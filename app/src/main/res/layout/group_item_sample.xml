@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,14 +23,14 @@
     android:weightSum="30"
     >
     <TextView
-
+        android:id="@+id/tv_group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="17sp"
         android:text="GroupName05"
         />
     <TextView
-
+        android:id="@+id/tv_group_balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="10sp"

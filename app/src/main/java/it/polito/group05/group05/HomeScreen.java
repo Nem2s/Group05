@@ -1,5 +1,8 @@
 package it.polito.group05.group05;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+
+import it.polito.group05.group05.Utility.Group;
+import it.polito.group05.group05.Utility.GroupAdapter;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -22,6 +33,33 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ArrayList<Group> items = new ArrayList<>();
+        ImageView iv = new ImageView(this);
+        GroupAdapter adapter = new GroupAdapter(this, items);
+        Context context = getApplicationContext();
+        ListView listView = (ListView)findViewById(R.id.groups_lv);
+        listView.setAdapter(adapter);
+        iv.setImageResource(R.drawable.ic_menu_camera);
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+        adapter.add(new Group("Group 1", "Credit +20", iv));
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
