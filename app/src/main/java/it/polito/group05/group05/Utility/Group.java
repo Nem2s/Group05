@@ -20,6 +20,8 @@ public class Group {
         this.groupProfile = groupProfile;
     }
 
+    public Group() {};
+
     public String getName() {
         return name;
     }

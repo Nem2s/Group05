@@ -3,39 +3,49 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_marginTop="8dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:weightSum="3"
-    android:baselineAligned="false">
+    android:baselineAligned="true">
 
-    <ImageView
-        android:layout_width="119dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dip"
+    <com.pkmmte.view.CircularImageView
         android:id="@+id/group_image"
-        android:src="@drawable/ic_menu_camera" />
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="2"
-    android:weightSum="30"
-    >
-    <TextView
-        android:id="@+id/tv_group_name"
+        android:layout_height="64dp"
+        android:layout_width="64dp"
+        app:border="true"
+        android:layout_marginLeft="16dp"
+        app:border_color="#EEEEEE"
+        app:border_width="0dp"
+        android:src="@drawable/group_profile"
+        >
+
+    </com.pkmmte.view.CircularImageView>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
-        android:text="GroupName05"
-        />
-    <TextView
-        android:id="@+id/tv_group_balance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-       android:text="Debit/credit   ___$"
-        android:layout_margin="10sp"
-       />
-</LinearLayout>
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_group_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="54dp"
+            android:layout_marginRight="16dp"
+            android:text="GroupName05"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv_group_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="54dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:text="Debit/credit   ___$"
+            android:textSize="10sp" />
+    </LinearLayout>
 </LinearLayout>
