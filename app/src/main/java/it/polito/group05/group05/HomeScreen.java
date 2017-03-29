@@ -49,6 +49,10 @@ public class HomeScreen extends AppCompatActivity
         Context context = getApplicationContext();
         ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
+        ActivityCompat.postponeEnterTransition(this);
+
+
+
         Group g = new Group();
         g.setName("Group ");
         g.setGroupProfile("http://images.clipartpanda.com/group-prayer-images-32.png");
