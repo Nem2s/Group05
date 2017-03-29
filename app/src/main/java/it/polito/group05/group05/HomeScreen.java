@@ -1,14 +1,10 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,11 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +23,6 @@ import java.util.Random;
 
 import it.polito.group05.group05.Utility.Group;
 import it.polito.group05.group05.Utility.GroupAdapter;
-import it.polito.group05.group05.Utility.ProfileImageActivity;
 import it.polito.group05.group05.Utility.User;
 
 public class HomeScreen extends AppCompatActivity
