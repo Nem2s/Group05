@@ -1,11 +1,14 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,52 +22,54 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
 
 import it.polito.group05.group05.Utility.Group;
 import it.polito.group05.group05.Utility.GroupAdapter;
+import it.polito.group05.group05.Utility.ProfileImageActivity;
+import it.polito.group05.group05.Utility.User;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ArrayList<Group> items = new ArrayList<>();
-        ImageView iv = new ImageView(this);
         GroupAdapter adapter = new GroupAdapter(this, items);
         Context context = getApplicationContext();
         ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
-        iv.setImageResource(R.drawable.group_profile);
         Group g = new Group();
-        g.setBalance("Credit +20");
-        g.setName("Group 1");
-        g.setGroupProfile(iv);
+        g.setName("Group ");
+        g.setGroupProfile("http://images.clipartpanda.com/group-prayer-images-32.png");
+        g.setLmTime(Calendar.getInstance().getTime().toString());
+        g.setBadge(12);
+        g.setBalance("Credit + 20");
+        Random r = new Random();
+        int m = r.nextInt(21 - 2) + 2;
+        for(int j = 0; j < m; j++) {
+            User u = new User();
+            u.setAdministrator(j >2);
+            u.setCardEnabled(j > 5);
+            u.setBalance(String.valueOf( j -2 >9?"Credit " + j:"Debit " + j));
+            u.setProfile_image("https://unsplash.it/300/300/?random");
+            u.setUser_name("User " + j);
+            u.setUser_group(g);
+            u.setId(String.valueOf(j + 3));
+            g.addMember(u);
+        }
         adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-        adapter.add(g);
-
+        adapter.addAll(generateRandomGroups(3));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,4 +145,37 @@ public class HomeScreen extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private List<Group> generateRandomGroups(int n) {
+        final String Uri = "https://unsplash.it/300/300/?random";
+        final Calendar c = Calendar.getInstance();
+        List<Group> ret = new ArrayList<>();
+        for(int i = 0; i < n; i++) {
+            Group g = new Group();
+            g.setName("Group " + i);
+            g.setGroupProfile(Uri);
+            g.setLmTime(c.getTime().toString());
+            g.setBadge(i - 1>0?i:0);
+            g.setBalance(String.valueOf( i+(n-1)>9?"Credit " + i+1:"Debit " + i));
+            Random r = new Random();
+            int m = r.nextInt(21 - 2) + 2;
+            for(int j = 0; j < m; j++) {
+                User u = new User();
+                u.setAdministrator(j > i + 1);
+                u.setCardEnabled(j > i+(j-1));
+                u.setBalance(String.valueOf( j -2 >9?"Credit " + i:"Debit " + j));
+                u.setProfile_image(Uri);
+                u.setUser_name("User " + j);
+                u.setUser_group(g);
+                u.setId(String.valueOf(j + i));
+                g.addMember(u);
+            }
+
+            ret.add(g);
+        }
+
+        return ret;
+    }
+
+
 }
