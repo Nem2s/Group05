@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.widget.ImageView;
 

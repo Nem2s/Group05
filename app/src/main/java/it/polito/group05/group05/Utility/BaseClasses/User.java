@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Color;
 
@@ -11,14 +11,14 @@ import java.util.Random;
 public class User {
     private String id;
     private String user_name;
-    private String balance;
+    private Balance balance;
     private String profile_image;
     private Group user_group;
     private int user_color;
     private boolean isAdministrator;
     private boolean isCardEnabled;
 
-    public User(String id, String user_name, String balance, String profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
+    public User(String id, String user_name, Balance balance, String profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
         this.balance = balance;
@@ -45,11 +45,11 @@ public class User {
         this.user_name = user_name;
     }
 
-    public String getBalance() {
+    public Balance getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Balance balance) {
         this.balance = balance;
     }
 
@@ -83,6 +83,10 @@ public class User {
 
     public void setCardEnabled(boolean cardEnabled) {
         isCardEnabled = cardEnabled;
+    }
+
+    public double getCurrentBalance(){
+        return balance.getCredit() - balance.getDebit();
     }
 
     public int generateRandomColor() {

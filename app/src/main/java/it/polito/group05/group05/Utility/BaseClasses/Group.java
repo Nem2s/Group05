@@ -1,19 +1,12 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Image;
 import android.text.SpannableString;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.nekocode.badge.BadgeDrawable;
-import it.polito.group05.group05.R;
 
 /**
  * Created by Marco on 24/03/2017.
@@ -22,19 +15,20 @@ import it.polito.group05.group05.R;
 public class Group {
 
     private String name;
-    private String balance;
+    private Balance balance;
     private BadgeDrawable badge;
     private String lmTime;
     private String groupProfile;
     private int groupColor;
     private List<User> members;
 
-    public Group(String groupName, String currentBalance, String groupProfile, String lmTime, BadgeDrawable badge) {
+    public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
         this.balance = currentBalance;
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
-        this.badge = badge;
+        setBadge(badgeCount);
+        this.members = new ArrayList<>();
     }
 
     public Group() {
@@ -49,11 +43,11 @@ public class Group {
         this.name = name;
     }
 
-    public String getBalance() {
+    public Balance getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Balance balance) {
         this.balance = balance;
     }
 

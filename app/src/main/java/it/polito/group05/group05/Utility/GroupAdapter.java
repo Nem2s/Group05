@@ -3,37 +3,32 @@ package it.polito.group05.group05.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.graphics.Palette;
+import android.support.v4.util.Pair;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.StringTokenizer;
 
-import it.polito.group05.group05.HomeScreen;
+import it.polito.group05.group05.GroupDetailsActivity;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
 /**
  * Created by Marco on 24/03/2017.
@@ -41,6 +36,8 @@ import it.polito.group05.group05.R;
 
 public class GroupAdapter extends ArrayAdapter<Group> {
 
+    Context context;
+    Activity activity;
     private static class ViewHolder {
         CircularImageView groupProfile;
         TextView name;
@@ -49,17 +46,19 @@ public class GroupAdapter extends ArrayAdapter<Group> {
         TextClock time;
     }
 
-    public GroupAdapter(Context context, List<Group> objects) {
+    public GroupAdapter(Context context, List<Group> objects, Activity activity) {
         super(context,0, objects);
+        this.context = context;
+        this.activity = activity;
     }
 
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         final Group group = getItem(position);
 
-         ViewHolder holder;
+         final ViewHolder holder;
 
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.group_item_sample, parent, false);
@@ -78,41 +77,22 @@ public class GroupAdapter extends ArrayAdapter<Group> {
             int groupColor = -1;
             Picasso
                     .with(getContext())
-                    .load(group.getGroupProfile())
+                    .load(Integer.parseInt(group.getGroupProfile()))
                     .placeholder(R.drawable.default_avatar)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .networkPolicy(NetworkPolicy.NO_CACHE)
                     .error(R.drawable.ic_visibility_off)
                     .transform(new PicassoRoundTransform())
                     .into(holder.groupProfile);
 
 
-            Picasso
-                    .with(getContext())
-                    .load(group.getGroupProfile())
-                    .resize(100, 100)
-                    .centerCrop()
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                            group.setGroupColor(ColorUtils.getDominantColor(bitmap));
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
             holder.name.setText(group.getName());
-            holder.balance.setText(group.getBalance());
+            String text = "<font color='green'>" + group.getBalance().getCredit() + "</font> / <font color='red'>" + group.getBalance().getDebit() + "</font>";
+            holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
+
+
+
+
             holder.time.setText(group.getLmTime());
-            group.setGroupColor(groupColor);
+            //group.setGroupColor(groupColor);
             if(group.getBadge() != null) {
                 holder.badge.setText(group.getBadge());
                 holder.time.setTextColor(getContext().getResources().getColor(R.color.colorAccent));
@@ -125,24 +105,25 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                 @Override
                 public void onClick(View view) {
                     // Ordinary Intent for launching a new activity
-                    Intent intent = new Intent(getContext(), ProfileImageActivity.class);
+                    Intent intent = new Intent(context, GroupDetailsActivity.class);
+                    intent.putExtra("Position", position);
 
                     // Get the transition name from the string
-                    String transitionName = getContext().getString(R.string.transition_string);
+                    String transitionImage = context.getString(R.string.transition_group_image);
+                    String transitionFab = context.getString(R.string.transition_fab);
 
                     // Define the view that the animation will start from
-                    View viewStart = finalConvertView.findViewById(R.id.iv_group_image);
-
+                    View groupImage = view.findViewById(R.id.iv_group_image);
+                    FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
+                    Pair <View, String> p1 = Pair.create((View)groupImage, transitionImage);
                     ActivityOptionsCompat options =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(),
-                                    viewStart,   // Starting view
-                                    transitionName    // The String
-                            );
+                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1);
                     //Start the Intent
-                    int[] screenLocation = new int[2];
-                    viewStart.getLocationOnScreen(screenLocation);
                     Singleton.getInstance().setmCurrentGroup(group);
-                    ActivityCompat.startActivity(getContext(), intent, options.toBundle());
+                    //ActivityCompat.startActivity(context, intent, options.toBundle());
+                    context.startActivity(intent, options.toBundle());
+                    AnimUtils.toggleOff(fab, 250, context);
+
                 }
             });
         }

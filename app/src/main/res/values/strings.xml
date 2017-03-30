@@ -3,6 +3,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="transition_string">hello</string>
+    <string name="transition_group_image">git</string>
+    <string name="transition_fab">tf</string>
     <string name="action_settings">Settings</string>
 </resources>

@@ -39,6 +39,7 @@
         android:src="@drawable/ic_action_add_black"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right"
-        android:layout_gravity="top|center_horizontal" />
+        android:layout_gravity="top|center_horizontal"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

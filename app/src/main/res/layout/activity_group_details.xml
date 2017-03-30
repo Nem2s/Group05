@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:transitionName="@string/transition_string"
+
 
     >
 
@@ -35,7 +35,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
                     android:src="@drawable/group_profile"
-                    android:transitionName="@string/transition_string"
+                    android:transitionName="@string/transition_group_image"
                     android:focusableInTouchMode="true"
                     >
 
@@ -71,13 +71,29 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
-    <android.support.v7.widget.CardView
+    <ScrollView
         android:layout_width="match_parent"
+        android:layout_below="@id/abl_header"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/abl_header"
-        app:layout_anchorGravity="bottom"
-        android:layout_gravity="bottom"
+        android:fillViewport="true"
+        android:scrollbars = "vertical"
+        android:scrollbarStyle="outsideInset"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coord_layout"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+
+    >
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp"
         app:cardCornerRadius="2dp"
         >
         <LinearLayout
@@ -85,16 +101,57 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-
+            <TextView
+                android:id="@+id/tv_partecipants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Partecipants:"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimaryText"
+                android:layout_margin="16dp"
+                />
             <ListView
                 android:id="@+id/lv_group_members"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:layout_marginBottom="24dp"
                 ></ListView>
 
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_action_add_black"
+        app:layout_anchor="@+id/card_view"
+        app:layout_anchorGravity="bottom|right"
+        android:clickable="true"
+        android:visibility="invisible"
+        />
 </android.support.design.widget.CoordinatorLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_below="@id/coord_layout"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        >
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/group_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            >
+
+
+        </com.github.mikephil.charting.charts.BarChart>
+    </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
