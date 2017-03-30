@@ -18,6 +18,7 @@
             android:id="@+id/toolbar_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
             android:background="@color/colorPrimaryDark"
             >
             <LinearLayout
@@ -35,6 +36,7 @@
                     android:layout_marginLeft="16dp"
                     android:src="@drawable/group_profile"
                     android:transitionName="@string/transition_string"
+                    android:focusableInTouchMode="true"
                     >
 
                 </com.pkmmte.view.CircularImageView>
