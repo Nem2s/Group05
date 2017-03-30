@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
 import it.polito.group05.group05.R;
@@ -27,7 +28,8 @@ public class Group {
     private String lmTime;
     private String groupProfile;
     private int groupColor;
-    private List<User> members;
+    private TreeMap<String, User> members;
+    private TreeMap<String, Expense> expenses;
 
     public Group(String groupName, String currentBalance, String groupProfile, String lmTime, BadgeDrawable badge) {
         this.name = groupName;
@@ -36,10 +38,7 @@ public class Group {
         this.lmTime = lmTime;
         this.badge = badge;
     }
-
-    public Group() {
-        this.members = new ArrayList<>();
-    };
+    public Group(){}
 
     public String getName() {
         return name;
@@ -63,7 +62,6 @@ public class Group {
 
     public void setGroupProfile(String Uri) {
         groupProfile = Uri;
-
     }
 
     public SpannableString getBadge() {
@@ -100,22 +98,22 @@ public class Group {
         this.groupColor = groupColor;
     }
 
-    public List<User> getMembers() {
-        return members;
+    public Expense getExpenses(String id) {
+        return expenses.get(id);
     }
-
-    public void addMember(User u) {
-        members.add(u);
-    }
-
-    public User getMember(String id) {
-        for (User u :
-                members) {
-            if(u.getId() == id) {
-                return u;
-            }
-
+    public void addExpense( Expense e){
+        if(!expenses.containsKey(e.getId())){
+            expenses.put(e.getId(), e);
         }
-        return null;
     }
+    public User getUsers(String id){
+        return members.get(id);
+    }
+
+    public void addUser( User u){
+        if(!members.containsKey(u.getId())){
+            members.put(u.getId(), u);
+        }
+    }
+
 }

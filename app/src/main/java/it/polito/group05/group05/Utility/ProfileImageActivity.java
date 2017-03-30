@@ -37,12 +37,22 @@ public class ProfileImageActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ArrayList<User> users = new ArrayList<>();
+
+
+        for(int i = 0;i< 10; i++) {
+            User u = new User();
+            u.setId("eNiente" + i);
+            u.setAdministrator(true);
+            u.setCardEnabled(true);
+            u.setUser_name("GIALLUME" + i);
+            users.add(i, u);
+        }
+
+
         UserAdapter adapter = new UserAdapter(this, users);
         ListView listView = (ListView)findViewById(R.id.lv_group_members);
         listView.setAdapter(adapter);
 
-
-        adapter.addAll(currentGroup.getMembers());
     }
 
     @Override

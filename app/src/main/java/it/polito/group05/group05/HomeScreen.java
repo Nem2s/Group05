@@ -66,7 +66,7 @@ public class HomeScreen extends AppCompatActivity
             u.setUser_name("User " + j);
             u.setUser_group(g);
             u.setId(String.valueOf(j + 3));
-            g.addMember(u);
+            g.addUser(u);
         }
         adapter.add(g);
         adapter.addAll(generateRandomGroups(3));
@@ -168,7 +168,7 @@ public class HomeScreen extends AppCompatActivity
                 u.setUser_name("User " + j);
                 u.setUser_group(g);
                 u.setId(String.valueOf(j + i));
-                g.addMember(u);
+                g.addUser(u);
             }
 
             ret.add(g);
