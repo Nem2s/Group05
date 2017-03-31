@@ -1,20 +1,14 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Image;
 import android.text.SpannableString;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
-import it.polito.group05.group05.R;
 
 /**
  * Created by Marco on 24/03/2017.
@@ -23,7 +17,7 @@ import it.polito.group05.group05.R;
 public class Group {
 
     private String name;
-    private String balance;
+    private Balance balance;
     private BadgeDrawable badge;
     private String lmTime;
     private String groupProfile;
@@ -31,12 +25,13 @@ public class Group {
     private TreeMap<String, User> members;
     private TreeMap<String, Expense> expenses;
 
-    public Group(String groupName, String currentBalance, String groupProfile, String lmTime, BadgeDrawable badge) {
+    public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
         this.balance = currentBalance;
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
-        this.badge = badge;
+        setBadge(badgeCount);
+        this.members = new TreeMap<String, User>();
     }
     public Group(){}
 
@@ -48,11 +43,11 @@ public class Group {
         this.name = name;
     }
 
-    public String getBalance() {
+    public Balance getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Balance balance) {
         this.balance = balance;
     }
 
@@ -101,16 +96,20 @@ public class Group {
     public Expense getExpenses(String id) {
         return expenses.get(id);
     }
+
     public void addExpense( Expense e){
         if(!expenses.containsKey(e.getId())){
             expenses.put(e.getId(), e);
         }
     }
-    public User getUsers(String id){
+    public User getMember(String id){
         return members.get(id);
     }
+    public List<User> getMembers(){
+        return new ArrayList<>(members.values());
+    }
 
-    public void addUser( User u){
+    public void addMember( User u){
         if(!members.containsKey(u.getId())){
             members.put(u.getId(), u);
         }
