@@ -83,13 +83,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 return false;
             }
         });
-        chart.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                view.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+
         listView.setAdapter(adapter);
         adapter.addAll(currentGroup.getMembers());
         populateChart(this, users);
@@ -98,6 +92,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
+        chart.setTouchEnabled(false);
         yAxisL.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxisL.setValueFormatter(new IAxisValueFormatter() {
             @Override
