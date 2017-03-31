@@ -79,34 +79,38 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 return false;
             }
         });
+        chart.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
         listView.setAdapter(adapter);
-        populateChart(this, users);
-        chart.invalidate();
         adapter.addAll(currentGroup.getMembers());
+
+        populateChart(this, users);
     }
 
     private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxis = chart.getAxisLeft();
-        yAxis.setLabelCount(8, false);
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-        yAxis.setSpaceTop(15f);
-        yAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
+        //yAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // only intervals of 1 day
-        xAxis.setLabelCount(7);
 
 
         Legend legend = chart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setDrawInside(false);
-        legend.setForm(Legend.LegendForm.SQUARE);
+        legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setFormSize(9f);
         legend.setTextSize(11f);
+        legend.setWordWrapEnabled(true);
         legend.setXEntrySpace(4f);
         legend.setEnabled(true);
 
@@ -114,12 +118,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         int i = 0;
         List<IBarDataSet> total = new ArrayList<>();
-        Map<User, Integer> xlabels = new HashMap<>();
         final ArrayList<String> xvalues = new ArrayList<>();
         for (User u : users) {
             List<BarEntry> barEntries = new ArrayList<>();
-            barEntries.add(new BarEntry(4f, 30));
-            xlabels.put(u, i);
+            barEntries.add(new BarEntry(i,(float)u.getBalance().getCredit()));
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
@@ -134,9 +136,17 @@ public class GroupDetailsActivity extends AppCompatActivity {
         legend.setCustom(legends);
         BarData data = new BarData(total);
         data.setBarWidth(0.9f);
+        IAxisValueFormatter formatter = new IAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return xvalues.get((int)value);
+            }
+        };
+        xAxis.setValueFormatter(formatter);
         chart.setData(data);
         chart.setFitBars(true);
-        chart.animateXY(300, 300, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInBack);
+        chart.animateXY(1250, 3000, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
 
 
     }
