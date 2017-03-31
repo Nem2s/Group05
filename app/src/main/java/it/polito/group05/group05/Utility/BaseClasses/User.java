@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Color;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 /**

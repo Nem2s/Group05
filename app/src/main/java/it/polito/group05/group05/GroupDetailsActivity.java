@@ -33,6 +33,9 @@ import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,6 +55,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
     private static final String TAG = GroupDetailsActivity.class.getSimpleName();
     private TextView partecipants;
+    private TextView tv_chart;
     private FloatingActionButton fab;
     private BarChart chart;
 
@@ -65,7 +69,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
         AnimUtils.toggleOn(fab, 750, this);
-
+        tv_chart = (TextView)findViewById(R.id.tv_chart);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
         ArrayList<User> users = new ArrayList<>();
         UserAdapter adapter = new UserAdapter(this, users);
@@ -93,8 +97,24 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void populateChart(Context context, ArrayList<User> users) {
-        YAxis yAxis = chart.getAxisLeft();
-        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        YAxis yAxisL = chart.getAxisLeft();
+        chart.getDescription().setEnabled(false);
+        yAxisL.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        yAxisL.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                DecimalFormat price = new DecimalFormat("#.##");
+                return price.format(value) + " €";
+            }
+        });
+        YAxis yAxisR = chart.getAxisRight();
+        yAxisR.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                DecimalFormat price = new DecimalFormat("#.##");
+                return price.format(value) + " €";
+            }
+        });
         //yAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -121,7 +141,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         final ArrayList<String> xvalues = new ArrayList<>();
         for (User u : users) {
             List<BarEntry> barEntries = new ArrayList<>();
-            barEntries.add(new BarEntry(i,(float)u.getBalance().getCredit()));
+            barEntries.add(new BarEntry(i, u.getTot_expenses()));
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
@@ -195,6 +215,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 if(color != toolbar_default) {
                     colorAnimation_toolbar.start();
                     partecipants.setTextColor(tx_color);
+                    tv_chart.setTextColor(tx_color);
                 }
                 if(fab_color != fab_default)
                     colorAnimation_fab.start();
