@@ -13,89 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad102770-7495-4dc5-a401-08a4a6d0b14f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/beach.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/boy.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/girl.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/girl_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/girl_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/hills.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/man.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/man_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/river.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/team.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/team_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-hdpi/welder.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/beach.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/boy.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/girl.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/girl_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/girl_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/hills.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/man.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/man_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/river.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/team.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/team_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-mdpi/welder.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/beach.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/boy.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/girl.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/girl_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/girl_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/hills.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/man.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/man_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/river.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/team.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/team_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xhdpi/welder.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/beach.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/boy.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/girl.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/girl_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/girl_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/hills.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/man.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/man_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/river.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/team.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/team_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxhdpi/welder.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/beach.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/boy.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/girl.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/girl_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/girl_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/hills.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/man.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/man_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/river.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/team.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/team_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable-xxxhdpi/welder.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/GroupDetailsActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/AnimUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Balance.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/anim/fab_close.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/anim/fab_open.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/res/drawable/list_divider.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/ProfileImageActivity.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/Expense.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Expense.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/Group.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Group.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/Singleton.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Singleton.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/User.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/User.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/res/layout/activity_profile_image.xml" afterPath="$PROJECT_DIR$/src/main/res/layout/activity_group_details.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/HomeScreen.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/HomeScreen.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/GroupAdapter.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/GroupAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/UserAdapter.java" afterPath="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/UserAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/res/layout/app_bar_home_screen.xml" afterPath="$PROJECT_DIR$/src/main/res/layout/app_bar_home_screen.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/res/layout/group_item_sample.xml" afterPath="$PROJECT_DIR$/src/main/res/layout/group_item_sample.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/res/layout/member_item_sample.xml" afterPath="$PROJECT_DIR$/src/main/res/layout/member_item_sample.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/res/values-v21/styles.xml" afterPath="$PROJECT_DIR$/src/main/res/values-v21/styles.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/src/main/res/values/strings.xml" />
     </list>
     <ignored path="app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -2139,9 +2057,9 @@
         <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/ExpenseActivity.java" />
         <option value="$PROJECT_DIR$/src/main/res/layout/activity_expense_v2.xml" />
         <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/Expense.java" />
-        <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Expense.java" />
         <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Group.java" />
         <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/GroupDetailsActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/it/polito/group05/group05/Utility/BaseClasses/Expense.java" />
       </list>
     </option>
   </component>
@@ -2272,36 +2190,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="BaseClasses" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="APP" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="group05" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Utility" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="BaseClasses" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Expense.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -2677,7 +2565,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0622665" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -2693,7 +2581,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22864865" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22864865" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
