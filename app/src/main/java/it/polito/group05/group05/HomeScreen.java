@@ -48,6 +48,7 @@ public class HomeScreen extends AppCompatActivity
         int m = r.nextInt(21 - 2) + 2;
         for(int j = 0; j < m; j++) {
             User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j==3, j==1);
+            u.setTot_expenses((float) (j*0.75));
             g.addMember(u);
         }
         adapter.add(g);
@@ -56,6 +57,7 @@ public class HomeScreen extends AppCompatActivity
         m = r.nextInt(21 - 2) + 2;
         for(int j = 0; j < m; j++) {
             User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.girl_1), g, j==3, j==1);
+            u.setTot_expenses((float) (j*2.5));
             g.addMember(u);
         }
         adapter.add(g);
