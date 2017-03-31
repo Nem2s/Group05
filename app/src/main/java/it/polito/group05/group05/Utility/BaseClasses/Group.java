@@ -106,7 +106,8 @@ public class Group {
         return members.get(id);
     }
     public List<User> getMembers(){
-        return new ArrayList<>(members.values());
+        ArrayList<User> new_list= new ArrayList<>(members.values());
+        return new_list;
     }
 
     public void addMember( User u){
