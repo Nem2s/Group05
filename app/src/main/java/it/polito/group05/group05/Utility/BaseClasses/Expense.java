@@ -1,60 +1,114 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.widget.ImageView;
+import java.io.File;
+import java.security.Timestamp;
+import java.sql.Time;
+import java.util.TreeMap;
 
 /**
- * Created by Andrea on 25-Mar-17.
+ * Created by Anna on 29/03/2017.
  */
+enum TYPE_EXPENSE {MANDATORY, NOTMANDATORY};
 
 public class Expense {
-
+    private String id;
+    private User owner;
     private String name;
     private String description;
-    private String owner;
-    private double amount;
-    //private String amount;
-    private ImageView e_image;
-    //File
-    //Deadline
-    public Expense(String expenseName, double expenseAmount, String expenseOwner, ImageView expenseImage )
-    {
-        this.e_image = expenseImage;
-        this.name = expenseName;
-        this.amount= expenseAmount;
-        this.owner = expenseOwner;
+    private Double price;
+    private TYPE_EXPENSE type;
+    private File file;
+    private int deadline;           //days
+    private Timestamp timestamp;
+    private TreeMap<String, User> lista_partecipanti;
+
+
+    public Expense(String id, User owner, String name, String description, Double price, TYPE_EXPENSE type, File file, int deadline,
+                   Timestamp timestamp){
+        this.id = id;
+        this.name= name;
+        this.description= description;
+        this.price=price;
+        this.type=type;
+        this.file=file;
+        this.deadline= deadline;
+        this.timestamp= timestamp;
     }
 
-    public String getName() {
+    //METHODS
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public User getOwner() {return owner;}
+
+    public void setOwner(User owner) {this.owner = owner;}
+
+    public String getName(){
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name){
+        this.name= name;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getDescription() {
+    public String getDescription(){
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String description){
+        this.description= description;
     }
 
-    public ImageView getE_image() {
-        return e_image;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setE_image(ImageView e_image) { this.e_image = e_image; }
+    public void setPrice(Double price){
+        this.price=price;
+    }
 
-    public String getOwner() { return owner; }
+    public TYPE_EXPENSE getType() {
+        return type;
+    }
 
-    public void setOwner(String owner) { this.owner = owner; }
+    public void setType(TYPE_EXPENSE type) {
+        this.type = type;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public int getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(int deadline) {
+        this.deadline = deadline;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void addPartecipant(User u){
+        if(!lista_partecipanti.containsKey(u.getId())){
+            lista_partecipanti.put(u.getId(),u);
+        }
+    }
+    public User getPartecipants(String id){
+        return lista_partecipanti.get(id);
+    }
+
+
 }
+

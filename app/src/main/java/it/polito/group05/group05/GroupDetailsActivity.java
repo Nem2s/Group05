@@ -92,7 +92,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         });
         listView.setAdapter(adapter);
         adapter.addAll(currentGroup.getMembers());
-
         populateChart(this, users);
     }
 
