@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    >
+    android:layout_marginTop="8dp">
     <com.pkmmte.view.CircularImageView
         android:id="@+id/iv_user_image"
-        android:layout_height="58dp"
-        android:layout_width="58dp"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="16dp"
         android:src="@drawable/group_profile"
-        android:transitionName="@string/transition_string"
+        app:border="true"
+        app:border_width="2dp"
+        app:border_color="@color/colorAccent"
         >
 
     </com.pkmmte.view.CircularImageView>
@@ -31,7 +34,7 @@
 
             android:text="GroupName05"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_user_balance"
@@ -39,19 +42,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Debit/credit   ___$"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         >
         <ImageView
             android:id="@+id/iv_paycard"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/ic_payment"
             android:layout_alignParentEnd="true"
             />

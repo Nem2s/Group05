@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05.Utility.BaseClasses;
 
 /**
  * Created by Marco on 28/03/2017.
