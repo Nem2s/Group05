@@ -22,5 +22,7 @@
         <item>equal part</item>
         <item>equal part</item>
     </string-array>
+    <string name="title_activity_group_">Group_Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

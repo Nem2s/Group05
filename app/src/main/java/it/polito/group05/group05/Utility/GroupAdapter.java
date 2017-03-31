@@ -3,15 +3,11 @@ package it.polito.group05.group05.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +19,9 @@ import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 import it.polito.group05.group05.GroupDetailsActivity;
+import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -101,6 +97,13 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                 holder.badge.setVisibility(View.INVISIBLE);
             final View finalConvertView = convertView;
 
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, Group_Activity.class);
+                    context.startActivity(intent);
+                }
+            });
             holder.groupProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

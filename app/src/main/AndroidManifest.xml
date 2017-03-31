@@ -20,7 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GroupDetailsActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".GroupDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Group_Activity"
+            android:label="@string/title_activity_group_"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
