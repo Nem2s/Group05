@@ -167,7 +167,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 final int color = palette.getLightVibrantColor(toolbar_default);
                 final int fab_color = palette.getMutedColor(fab_default);
                 Palette.Swatch tx_swatch = palette.getVibrantSwatch();
-                final int tx_color = tx_swatch.getBodyTextColor();
+                int tx_color = getResources().getColor(R.color.colorPrimaryText);
+                if (tx_swatch != null) {
+                    tx_color = tx_swatch.getBodyTextColor();
+                }
                 ValueAnimator colorAnimation_toolbar = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
                 colorAnimation_toolbar.setDuration(250); // milliseconds
                 colorAnimation_toolbar.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

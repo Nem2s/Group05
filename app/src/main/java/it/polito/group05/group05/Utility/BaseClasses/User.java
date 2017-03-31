@@ -15,6 +15,7 @@ public class User {
     private String profile_image;
     private Group user_group;
     private int user_color;
+    private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
 
@@ -93,6 +94,14 @@ public class User {
         Random rnd = new Random();
         return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
+    }
+
+    public float getTot_expenses() {
+        return tot_expenses;
+    }
+
+    public void setTot_expenses(float tot_expenses) {
+        this.tot_expenses = tot_expenses;
     }
 
     public int getUser_color() {
