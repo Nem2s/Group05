@@ -1,23 +1,29 @@
 package it.polito.group05.group05;
 
-import android.support.design.widget.TabLayout;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
-import android.widget.TextView;
+import java.util.ArrayList;
+
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.ExpenseAdapter;
 
 public class Group_Activity extends AppCompatActivity {
 
@@ -105,10 +111,12 @@ public class Group_Activity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(String s) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+
+            //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putString(ARG_SECTION_NUMBER,s);
             fragment.setArguments(args);
             return fragment;
         }
@@ -117,11 +125,34 @@ public class Group_Activity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
+            final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
 
-            // List view
             View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            ListView lv =(ListView) rootView.findViewById(R.id.expense_lv);
+            //ScrollView sv = (ScrollView)rootView.findViewById(R.id.expense_sv);
+            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
+            ArrayList<Expense> expenses = new ArrayList<>();
+            ExpenseAdapter ea= new ExpenseAdapter(getContext(),expenses);
+
+            lv.setOnTouchListener(new View.OnTouchListener() {
+                // Setting on Touch Listener for handling the touch inside ScrollView
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    // Disallow the touch request for parent scroll on touch of child view
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+
+
+            lv.setAdapter(ea);
+            ea.add(currentGroup.getExpense("0"));
+            //ea.addAll(currentGroup.getExpenses());
+
+
             return rootView;
         }
     }
@@ -140,7 +171,7 @@ public class Group_Activity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(this.getPageTitle(position).toString());
         }
 
         @Override

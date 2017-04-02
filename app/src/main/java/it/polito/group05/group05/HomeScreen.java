@@ -3,9 +3,8 @@ package it.polito.group05.group05;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -22,9 +22,11 @@ import java.util.Random;
 
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
-import it.polito.group05.group05.Utility.GroupAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.GroupAdapter;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,6 +53,10 @@ public class HomeScreen extends AppCompatActivity
             u.setTot_expenses((float) (j*0.75));
             g.addMember(u);
         }
+        for(int i = 0; i < m; i++) {
+            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
+            g.addExpense(s);
+        }
         adapter.add(g);
         g = new Group("Group 2", new Balance(12, 0), String.valueOf(R.drawable.beach), Calendar.getInstance().getTime().toString(), 1);
         r = new Random();
@@ -60,6 +66,13 @@ public class HomeScreen extends AppCompatActivity
             u.setTot_expenses((float) (j*2.5));
             g.addMember(u);
         }
+
+        for(int i = 0; i < m; i++) {
+            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
+            g.addExpense(s);
+        }
+
+
         adapter.add(g);
         //adapter.addAll(generateRandomGroups(3));
         fab = (FloatingActionButton) findViewById(R.id.fab);

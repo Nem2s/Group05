@@ -4,12 +4,11 @@ import android.graphics.Color;
 import android.text.SpannableString;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
-
 /**
  * Created by Marco on 24/03/2017.
  */
@@ -22,8 +21,8 @@ public class Group {
     private String lmTime;
     private String groupProfile;
     private int groupColor;
-    private TreeMap<String, User> members;
-    private TreeMap<String, Expense> expenses;
+    private Map<String, User> members;
+    private Map<String, Expense> expenses ;
 
     public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
@@ -31,7 +30,8 @@ public class Group {
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new TreeMap<String, User>();
+        this.members = new TreeMap<>();
+        this.expenses = new TreeMap<>();
     }
     public Group(){}
 
@@ -93,14 +93,17 @@ public class Group {
         this.groupColor = groupColor;
     }
 
-    public Expense getExpenses(String id) {
+    public Expense getExpense(String id) {
         return expenses.get(id);
+    }
+    public List<Expense> getExpenses() {
+        return (List<Expense>)expenses.values();
     }
 
     public void addExpense( Expense e){
-        if(!expenses.containsKey(e.getId())){
+
             expenses.put(e.getId(), e);
-        }
+
     }
     public User getMember(String id){
         return members.get(id);

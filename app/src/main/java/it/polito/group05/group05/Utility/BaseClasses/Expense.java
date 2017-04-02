@@ -1,14 +1,12 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import java.io.File;
-import java.security.Timestamp;
-import java.sql.Time;
+import java.sql.Timestamp;
+
+
 import java.util.TreeMap;
 
-/**
- * Created by Anna on 29/03/2017.
- */
-enum TYPE_EXPENSE {MANDATORY, NOTMANDATORY};
+;
 
 public class Expense {
     private String id;
@@ -21,6 +19,7 @@ public class Expense {
     private int deadline;           //days
     private Timestamp timestamp;
     private TreeMap<String, User> lista_partecipanti;
+    private String image;
 
 
     public Expense(String id, User owner, String name, String description, Double price, TYPE_EXPENSE type, File file, int deadline,
@@ -34,6 +33,17 @@ public class Expense {
         this.deadline= deadline;
         this.timestamp= timestamp;
     }
+    public Expense(String id, User owner, String name, String description, Double price, TYPE_EXPENSE type, int deadline,
+                   Timestamp timestamp){
+        this.id = id;
+        this.name= name;
+        this.description= description;
+        this.price=price;
+        this.type=type;
+
+        this.deadline= deadline;
+        this.timestamp= timestamp;
+    }
 
     //METHODS
     public String getId() {
@@ -42,6 +52,14 @@ public class Expense {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public User getOwner() {return owner;}

@@ -101,9 +101,16 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, Group_Activity.class);
+                    intent.putExtra("Position", position);
+                    Singleton.getInstance().setmCurrentGroup(group);
                     context.startActivity(intent);
                 }
             });
+
+
+
+
+
             holder.groupProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
