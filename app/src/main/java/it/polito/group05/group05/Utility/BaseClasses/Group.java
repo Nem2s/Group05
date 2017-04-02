@@ -21,7 +21,7 @@ public class Group {
     private BadgeDrawable badge;
     private String lmTime;
     private String groupProfile;
-    private int groupColor;
+    private GroupColor groupColor;
     private TreeMap<String, User> members;
     private TreeMap<String, Expense> expenses;
 
@@ -85,11 +85,11 @@ public class Group {
         this.lmTime = lmTime;
     }
 
-    public int getGroupColor() {
+    public GroupColor getGroupColor() {
         return groupColor;
     }
 
-    public void setGroupColor(int groupColor) {
+    public void setGroupColor(GroupColor groupColor) {
         this.groupColor = groupColor;
     }
 

@@ -1,9 +1,12 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,7 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,11 +34,14 @@ import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.PicassoRoundTransform;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FloatingActionButton fab;
+    DrawerLayout drawer;
+    User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,10 +51,10 @@ public class HomeScreen extends AppCompatActivity
         setSupportActionBar(toolbar);
         ArrayList<Group> items = new ArrayList<>();
         GroupAdapter adapter = new GroupAdapter(this, items, this);
-        Context context = getApplicationContext();
+        final Context context = getApplicationContext();
         ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
-
+        currentUser = new User("12", "Bob", new Balance(88, 21), String.valueOf(R.drawable.man_1), null, false, false);
         Group g = new Group("Group 1", new Balance(120, 61.1), String.valueOf(R.drawable.hills), Calendar.getInstance().getTime().toString(), 9);
         Random r = new Random();
         int m = r.nextInt(21 - 2) + 2;
@@ -72,9 +84,30 @@ public class HomeScreen extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                CircularImageView cv = (CircularImageView)findViewById(R.id.drawer_header_image);
+                super.onDrawerOpened(drawerView);
+                Picasso
+                        .with(context)
+                        .load(Integer.parseInt(currentUser.getProfile_image()))
+                        .transform(new PicassoRoundTransform())
+                        .placeholder(R.drawable.default_avatar)
+                        .error(R.drawable.ic_visibility_off)
+                        .into(cv);
+
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -91,7 +124,7 @@ public class HomeScreen extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -127,17 +160,11 @@ public class HomeScreen extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_contacts) {
 
         }
 

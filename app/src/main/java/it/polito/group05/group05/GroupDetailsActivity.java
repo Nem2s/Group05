@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -45,6 +47,7 @@ import java.util.Map;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
 import it.polito.group05.group05.Utility.PicassoRoundTransform;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
@@ -59,6 +62,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private BarChart chart;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +70,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_header);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         chart = (BarChart)findViewById(R.id.group_chart);
+        tv_chart = (TextView)findViewById(R.id.tv_chart);
+        partecipants = (TextView)findViewById(R.id.tv_partecipants);
         customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
         AnimUtils.toggleOn(fab, 750, this);
-        tv_chart = (TextView)findViewById(R.id.tv_chart);
-        partecipants = (TextView)findViewById(R.id.tv_partecipants);
+
         ArrayList<User> users = new ArrayList<>();
         UserAdapter adapter = new UserAdapter(this, users);
         ListView listView = (ListView)findViewById(R.id.lv_group_members);
@@ -173,6 +178,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void customizeToolbar(final Toolbar toolbar) {
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final GroupColor gc = new GroupColor();
         final Palette.PaletteAsyncListener paletteListener = new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette palette) {
                 int toolbar_default = getResources().getColor(R.color.colorPrimary);
@@ -187,12 +193,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 }
                 ValueAnimator colorAnimation_toolbar = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
                 colorAnimation_toolbar.setDuration(250); // milliseconds
+                final int finalTx_color = tx_color;
                 colorAnimation_toolbar.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
                         toolbar.setBackgroundColor(color);
-                        toolbar.setTitleTextColor(_text);
+                        toolbar.setTitleTextColor(finalTx_color);
 
                     }
 
@@ -214,29 +221,37 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 if(fab_color != fab_default)
                     colorAnimation_fab.start();
 
+                gc.setToolbarColor(color);
+                gc.setToolbarTextColor(tx_color);
+                gc.setCardsColor(tx_color);
+                currentGroup.setGroupColor(gc);
             }
+
+
         };
-        Picasso
-                .with(getApplicationContext())
-                .load(Integer.parseInt(currentGroup.getGroupProfile()))
-                .transform(new PicassoRoundTransform())
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Palette.from(bitmap).generate(paletteListener);
-                        c.setImageBitmap(bitmap);
-                    }
 
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
 
-                    }
+            Picasso
+                    .with(getApplicationContext())
+                    .load(Integer.parseInt(currentGroup.getGroupProfile()))
+                    .transform(new PicassoRoundTransform())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Palette.from(bitmap).generate(paletteListener);
+                            c.setImageBitmap(bitmap);
+                        }
 
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
 
-                    }
-                });
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
 
 
     }
