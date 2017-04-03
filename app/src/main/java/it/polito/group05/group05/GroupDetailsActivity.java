@@ -48,6 +48,7 @@ import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
+import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.PicassoRoundTransform;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
@@ -179,58 +180,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void customizeToolbar(final Toolbar toolbar) {
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
         final GroupColor gc = new GroupColor();
-        final Palette.PaletteAsyncListener paletteListener = new Palette.PaletteAsyncListener() {
-            public void onGenerated(Palette palette) {
-                int toolbar_default = getResources().getColor(R.color.colorPrimary);
-                int fab_default = getResources().getColor(R.color.colorAccent);
-                final int _text = 0x000000;
-                final int color = palette.getLightVibrantColor(toolbar_default);
-                final int fab_color = palette.getMutedColor(fab_default);
-                Palette.Swatch tx_swatch = palette.getVibrantSwatch();
-                int tx_color = getResources().getColor(R.color.colorPrimaryText);
-                if (tx_swatch != null) {
-                    tx_color = tx_swatch.getBodyTextColor();
-                }
-                ValueAnimator colorAnimation_toolbar = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
-                colorAnimation_toolbar.setDuration(250); // milliseconds
-                final int finalTx_color = tx_color;
-                colorAnimation_toolbar.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        toolbar.setBackgroundColor(color);
-                        toolbar.setTitleTextColor(finalTx_color);
-
-                    }
-
-                });
-                ValueAnimator colorAnimation_fab = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
-                colorAnimation_fab.setDuration(250); // milliseconds
-                colorAnimation_fab.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        fab.setBackgroundColor(fab_color);
-                    }
-                });
-
-                if(color != toolbar_default) {
-                    colorAnimation_toolbar.start();
-                    partecipants.setTextColor(tx_color);
-                    tv_chart.setTextColor(tx_color);
-                }
-                if(fab_color != fab_default)
-                    colorAnimation_fab.start();
-
-                gc.setToolbarColor(color);
-                gc.setToolbarTextColor(tx_color);
-                gc.setCardsColor(tx_color);
-                currentGroup.setGroupColor(gc);
-            }
-
-
-        };
-
-
             Picasso
                     .with(getApplicationContext())
                     .load(Integer.parseInt(currentGroup.getGroupProfile()))
@@ -238,7 +187,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            Palette.from(bitmap).generate(paletteListener);
+                            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
+                            builder
+                                    .load(bitmap)
+                                    .set(toolbar)
+                                    .set(fab)
+                                    .anim()
+                                    .method(ColorUtils.type.VIBRANT)
+                                    .brighter(ColorUtils.bright.LIGHT)
+                                    .build();
                             c.setImageBitmap(bitmap);
                         }
 

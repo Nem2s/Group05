@@ -116,9 +116,9 @@
                 android:id="@+id/lv_group_members"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="24dp"
                 android:divider="@null"
-                android:dividerHeight="0dp"></ListView>
+                android:dividerHeight="0dp"
+                ></ListView>
 
         </LinearLayout>
 

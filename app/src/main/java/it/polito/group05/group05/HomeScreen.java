@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -32,6 +33,7 @@ import java.util.Random;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.PicassoRoundTransform;
@@ -42,6 +44,11 @@ public class HomeScreen extends AppCompatActivity
     FloatingActionButton fab;
     DrawerLayout drawer;
     User currentUser;
+    NavigationView navigationView;
+    LinearLayout ll_header;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -54,7 +61,10 @@ public class HomeScreen extends AppCompatActivity
         final Context context = getApplicationContext();
         ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
-        currentUser = new User("12", "Bob", new Balance(88, 21), String.valueOf(R.drawable.man_1), null, false, false);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        /*DEBUG*/
+        currentUser = new User("12", "Bob", new Balance(88, 21), String.valueOf(R.drawable.boy), null, false, false);
         Group g = new Group("Group 1", new Balance(120, 61.1), String.valueOf(R.drawable.hills), Calendar.getInstance().getTime().toString(), 9);
         Random r = new Random();
         int m = r.nextInt(21 - 2) + 2;
@@ -64,16 +74,22 @@ public class HomeScreen extends AppCompatActivity
             g.addMember(u);
         }
         adapter.add(g);
-        g = new Group("Group 2", new Balance(12, 0), String.valueOf(R.drawable.beach), Calendar.getInstance().getTime().toString(), 1);
-        r = new Random();
-        m = r.nextInt(21 - 2) + 2;
-        for(int j = 0; j < m; j++) {
-            User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.girl_1), g, j==3, j==1);
-            u.setTot_expenses((float) (j*2.5));
-            g.addMember(u);
+        for(int i = 0; i < 25; i++) {
+            g = new Group("Group 2", new Balance(12, 0), String.valueOf(R.drawable.beach), Calendar.getInstance().getTime().toString(), 1);
+            r = new Random();
+            m = r.nextInt(21 - 2) + 2;
+            for (int j = 0; j < m; j++) {
+                User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.girl_1), g, j == 3, j == 1);
+                u.setTot_expenses((float) (j * 2.5));
+                g.addMember(u);
+            }
+            adapter.add(g);
         }
-        adapter.add(g);
         //adapter.addAll(generateRandomGroups(3));
+
+        /*END DEBUG */
+
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,34 +101,75 @@ public class HomeScreen extends AppCompatActivity
         });
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        initDrawer();
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                CircularImageView cv = (CircularImageView)findViewById(R.id.drawer_header_image);
-                super.onDrawerOpened(drawerView);
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                final CircularImageView cv = (CircularImageView)findViewById(R.id.drawer_header_image);
+                final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
+                final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
+                ll_header = (LinearLayout)findViewById(R.id.drawer_ll_header);
                 Picasso
-                        .with(context)
+                        .with(getApplicationContext())
                         .load(Integer.parseInt(currentUser.getProfile_image()))
                         .transform(new PicassoRoundTransform())
                         .placeholder(R.drawable.default_avatar)
                         .error(R.drawable.ic_visibility_off)
-                        .into(cv);
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                ColorUtils.PaletteBuilder b = new ColorUtils.PaletteBuilder();
+                                b.load(bitmap)
+                                        .brighter(ColorUtils.bright.DARK)
+                                        .method(ColorUtils.type.MUTED)
+                                        .set(ll_header)
+                                        .set(tv_username)
+                                        .set(tv_email)
+                                        .build();
+                                cv.setImageBitmap(bitmap);
+                            }
 
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
 
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
+
             }
-        };
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    private void initDrawer() {
+
+        Menu menu = navigationView.getMenu();
+        MenuItem item = menu.findItem(R.id.nav_balance);
+        item.setTitle("Balance: " + currentUser.getCurrentBalance() + " €");
     }
 
     @Override
