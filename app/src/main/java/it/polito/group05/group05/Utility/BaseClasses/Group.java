@@ -74,7 +74,7 @@ public class Group {
              badge = new BadgeDrawable.Builder()
                         .type(BadgeDrawable.TYPE_NUMBER)
                         .badgeColor(Color.parseColor("#FFC107"))
-                        .textSize(40)
+                        .textSize(30)
                         .number(count)
                         .build();
 

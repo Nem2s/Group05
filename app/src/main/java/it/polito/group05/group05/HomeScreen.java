@@ -56,7 +56,10 @@ public class HomeScreen extends AppCompatActivity
         for(int i = 0; i < m; i++) {
             Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
             s.setImage(String.valueOf(R.drawable.cheese));
-            s.setPartecipants(g.getMembers());
+            List<User> l = g.getMembers();
+            int n = r.nextInt(l.size());
+            s.setOwner(l.get(n));
+            s.setPartecipants(l);
             g.addExpense(s);
         }
         adapter.add(g);
@@ -72,7 +75,10 @@ public class HomeScreen extends AppCompatActivity
         for(int i = 0; i < m; i++) {
             Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
             s.setImage(String.valueOf(R.drawable.cheese));
-            s.setPartecipants(g.getMembers());
+            List<User> l = g.getMembers();
+            int n = r.nextInt(l.size());
+            s.setOwner(l.get(n));
+            s.setPartecipants(l);
             g.addExpense(s);
         }
 

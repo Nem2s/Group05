@@ -39,6 +39,7 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         TextView name;
         TextView price;
         RecyclerView rv;
+        TextView description;
     }
     public int getCout(){return obj.size();}
     public Expense getItem(int position){return obj.get(position);}
@@ -57,7 +58,7 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
             holder.expense_image = (ImageView) convertView.findViewById(R.id.expense_image);
             holder.name= (TextView) convertView.findViewById(R.id.expense_name);
             holder.price= (TextView) convertView.findViewById(R.id.expense_price);
-
+            holder.description=(TextView) convertView.findViewById(R.id.expense_owner);
            // holder.description.setText("drbgbdfvdjvbksd\nujgub\niuguyguy\n");
             CardView cv = (CardView) convertView.findViewById(R.id.card_expense);
           //  View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
@@ -68,11 +69,12 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
                 public void onClick(View v) {
 
                     if(holder.rv.getVisibility()==View.GONE) {
+                        holder.description.setVisibility(View.VISIBLE);
                         holder.rv.setVisibility(View.VISIBLE);
 
                     }
                     else {
-
+                        holder.description.setVisibility(View.GONE);
                         holder.rv.setVisibility(View.GONE);
                     }
                 }
@@ -91,6 +93,8 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
                     .into(holder.expense_image);
           //  holder.expense_image.setImageResource(R.drawable.facebook);
             holder.name.setText(expense.getName());
+            holder.description.setText("Posted by "+expense.getOwner().getUser_name()+" on "+expense.getTimestamp().toString());
+
             LinearLayoutManager l = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
             holder.rv.setLayoutManager(l);
             holder.price.setText(String.format("%.2f €",expense.getPrice()));
