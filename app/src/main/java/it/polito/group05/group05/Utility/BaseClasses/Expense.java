@@ -2,13 +2,13 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import java.io.File;
 import java.sql.Timestamp;
-
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 ;
 
-public class Expense {
+public class Expense{
     private String id;
     private User owner;
     private String name;
@@ -18,7 +18,7 @@ public class Expense {
     private File file;
     private int deadline;           //days
     private Timestamp timestamp;
-    private TreeMap<String, User> lista_partecipanti;
+    private TreeMap<String, User> lista_partecipanti=new TreeMap<>();
     private String image;
 
 
@@ -31,6 +31,7 @@ public class Expense {
         this.type=type;
         this.file=file;
         this.deadline= deadline;
+
         this.timestamp= timestamp;
     }
     public Expense(String id, User owner, String name, String description, Double price, TYPE_EXPENSE type, int deadline,
@@ -123,8 +124,18 @@ public class Expense {
             lista_partecipanti.put(u.getId(),u);
         }
     }
-    public User getPartecipants(String id){
-        return lista_partecipanti.get(id);
+    public List<User> getPartecipants(){
+List<User> l = new ArrayList<>(lista_partecipanti.values());
+        return l;
+    }
+    public  void setPartecipants(List<User> list){
+
+        for(User i : list){
+            lista_partecipanti.put(i.getId(),i);
+        }
+    }
+    public  void setPartecipant(User user){
+        lista_partecipanti.put(user.getId(),user);
     }
 
 

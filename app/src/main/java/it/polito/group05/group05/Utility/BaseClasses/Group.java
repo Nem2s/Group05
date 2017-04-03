@@ -4,6 +4,9 @@ import android.graphics.Color;
 import android.text.SpannableString;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -96,8 +99,15 @@ public class Group {
     public Expense getExpense(String id) {
         return expenses.get(id);
     }
-    public List<Expense> getExpenses() {
-        return (List<Expense>)expenses.values();
+    public Collection<Expense> getExpenses() {
+        List l = new ArrayList(expenses.values());
+         Collections.sort(l, new Comparator<Expense>() {
+            @Override
+            public int compare(Expense o1, Expense o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        return l;
     }
 
     public void addExpense( Expense e){
@@ -108,6 +118,8 @@ public class Group {
     public User getMember(String id){
         return members.get(id);
     }
+
+
     public List<User> getMembers(){
         ArrayList<User> new_list= new ArrayList<>(members.values());
         return new_list;

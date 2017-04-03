@@ -102,6 +102,7 @@ public class Group_Activity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
@@ -124,37 +125,42 @@ public class Group_Activity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            if (getArguments().getString(ARG_SECTION_NUMBER).compareTo("Expenses") == 0) {
+                final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
 
-            final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
+                View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
+                ListView lv = (ListView) rootView.findViewById(R.id.expense_lv);
+                //ScrollView sv = (ScrollView)rootView.findViewById(R.id.expense_sv);
+                //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
-            View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
-            ListView lv =(ListView) rootView.findViewById(R.id.expense_lv);
-            //ScrollView sv = (ScrollView)rootView.findViewById(R.id.expense_sv);
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+                //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
+                ArrayList<Expense> expenses = new ArrayList<>();
+                ExpenseAdapter ea = new ExpenseAdapter(getContext(), expenses);
 
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-            ArrayList<Expense> expenses = new ArrayList<>();
-            ExpenseAdapter ea= new ExpenseAdapter(getContext(),expenses);
-
-            lv.setOnTouchListener(new View.OnTouchListener() {
-                // Setting on Touch Listener for handling the touch inside ScrollView
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    // Disallow the touch request for parent scroll on touch of child view
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                    return false;
-                }
-            });
-
-
-            lv.setAdapter(ea);
-            ea.add(currentGroup.getExpense("0"));
-            //ea.addAll(currentGroup.getExpenses());
+                lv.setOnTouchListener(new View.OnTouchListener() {
+                    // Setting on Touch Listener for handling the touch inside ScrollView
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // Disallow the touch request for parent scroll on touch of child view
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }
+                });
 
 
-            return rootView;
+                lv.setAdapter(ea);
+                //        ea.add(currentGroup.getExpense("0"));
+                //        ea.add(currentGroup.getExpense("0"));
+                ea.addAll(currentGroup.getExpenses());
+
+
+                return rootView;
+            }
+            return null;
         }
+
+
     }
 
     /**
@@ -176,7 +182,7 @@ public class Group_Activity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2;
         }
 
