@@ -130,7 +130,7 @@ public class Group_Activity extends AppCompatActivity {
 
                 View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
                 ListView lv = (ListView) rootView.findViewById(R.id.expense_lv);
-                //ScrollView sv = (ScrollView)rootView.findViewById(R.id.expense_sv);
+
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -150,11 +150,7 @@ public class Group_Activity extends AppCompatActivity {
 
 
                 lv.setAdapter(ea);
-                //        ea.add(currentGroup.getExpense("0"));
-                //        ea.add(currentGroup.getExpense("0"));
                 ea.addAll(currentGroup.getExpenses());
-
-
                 return rootView;
             }
             return null;

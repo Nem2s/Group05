@@ -36,6 +36,7 @@ public class ExpenseCardAdapter extends RecyclerView.Adapter<ExpenseCardAdapterH
     public void onBindViewHolder(ExpenseCardAdapterHolder holder, int position) {
 
         holder.setData(list.get(position));
+
     }
 
     @Override

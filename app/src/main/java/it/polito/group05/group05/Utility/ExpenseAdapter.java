@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,6 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         ImageView expense_image;
         TextView name;
         TextView price;
-      //  TextView description;
         RecyclerView rv;
     }
     public int getCout(){return obj.size();}
@@ -63,13 +63,13 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
           //  View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
             holder.rv = (RecyclerView) convertView.findViewById(R.id.expense_rv);
 
-
             cv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     if(holder.rv.getVisibility()==View.GONE) {
                         holder.rv.setVisibility(View.VISIBLE);
+
                     }
                     else {
 
@@ -91,6 +91,8 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
                     .into(holder.expense_image);
           //  holder.expense_image.setImageResource(R.drawable.facebook);
             holder.name.setText(expense.getName());
+            LinearLayoutManager l = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
+            holder.rv.setLayoutManager(l);
             holder.price.setText(String.format("%.2f €",expense.getPrice()));
             ExpenseCardAdapter adapter = new ExpenseCardAdapter(context,expense.getPartecipants());
             holder.rv.setAdapter(adapter);
