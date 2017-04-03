@@ -7,166 +7,160 @@
     android:background="#FFFFFF"
     android:padding="10dp">
 
-<android.support.v7.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="16dp"
-    app:cardCornerRadius="2dp"
-
-    >
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1.6"
-        android:padding="25sp">
+        android:layout_height="match_parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1.3"
             android:layout_height="match_parent"
-            android:weightSum="1">
+            android:orientation="horizontal"
+            android:padding="25sp"
+            android:weightSum="1.6">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/security_code"
-                android:layout_weight="0.06" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="0.3"
-            android:layout_height="match_parent">
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Name"
-                android:textSize="13sp"
-                android:layout_marginLeft="8dp"
-                app:met_errorColor="#646464"
-                app:met_floatingLabel="highlight"
-                app:met_minCharacters="2" />
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Description"
-                android:inputType="textMultiLine"
-                android:layout_marginLeft="8dp"
-                app:met_errorColor="#646464"
-                android:layout_marginTop="0dp"
-                android:textSize="13sp"
-                app:met_floatingLabel="highlight"
-                app:met_minCharacters="2" />
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="140sp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="0dp"
-                android:hint="Cost"
-                app:met_errorColor="#646464"
-                android:textSize="13sp"
-                app:met_floatingLabel="highlight"
-                app:met_iconRight="@drawable/euro"
-                android:inputType="numberDecimal"
-                app:met_minCharacters="2" />
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="0dp"
-                android:hint="Select a File"
-                android:textSize="13sp"
-                app:met_errorColor="#646464"
-                app:met_floatingLabel="highlight"
-                app:met_iconRight="@drawable/clip"
-                app:met_minCharacters="2" />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_weight="1.3"
+                android:orientation="vertical"
+                android:weightSum="1">
 
-                <TextView
+                <ImageView
+                    android:id="@+id/image1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Deadline"
+                    android:layout_weight="0.06"
+                    android:src="@drawable/security_code" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_name_expense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_weight="0.5"
-                    android:textSize="13sp"/>
+                    android:hint="Name"
+                    android:textSize="13sp"
+                    app:met_errorColor="#646464"
+                    app:met_floatingLabel="highlight"
+                    app:met_minCharacters="2" />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_cost_expense"
+                    android:layout_width="140sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="0dp"
+                    android:hint="Cost"
+                    android:inputType="numberDecimal"
+                    android:textSize="13sp"
+                    app:met_errorColor="#646464"
+                    app:met_floatingLabel="highlight"
+                    app:met_iconRight="@drawable/euro"
+                    app:met_minCharacters="2" />
+
+
+                <CheckBox
+                    android:id="@+id/cb1_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="description_handler"
+                    android:text="Description"
+
+                    />
+                <!--content to hide/show -->
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_description_expense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="0dp"
+                    android:hint="Description"
+                    android:inputType="textMultiLine"
+                    android:textSize="13sp"
+                    app:met_errorColor="#646464"
+                    app:met_floatingLabel="highlight"
+                    app:met_minCharacters="2" />
+
+                <CheckBox
+                    android:id="@+id/cb2_addfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="file_handler"
+                    android:text="Add a File" />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_addfile_expense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="0dp"
+                    android:hint="Select a File"
+                    android:textSize="13sp"
+                    app:met_errorColor="#646464"
+                    app:met_floatingLabel="highlight"
+                    app:met_iconRight="@drawable/clip"
+                    app:met_minCharacters="2" />
+
+                <CheckBox
+                    android:id="@+id/cb3_deadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="deadline_handler"
+                    android:text="Add a deadline" />
 
                 <Spinner
                     android:id="@+id/spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:textAlignment="center"
                     android:layout_marginTop="8dp"
                     android:entries="@array/deadline_name"
                     android:popupBackground="#000000"
-                    android:background="@drawable/edittext_design"
+                    android:textAlignment="center"
                     >
 
                 </Spinner>
 
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:text="Proposal"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_weight="0.5"
-                    android:textSize="13sp"
-                    android:layout_height="wrap_content" />
-                <ToggleButton
-                    android:id="@+id/toggle_button"
+                <CheckBox
+                    android:id="@+id/cb4_proposal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text=""
-                    android:textOff=""
-                    android:textOn=""
-                    android:scaleX="0.4"
-                    android:scaleY="0.4"
-                    android:background="@drawable/toggle_selector"
-
+                    android:text="Proposal"
+                    android:clickable="true"
+                    android:onClick="proposal_handler"
                     />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/buttonfinal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="8dp"
+                        android:background="@drawable/edittext_design"
+                        android:text="ADD" />
+                </RelativeLayout>
+
 
             </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ADD"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginRight="8dp"
-                    android:scaleY="6sp"
-                    android:background="@drawable/edittext_design"/>
-            </RelativeLayout>
-
 
         </LinearLayout>
 
-    </LinearLayout>
-
-</android.support.v7.widget.CardView>
-
-
+    </ScrollView>
 
 </LinearLayout>

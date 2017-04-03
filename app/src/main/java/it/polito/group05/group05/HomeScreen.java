@@ -1,6 +1,7 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,7 +40,7 @@ public class HomeScreen extends AppCompatActivity
         setSupportActionBar(toolbar);
         ArrayList<Group> items = new ArrayList<>();
         GroupAdapter adapter = new GroupAdapter(this, items, this);
-        Context context = getApplicationContext();
+        final Context context = getApplicationContext();
         ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
 
@@ -67,8 +68,8 @@ public class HomeScreen extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(context, ExpenseActivity.class);
+                startActivity(i);
             }
         });
 
