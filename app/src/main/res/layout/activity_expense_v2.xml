@@ -1,97 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:padding="10dp">
 
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp"
+    app:cardCornerRadius="2dp"
+
+    >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:weightSum="1.6"
         android:padding="25sp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_weight="1.3"
+            android:layout_height="match_parent"
+            android:weightSum="1">
 
-
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/name_exp1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3">
-
-                <EditText
-                    android:id="@+id/tx1_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="NAME" />
-
-            </android.support.design.widget.TextInputLayout>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/security_code"
+                android:layout_weight="0.06" />
 
-                />
         </LinearLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/descizione_exp1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/tx2_descr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="DESCRIPTION" />
-
-
-        </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_weight="0.3"
+            android:layout_height="match_parent">
 
-            <android.support.design.widget.TextInputLayout
+            <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:orientation="horizontal">
+                android:hint="Name"
+                android:textSize="13sp"
+                android:layout_marginLeft="8dp"
+                app:met_errorColor="#646464"
+                app:met_floatingLabel="highlight"
+                app:met_minCharacters="2" />
 
-                <EditText
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:inputType="textMultiLine"
+                android:layout_marginLeft="8dp"
+                app:met_errorColor="#646464"
+                android:layout_marginTop="0dp"
+                android:textSize="13sp"
+                app:met_floatingLabel="highlight"
+                app:met_minCharacters="2" />
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="140sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="0dp"
+                android:hint="Cost"
+                app:met_errorColor="#646464"
+                android:textSize="13sp"
+                app:met_floatingLabel="highlight"
+                app:met_iconRight="@drawable/euro"
+                android:inputType="numberDecimal"
+                app:met_minCharacters="2" />
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="0dp"
+                android:hint="Select a File"
+                android:textSize="13sp"
+                app:met_errorColor="#646464"
+                app:met_floatingLabel="highlight"
+                app:met_iconRight="@drawable/clip"
+                app:met_minCharacters="2" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="COST"/>
+                    android:text="Deadline"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="0.5"
+                    android:textSize="13sp"/>
 
-            </android.support.design.widget.TextInputLayout>
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:textAlignment="center"
+                    android:layout_marginTop="8dp"
+                    android:entries="@array/deadline_name"
+                    android:popupBackground="#000000"
+                    android:background="@drawable/edittext_design"
+                    >
 
-            <TextView
+                </Spinner>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="€"
-                android:layout_weight="0.3"
-                android:gravity="center_vertical"
-                android:textSize="30dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="Proposal"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="0.5"
+                    android:textSize="13sp"
+                    android:layout_height="wrap_content" />
+                <ToggleButton
+                    android:id="@+id/toggle_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    android:scaleX="0.4"
+                    android:scaleY="0.4"
+                    android:background="@drawable/toggle_selector"
 
-                />
+                    />
 
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ADD"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="8dp"
+                    android:scaleY="6sp"
+                    android:background="@drawable/edittext_design"/>
+            </RelativeLayout>
 
 
         </LinearLayout>
 
-
     </LinearLayout>
+
+</android.support.v7.widget.CardView>
+
 
 
 </LinearLayout>
