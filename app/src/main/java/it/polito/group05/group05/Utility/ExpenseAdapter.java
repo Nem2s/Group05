@@ -101,6 +101,7 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
             ExpenseCardAdapter adapter = new ExpenseCardAdapter(context,expense.getPartecipants());
             holder.rv.setAdapter(adapter);
             holder.rv.setVisibility(View.GONE);
+            holder.description.setVisibility(View.GONE);
         }
         final View finalConvertView = convertView;
         return finalConvertView;
