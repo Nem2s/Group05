@@ -5,6 +5,7 @@ import android.text.SpannableString;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -22,8 +23,8 @@ public class Group {
     private String lmTime;
     private String groupProfile;
     private int groupColor;
-    private TreeMap<String, User> members;
-    private TreeMap<String, Expense> expenses;
+    private HashMap<String, User> members;
+    private HashMap<String, Expense> expenses;
 
     public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
@@ -31,9 +32,11 @@ public class Group {
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new TreeMap<String, User>();
+        this.members = new HashMap<String, User>();
     }
     public Group(){}
+
+
 
     public String getName() {
         return name;

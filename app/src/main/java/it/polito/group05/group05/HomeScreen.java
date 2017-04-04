@@ -1,9 +1,12 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,24 +17,123 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
+
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Group1;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "AnonymousAuth";
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_auth_listener]
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    // [END declare_auth_listener]
+
+
     FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        mAuth = FirebaseAuth.getInstance();
+       // mAuth.signOut();
+        FirebaseUser user= mAuth.getCurrentUser();
+
+        if(user == null)
+        {
+            startActivity(new Intent(this, GeneralAuthentication.class));
+            finish();
+        }
+
+
+        final FirebaseDatabase database1 = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database1.getReference("users");
+
+
+        // Write a message to the database
+        Balance BalAndrea = new Balance(20, 20);
+        HashMap<String, String> members = new HashMap<>();
+        members.put("Group2", "1");
+        members.put("Group1", "2");
+        members.put("Group3", "3");
+        members.put("Group4", "4");
+        //Group G = new Group("ciao", BalAndrea, "aaa", Calendar.getInstance().getTime().toString(), 1);
+        Group1 G = new Group1("group1", BalAndrea, null, "1234", "567", 1, members);
+        User Andrea = new User("q", "andrea3204", BalAndrea, null, null, true, true);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("users");
+        DatabaseReference myRef2 = database.getReference("groups");
+        DatabaseReference itemRef = myRef2.push();
+      //  myRef.child(Andrea.getUser_name()).setValue(Andrea);
+
+       // itemRef.setValue(G);
+
+   /*     ref.orderByKey().equalTo("andrea3205").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                for(DataSnapshot child : children) {
+                    User u2 = child.getValue(User.class);
+                    String s = u2.getUser_name();
+                    System.out.print(s);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+*/
+        User Andrea2 = new User("q", "andrea3205", BalAndrea, null, null, true, true);
+    //    myRef.child(Andrea2.getUser_name()).setValue(Andrea2);
+        /*DatabaseReference itemRef = myRef.push();
+        myRef.setValue(Andrea);
+        itemRef.setValue(Andrea);
+        myRef.child("message").setValue("ciao");
+        myRef.child("message2").setValue("1");
+        myRef.child("message").setValue("2");
+        myRef.child("message").setValue("3");
+        myRef.child("message").setValue("4");
+        String key = myRef.child("qwerty").getKey();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key, "ciao2");
+        myRef.updateChildren(childUpdates);*/
+
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
@@ -83,6 +185,16 @@ public class HomeScreen extends AppCompatActivity
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if(fab.getVisibility() == View.INVISIBLE)
@@ -98,6 +210,7 @@ public class HomeScreen extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,6 +268,7 @@ public class HomeScreen extends AppCompatActivity
             g.setName("Group " + i);
             Random r = new Random();
             int m = r.nextInt(21 - 2) + 2;
+            m=5;
             for(int j = 0; j < m; j++) {
 
             }
