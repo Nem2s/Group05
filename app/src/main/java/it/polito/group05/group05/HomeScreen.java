@@ -28,17 +28,18 @@ import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
-<<<<<<< HEAD
+
 import it.polito.group05.group05.Utility.activity_expense;
-=======
+
 import it.polito.group05.group05.Utility.GroupAdapter;
->>>>>>> origin/Nino
+
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     ListView listView;
     FloatingActionButton fab;
     GroupAdapter adapter;
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,18 +47,18 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-<<<<<<< HEAD
-        ArrayList<Group> items = new ArrayList<>();
-        GroupAdapter adapter = new GroupAdapter(this, items, this);
-        final Context context = getApplicationContext();
-        ListView listView = (ListView)findViewById(R.id.groups_lv);
-=======
         List<Group> items = Singleton.getInstance().getmCurrentGroups();
+        //ArrayList<Group> items = new ArrayList<>();
+        GroupAdapter adapter = new GroupAdapter(this, items, this);
+        context = getApplicationContext();
+        ListView listView = (ListView)findViewById(R.id.groups_lv);
+
+
 
         adapter = new GroupAdapter(this, items, this);
-        Context context = getApplicationContext();
+
          listView = (ListView)findViewById(R.id.groups_lv);
->>>>>>> origin/Nino
+
         listView.setAdapter(adapter);
 
         Group g = new Group("Group 1", new Balance(120, 61.1), String.valueOf(R.drawable.hills), Calendar.getInstance().getTime().toString(), 9);
@@ -105,8 +106,8 @@ public class HomeScreen extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(context, activity_expense.class);
-                startActivity(i);
+               // Intent i = new Intent(context, activity_expense.class);
+                //startActivity(i);
             }
         });
 
@@ -124,7 +125,7 @@ public class HomeScreen extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         //Singleton.getInstance().addGroup(Singleton.getInstance().getmCurrentGroup());
-        adapter.notifyDataSetChanged();
+
 
         //listView.refreshDrawableState();
         if(fab.getVisibility() == View.INVISIBLE)

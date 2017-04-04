@@ -38,9 +38,8 @@ public class activity_expense extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
+
+            et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
         cb_description = (CheckBox) findViewById(R.id.cb1_description);
         // hide until its title is clicked
@@ -74,6 +73,7 @@ public class activity_expense extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
 
+
         spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view,
@@ -81,7 +81,7 @@ public class activity_expense extends AppCompatActivity {
                 switch (position){
                     case 0: recyclerView.setVisibility(View.GONE);
                         break;
-                    case 1: recyclerView.setVisibility(recyclerView.isShown() ? View.GONE : View.VISIBLE);
+                    case 1: recyclerView.setVisibility(View.VISIBLE);
                 }
             }
             @Override

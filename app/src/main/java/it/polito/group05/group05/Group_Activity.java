@@ -1,5 +1,7 @@
 package it.polito.group05.group05;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,6 +28,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
+import it.polito.group05.group05.Utility.activity_expense;
 
 public class Group_Activity extends AppCompatActivity {
 
@@ -64,11 +67,14 @@ public class Group_Activity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Intent i = new Intent(getBaseContext(), activity_expense.class);
+                startActivity(i);
             }
         });
 
@@ -105,7 +111,6 @@ public class Group_Activity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
-
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
@@ -139,6 +144,7 @@ public class Group_Activity extends AppCompatActivity {
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
                 List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
+
                 ExpenseAdapter ea = new ExpenseAdapter(getContext(),expenses);
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
                 rv.setOnTouchListener(new View.OnTouchListener() {

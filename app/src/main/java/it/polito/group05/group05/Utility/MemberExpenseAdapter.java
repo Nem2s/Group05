@@ -68,9 +68,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.setData(member.get(position));
-        CheckBox checkBox= holder.include_person;
-        EditText editText= holder.costo_person;
-        ImageView imageView= holder.euro_person;
+
     }
 
     @Override
