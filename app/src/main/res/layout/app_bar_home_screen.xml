@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.codetail.widget.RevealFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parent_layout"
     android:fitsSystemWindows="true"
     tools:context="it.polito.group05.group05.HomeScreen">
+
+<android.support.design.widget.CoordinatorLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="it.polito.group05.group05.HomeScreen">
+
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -40,6 +49,69 @@
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right"
         android:layout_gravity="top|center_horizontal"
+        android:transitionName="@string/transition_fab"
         />
-
 </android.support.design.widget.CoordinatorLayout>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/reveal_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"
+            android:visibility="invisible"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:padding="32dp"
+                android:layout_margin="8dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_label_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create a new Group!"
+
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/group_name_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:met_floatingLabel="normal"
+                    app:met_singleLineEllipsis="true"
+                    android:hint="Group Name"
+                    app:met_floatingLabelAnimating="true"
+                    android:layout_margin="16dp"
+                    android:layout_below="@id/tv_label_dialog"
+                    />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Partecipants: "
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/invited_people_list"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:padding="16dp"
+                ></android.support.v7.widget.RecyclerView>
+
+                <Button
+                    android:id="@+id/add_to_group_button"
+                    android:theme="@style/AppTheme.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create it!"
+                    android:layout_marginTop="32dp"
+                    android:layout_gravity="end"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
+    </io.codetail.widget.RevealFrameLayout>

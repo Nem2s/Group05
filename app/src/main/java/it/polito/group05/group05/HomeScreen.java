@@ -1,12 +1,24 @@
 package it.polito.group05.group05;
 
+import android.animation.Animator;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +28,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
 import com.pkmmte.view.CircularImageView;
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -30,12 +46,17 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+
+import it.polito.group05.group05.Utility.InvitedAdapter;
 import it.polito.group05.group05.Utility.PicassoRoundTransform;
 
 public class HomeScreen extends AppCompatActivity
@@ -46,8 +67,11 @@ public class HomeScreen extends AppCompatActivity
     User currentUser;
     NavigationView navigationView;
     LinearLayout ll_header;
-
-
+    Activity activity;
+    CoordinatorLayout reveal_layout;
+    Button addButton;
+    MaterialEditText et_group_name;
+    RecyclerView rv_invited;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +80,26 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ArrayList<Group> items = new ArrayList<>();
-        GroupAdapter adapter = new GroupAdapter(this, items, this);
+        final ArrayList<Group> items = new ArrayList<>();
         final Context context = getApplicationContext();
-        ListView listView = (ListView)findViewById(R.id.groups_lv);
-        listView.setAdapter(adapter);
+        reveal_layout = (CoordinatorLayout) findViewById(R.id.reveal_layout);
+        rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
+        addButton = (Button)findViewById(R.id.add_to_group_button);
+        et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
+        addButton.setVisibility(View.INVISIBLE);
+        RecyclerView rv = (RecyclerView)findViewById(R.id.groups_rv);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        final GroupAdapter groupAdapter = new GroupAdapter(items, this);
+        rv.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
+        rv.setLayoutManager(llm);
+        rv.setAdapter(groupAdapter);
+        final List<UserContact> all = new ArrayList<>();
+        final InvitedAdapter invitedAdapter = new InvitedAdapter(all, this);
+        LinearLayoutManager llmi = new LinearLayoutManager(this);
+        rv_invited.setHasFixedSize(true);
+        rv_invited.setLayoutManager(llmi);
+        rv_invited.setAdapter(invitedAdapter);
+        all.addAll(retriveAllPeople());
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         /*DEBUG*/
@@ -73,8 +112,8 @@ public class HomeScreen extends AppCompatActivity
             u.setTot_expenses((float) (j*0.75));
             g.addMember(u);
         }
-        adapter.add(g);
-        for(int i = 0; i < 25; i++) {
+        items.add(g);
+        for(int i = 0; i < 8; i++) {
             g = new Group("Group 2", new Balance(12, 0), String.valueOf(R.drawable.beach), Calendar.getInstance().getTime().toString(), 1);
             r = new Random();
             m = r.nextInt(21 - 2) + 2;
@@ -83,20 +122,58 @@ public class HomeScreen extends AppCompatActivity
                 u.setTot_expenses((float) (j * 2.5));
                 g.addMember(u);
             }
-            adapter.add(g);
+            items.add(g);
         }
         //adapter.addAll(generateRandomGroups(3));
 
         /*END DEBUG */
 
-
+        activity = this;
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                /*Intent intent = new Intent(HomeScreen.this);
+                Pair<View, String> p1 = Pair.create((View)fab, getResources().getString(R.string.transition_fab));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(activity, p1);
+                startActivity(intent,options.toBundle());*/
+                int cx = (fab.getLeft() + fab.getRight())/2;
+                int cy = (fab.getBottom() + fab.getTop())/2;
+                int dx = Math.max(cx, fab.getWidth() - cx);
+                int dy = Math.max(cy, fab.getHeight() - cy);
+                float radius = (float) Math.hypot(dx, dy);
+                toogleCreateGroupView(cx, cy, radius, reveal_layout, 350);
+
+
+
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!et_group_name.getText().toString().equals("")) {
+                    Group g = new Group("Group NEW!", new Balance(14, 12), String.valueOf(R.drawable.money), Calendar.getInstance().getTime().toString(), 1);
+                    for (UserContact u : all) {
+                        if(u.isSelected()) {
+                            g.addMember(u);
+                            u.setSelected(false);
+                        }
+                    }
+                    if(g.getMembers().isEmpty())
+                        Snackbar.make(view, "Missing some Informations!", BaseTransientBottomBar.LENGTH_LONG).show();
+                    else {
+                        items.add(g);
+                        groupAdapter.notifyDataSetChanged();
+                        reinitializeNewGroupView(all);
+                        onBackPressed();
+                    }
+                } else {
+                    Snackbar.make(view, "Missing some Informations!", BaseTransientBottomBar.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -165,6 +242,63 @@ public class HomeScreen extends AppCompatActivity
 
     }
 
+    private void reinitializeNewGroupView(List<UserContact> users) { ///DA RIVEDERE!
+        rv_invited.invalidate();
+        rv_invited.scrollToPosition(users.size());
+        rv_invited.scrollToPosition(0);
+        et_group_name.setText("");
+    }
+
+    private List<UserContact> retriveAllPeople() {
+        List<UserContact> res = new ArrayList<>();
+        for(int i = 0; i < 76; i++) {
+            UserContact u = new UserContact("q" + i, "User " + i, new Balance(i++, i), String.valueOf(R.drawable.boy), null, i==3, i==1);
+            res.add(u);
+        }
+        return res;
+    }
+
+    public void toogleCreateGroupView (int cx, int cy, float radius, final View revealLayout, int duration) {
+        Animator animator =
+                ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, 0, radius);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        Animator animator_reverse = ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, radius, 0);
+
+            if (revealLayout.getVisibility() == View.INVISIBLE) {
+                fab.setClickable(false);
+                revealLayout.setVisibility(View.VISIBLE);
+                AnimUtils.bounce((View)addButton, this);
+                animator.start();
+            } else {
+                animator_reverse.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        revealLayout.setVisibility(View.INVISIBLE);
+                        fab.setClickable(true);
+                        addButton.setVisibility(View.INVISIBLE);
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                });
+                animator_reverse.start();
+            }
+    }
+
     private void initDrawer() {
 
         Menu menu = navigationView.getMenu();
@@ -182,6 +316,15 @@ public class HomeScreen extends AppCompatActivity
     @Override
     public void onBackPressed() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if(reveal_layout.getVisibility() == View.VISIBLE) {
+            int cx = (fab.getLeft() + fab.getRight())/2;
+            int cy = (fab.getBottom() + fab.getTop())/2;
+            int dx = Math.max(cx, fab.getWidth() - cx);
+            int dy = Math.max(cy, fab.getHeight() - cy);
+            float radius = (float) Math.hypot(dx, dy);
+            toogleCreateGroupView(cx, cy, radius, reveal_layout, 350);
+            return;
+        }
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -195,6 +338,8 @@ public class HomeScreen extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_home_screen, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

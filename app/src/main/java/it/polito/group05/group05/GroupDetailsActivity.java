@@ -11,6 +11,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,32 +76,25 @@ public class GroupDetailsActivity extends AppCompatActivity {
         chart = (BarChart)findViewById(R.id.group_chart);
         tv_chart = (TextView)findViewById(R.id.tv_chart);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
+        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
-        AnimUtils.toggleOn(fab, 750, this);
+        AnimUtils.toggleOn(fab, 500, this);
 
         ArrayList<User> users = new ArrayList<>();
-        UserAdapter adapter = new UserAdapter(this, users);
-        ListView listView = (ListView)findViewById(R.id.lv_group_members);
-        listView.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
-
-        listView.setAdapter(adapter);
-        adapter.addAll(currentGroup.getMembers());
+        UserAdapter adapter = new UserAdapter(users, this);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+        users.addAll(currentGroup.getMembers());
         populateChart(this, users);
     }
 
     private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
-        chart.setTouchEnabled(false);
+        chart.setDoubleTapToZoomEnabled(false);
         yAxisL.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxisL.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -123,15 +119,16 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
 
         Legend legend = chart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setDrawInside(false);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setFormSize(9f);
-        legend.setTextSize(11f);
+        legend.setForm(Legend.LegendForm.SQUARE);
+        legend.setFormSize(21f);
+        legend.setFormLineWidth(8f);
+        legend.setTextSize(13f);
         legend.setWordWrapEnabled(true);
-        legend.setXEntrySpace(4f);
+        legend.setXEntrySpace(22f);
         legend.setEnabled(true);
 
         List<LegendEntry> legends = new ArrayList<>();
@@ -166,7 +163,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
         xAxis.setValueFormatter(formatter);
         chart.setData(data);
         chart.setFitBars(true);
-        chart.animateXY(1250, 3000, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
+        chart.animateXY(750, 1500, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
+        chart.setVisibleXRangeMaximum(8);
 
 
     }

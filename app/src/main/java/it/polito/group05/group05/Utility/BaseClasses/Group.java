@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.app.Application;
 import android.graphics.Color;
 import android.text.SpannableString;
 
@@ -70,7 +71,7 @@ public class Group {
             return;
              badge = new BadgeDrawable.Builder()
                         .type(BadgeDrawable.TYPE_NUMBER)
-                        .badgeColor(Color.parseColor("#FFC107"))
+                        .badgeColor(Color.parseColor("#01D1B1"))
                         .textSize(40)
                         .number(count)
                         .build();
