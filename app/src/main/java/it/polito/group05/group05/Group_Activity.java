@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,9 +18,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
@@ -48,6 +50,7 @@ public class Group_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_group_);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -125,20 +128,20 @@ public class Group_Activity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             if (getArguments().getString(ARG_SECTION_NUMBER).compareTo("Expenses") == 0) {
                 final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
-
                 View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
-                ListView lv = (ListView) rootView.findViewById(R.id.expense_lv);
+                RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
 
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-                ArrayList<Expense> expenses = new ArrayList<>();
-                ExpenseAdapter ea = new ExpenseAdapter(getContext(), expenses);
-
-                lv.setOnTouchListener(new View.OnTouchListener() {
+                List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
+                ExpenseAdapter ea = new ExpenseAdapter(getContext(),expenses);
+                LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
+                rv.setOnTouchListener(new View.OnTouchListener() {
                     // Setting on Touch Listener for handling the touch inside ScrollView
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
@@ -148,9 +151,8 @@ public class Group_Activity extends AppCompatActivity {
                     }
                 });
 
-
-                lv.setAdapter(ea);
-                ea.addAll(currentGroup.getExpenses());
+                rv.setLayoutManager(llm);
+                rv.setAdapter(ea);
                 return rootView;
             }
             return null;

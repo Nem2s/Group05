@@ -24,14 +24,16 @@ import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    ListView listView;
     FloatingActionButton fab;
+    GroupAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,10 +41,11 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ArrayList<Group> items = new ArrayList<>();
-        GroupAdapter adapter = new GroupAdapter(this, items, this);
+        List<Group> items = Singleton.getInstance().getmCurrentGroups();
+
+        adapter = new GroupAdapter(this, items, this);
         Context context = getApplicationContext();
-        ListView listView = (ListView)findViewById(R.id.groups_lv);
+         listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
 
         Group g = new Group("Group 1", new Balance(120, 61.1), String.valueOf(R.drawable.hills), Calendar.getInstance().getTime().toString(), 9);
@@ -108,6 +111,10 @@ public class HomeScreen extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        //Singleton.getInstance().addGroup(Singleton.getInstance().getmCurrentGroup());
+        adapter.notifyDataSetChanged();
+
+        //listView.refreshDrawableState();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);
     }

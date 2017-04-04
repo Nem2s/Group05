@@ -5,6 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.pkmmte.view.CircularImageView;
 
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class ExpenseCardAdapter extends RecyclerView.Adapter<ExpenseCardAdapterH
     }
     @Override
     public ExpenseCardAdapterHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View rootView = li.inflate(R.layout.expense_card_expansion,parent,false);
+        View rootView = li.inflate(R.layout.expense_card_expansion,parent,false);
         ExpenseCardAdapterHolder holder = new ExpenseCardAdapterHolder(rootView);
         return holder;
     }
@@ -43,4 +46,28 @@ public class ExpenseCardAdapter extends RecyclerView.Adapter<ExpenseCardAdapterH
     public int getItemCount() {
         return list.size();
     }
+}
+
+class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
+    CircularImageView civ;
+    TextView tv;
+
+
+
+
+    public ExpenseCardAdapterHolder(View itemView) {
+        super(itemView);
+        civ = (CircularImageView) itemView.findViewById(R.id.expense_member_image);
+        tv = (TextView) itemView.findViewById(R.id.expense_member_name);
+
+    }
+    public void setData(User u){
+
+        civ.setImageResource(Integer.parseInt(u.getProfile_image()));
+        tv.setText(u.getUser_name());
+
+    }
+
+
+
 }

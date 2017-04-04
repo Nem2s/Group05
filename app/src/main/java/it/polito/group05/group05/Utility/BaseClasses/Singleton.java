@@ -1,5 +1,8 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Marco on 28/03/2017.
  */
@@ -7,9 +10,11 @@ package it.polito.group05.group05.Utility.BaseClasses;
 public class Singleton {
     private static Singleton mInstance = null;
 
+    private List<Group> mCurrentGroups;
     private Group mCurrentGroup;
 
     private Singleton(){
+        mCurrentGroups = new ArrayList<>();
         mCurrentGroup = new Group();
     }
 
@@ -26,5 +31,13 @@ public class Singleton {
 
     public Group getmCurrentGroup() {
         return this.mCurrentGroup;
+    }
+    public void setmCurrentGroups(List<Group> g) {
+        this.mCurrentGroups = g;}
+    public void addGroup(Group g) {
+        this.mCurrentGroups.add(g);
+  }
+    public List<Group> getmCurrentGroups() {
+        return this.mCurrentGroups;
     }
 }
