@@ -18,6 +18,11 @@
         <item>Equal part</item>
         <item>Unequal part</item>
     </string-array>
+<<<<<<< HEAD
     <string name="title_activity_expense">activity_expense</string>
+=======
+    <string name="title_activity_group_">Group_Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+>>>>>>> origin/Nino
 
 </resources>

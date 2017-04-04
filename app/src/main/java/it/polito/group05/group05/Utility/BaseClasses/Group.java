@@ -4,12 +4,14 @@ import android.graphics.Color;
 import android.text.SpannableString;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
-
 /**
  * Created by Marco on 24/03/2017.
  */
@@ -22,8 +24,8 @@ public class Group {
     private String lmTime;
     private String groupProfile;
     private int groupColor;
-    private TreeMap<String, User> members;
-    private TreeMap<String, Expense> expenses;
+    private Map<String, User> members;
+    private Map<String, Expense> expenses ;
 
     public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
@@ -31,7 +33,8 @@ public class Group {
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new TreeMap<String, User>();
+        this.members = new TreeMap<>();
+        this.expenses = new TreeMap<>();
     }
     public Group(){}
 
@@ -71,7 +74,7 @@ public class Group {
              badge = new BadgeDrawable.Builder()
                         .type(BadgeDrawable.TYPE_NUMBER)
                         .badgeColor(Color.parseColor("#FFC107"))
-                        .textSize(40)
+                        .textSize(30)
                         .number(count)
                         .build();
 
@@ -93,18 +96,30 @@ public class Group {
         this.groupColor = groupColor;
     }
 
-    public Expense getExpenses(String id) {
+    public Expense getExpense(String id) {
         return expenses.get(id);
+    }
+    public Collection<Expense> getExpenses() {
+        List l = new ArrayList(expenses.values());
+         Collections.sort(l, new Comparator<Expense>() {
+            @Override
+            public int compare(Expense o1, Expense o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        return l;
     }
 
     public void addExpense( Expense e){
-        if(!expenses.containsKey(e.getId())){
+
             expenses.put(e.getId(), e);
-        }
+
     }
     public User getMember(String id){
         return members.get(id);
     }
+
+
     public List<User> getMembers(){
         ArrayList<User> new_list= new ArrayList<>(members.values());
         return new_list;

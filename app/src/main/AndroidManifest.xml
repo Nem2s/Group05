@@ -24,8 +24,13 @@
             android:name=".GroupDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+<<<<<<< HEAD
             android:name=".Utility.activity_expense"
             android:label="@string/title_activity_expense"
+=======
+            android:name=".Group_Activity"
+            android:label="@string/title_activity_group_"
+>>>>>>> origin/Nino
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
