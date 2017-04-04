@@ -14,6 +14,7 @@ import java.util.List;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 
 /**
  * Created by antonino on 03/04/2017.
@@ -98,7 +99,7 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
         rv.setAdapter(adapter);
         rv.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
-
+    if(expense.getType()== TYPE_EXPENSE.NOTMANDATORY)
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

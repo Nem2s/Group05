@@ -27,6 +27,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
 public class HomeScreen extends AppCompatActivity
@@ -52,17 +53,18 @@ public class HomeScreen extends AppCompatActivity
         Random r = new Random();
         int m = r.nextInt(21 - 2) + 2;
         for(int j = 0; j < m; j++) {
-            User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j==3, j==1);
-            u.setTot_expenses((float) (j*0.75));
+            User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j == 3, j == 1);
+            u.setTot_expenses((float) (j * 0.75));
             g.addMember(u);
         }
+        m=2;
         for(int i = 0; i < m; i++) {
             Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
             s.setImage(String.valueOf(R.drawable.idea));
             List<User> l = g.getMembers();
             int n = r.nextInt(l.size());
             s.setOwner(l.get(n));
-            s.setPartecipants(l);
+            s.setPartecipants(User_expense.createListUserExpense(g,s));
             g.addExpense(s);
         }
         adapter.add(g);
@@ -74,14 +76,14 @@ public class HomeScreen extends AppCompatActivity
             u.setTot_expenses((float) (j*2.5));
             g.addMember(u);
         }
-
+        m=12;
         for(int i = 0; i < m; i++) {
-            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
+            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.NOTMANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
             s.setImage(String.valueOf(R.drawable.idea));
             List<User> l = g.getMembers();
             int n = r.nextInt(l.size());
             s.setOwner(l.get(n));
-            s.setPartecipants(l);
+            s.setPartecipants(User_expense.createListUserExpense(g,s));
             g.addExpense(s);
         }
 
@@ -113,7 +115,6 @@ public class HomeScreen extends AppCompatActivity
         super.onResume();
         //Singleton.getInstance().addGroup(Singleton.getInstance().getmCurrentGroup());
         adapter.notifyDataSetChanged();
-
         //listView.refreshDrawableState();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);

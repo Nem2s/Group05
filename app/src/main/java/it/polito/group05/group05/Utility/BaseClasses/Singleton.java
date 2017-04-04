@@ -12,6 +12,7 @@ public class Singleton {
 
     private List<Group> mCurrentGroups;
     private Group mCurrentGroup;
+    private String user;
 
     private Singleton(){
         mCurrentGroups = new ArrayList<>();
@@ -39,5 +40,9 @@ public class Singleton {
   }
     public List<Group> getmCurrentGroups() {
         return this.mCurrentGroups;
+    }
+    public void setId(String s){}
+    public String getId() {
+        return user;
     }
 }

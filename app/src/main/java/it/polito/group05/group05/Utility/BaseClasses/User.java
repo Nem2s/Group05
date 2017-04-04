@@ -2,7 +2,6 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Color;
 
-import java.text.DecimalFormat;
 import java.util.Random;
 
 /**
@@ -19,7 +18,7 @@ public class User {
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
-
+    public User(){};
     public User(String id, String user_name, Balance balance, String profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
