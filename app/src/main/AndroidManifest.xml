@@ -20,8 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ExpenseActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".GroupDetailsActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".GroupDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Utility.activity_expense"
+            android:label="@string/title_activity_expense"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

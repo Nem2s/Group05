@@ -38,6 +38,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
 
     Context context;
     Activity activity;
+
     private static class ViewHolder {
         CircularImageView groupProfile;
         TextView name;

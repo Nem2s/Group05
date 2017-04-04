@@ -26,6 +26,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.activity_expense;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,7 +69,7 @@ public class HomeScreen extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(context, ExpenseActivity.class);
+                Intent i = new Intent(context, activity_expense.class);
                 startActivity(i);
             }
         });

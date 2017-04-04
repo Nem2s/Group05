@@ -18,5 +18,6 @@
         <item>Equal part</item>
         <item>Unequal part</item>
     </string-array>
+    <string name="title_activity_expense">activity_expense</string>
 
 </resources>
