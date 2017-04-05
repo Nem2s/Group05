@@ -48,7 +48,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
         }
 
         public void setData(User u){
-            image_person.setImageResource(Integer.parseInt(u.getProfile_image()));
+            image_person.setImageBitmap(u.getProfile_image());
             name_person.setText(u.getUser_name());
         }
     }

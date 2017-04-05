@@ -19,7 +19,7 @@ public class User {
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
-
+public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;

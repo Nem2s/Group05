@@ -29,6 +29,9 @@
 
             android:name=".Utility.activity_expense"
             android:label="@string/title_activity_expense"/>
+        <activity
+            android:name=".Group_Activity"
+            />
     </application>
 
 </manifest>

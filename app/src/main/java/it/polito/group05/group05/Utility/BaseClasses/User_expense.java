@@ -12,7 +12,8 @@ public class User_expense extends User {
     Expense expense;
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
-    public User_expense(){super();}
+    public User_expense(){
+        super();}
 
     public static List<User> createListUserExpense(Group g,Expense e){
         List<User> user_expenses = new ArrayList<>();

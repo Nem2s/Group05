@@ -2,6 +2,7 @@ package it.polito.group05.group05;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -12,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +29,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
 import it.polito.group05.group05.Utility.activity_expense;
 
-public class Group_Activity extends AppCompatActivity {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -53,7 +53,7 @@ public class Group_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_);
-
+/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
@@ -67,9 +67,9 @@ public class Group_Activity extends AppCompatActivity {
             }
         });
 
-        toolbar.setLogo(Integer.parseInt(Singleton.getInstance().getmCurrentGroup().getGroupProfile()));
+        //toolbar.setLogo(Integer.parseInt(Singleton.getInstance().getmCurrentGroup().getGroupProfile()));
 
-        toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
+        //toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,9 +78,9 @@ public class Group_Activity extends AppCompatActivity {
 
             }
         });
+*/
 
-
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -132,6 +132,11 @@ public class Group_Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -168,7 +173,8 @@ public class Group_Activity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            if (getArguments().getInt(ARG_SECTION_NUMBER)==0) {
+
+
                 final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
                 View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
                 RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
@@ -195,13 +201,13 @@ public class Group_Activity extends AppCompatActivity {
                 rv.setAdapter(ea);
 
                 return rootView;
-            }
-            return null;
-        }
 
-        public void myOnResume() {
+
+        }
+        @Override
+        public void onResume() {
             super.onResume();
-            if(ea!=null)
+
                 ea.notifyDataSetChanged();
 
         }
@@ -221,7 +227,16 @@ public class Group_Activity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position);
+            Fragment fragment =null;
+            switch (position){
+                case 0:
+                    fragment=PlaceholderFragment.newInstance(position);
+                    break;
+                case 1:
+                    fragment = ChatFragment.newInstance("","");
+                break;
+            }
+            return fragment;
         }
 
         @Override
