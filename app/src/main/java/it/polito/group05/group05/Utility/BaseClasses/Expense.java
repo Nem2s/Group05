@@ -41,7 +41,7 @@ public class Expense{
         this.description= description;
         this.price=price;
         this.type=type;
-
+        this.owner = owner;
         this.deadline= deadline;
         this.timestamp= timestamp;
     }
