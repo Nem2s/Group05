@@ -53,9 +53,13 @@ public class HomeScreen extends AppCompatActivity
         Random r = new Random();
         int m = r.nextInt(21 - 2) + 2;
         for(int j = 0; j < m; j++) {
+
             User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j == 3, j == 1);
+
             u.setTot_expenses((float) (j * 0.75));
             g.addMember(u);
+            if(j==1)
+                Singleton.getInstance().setId(u.getId());
         }
         m=2;
         for(int i = 0; i < m; i++) {
@@ -64,7 +68,8 @@ public class HomeScreen extends AppCompatActivity
             List<User> l = g.getMembers();
             int n = r.nextInt(l.size());
             s.setOwner(l.get(n));
-            s.setPartecipants(User_expense.createListUserExpense(g,s));
+            l=User_expense.createListUserExpense(g,s);
+            s.setPartecipants(l);
             g.addExpense(s);
         }
         adapter.add(g);

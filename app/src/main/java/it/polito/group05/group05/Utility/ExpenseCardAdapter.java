@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,10 @@ import com.pkmmte.view.CircularImageView;
 import java.util.List;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 /**
  * Created by antonino on 03/04/2017.
@@ -50,7 +54,7 @@ public class ExpenseCardAdapter extends RecyclerView.Adapter<ExpenseCardAdapterH
 
 class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
     CircularImageView civ;
-    TextView tv;
+    TextView tv,tv_debt;
 
 
 
@@ -59,13 +63,21 @@ class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
         super(itemView);
         civ = (CircularImageView) itemView.findViewById(R.id.expense_member_image);
         tv = (TextView) itemView.findViewById(R.id.expense_member_name);
-
+        tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
     }
     public void setData(User u){
 
         civ.setImageResource(Integer.parseInt(u.getProfile_image()));
-        tv.setText(u.getUser_name());
-
+        tv.setText(u.getId().compareTo(Singleton.getInstance().getId())!=0 ? u.getUser_name():"You");
+        if(u instanceof User_expense) {
+            Double c = ((User_expense) u).getDebt();
+            tv_debt.setText(String.format("%.2f",c));
+            if(((User_expense) u).getExpense().getType()== TYPE_EXPENSE.MANDATORY)
+            if(c<0)
+                tv_debt.setTextColor(Color.RED);
+            else if(c>0)
+                tv_debt.setTextColor(Color.GREEN);
+        }
     }
 
 

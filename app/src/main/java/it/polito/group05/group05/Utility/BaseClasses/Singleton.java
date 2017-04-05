@@ -41,7 +41,7 @@ public class Singleton {
     public List<Group> getmCurrentGroups() {
         return this.mCurrentGroups;
     }
-    public void setId(String s){}
+    public void setId(String s){this.user=new String(s);}
     public String getId() {
         return user;
     }

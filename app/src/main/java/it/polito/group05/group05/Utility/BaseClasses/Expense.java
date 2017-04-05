@@ -139,5 +139,24 @@ List<User> l = new ArrayList<>(lista_partecipanti.values());
     }
 
 
+    public Double getDebtUser(String id){
+
+        User s =this.lista_partecipanti.get(id);
+        if(s instanceof User_expense) return ((User_expense) s).getDebt();
+        else return -1.0;
+
+
+    }
+
+    public void setDebtUser(String id,Double d){
+
+        User s =this.lista_partecipanti.get(id);
+        if(s instanceof User_expense)
+            ((User_expense) s).setDebt(d);
+
+
+
+    }
+
 }
 
