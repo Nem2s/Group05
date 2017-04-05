@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import it.polito.group05.group05.GroupDetailsActivity;
+import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -60,7 +61,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         /*Picasso
                 .with(context)
                 .load(groups.get(position).getGroupProfile())
@@ -109,6 +110,16 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                     context.startActivity(intent, options.toBundle());
                 AnimUtils.toggleOff(fab, 250, context);
 
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, Group_Activity.class);
+                intent.putExtra("Position", position);
+                Singleton.getInstance().setmCurrentGroup(groups.get(position));
+                context.startActivity(intent);
             }
         });
 

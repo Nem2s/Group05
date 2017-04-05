@@ -31,6 +31,10 @@ public class User {
         this.user_color = generateRandomColor();
     }
 
+    public User() {
+
+    }
+
     public String getId() {
         return id;
     }

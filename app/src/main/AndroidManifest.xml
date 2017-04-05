@@ -26,9 +26,12 @@
             android:name=".GroupDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-
-            android:name=".Utility.activity_expense"
-            android:label="@string/title_activity_expense"/>
+            android:name=".activity_expense"
+            android:label="@string/title_activity_expense" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Group_Activity"
+            android:label="@string/title_activity_group_"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

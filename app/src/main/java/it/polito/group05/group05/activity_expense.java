@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +28,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.MemberExpenseAdapter;
 
 public class activity_expense extends AppCompatActivity {
 
@@ -188,7 +189,6 @@ public class activity_expense extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
                 Expense e = new Expense(id_expense,expense_owner,expense_name,expense_description==null?"":expense_description,
                             expense_price, expense_type, expense_deadline, expense_timestamp);
                 List<User> l= User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(),e);
@@ -197,7 +197,6 @@ public class activity_expense extends AppCompatActivity {
                 finish();
             }
         });
-
     }
     
     public void description_handler(View v){

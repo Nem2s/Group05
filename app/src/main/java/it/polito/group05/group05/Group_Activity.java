@@ -1,14 +1,21 @@
 package it.polito.group05.group05;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +26,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +37,6 @@ import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
-import it.polito.group05.group05.Utility.activity_expense;
 
 public class Group_Activity extends AppCompatActivity {
 
@@ -47,40 +56,39 @@ public class Group_Activity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
-        toolbar.setNavigationIcon(R.drawable.left_arrow );
-        toolbar.setNavigationContentDescription("back" +
-                "");
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        toolbar.setLogo(Integer.parseInt(Singleton.getInstance().getmCurrentGroup().getGroupProfile()));
-
-        toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
+        context = this;
+        final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final AppBarLayout appbar = (AppBarLayout)findViewById(R.id.appbar);
+        final TextView tv = (TextView)findViewById(R.id.tv_group_name);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Pair<View, String> p1 = Pair.create((View)appbar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+
+
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
                 Intent intent = new Intent(getBaseContext(), GroupDetailsActivity.class);
-                startActivity(intent);
+                startActivity(intent, options.toBundle());
 
             }
         });
-
-
         setSupportActionBar(toolbar);
+        c.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -108,6 +116,11 @@ public class Group_Activity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

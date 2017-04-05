@@ -13,13 +13,18 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/abl_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:transitionName="@string/transition_appbar"
+        >
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:background="@color/colorPrimaryDark"
+            android:transitionName="@string/transition_toolbar"
+
+
             >
             <LinearLayout
                 android:id="@+id/cv_header_ll"
@@ -45,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
+                    android:transitionName="@string/transition_text"
                     android:layout_marginRight="16dp"
                     android:orientation="vertical">
 
@@ -52,7 +58,6 @@
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:text="GroupName05"
                         android:textStyle="bold"
                         android:textSize="16sp" />

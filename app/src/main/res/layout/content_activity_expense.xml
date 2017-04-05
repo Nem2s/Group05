@@ -1,34 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="it.polito.group05.group05.Utility.activity_expense"
+    tools:context="it.polito.group05.group05.activity_expense"
     tools:showIn="@layout/activity_expense"
     >
-
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-
-
-        >
-
-
         <ScrollView
-            android:layout_margin="8dp"
             android:layout_width="match_parent"
+            android:background="@color/colorAccent"
             android:layout_height="wrap_content">
 
 
             <RelativeLayout
                 android:layout_width="match_parent"
+                android:layout_margin="16dp"
                 android:layout_height="wrap_content"
-                android:padding="25dp"
+                android:padding="32dp"
                 android:paddingTop="10dp"
                 >
 
@@ -43,20 +34,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-
                         android:textStyle="normal"
                         android:hint="Name"
                         android:textSize="13sp"
                         app:met_errorColor="#646464"
+                        app:met_baseColor="@color/colorPrimary"
                         app:met_floatingLabel="highlight"
                         app:met_minCharacters="2" />
 
                     <com.rengwuxian.materialedittext.MaterialEditText
                         android:id="@+id/et_cost_expense"
-                        android:layout_width="140sp"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:hint="Cost"
+                        app:met_baseColor="@color/colorPrimary"
                         android:inputType="numberDecimal"
                         android:digits="0123456789.,"
                         android:textSize="13sp"
@@ -76,6 +68,7 @@
                         android:onClick="description_handler"
                         android:text="Description"
                         android:textStyle="normal"
+                        app:buttonTint="@color/colorPrimary"
 
                         />
                     <!--content to hide/show -->
@@ -90,6 +83,8 @@
                         app:met_errorColor="#646464"
                         app:met_floatingLabel="highlight"
                         app:met_minCharacters="2"
+                        app:met_baseColor="@color/colorPrimary"
+
                         android:textStyle="normal"/>
 
                     <CheckBox
@@ -100,6 +95,7 @@
                         android:clickable="true"
                         android:textStyle="normal"
                         android:onClick="file_handler"
+                        app:buttonTint="@color/colorPrimary"
                         android:text="Add a File" />
 
                     <com.rengwuxian.materialedittext.MaterialEditText
@@ -111,51 +107,64 @@
                         app:met_errorColor="#646464"
                         app:met_floatingLabel="highlight"
                         app:met_iconRight="@drawable/clip"
-                        app:met_minCharacters="2" />
+                        app:met_baseColor="@color/colorPrimary"
 
+                        app:met_minCharacters="2" />
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        >
                     <CheckBox
                         android:id="@+id/cb3_deadline"
-                        android:layout_margin="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:textStyle="normal"
                         android:onClick="deadline_handler"
+                        app:buttonTint="@color/colorPrimary"
                         android:text="Add a deadline" />
 
                     <Spinner
                         android:id="@+id/spinner"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_margin="8dp"
                         android:entries="@array/deadline_name"
                         android:textAlignment="center"
                         >
 
                     </Spinner>
-
-
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        >
                     <CheckBox
                         android:id="@+id/cb4_proposal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
                         android:text="Proposal"
                         android:textStyle="normal"
                         android:clickable="true"
                         android:onClick="proposal_handler"
-                        />
+                        android:layout_alignParentTop="true"
+                        app:buttonTint="@color/colorPrimary"
+                        android:layout_alignParentStart="true" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="8dp"
+                        android:layout_margin="8dp"
+                        android:layout_below="@id/cb4_proposal"
                         android:layout_marginBottom="10dp">
 
                         <TextView
                             android:id="@+id/tv_policy"
-                            android:layout_width="80dp"
-                            android:layout_margin="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Split"
                             android:textStyle="normal"
@@ -168,11 +177,11 @@
                             android:layout_height="wrap_content">
                         </Spinner>
                     </LinearLayout>
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:orientation="vertical"
                         >
 
@@ -187,11 +196,4 @@
             </RelativeLayout>
 
         </ScrollView>
-
-    </android.support.v7.widget.CardView>
-
-
-
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

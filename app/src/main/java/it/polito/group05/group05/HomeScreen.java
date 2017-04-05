@@ -15,6 +15,9 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -25,6 +28,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,8 +51,12 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.User;
@@ -107,12 +117,9 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        List<Group> items = Singleton.getInstance().getmCurrentGroups();
+        final List<Group> items = Singleton.getInstance().getmCurrentGroups();
 
-        adapter = new GroupAdapter(this, items, this);
-        Context context = getApplicationContext();
-         listView = (ListView)findViewById(R.id.groups_lv);
-        listView.setAdapter(adapter);
+
 
 
         reveal_layout = (LinearLayout) findViewById(R.id.reveal_layout);
@@ -145,8 +152,8 @@ public class HomeScreen extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        currentUser = new User("q" + 1, "User " + 1, new Balance(3, 1), null, null, true, true);
-
+        currentUser = new User("q" + 1, "User " + 1, new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        Singleton.getInstance().setId(currentUser.getId());
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -185,6 +192,7 @@ public class HomeScreen extends AppCompatActivity
             @Override
             public void onClick(View view) {
                     newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
+                    newgroup.addMember(currentUser);
                     for (UserContact u : all) {
                         if(u.isSelected()) {
                             newgroup.addMember(u);
@@ -194,6 +202,19 @@ public class HomeScreen extends AppCompatActivity
                     if(newgroup.getMembers().isEmpty() || et_group_name.getText().toString().equals(""))
                         Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
                     else {
+                        Random r = new Random();
+                        int m=2;
+                        for(int i = 0; i < m; i++) {
+
+                            Expense s = new Expense(String.valueOf(i), newgroup.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
+                            s.setImage(String.valueOf(R.drawable.idea));
+                            List<User> l = newgroup.getMembers();
+                            int n = r.nextInt(l.size());
+                            s.setOwner(l.get(n));
+                            l= User_expense.createListUserExpense(newgroup,s);
+                            s.setPartecipants(l);
+                            newgroup.addExpense(s);
+                        }
                         items.add(newgroup);
                         groupAdapter.notifyDataSetChanged();
                         reinitializeNewGroupView(all);
@@ -224,39 +245,6 @@ public class HomeScreen extends AppCompatActivity
                         .set(tv_username)
                         .set(tv_email)
                         .build();
-
-                /*Picasso
-                        .with(getApplicationContext())
-                        .load(Integer.parseInt(currentUser.getProfile_image()))
-                        .transform(new PicassoRoundTransform())
-                        .placeholder(R.drawable.default_avatar)
-                        .error(R.drawable.ic_visibility_off)
-                        .into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                ColorUtils.PaletteBuilder b = new ColorUtils.PaletteBuilder();
-                                b.load(bitmap)
-                                        .brighter(ColorUtils.bright.DARK)
-                                        .method(ColorUtils.type.MUTED)
-                                        .set(ll_header)
-                                        .set(tv_username)
-                                        .set(tv_email)
-                                        .build();
-                                cv.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                            }
-                        });
-
-*/
                 cv_user_drawer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -312,7 +300,7 @@ public class HomeScreen extends AppCompatActivity
     private List<UserContact> retriveAllPeople() {
         List<UserContact> res = new ArrayList<>();
         for(int i = 0; i < 76; i++) {
-            UserContact u = new UserContact("q" + i, "User " + i, new Balance(i++, i), null, null, i==3, i==1);
+            UserContact u = new UserContact("p" + i, "User " + i, new Balance(i++, i), null, null, i==3, i==1);
             res.add(u);
         }
         return res;

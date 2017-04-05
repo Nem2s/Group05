@@ -7,5 +7,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!-- Add this line -->
         <item name="android:windowContentTransitions">true</item>
+        <!-- enable overlapping of exiting and entering activities-->
+
     </style>
 </resources>
