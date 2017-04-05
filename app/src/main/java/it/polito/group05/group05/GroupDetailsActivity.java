@@ -138,7 +138,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         final ArrayList<String> xvalues = new ArrayList<>();
         for (User u : users) {
             List<BarEntry> barEntries = new ArrayList<>();
-            barEntries.add(new BarEntry(i, u.getTot_expenses()));
+            barEntries.add(new BarEntry(i, (float)( u.getBalance().getCredit() - u.getBalance().getDebit())));
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
@@ -178,36 +178,16 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void customizeToolbar(final Toolbar toolbar) {
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
         final GroupColor gc = new GroupColor();
-            Picasso
-                    .with(getApplicationContext())
-                    .load(Integer.parseInt(currentGroup.getGroupProfile()))
-                    .transform(new PicassoRoundTransform())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
-                            builder
-                                    .load(bitmap)
-                                    .set(toolbar)
-                                    .set(fab)
-                                    .anim()
-                                    .method(ColorUtils.type.VIBRANT)
-                                    .brighter(ColorUtils.bright.LIGHT)
-                                    .build();
-                            c.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
-
+            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
+            builder
+                    .load(currentGroup.getGroupProfile())
+                    .set(toolbar)
+                    .set(fab)
+                    .anim()
+                    .method(ColorUtils.type.VIBRANT)
+                    .brighter(ColorUtils.bright.LIGHT)
+                    .build();
+            c.setImageBitmap(currentGroup.getGroupProfile());
 
     }
 

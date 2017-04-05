@@ -63,9 +63,15 @@ public class AnimUtils {
         }
     }
 
-    public static void bounce(View v, Context context) {
+    public static void bounce(View v, int duration, Context context, boolean infinite) {
         Animation anim = AnimationUtils.loadAnimation(context, R.anim.bounce);
-        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.06, 50);
+        anim.setDuration(duration);
+        MyBounceInterpolator interpolator;
+        if(infinite) {
+            anim.setRepeatCount(Animation.INFINITE);
+            interpolator = new MyBounceInterpolator(0.3, 20);
+        } else
+            interpolator = new MyBounceInterpolator(0.06, 50);
         anim.setInterpolator(interpolator);
         v.setVisibility(View.VISIBLE);
         v.startAnimation(anim);

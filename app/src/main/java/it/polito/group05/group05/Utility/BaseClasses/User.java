@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import java.text.DecimalFormat;
@@ -13,14 +14,14 @@ public class User {
     private String id;
     private String user_name;
     private Balance balance;
-    private String profile_image;
+    private Bitmap profile_image;
     private Group user_group;
     private int user_color;
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
 
-    public User(String id, String user_name, Balance balance, String profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
+    public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
         this.balance = balance;
@@ -55,11 +56,11 @@ public class User {
         this.balance = balance;
     }
 
-    public String getProfile_image() {
+    public Bitmap getProfile_image() {
         return profile_image;
     }
 
-    public void setProfile_image(String profile_image) {
+    public void setProfile_image(Bitmap profile_image) {
         this.profile_image = profile_image;
     }
 

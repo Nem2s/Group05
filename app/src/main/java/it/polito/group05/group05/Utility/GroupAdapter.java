@@ -39,10 +39,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
     Context context;
     List<Group> groups;
+    public boolean isEnabled;
 
     public GroupAdapter(List<Group> objects, Context context) {
         this.context = context;
         this.groups = objects;
+        this.isEnabled = true;
     }
 
     @Override
@@ -59,15 +61,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Picasso
+        /*Picasso
                 .with(context)
-                .load(Integer.parseInt(groups.get(position).getGroupProfile()))
+                .load(groups.get(position).getGroupProfile())
                 .placeholder(R.drawable.default_avatar)
                 .error(R.drawable.ic_visibility_off)
                 .transform(new PicassoRoundTransform())
-                .into(holder.groupProfile);
+                .into(holder.groupProfile);*/
         final int currentPosition = position;
-
+        holder.groupProfile.setImageBitmap(groups.get(position).getGroupProfile());
         holder.name.setText(groups.get(position).getName());
         String text = "<font color='green'>" + groups.get(position).getBalance().getCredit() + "</font> / <font color='red'>" + groups.get(position).getBalance().getDebit() + "</font>";
         holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
@@ -103,7 +105,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 //Start the Intent
                 Singleton.getInstance().setmCurrentGroup(groups.get(currentPosition));
                 //ActivityCompat.startActivity(context, intent, options.toBundle());
-                context.startActivity(intent, options.toBundle());
+                if(isEnabled)
+                    context.startActivity(intent, options.toBundle());
                 AnimUtils.toggleOff(fab, 250, context);
 
             }

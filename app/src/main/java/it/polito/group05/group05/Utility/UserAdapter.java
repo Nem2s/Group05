@@ -60,13 +60,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(UserAdapter.ViewHolder holder, int position) {
         final int currentPosition = position;
         final User currentUser = users.get(position);
-        Picasso
+        /*Picasso
                 .with(context)
                 .load(Integer.parseInt(currentUser.getProfile_image()))
                 .placeholder(R.drawable.default_avatar)
                 .error(R.drawable.ic_visibility_off)
                 .transform(new PicassoRoundTransform())
-                .into(holder.img_profile);
+                .into(holder.img_profile);*/
+        holder.img_profile.setImageBitmap(currentUser.getProfile_image());
         holder.img_profile.setBorderColor(currentUser.getUser_color());
         holder.color.setBackgroundTintList(ColorStateList.valueOf(currentUser.getUser_color()));
         String text = "<font color='green'>" + currentUser.getBalance().getCredit() + "</font> / <font color='red'>" + currentUser.getBalance().getDebit() + "</font>";

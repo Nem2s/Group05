@@ -34,7 +34,6 @@
                     android:layout_width="58dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/group_profile"
                     android:transitionName="@string/transition_group_image"
                     android:focusableInTouchMode="true"
                     >
@@ -120,7 +119,7 @@
                 android:layout_height="match_parent"
                 app:stackFromEnd="true"
 
-                android:paddingBottom="8dp"
+                android:paddingBottom="32dp"
                 android:dividerHeight="2dp"
                 />
 

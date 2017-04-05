@@ -1,8 +1,11 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
+
+import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,12 +24,12 @@ public class Group {
     private Balance balance;
     private BadgeDrawable badge;
     private String lmTime;
-    private String groupProfile;
+    private Bitmap groupProfile;
     private GroupColor groupColor;
     private TreeMap<String, User> members;
     private TreeMap<String, Expense> expenses;
 
-    public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
+    public Group(String groupName, Balance currentBalance, Bitmap groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
         this.balance = currentBalance;
         this.groupProfile = groupProfile;
@@ -52,12 +55,12 @@ public class Group {
         this.balance = balance;
     }
 
-    public String getGroupProfile() {
+    public Bitmap getGroupProfile() {
         return groupProfile;
     }
 
-    public void setGroupProfile(String Uri) {
-        groupProfile = Uri;
+    public void setGroupProfile(Bitmap image) {
+        groupProfile = image;
     }
 
     public SpannableString getBadge() {
