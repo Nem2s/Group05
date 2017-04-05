@@ -115,6 +115,18 @@ public class Group {
             expenses.put(e.getId(), e);
 
     }
+
+    public Map<String,Double> debtUsers(){
+
+
+        Map<String, Double> f = new TreeMap<String,Double>();
+        for( Expense i : expenses.values())
+            if(i.getType()!=TYPE_EXPENSE.NOTMANDATORY)
+                for(User u : i.getPartecipants())
+                    if(u instanceof User_expense)
+                        f.put(u.getId(),f.get(u.getId())+((User_expense) u).getDebt());
+        return f;
+    }
     public User getMember(String id){
         return members.get(id);
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -22,6 +22,7 @@
         android:textStyle="bold"
         android:id="@+id/expense_member_name"
         android:textAlignment="center"
+        android:layout_below="@+id/expense_member_image"
         />
 
     <TextView
@@ -33,6 +34,7 @@
         android:textSize="12sp"
         android:textStyle="bold"
         android:id="@+id/expense_member_debt"
+        android:layout_below="@+id/expense_member_name"
         />
 
-</LinearLayout>
+</RelativeLayout>

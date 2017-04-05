@@ -16,7 +16,6 @@ public class User_expense extends User {
 
     public static List<User> createListUserExpense(Group g,Expense e){
         List<User> user_expenses = new ArrayList<>();
-
         List<User> u = g.getMembers();
         for(User i : u){
             User_expense x = new User_expense(g,e,e.getType(),i.getId());
