@@ -11,25 +11,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
-import it.polito.group05.group05.Utility.BaseClasses.Group;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.ExpenseAdapter;
 import it.polito.group05.group05.Utility.activity_expense;
 
-public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -133,19 +121,21 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    protected void onResume() {
+        super.onResume();
+        //getSupportFragmentManager().getFragments().get(1).onResume();
 
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+/*
+
     public static class PlaceholderFragment extends Fragment {
 
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         ExpenseAdapter ea;
 
 
@@ -155,10 +145,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+
         public static PlaceholderFragment newInstance(int s) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -212,7 +199,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         }
     }
-
+*/
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -230,10 +217,10 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
             Fragment fragment =null;
             switch (position){
                 case 0:
-                    fragment=PlaceholderFragment.newInstance(position);
+                    fragment=ExpenseFragment.newInstance();
                     break;
                 case 1:
-                    fragment = ChatFragment.newInstance("","");
+                    fragment = ChatFragment.newInstance();
                 break;
             }
             return fragment;

@@ -122,6 +122,7 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
                         d =d*(-1.00);
                         expense.setDebtUser(Singleton.getInstance().getId(),d);
                         adapter.notifyDataSetChanged();
+
                         dialog.cancel();
 
                     }

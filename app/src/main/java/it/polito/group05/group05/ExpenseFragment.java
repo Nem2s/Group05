@@ -4,30 +4,51 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.ExpenseAdapter;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ChatFragment.OnFragmentInteractionListener} interface
+ * {@link ExpenseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ChatFragment#newInstance} factory method to
+ * Use the {@link ExpenseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ChatFragment extends Fragment {
+public class ExpenseFragment extends Fragment {
+    ExpenseAdapter ea;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-
-    // TODO: Rename and change types of parameters
-
-
     private OnFragmentInteractionListener mListener;
 
-    public ChatFragment() {
+    @Override
+    public void onResume() {
+        super.onResume();
+//        ea.notifyAll();
+        ea.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ea.notifyDataSetChanged();
+    }
+
+    public ExpenseFragment() {
         // Required empty public constructor
     }
 
@@ -36,12 +57,11 @@ public class ChatFragment extends Fragment {
      * this fragment using the provided parameters.
      *
 
-     * @return A new instance of fragment ChatFragment.
+     * @return A new instance of fragment ExpenseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ChatFragment newInstance() {
-        ChatFragment fragment = new ChatFragment();
-
+    public static ExpenseFragment newInstance() {
+        ExpenseFragment fragment = new ExpenseFragment();
         return fragment;
     }
 
@@ -49,7 +69,6 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
         }
     }
 
@@ -57,7 +76,31 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+
+        final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
+        View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
+        RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
+
+
+        List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
+
+        ea = new ExpenseAdapter(getContext(),expenses);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
+        rv.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
+        rv.setLayoutManager(llm);
+        rv.setAdapter(ea);
+
+        return rootView;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
