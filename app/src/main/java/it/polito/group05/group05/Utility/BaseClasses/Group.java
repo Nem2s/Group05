@@ -8,8 +8,11 @@ import android.text.SpannableString;
 import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
@@ -35,7 +38,8 @@ public class Group {
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new TreeMap<String, User>();
+        this.members = new TreeMap<>();
+        this.expenses = new TreeMap<>();
     }
     public Group(){}
 
@@ -74,8 +78,8 @@ public class Group {
             return;
              badge = new BadgeDrawable.Builder()
                         .type(BadgeDrawable.TYPE_NUMBER)
-                        .badgeColor(Color.parseColor("#01D1B1"))
-                        .textSize(40)
+                        .badgeColor(Color.parseColor("#FFC107"))
+                        .textSize(30)
                         .number(count)
                         .build();
 
@@ -97,21 +101,46 @@ public class Group {
         this.groupColor = groupColor;
     }
 
-    public Expense getExpenses(String id) {
+    public Expense getExpense(String id) {
         return expenses.get(id);
+    }
+    public Collection<Expense> getExpenses() {
+        List l = new ArrayList(expenses.values());
+         Collections.sort(l, new Comparator<Expense>() {
+            @Override
+            public int compare(Expense o1, Expense o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        return l;
     }
 
     public void addExpense( Expense e){
-        if(!expenses.containsKey(e.getId())){
+
             expenses.put(e.getId(), e);
-        }
+
+    }
+
+    public Map<String,Double> debtUsers(){
+
+
+        Map<String, Double> f = new TreeMap<String,Double>();
+        for( Expense i : expenses.values())
+            if(i.getType()!=TYPE_EXPENSE.NOTMANDATORY)
+                for(User u : i.getPartecipants())
+                    if(u instanceof User_expense)
+                        f.put(u.getId(),f.get(u.getId())+((User_expense) u).getDebt());
+        return f;
     }
     public User getMember(String id){
         return members.get(id);
     }
+
+
     public List<User> getMembers(){
         ArrayList<User> new_list= new ArrayList<>(members.values());
         return new_list;
+
     }
 
     public void addMember( User u){
