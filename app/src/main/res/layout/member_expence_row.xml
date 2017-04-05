@@ -72,6 +72,8 @@
                     android:id="@+id/et_ins"
                     android:layout_width="70dp"
                     android:layout_height="20dp"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
                     android:layout_centerInParent="true"
                     android:layout_toLeftOf="@+id/euro_member"
 

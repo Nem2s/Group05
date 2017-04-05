@@ -30,7 +30,9 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     Context c;
 
     //VIEWHOLDER CLASS
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+
         public CircularImageView image_person;
         public TextView name_person;
         public CheckBox include_person;

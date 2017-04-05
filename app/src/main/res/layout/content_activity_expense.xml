@@ -58,6 +58,7 @@
                         android:layout_margin="8dp"
                         android:hint="Cost"
                         android:inputType="numberDecimal"
+                        android:digits="0123456789.,"
                         android:textSize="13sp"
                         android:textStyle="normal"
                         app:met_errorColor="#646464"

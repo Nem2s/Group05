@@ -75,6 +75,7 @@ public class Group_Activity extends AppCompatActivity {
 
                 Intent i = new Intent(getBaseContext(), activity_expense.class);
                 startActivity(i);
+                
             }
         });
 

@@ -20,6 +20,10 @@ public class User {
     private boolean isAdministrator;
     private boolean isCardEnabled;
 
+    public User(){
+        super();
+    }
+
     public User(String id, String user_name, Balance balance, String profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;

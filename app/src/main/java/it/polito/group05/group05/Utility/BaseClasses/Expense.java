@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-;
+
 
 public class Expense{
     private String id;
@@ -125,7 +125,7 @@ public class Expense{
         }
     }
     public List<User> getPartecipants(){
-List<User> l = new ArrayList<>(lista_partecipanti.values());
+        List<User> l = new ArrayList<>(lista_partecipanti.values());
         return l;
     }
     public  void setPartecipants(List<User> list){
@@ -138,6 +138,15 @@ List<User> l = new ArrayList<>(lista_partecipanti.values());
         lista_partecipanti.put(user.getId(),user);
     }
 
+
+    public Double getDebtUser(String id){
+
+        User s =this.lista_partecipanti.get(id);
+        if(s instanceof User_expense) return ((User_expense) s).getDebt();
+        else return -1.0;
+
+
+    }
 
 }
 
