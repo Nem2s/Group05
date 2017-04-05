@@ -66,8 +66,8 @@ class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
         tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
     }
     public void setData(User u){
-
         civ.setImageBitmap(u.getProfile_image());
+
         tv.setText(u.getId().compareTo(Singleton.getInstance().getId())!=0 ? u.getUser_name():"You");
         if(u instanceof User_expense) {
             Double c = ((User_expense) u).getDebt();

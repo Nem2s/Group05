@@ -3,28 +3,20 @@ package it.polito.group05.group05.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 import it.polito.group05.group05.GroupDetailsActivity;
 import it.polito.group05.group05.Group_Activity;
@@ -41,6 +33,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     Context context;
     List<Group> groups;
     public boolean isEnabled;
+    View v;
 
     public GroupAdapter(List<Group> objects, Context context) {
         this.context = context;
@@ -55,8 +48,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item_sample, parent, false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item_sample, parent, false);
         ViewHolder vh = new ViewHolder(v);
+
         return vh;
     }
 
@@ -86,7 +80,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         }
         else
             holder.badge.setVisibility(View.INVISIBLE);
-
+    v.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, Group_Activity.class);
+            Singleton.getInstance().setmCurrentGroup(groups.get(currentPosition));
+            context.startActivity(intent);
+        }
+    });
         holder.groupProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
