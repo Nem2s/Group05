@@ -1,12 +1,15 @@
 package it.polito.group05.group05.Utility;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +17,8 @@ import java.util.List;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 
 /**
  * Created by antonino on 03/04/2017.
@@ -81,8 +86,7 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
 
 
 
-    public void setData(Expense expense,Context context){
-
+    public void setData(final Expense expense, final Context context){
 
         expense_image.setImageResource(Integer.parseInt(expense.getImage()));
 
@@ -93,12 +97,36 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
         LinearLayoutManager l = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
         rv.setLayoutManager(l);
         price.setText(String.format("%.2f €",expense.getPrice()));
-        ExpenseCardAdapter adapter = new ExpenseCardAdapter(context,expense.getPartecipants());
+        final ExpenseCardAdapter adapter = new ExpenseCardAdapter(context,expense.getPartecipants());
         rv.setAdapter(adapter);
         rv.setAdapter(adapter);
         rv.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
+    if(expense.getType()== TYPE_EXPENSE.NOTMANDATORY)
+        price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                View s =LayoutInflater.from(context).inflate(R.layout.layout,null,false);
+                dialog.setView(s);
+                dialog.setTitle("Choose your amount");
+                dialog.setCanceledOnTouchOutside(true);
+                ((Button)s.findViewById(R.id.expense_done)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Double d = Double.valueOf(((EditText)dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
+                        d =d*(-1.00);
+                        expense.setDebtUser(Singleton.getInstance().getId(),d);
+                        adapter.notifyDataSetChanged();
+                        dialog.cancel();
 
+                    }
+                });
+
+                dialog.show();
+
+            }
+        });
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

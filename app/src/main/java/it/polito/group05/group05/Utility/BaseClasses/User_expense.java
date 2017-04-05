@@ -12,19 +12,15 @@ public class User_expense extends User {
     Expense expense;
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
-
-    public User_expense(){
-        super();
-    }
+    public User_expense(){super();}
 
     public static List<User> createListUserExpense(Group g,Expense e){
         List<User> user_expenses = new ArrayList<>();
-
         List<User> u = g.getMembers();
         for(User i : u){
             User_expense x = new User_expense(g,e,e.getType(),i.getId());
             x.setProfile_image(i.getProfile_image());
-            //   User_expense x = new User_expense();
+         //   User_expense x = new User_expense();
             x.setId(i.getId());
             x.setUser_name(i.getUser_name());
             user_expenses.add(x);
@@ -36,7 +32,6 @@ public class User_expense extends User {
     }
 
     public User_expense(Group p,Expense s,TYPE_EXPENSE t, String user){
-        super();
         this.group=p;
         this.expense=s;
         this.typeExpense=t;

@@ -195,25 +195,11 @@ public class activity_expense extends AppCompatActivity {
                 Expense e = new Expense(id_expense,expense_owner,expense_name,expense_description,
                             expense_price, expense_type, expense_deadline, expense_timestamp);
                 Singleton.getInstance().getmCurrentGroup().addExpense(e);
-               
-            }
-
-        });
-
-
-    /*    fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
-    */
+
     }
-
-
-
-
+    
     public void description_handler(View v){
         et_description.setVisibility(et_description.isShown() ? View.GONE : View.VISIBLE);
     }
