@@ -104,7 +104,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                     intent.putExtra("Position", position);
                     Singleton.getInstance().setmCurrentGroup(group);
                     context.startActivity(intent);
-                }
+            }
             });
 
 

@@ -1,5 +1,6 @@
 package it.polito.group05.group05;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -51,7 +52,32 @@ public class Group_Activity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
+        toolbar.setNavigationIcon(R.drawable.left_arrow );
+        toolbar.setNavigationContentDescription("back" +
+                "");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        toolbar.setLogo(Integer.parseInt(Singleton.getInstance().getmCurrentGroup().getGroupProfile()));
+
+        toolbar.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), GroupDetailsActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -81,6 +107,7 @@ public class Group_Activity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_group_, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
