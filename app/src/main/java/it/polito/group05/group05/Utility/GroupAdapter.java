@@ -119,7 +119,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 Intent intent = new Intent(context, Group_Activity.class);
                 intent.putExtra("Position", position);
                 Singleton.getInstance().setmCurrentGroup(groups.get(position));
-                context.startActivity(intent);
+                String transitionFab = context.getString(R.string.transition_fab);
+                FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
+                Pair <View, String> p1 = Pair.create((View)fab, transitionFab);
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1);
+                context.startActivity(intent, options.toBundle());
             }
         });
 

@@ -42,6 +42,9 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -224,6 +227,16 @@ public class HomeScreen extends AppCompatActivity
             }
         });
 
+        KeyboardVisibilityEvent.setEventListener(this, new KeyboardVisibilityEventListener() {
+            @Override
+            public void onVisibilityChanged(boolean isOpen) {
+                if(isOpen)
+                    addButton.setVisibility(View.INVISIBLE);
+                else
+                    addButton.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -355,6 +368,8 @@ public class HomeScreen extends AppCompatActivity
         MenuItem item = menu.findItem(R.id.nav_balance);
         //item.setTitle("Balance: " + currentUser.getCurrentBalance() + " €");
     }
+
+
 
     @Override
     protected void onResume() {

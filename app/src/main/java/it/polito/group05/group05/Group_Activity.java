@@ -68,6 +68,7 @@ public class Group_Activity extends AppCompatActivity {
         final AppBarLayout appbar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
