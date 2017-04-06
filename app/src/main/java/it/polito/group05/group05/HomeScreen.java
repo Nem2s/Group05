@@ -3,8 +3,9 @@ package it.polito.group05.group05;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -22,19 +22,14 @@ import java.util.Random;
 
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
-import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.GroupAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.User;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    ListView listView;
+
     FloatingActionButton fab;
-    GroupAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -42,36 +37,19 @@ public class HomeScreen extends AppCompatActivity
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        List<Group> items = Singleton.getInstance().getmCurrentGroups();
-
-        adapter = new GroupAdapter(this, items, this);
+        ArrayList<Group> items = new ArrayList<>();
+        GroupAdapter adapter = new GroupAdapter(this, items, this);
         Context context = getApplicationContext();
-         listView = (ListView)findViewById(R.id.groups_lv);
+        ListView listView = (ListView)findViewById(R.id.groups_lv);
         listView.setAdapter(adapter);
 
         Group g = new Group("Group 1", new Balance(120, 61.1), String.valueOf(R.drawable.hills), Calendar.getInstance().getTime().toString(), 9);
         Random r = new Random();
         int m = r.nextInt(21 - 2) + 2;
         for(int j = 0; j < m; j++) {
-
-            User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j == 3, j == 1);
-
-            u.setTot_expenses((float) (j * 0.75));
+            User u = new User("q" + j, "User " + j, new Balance(j++, j), String.valueOf(R.drawable.man), g, j==3, j==1);
+            u.setTot_expenses((float) (j*0.75));
             g.addMember(u);
-            if(j==1)
-                Singleton.getInstance().setId(u.getId());
-        }
-        m=2;
-        for(int i = 0; i < m; i++) {
-
-            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
-            s.setImage(String.valueOf(R.drawable.idea));
-            List<User> l = g.getMembers();
-            int n = r.nextInt(l.size());
-            s.setOwner(l.get(n));
-            l=User_expense.createListUserExpense(g,s);
-            s.setPartecipants(l);
-            g.addExpense(s);
         }
         adapter.add(g);
         g = new Group("Group 2", new Balance(12, 0), String.valueOf(R.drawable.beach), Calendar.getInstance().getTime().toString(), 1);
@@ -82,18 +60,6 @@ public class HomeScreen extends AppCompatActivity
             u.setTot_expenses((float) (j*2.5));
             g.addMember(u);
         }
-        m=12;
-        for(int i = 0; i < m; i++) {
-            Expense s = new Expense(String.valueOf(i), g.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.NOTMANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
-            s.setImage(String.valueOf(R.drawable.idea));
-            List<User> l = g.getMembers();
-            int n = r.nextInt(l.size());
-            s.setOwner(l.get(n));
-            s.setPartecipants(User_expense.createListUserExpense(g,s));
-            g.addExpense(s);
-        }
-
-
         adapter.add(g);
         //adapter.addAll(generateRandomGroups(3));
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -119,9 +85,6 @@ public class HomeScreen extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        //Singleton.getInstance().addGroup(Singleton.getInstance().getmCurrentGroup());
-        adapter.notifyDataSetChanged();
-        //listView.refreshDrawableState();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);
     }

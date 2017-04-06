@@ -199,7 +199,7 @@ public class activity_expense extends AppCompatActivity {
         });
 
     }
-    
+
     public void description_handler(View v){
         et_description.setVisibility(et_description.isShown() ? View.GONE : View.VISIBLE);
     }

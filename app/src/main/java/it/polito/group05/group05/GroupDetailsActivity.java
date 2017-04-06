@@ -7,14 +7,19 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -45,6 +50,8 @@ import java.util.Map;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
+import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.PicassoRoundTransform;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
@@ -59,6 +66,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private BarChart chart;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,33 +74,27 @@ public class GroupDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_header);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         chart = (BarChart)findViewById(R.id.group_chart);
-        customizeToolbar(toolbar);
-        setSupportActionBar(toolbar);
-        AnimUtils.toggleOn(fab, 750, this);
         tv_chart = (TextView)findViewById(R.id.tv_chart);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
-        ArrayList<User> users = new ArrayList<>();
-        UserAdapter adapter = new UserAdapter(this, users);
-        ListView listView = (ListView)findViewById(R.id.lv_group_members);
-        listView.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        customizeToolbar(toolbar);
+        setSupportActionBar(toolbar);
+        AnimUtils.toggleOn(fab, 500, this);
 
-        listView.setAdapter(adapter);
-        adapter.addAll(currentGroup.getMembers());
+        ArrayList<User> users = new ArrayList<>();
+        UserAdapter adapter = new UserAdapter(users, this);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+        users.addAll(currentGroup.getMembers());
         populateChart(this, users);
     }
 
     private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
-        chart.setTouchEnabled(false);
+        chart.setDoubleTapToZoomEnabled(false);
         yAxisL.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxisL.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -117,15 +119,16 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
 
         Legend legend = chart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setDrawInside(false);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setFormSize(9f);
-        legend.setTextSize(11f);
+        legend.setForm(Legend.LegendForm.SQUARE);
+        legend.setFormSize(21f);
+        legend.setFormLineWidth(8f);
+        legend.setTextSize(13f);
         legend.setWordWrapEnabled(true);
-        legend.setXEntrySpace(4f);
+        legend.setXEntrySpace(22f);
         legend.setEnabled(true);
 
         List<LegendEntry> legends = new ArrayList<>();
@@ -160,7 +163,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
         xAxis.setValueFormatter(formatter);
         chart.setData(data);
         chart.setFitBars(true);
-        chart.animateXY(1250, 3000, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
+        chart.animateXY(750, 1500, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
+        chart.setVisibleXRangeMaximum(8);
 
 
     }
@@ -173,70 +177,36 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void customizeToolbar(final Toolbar toolbar) {
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
-        final Palette.PaletteAsyncListener paletteListener = new Palette.PaletteAsyncListener() {
-            public void onGenerated(Palette palette) {
-                int toolbar_default = getResources().getColor(R.color.colorPrimary);
-                int fab_default = getResources().getColor(R.color.colorAccent);
-                final int _text = 0x000000;
-                final int color = palette.getLightVibrantColor(toolbar_default);
-                final int fab_color = palette.getMutedColor(fab_default);
-                Palette.Swatch tx_swatch = palette.getVibrantSwatch();
-                int tx_color = getResources().getColor(R.color.colorPrimaryText);
-                if (tx_swatch != null) {
-                    tx_color = tx_swatch.getBodyTextColor();
-                }
-                ValueAnimator colorAnimation_toolbar = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
-                colorAnimation_toolbar.setDuration(250); // milliseconds
-                colorAnimation_toolbar.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        final GroupColor gc = new GroupColor();
+            Picasso
+                    .with(getApplicationContext())
+                    .load(Integer.parseInt(currentGroup.getGroupProfile()))
+                    .transform(new PicassoRoundTransform())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
+                            builder
+                                    .load(bitmap)
+                                    .set(toolbar)
+                                    .set(fab)
+                                    .anim()
+                                    .method(ColorUtils.type.VIBRANT)
+                                    .brighter(ColorUtils.bright.LIGHT)
+                                    .build();
+                            c.setImageBitmap(bitmap);
+                        }
 
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        toolbar.setBackgroundColor(color);
-                        toolbar.setTitleTextColor(_text);
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
 
-                    }
+                        }
 
-                });
-                ValueAnimator colorAnimation_fab = ValueAnimator.ofObject(new ArgbEvaluator(), toolbar_default, color);
-                colorAnimation_fab.setDuration(250); // milliseconds
-                colorAnimation_fab.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        fab.setBackgroundColor(fab_color);
-                    }
-                });
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                if(color != toolbar_default) {
-                    colorAnimation_toolbar.start();
-                    partecipants.setTextColor(tx_color);
-                    tv_chart.setTextColor(tx_color);
-                }
-                if(fab_color != fab_default)
-                    colorAnimation_fab.start();
-
-            }
-        };
-        Picasso
-                .with(getApplicationContext())
-                .load(Integer.parseInt(currentGroup.getGroupProfile()))
-                .transform(new PicassoRoundTransform())
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Palette.from(bitmap).generate(paletteListener);
-                        c.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
+                        }
+                    });
 
 
     }

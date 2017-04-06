@@ -1,9 +1,18 @@
 package it.polito.group05.group05.Utility;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -13,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
@@ -30,73 +40,79 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
  * Created by Marco on 28/03/2017.
  */
 
-public class UserAdapter extends ArrayAdapter<User> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     Context context;
-    ViewHolder holder;
-    public UserAdapter(@NonNull Context context, List<User> objects) {
-        super(context, 0, objects);
+    List<User> users;
+    public UserAdapter(List<User> objects, Context context) {
         this.context = context;
+        this.users = objects;
     }
 
-    private static class ViewHolder {
+    @Override
+    public UserAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.member_item_sample, parent, false);
+        UserAdapter.ViewHolder vh = new UserAdapter.ViewHolder(v);
+        return vh;
+    }
+
+    @Override
+    public void onBindViewHolder(UserAdapter.ViewHolder holder, int position) {
+        final int currentPosition = position;
+        final User currentUser = users.get(position);
+        Picasso
+                .with(context)
+                .load(Integer.parseInt(currentUser.getProfile_image()))
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.ic_visibility_off)
+                .transform(new PicassoRoundTransform())
+                .into(holder.img_profile);
+        holder.img_profile.setBorderColor(currentUser.getUser_color());
+        holder.color.setBackgroundTintList(ColorStateList.valueOf(currentUser.getUser_color()));
+        String text = "<font color='green'>" + currentUser.getBalance().getCredit() + "</font> / <font color='red'>" + currentUser.getBalance().getDebit() + "</font>";
+        holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
+        if(!currentUser.isAdministrator())
+            holder.administrator.setVisibility(View.INVISIBLE);
+        if(!currentUser.isCardEnabled())
+            holder.payByCard.setVisibility(View.INVISIBLE);
+        holder.user_name.setText(currentUser.getUser_name());
+
+
+        holder.payByCard.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Snackbar
+                    .make(view, "To be implemented...", Snackbar.LENGTH_SHORT)
+                    .setAction("Ok", null)
+                    .show();
+        }
+    });
+    }
+
+    @Override
+    public int getItemCount() {
+        return users.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         CircularImageView img_profile;
         TextView user_name;
         TextView balance;
         TextView administrator;
         ImageView payByCard;
-    }
+        FloatingActionButton color;
 
-    @NonNull
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final User user = getItem(position);
-
-
-        if(convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.member_item_sample, parent, false);
-            holder = new ViewHolder();
-            holder.img_profile = (CircularImageView) convertView.findViewById(R.id.iv_user_image);
-            holder.balance = (TextView)convertView.findViewById(R.id.tv_user_balance);
-            holder.user_name = (TextView)convertView.findViewById(R.id.tv_user_name);
-            holder.payByCard = (ImageView)convertView.findViewById(R.id.iv_paycard);
-            holder.administrator = (TextView)convertView.findViewById(R.id.tv_admin);
-            convertView.setTag(holder);
-        } else
-            holder = (ViewHolder)convertView.getTag();
-
-        if(user != null) {
-            Picasso
-                    .with(getContext())
-                    .load(Integer.parseInt(user.getProfile_image()))
-                    .placeholder(R.drawable.default_avatar)
-                    .error(R.drawable.ic_visibility_off)
-                    .transform(new PicassoRoundTransform())
-                    .into(holder.img_profile);
-            holder.img_profile.setBorderColor(user.getUser_color());
-            String text = "<font color='green'>" + user.getBalance().getCredit() + "</font> / <font color='red'>" + user.getBalance().getDebit() + "</font>";
-            holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
-            if(!user.isAdministrator())
-                holder.administrator.setVisibility(View.INVISIBLE);
-            if(!user.isCardEnabled())
-                holder.payByCard.setVisibility(View.INVISIBLE);
-            holder.user_name.setText(user.getUser_name());
+        public ViewHolder(View itemView) {
+            super(itemView);
+            img_profile = (CircularImageView) itemView.findViewById(R.id.iv_user_image);
+            balance = (TextView)itemView.findViewById(R.id.tv_user_balance);
+            user_name = (TextView)itemView.findViewById(R.id.tv_user_name);
+            payByCard = (ImageView)itemView.findViewById(R.id.iv_paycard);
+            administrator = (TextView)itemView.findViewById(R.id.tv_admin);
+            color = (FloatingActionButton) itemView.findViewById(R.id.member_color);
         }
-
-        holder.payByCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar
-                        .make(view, "To be implemented...", Snackbar.LENGTH_SHORT)
-                        .setAction("Ok", null)
-                        .show();
-            }
-        });
-
-
-        final View finalConvertView = convertView;
-        return finalConvertView;
     }
+
 
 
 

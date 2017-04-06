@@ -47,15 +47,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapterHolder> {
         holder.setData(list.get(position),c);
     }
 
-
-
     @Override
     public int getItemCount() {
         return list.size();
     }
 }
-
-
 
 class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
     ImageView expense_image;

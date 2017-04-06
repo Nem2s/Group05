@@ -144,7 +144,7 @@ public class Group_Activity extends AppCompatActivity {
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-                List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
+                List<Expense> expenses =new ArrayList<>(currentGroup.getAllExpense());
 
                 ExpenseAdapter ea = new ExpenseAdapter(getContext(),expenses);
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);

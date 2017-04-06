@@ -1,5 +1,4 @@
 <resources>
-
     <style name="Theme.Transparent" parent="Theme.AppCompat">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -24,38 +23,8 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <style name="chat_text_message_style">
-
-        <item name="android:layout_width">wrap_content</item>
-
-        <item name="android:layout_height">wrap_content</item>
-
-
-
-        <item name="android:paddingTop">5dp</item>
-
-        <item name="android:paddingBottom">5dp</item>
-
-        <item name="android:paddingLeft">8dp</item>
-
-        <item name="android:paddingRight">8dp</item>
-
-        <item name="android:textSize">16sp</item>
-
-        <item name="android:textColor">@android:color/black</item>
-
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/colorIcons</item>
     </style>
-
-
-
-    <style name="chat_timings">
-
-        <item name="android:layout_width">wrap_content</item>
-
-        <item name="android:layout_height">wrap_content</item>
-
-        <item name="android:textSize">12sp</item>
-
-    </style>
-
 </resources>
