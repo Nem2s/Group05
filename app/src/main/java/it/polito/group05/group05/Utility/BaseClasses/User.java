@@ -3,6 +3,8 @@ package it.polito.group05.group05.Utility.BaseClasses;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -19,8 +21,8 @@ public class User {
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
-
-
+    private List<UserContact> contacts;
+public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -30,11 +32,9 @@ public class User {
         this.isAdministrator = isAdministrator;
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
+        this.contacts = new ArrayList<>();
     }
-
-    public User(){
-        super();
-    }
+    
 
     public String getId() {
         return id;
@@ -100,12 +100,15 @@ public class User {
         Random mRandom = new Random();
         // This is the base color which will be mixed with the generated one
         final int baseColor = Color.WHITE;
+
         final int baseRed = Color.red(baseColor);
         final int baseGreen = Color.green(baseColor);
         final int baseBlue = Color.blue(baseColor);
+
         final int red = (baseRed + mRandom.nextInt(256)) / 2;
         final int green = (baseGreen + mRandom.nextInt(256)) / 2;
         final int blue = (baseBlue + mRandom.nextInt(256)) / 2;
+
         return Color.rgb(red, green, blue);
 
     }
@@ -120,5 +123,17 @@ public class User {
 
     public int getUser_color() {
         return user_color;
+    }
+
+    public List<UserContact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<UserContact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void addContact(UserContact user) {
+        contacts.add(user);
     }
 }

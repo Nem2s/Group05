@@ -1,13 +1,14 @@
 package it.polito.group05.group05;
 
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -24,7 +25,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -33,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
 import it.polito.group05.group05.Utility.HideScrollListener;
 
-public class Group_Activity extends AppCompatActivity {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -64,8 +65,10 @@ public class Group_Activity extends AppCompatActivity {
     Context context;
     static Toolbar toolbar;
     static FloatingActionButton fab;
+    static AppBarLayout appBar;
+    static CoordinatorLayout main_content;
     static List<Expense> expenses;
-    public Group actual_group;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,17 +77,18 @@ public class Group_Activity extends AppCompatActivity {
 
         context = this;
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
-        final AppBarLayout appbar = (AppBarLayout)findViewById(R.id.appbar);
+        appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        main_content = (CoordinatorLayout)findViewById(R.id.main_content);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Pair<View, String> p1 = Pair.create((View)appbar, getString(R.string.transition_appbar));
+                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
@@ -118,7 +122,7 @@ public class Group_Activity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actual_group = Singleton.getInstance().getmCurrentGroup();
+
                 Intent i = new Intent(getBaseContext(), Expense_activity.class);
                 startActivity(i);
                 
@@ -142,16 +146,18 @@ public class Group_Activity extends AppCompatActivity {
 
 
     private static void hideViews() {
-        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
         //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
         //int fabBottomMargin = lp.bottomMargin;
         //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
+
     private static void showViews() {
+
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
         fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+
     }
 
     @Override
@@ -169,15 +175,23 @@ public class Group_Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //getSupportFragmentManager().getFragments().get(1).onResume();
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+/*
+
     public static class PlaceholderFragment extends Fragment {
 
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         ExpenseAdapter ea;
 
 
@@ -187,10 +201,7 @@ public class Group_Activity extends AppCompatActivity {
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+
         public static PlaceholderFragment newInstance(int s) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -224,9 +235,7 @@ public class Group_Activity extends AppCompatActivity {
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-                if(currentGroup.getExpenses()!=null) {
-                    expenses = new ArrayList<>(currentGroup.getExpenses());
-                }
+                expenses =new ArrayList<>(currentGroup.getExpenses());
                 ea = new ExpenseAdapter(getContext(),expenses);
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
                 rv.setOnTouchListener(new View.OnTouchListener() {
@@ -243,10 +252,9 @@ public class Group_Activity extends AppCompatActivity {
                 rv.setAdapter(ea);
 
                 return rootView;
-            }
-            return null;
-        }
 
+
+        }
         @Override
         public void onResume() {
             myOnResume();
@@ -262,7 +270,7 @@ public class Group_Activity extends AppCompatActivity {
 
         }
     }
-
+*/
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -277,7 +285,16 @@ public class Group_Activity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position);
+            Fragment fragment =null;
+            switch (position){
+                case 0:
+                    fragment=ExpenseFragment.newInstance();
+                    break;
+                case 1:
+                    fragment = ChatFragment.newInstance();
+                break;
+            }
+            return fragment;
         }
 
         @Override
