@@ -1,9 +1,6 @@
 package it.polito.group05.group05;
 
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -24,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -34,6 +30,7 @@ import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
 
+import it.polito.group05.group05.Utility.activity_expense;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +40,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
 import it.polito.group05.group05.Utility.HideScrollListener;
 
-public class Group_Activity extends AppCompatActivity {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -169,15 +166,22 @@ public class Group_Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //getSupportFragmentManager().getFragments().get(1).onResume();
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+/*
+
     public static class PlaceholderFragment extends Fragment {
 
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         ExpenseAdapter ea;
 
 
@@ -187,10 +191,7 @@ public class Group_Activity extends AppCompatActivity {
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+
         public static PlaceholderFragment newInstance(int s) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -241,10 +242,9 @@ public class Group_Activity extends AppCompatActivity {
                 rv.setAdapter(ea);
 
                 return rootView;
-            }
-            return null;
-        }
 
+
+        }
         @Override
         public void onResume() {
             myOnResume();
@@ -260,7 +260,7 @@ public class Group_Activity extends AppCompatActivity {
 
         }
     }
-
+*/
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -275,7 +275,16 @@ public class Group_Activity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position);
+            Fragment fragment =null;
+            switch (position){
+                case 0:
+                    fragment=ExpenseFragment.newInstance();
+                    break;
+                case 1:
+                    fragment = ChatFragment.newInstance();
+                break;
+            }
+            return fragment;
         }
 
         @Override
