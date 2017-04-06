@@ -60,6 +60,7 @@ public class Expense_activity extends AppCompatActivity {
     private String id_expense;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +150,11 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-
+        cb_addfile.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v){
+            }
+        });
 
         List<String> array= new ArrayList<>();
         array.add("Equal part");
@@ -161,10 +166,12 @@ public class Expense_activity extends AppCompatActivity {
 
 
 
-        MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers());
+        MemberExpenseAdapter adapter= new MemberExpenseAdapter(this,
+                Singleton.getInstance().getmCurrentGroup().getMembers());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
+     //   recyclerView.setItemViewCacheSize(Singleton.getInstance().getmCurrentGroup().getMembers().size());
 
         id_owner= Singleton.getInstance().getId();
         expense_owner = Singleton.getInstance().getmCurrentGroup().getMember(id_owner);

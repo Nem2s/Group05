@@ -22,6 +22,7 @@ public class User {
     private boolean isAdministrator;
     private boolean isCardEnabled;
     private List<UserContact> contacts;
+
 public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
