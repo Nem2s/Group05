@@ -86,12 +86,8 @@ public class HomeScreen extends AppCompatActivity
     RecyclerView rv_groups;
     CircularImageView iv_new_group;
     RelativeLayout no_groups;
-
-
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
-
     Group newgroup = new Group();
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -109,8 +105,6 @@ public class HomeScreen extends AppCompatActivity
     }
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -119,10 +113,6 @@ public class HomeScreen extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final List<Group> items = Singleton.getInstance().getmCurrentGroups();
-
-
-
-
         reveal_layout = (LinearLayout) findViewById(R.id.reveal_layout);
         rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
         addButton = (Button)findViewById(R.id.add_to_group_button);
@@ -153,7 +143,7 @@ public class HomeScreen extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        currentUser = new User("q" + 1, "User " + 1, new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        currentUser = new User("q" + 1, "You", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         Singleton.getInstance().setId(currentUser.getId());
 
 
@@ -204,7 +194,7 @@ public class HomeScreen extends AppCompatActivity
                     Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
                 else {
                     Random r = new Random();
-                    int m=2;
+                    int m=21;
                     for(int i = 0; i < m; i++) {
 
                         Expense s = new Expense(String.valueOf(i), newgroup.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));

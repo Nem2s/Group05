@@ -16,6 +16,7 @@ import java.util.List;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 
 /**
  * Created by user on 04/04/2017.

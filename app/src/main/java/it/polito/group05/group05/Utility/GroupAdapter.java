@@ -68,10 +68,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         holder.name.setText(groups.get(position).getName());
         String text = "<font color='green'>" + groups.get(position).getBalance().getCredit() + "</font> / <font color='red'>" + groups.get(position).getBalance().getDebit() + "</font>";
         holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
-
-
-
-
         holder.time.setText(groups.get(position).getLmTime());
         //group.setGroupColor(groupColor);
         if(groups.get(position).getBadge() != null) {

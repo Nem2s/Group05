@@ -1,6 +1,7 @@
 package it.polito.group05.group05;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
@@ -37,6 +41,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
+import it.polito.group05.group05.Utility.HideScrollListener;
 
 public class Group_Activity extends AppCompatActivity {
 
@@ -57,26 +62,32 @@ public class Group_Activity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     Context context;
-
+    static Toolbar toolbar;
+    static FloatingActionButton fab;
+    static List<Expense> expenses;
+    public Group actual_group;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_);
+
         context = this;
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
         final AppBarLayout appbar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
+
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Pair<View, String> p1 = Pair.create((View)appbar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-
 
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
@@ -102,14 +113,13 @@ public class Group_Activity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent i = new Intent(getBaseContext(), activity_expense.class);
+                actual_group = Singleton.getInstance().getmCurrentGroup();
+                Intent i = new Intent(getBaseContext(), Expense_activity.class);
                 startActivity(i);
                 
             }
@@ -130,6 +140,19 @@ public class Group_Activity extends AppCompatActivity {
         return true;
     }
 
+
+    private static void hideViews() {
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        //int fabBottomMargin = lp.bottomMargin;
+        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    private static void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -187,12 +210,23 @@ public class Group_Activity extends AppCompatActivity {
                 View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
                 RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
 
+                rv.setOnScrollListener(new HideScrollListener() {
+                    @Override
+                    public void onHide() {
+                        hideViews();
+                    }
+                    @Override
+                    public void onShow() {
+                        showViews();
+                    }
+                });
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-                List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
-
+                if(currentGroup.getExpenses()!=null) {
+                    expenses = new ArrayList<>(currentGroup.getExpenses());
+                }
                 ea = new ExpenseAdapter(getContext(),expenses);
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
                 rv.setOnTouchListener(new View.OnTouchListener() {
@@ -213,10 +247,18 @@ public class Group_Activity extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        public void onResume() {
+            myOnResume();
+        }
+
         public void myOnResume() {
             super.onResume();
-            if(ea!=null)
+            if(ea!=null) {
+                expenses = new ArrayList<>(Singleton.getInstance().getmCurrentGroup().getExpenses());
                 ea.notifyDataSetChanged();
+            }
+
 
         }
     }
