@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -24,40 +27,65 @@ import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
  * Created by antonino on 03/04/2017.
  */
 
-public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapterHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     List<Expense> list;
     LayoutInflater li;
     Context c;
+    //added view types
+    private static final int TYPE_HEADER = 2;
+    private static final int TYPE_ITEM = 1;
 
-    public ExpenseAdapter(Context c, List<Expense> data){
+    public ExpenseAdapter(Context c, List<Expense> data) {
         li = LayoutInflater.from(c);
         this.c = c;
-        list=data;
-    }
-    @Override
-    public ExpenseAdapterHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = li.inflate(R.layout.item_expense,parent,false);
-        ExpenseAdapterHolder holder = new ExpenseAdapterHolder(rootView);
-        return holder;
+        list = data;
     }
 
     @Override
-    public void onBindViewHolder(ExpenseAdapterHolder holder, int position) {
-        holder.setData(list.get(position),c);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            View rootView = li.inflate(R.layout.item_expense, parent, false);
+            return ExpenseAdapterHolder.newInstance(rootView);
+        } else if (viewType == TYPE_HEADER) {
+            View rootView = li.inflate(R.layout.fragment_header_group, parent, false);
+            return new ExpenseAdapterHeaderHolder(rootView);
+        }
+        throw new RuntimeException("There is no type that matches the type " + viewType + " + make sure your using types    correctly");
     }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (!isPositionHeader(position)) {
+            ((ExpenseAdapterHolder)holder).setData(list.get(position -1), c);
+        }
+
+    }
 
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list.size() + 1;
+    }
+
+
+    //added a method that returns viewType for a given position
+    @Override
+    public int getItemViewType(int position) {
+        if (isPositionHeader(position)) {
+            return TYPE_HEADER;
+        }
+        return TYPE_ITEM;
+    }
+
+    //added a method to check if given position is a header
+    private boolean isPositionHeader(int position) {
+        return position == 0;
     }
 }
 
 
-
-class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
+class ExpenseAdapterHolder extends ViewHolder {
     ImageView expense_image;
     TextView name;
     TextView price;
@@ -67,21 +95,29 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
 
 
 
-    public ExpenseAdapterHolder(View itemView) {
+    public ExpenseAdapterHolder(View itemView, ImageView expense_image, TextView name, TextView price, TextView description, CardView cv, RecyclerView rv) {
         super(itemView);
-        expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
-        name= (TextView) itemView.findViewById(R.id.expense_name);
-        price= (TextView) itemView.findViewById(R.id.expense_price);
-        description=(TextView) itemView.findViewById(R.id.expense_owner);
-        // holder.description.setText("drbgbdfvdjvbksd\nujgub\niuguyguy\n");
-         cv = (CardView) itemView.findViewById(R.id.card_expense);
-        //  View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
-        rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
-
-
-
-
+        this.expense_image = expense_image;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.cv = cv;
+        this.rv = rv;
     }
+
+
+        public static ExpenseAdapterHolder newInstance(View itemView) {
+            ImageView expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
+            TextView name= (TextView) itemView.findViewById(R.id.expense_name);
+            TextView price= (TextView) itemView.findViewById(R.id.expense_price);
+            TextView description=(TextView) itemView.findViewById(R.id.expense_owner);
+            // holder.description.setText("drbgbdfvdjvbksd\nujgub\niuguyguy\n");
+            CardView cv = (CardView) itemView.findViewById(R.id.card_expense);
+            //  View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
+            RecyclerView rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
+            return new ExpenseAdapterHolder(itemView, expense_image, name, price, description, cv, rv);
+        }
+
 
 
 
@@ -102,7 +138,6 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
         rv.setLayoutManager(l);
         price.setText(String.format("%.2f €",expense.getPrice()));
         final ExpenseCardAdapter adapter = new ExpenseCardAdapter(context,expense.getPartecipants());
-        rv.setAdapter(adapter);
         rv.setAdapter(adapter);
         rv.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
@@ -152,4 +187,11 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
 
 
 
+}
+
+class ExpenseAdapterHeaderHolder extends ViewHolder {
+
+    public ExpenseAdapterHeaderHolder(View itemView) {
+        super(itemView);
+    }
 }

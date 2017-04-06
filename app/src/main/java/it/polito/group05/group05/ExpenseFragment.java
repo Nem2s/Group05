@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,10 @@ import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
+import it.polito.group05.group05.Utility.HideScrollListener;
+
+import static it.polito.group05.group05.Group_Activity.fab;
+import static it.polito.group05.group05.Group_Activity.toolbar;
 
 
 /**
@@ -30,6 +36,8 @@ import it.polito.group05.group05.Utility.ExpenseAdapter;
  */
 public class ExpenseFragment extends Fragment {
     ExpenseAdapter ea;
+    RecyclerView rv;
+    List<Expense> expenses;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -38,8 +46,12 @@ public class ExpenseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        ea.notifyAll();
-        ea.notifyDataSetChanged();
+        if(ea != null) {
+            expenses.clear();
+            expenses.addAll(Singleton.getInstance().getmCurrentGroup().getExpenses());
+            ea.notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -72,6 +84,20 @@ public class ExpenseFragment extends Fragment {
         }
     }
 
+
+    private static void hideViews() {
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        //int fabBottomMargin = lp.bottomMargin;
+        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    private static void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,10 +105,20 @@ public class ExpenseFragment extends Fragment {
 
         final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
-        RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
+        rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
+        rv.setOnScrollListener(new HideScrollListener() {
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+            @Override
+            public void onShow() {
+                showViews();
+            }
 
+        });
 
-        List<Expense> expenses =new ArrayList<>(currentGroup.getExpenses());
+        expenses =new ArrayList<>(currentGroup.getExpenses());
 
         ea = new ExpenseAdapter(getContext(),expenses);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
@@ -141,4 +177,6 @@ public class ExpenseFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

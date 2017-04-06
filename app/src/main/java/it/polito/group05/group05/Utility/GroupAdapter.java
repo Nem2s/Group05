@@ -55,7 +55,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         /*Picasso
                 .with(context)
                 .load(groups.get(position).getGroupProfile())
@@ -111,6 +111,21 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                     context.startActivity(intent, options.toBundle());
                 AnimUtils.toggleOff(fab, 250, context);
 
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, Group_Activity.class);
+                intent.putExtra("Position", position);
+                Singleton.getInstance().setmCurrentGroup(groups.get(position));
+                String transitionFab = context.getString(R.string.transition_fab);
+                FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
+                Pair <View, String> p1 = Pair.create((View)fab, transitionFab);
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1);
+                context.startActivity(intent, options.toBundle());
             }
         });
 

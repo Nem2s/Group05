@@ -93,7 +93,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-
             <LinearLayout
                 android:id="@+id/et_layout"
                 android:layout_width="match_parent"
@@ -103,8 +102,8 @@
 
                 <com.pkmmte.view.CircularImageView
                     android:id="@+id/iv_new_group"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="8dp"
                     android:src="@drawable/network" />

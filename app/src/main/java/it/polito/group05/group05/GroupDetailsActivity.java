@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -65,17 +66,21 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private TextView tv_chart;
     private FloatingActionButton fab;
     private BarChart chart;
+    private Toolbar toolbar;
+    private TextView tv_group_name;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_header);
+        toolbar = (Toolbar)findViewById(R.id.toolbar_header);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         chart = (BarChart)findViewById(R.id.group_chart);
         tv_chart = (TextView)findViewById(R.id.tv_chart);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
+        tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
+
         RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         customizeToolbar(toolbar);
@@ -172,6 +177,19 @@ public class GroupDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AnimUtils.toggleOff(fab, 250, this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
+            builder
+                    .load(currentGroup.getGroupProfile())
+                    .set(toolbar)
+                    .set(tv_group_name)
+                    .setContext(this)
+                    .anim()
+                    .comeBack(getResources().getColor(R.color.colorPrimary))
+                    .method(ColorUtils.type.VIBRANT)
+                    .brighter(ColorUtils.bright.LIGHT)
+                    .build();
+        }
         super.onBackPressed();
     }
 
@@ -183,6 +201,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     .load(currentGroup.getGroupProfile())
                     .set(toolbar)
                     .set(fab)
+                    .set(tv_group_name)
                     .anim()
                     .method(ColorUtils.type.VIBRANT)
                     .brighter(ColorUtils.bright.LIGHT)
@@ -190,6 +209,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
             c.setImageBitmap(currentGroup.getGroupProfile());
 
     }
+
+
 
 
 }

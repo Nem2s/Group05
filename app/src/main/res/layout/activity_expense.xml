@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.polito.group05.group05.Utility.activity_expense">
-
-
-    <include layout="@layout/content_activity_expense" />
-
+    android:background="@color/colorAccent"
+    tools:context="it.polito.group05.group05.activity_expense">
 
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@drawable/ic_action_add_black"
+        android:layout_gravity="bottom|end"
+        android:transitionName="@string/transition_fab"
+        />
 
+    <include layout="@layout/content_activity_expense" />
 </android.support.design.widget.CoordinatorLayout>
