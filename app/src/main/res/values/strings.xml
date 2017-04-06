@@ -5,6 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="transition_group_image">git</string>
     <string name="transition_fab">tf</string>
+    <string name="transition_toolbar">tt</string>
+    <string name="transition_appbar">ta</string>
+    <string name="transition_text">ttt</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="deadline_name">
@@ -23,6 +26,9 @@
 
     <string name="title_activity_group_">Group_Activity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

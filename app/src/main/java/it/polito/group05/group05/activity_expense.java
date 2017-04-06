@@ -1,13 +1,10 @@
-package it.polito.group05.group05.Utility;
+package it.polito.group05.group05;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,18 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import java.sql.Timestamp;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.io.File;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TreeMap;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
@@ -34,6 +27,8 @@ import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.MemberExpenseAdapter;
 
 public class activity_expense extends AppCompatActivity {
 
@@ -135,6 +130,7 @@ public class activity_expense extends AppCompatActivity {
             }
         });
         cb_proposal = (CheckBox) findViewById(R.id.cb4_proposal);
+        expense_type=TYPE_EXPENSE.MANDATORY;
         cb_proposal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,12 +188,15 @@ public class activity_expense extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Expense e = new Expense(id_expense,expense_owner,expense_name,expense_description,
+
+                Expense e = new Expense(id_expense,expense_owner,expense_name,expense_description==null?"":expense_description,
                             expense_price, expense_type, expense_deadline, expense_timestamp);
+                List<User> l= User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(),e);
+                e.setPartecipants(l);
                 Singleton.getInstance().getmCurrentGroup().addExpense(e);
+                finish();
             }
         });
-
     }
 
     public void description_handler(View v){

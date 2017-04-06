@@ -56,14 +56,15 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final int currentPosition = position;
         final UserContact currentUser = invited.get(position);
-        Picasso
+        /*Picasso
                 .with(context)
                 .load(Integer.parseInt(currentUser.getProfile_image()))
                 .placeholder(R.drawable.default_avatar)
                 .error(R.drawable.ic_visibility_off)
                 .transform(new PicassoRoundTransform())
-                .into(holder.img_profile);
-        holder.button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+                .into(holder.img_profile);*/
+        holder.img_profile.setImageBitmap(currentUser.getProfile_image());
+        holder.button.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorPrimary)));
         if(currentUser.isSelected())
             holder.button.setVisibility(View.VISIBLE);
         else

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-;
+
 
 public class Expense{
     private String id;
@@ -41,7 +41,7 @@ public class Expense{
         this.description= description;
         this.price=price;
         this.type=type;
-
+        this.owner = owner;
         this.deadline= deadline;
         this.timestamp= timestamp;
     }

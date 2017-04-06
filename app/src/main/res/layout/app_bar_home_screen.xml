@@ -12,7 +12,6 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="it.polito.group05.group05.HomeScreen">
 
 
@@ -51,67 +50,105 @@
         android:layout_gravity="top|center_horizontal"
         android:transitionName="@string/transition_fab"
         />
+    <RelativeLayout
+        android:id="@+id/no_groups_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        >
+
+        <ImageView
+            android:id="@+id/iv_no_groups"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:src="@drawable/smartphone"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start sharing your Expenses!"
+            android:layout_below="@id/iv_no_groups"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="16dp"
+            android:textSize="25sp"
+            android:textStyle="italic"
+            android:alpha="0.5"
+            />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/reveal_layout"
+    <LinearLayout
+        android:id="@+id/reveal_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:visibility="invisible">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorAccent"
-            android:visibility="invisible"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:padding="32dp"
-                android:layout_margin="8dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_label_dialog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create a new Group!"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-                />
             <LinearLayout
+                android:id="@+id/et_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
+                android:layout_margin="16dp"
+                android:orientation="horizontal">
+
+                <com.pkmmte.view.CircularImageView
+                    android:id="@+id/iv_new_group"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/network" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/group_name_add"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:met_floatingLabel="normal"
-                    app:met_singleLineEllipsis="true"
                     android:hint="Group Name"
+                    app:met_floatingLabel="highlight"
                     app:met_floatingLabelAnimating="true"
-                    android:layout_margin="16dp"
-                    android:layout_below="@id/tv_label_dialog"
-                    />
+                    app:met_singleLineEllipsis="true" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rv_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:layout_below="@id/et_layout"
+                >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Partecipants: "
-                />
+                android:text="Add Partecipants: " />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/invited_people_list"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:padding="16dp"
-                ></android.support.v7.widget.RecyclerView>
-
-                <Button
-                    android:id="@+id/add_to_group_button"
-                    android:theme="@style/AppTheme.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Create it!"
-                    android:layout_marginTop="32dp"
-                    android:layout_gravity="end"
-                    android:textSize="16sp" />
+                android:layout_height="300dp"
+                android:padding="16dp"/>
             </LinearLayout>
-        </android.support.design.widget.CoordinatorLayout>
-    </io.codetail.widget.RevealFrameLayout>
+            <Button
+                android:id="@+id/add_to_group_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:text="Create it!"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:textSize="16sp"
+                android:theme="@style/AppTheme.Button" />
+        </RelativeLayout>
+    </LinearLayout>
+</io.codetail.widget.RevealFrameLayout>

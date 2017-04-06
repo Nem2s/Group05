@@ -17,8 +17,6 @@ import java.util.List;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 
-import static android.R.id.list;
-
 /**
  * Created by user on 04/04/2017.
  */
@@ -50,7 +48,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
         }
 
         public void setData(User u){
-            image_person.setImageResource(Integer.parseInt(u.getProfile_image()));
+            image_person.setImageBitmap(u.getProfile_image());
             name_person.setText(u.getUser_name());
         }
     }

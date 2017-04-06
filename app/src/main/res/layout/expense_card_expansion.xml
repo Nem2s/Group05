@@ -10,6 +10,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:id="@+id/expense_member_image"
+
         />
 
 

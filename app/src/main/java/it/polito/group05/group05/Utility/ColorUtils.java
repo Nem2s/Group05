@@ -1,8 +1,11 @@
 package it.polito.group05.group05.Utility;
 
+import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +16,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polito.group05.group05.R;
+
 /**
  * Created by Marco on 03/04/2017.
  */
@@ -21,6 +26,12 @@ public class ColorUtils {
 
     public enum type {DOMINANT, VIBRANT, MUTED};
     public enum bright {LIGHT, DARK, NORMAL};
+    public static Context context;
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
 
     private static class PaletteUtils {
         private Bitmap image;
@@ -28,6 +39,9 @@ public class ColorUtils {
         private Palette.Swatch swatch;
         private type type;
         private bright bright;
+        private Context context;
+
+        private int starterColor;
         public boolean anim;
 
         public PaletteUtils() {
@@ -62,6 +76,14 @@ public class ColorUtils {
 
         public void setType(ColorUtils.type type) {
             this.type = type;
+        }
+
+        public int getStarterColor() {
+            return starterColor;
+        }
+
+        public void setStarterColor(int starterColor) {
+            this.starterColor = starterColor;
         }
 
         public void build() {
@@ -124,17 +146,38 @@ public class ColorUtils {
                 for (final View view : elements) {
 
                     if (view instanceof TextView) {
-                        ((TextView) view).setTextColor(swatch.getBodyTextColor());
+                        if(anim) {
+                            ValueAnimator animator;
+                            if(starterColor != 0)
+                                animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(),context.getResources().getColor(R.color.colorPrimaryText));
+                            animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), swatch.getBodyTextColor());
+                            animator.setDuration(1000);
+                            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    ((TextView) view).setTextColor((Integer) valueAnimator.getAnimatedValue());
+                                }
+                            });
+                            animator.start();
+                        }else
+                            ((TextView) view).setTextColor(swatch.getBodyTextColor());
                     }
                     else if(view instanceof Toolbar) {
                         if(anim) {
-                            ValueAnimator animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), swatch.getRgb());
+                            ValueAnimator animator;
+                            if(starterColor != 0) {
+                                animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), view.getSolidColor());
+                            }else
+                                animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), swatch.getRgb());
                             animator.setDuration(1000);
                             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 @Override
                                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                                     view.setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
-                                    ((Toolbar) view).setTitleTextColor(swatch.getBodyTextColor());
+                                    if(starterColor != 0)
+                                        ((Toolbar) view).setTitleTextColor(Color.WHITE);
+                                    else
+                                        ((Toolbar) view).setTitleTextColor(swatch.getBodyTextColor());
                                 }
                             });
                             animator.start();
@@ -145,7 +188,11 @@ public class ColorUtils {
                     }
                     else if (view != null) {
                         if(anim) {
-                            ValueAnimator animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), swatch.getRgb());
+                            ValueAnimator animator;
+                            if(starterColor != 0) {
+                                animator = ValueAnimator.ofObject(new ArgbEvaluator(), swatch.getRgb(), starterColor);
+                            }else
+                                animator = ValueAnimator.ofObject(new ArgbEvaluator(), view.getSolidColor(), swatch.getRgb());
                             animator.setDuration(1000);
                             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 @Override
@@ -194,6 +241,16 @@ public class ColorUtils {
         }
         public PaletteBuilder anim(){
             p.anim = true;
+            return this;
+        }
+
+        public PaletteBuilder comeBack(int color) {
+            p.setStarterColor(color);
+            return this;
+        }
+
+        public PaletteBuilder setContext(Context context) {
+            p.context = context;
             return this;
         }
 

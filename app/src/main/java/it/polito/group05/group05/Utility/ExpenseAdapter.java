@@ -84,10 +84,14 @@ class ExpenseAdapterHolder extends RecyclerView.ViewHolder {
 
     public void setData(final Expense expense, final Context context){
 
+        if(expense.getImage()==null)
+            expense.setImage(String.valueOf(R.drawable.idea));
+
         expense_image.setImageResource(Integer.parseInt(expense.getImage()));
 
         //  holder.expense_image.setImageResource(R.drawable.facebook);
         name.setText(expense.getName());
+
         description.setText("Posted by "+expense.getOwner().getUser_name()+" on "+expense.getTimestamp().toString());
       //  description.setText("kjebanwineineoxowxmoxownxe");
         LinearLayoutManager l = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
