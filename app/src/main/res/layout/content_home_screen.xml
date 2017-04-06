@@ -13,10 +13,11 @@
     tools:context="it.polito.group05.group05.HomeScreen"
     tools:showIn="@layout/app_bar_home_screen">
 
-    <ListView
-        android:id="@+id/groups_lv"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/groups_rv"
+        android:dividerHeight="3dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        ></ListView>
+        android:clipToPadding="false"
+        ></android.support.v7.widget.RecyclerView>
 </RelativeLayout>

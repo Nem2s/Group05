@@ -1,12 +1,18 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.app.Application;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
 
+import com.pkmmte.view.CircularImageView;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
@@ -21,22 +27,21 @@ public class Group {
     private Balance balance;
     private BadgeDrawable badge;
     private String lmTime;
-    private String groupProfile;
-    private int groupColor;
-    private HashMap<String, User> members;
-    private HashMap<String, Expense> expenses;
+    private Bitmap groupProfile;
+    private GroupColor groupColor;
+    private TreeMap<String, User> members;
+    private TreeMap<String, Expense> expenses;
 
-    public Group(String groupName, Balance currentBalance, String groupProfile, String lmTime, int badgeCount) {
+    public Group(String groupName, Balance currentBalance, Bitmap groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
         this.balance = currentBalance;
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new HashMap<String, User>();
+        this.members = new TreeMap<>();
+        this.expenses = new TreeMap<>();
     }
     public Group(){}
-
-
 
     public String getName() {
         return name;
@@ -54,12 +59,12 @@ public class Group {
         this.balance = balance;
     }
 
-    public String getGroupProfile() {
+    public Bitmap getGroupProfile() {
         return groupProfile;
     }
 
-    public void setGroupProfile(String Uri) {
-        groupProfile = Uri;
+    public void setGroupProfile(Bitmap image) {
+        groupProfile = image;
     }
 
     public SpannableString getBadge() {
@@ -74,7 +79,7 @@ public class Group {
              badge = new BadgeDrawable.Builder()
                         .type(BadgeDrawable.TYPE_NUMBER)
                         .badgeColor(Color.parseColor("#FFC107"))
-                        .textSize(40)
+                        .textSize(30)
                         .number(count)
                         .build();
 
@@ -88,29 +93,54 @@ public class Group {
         this.lmTime = lmTime;
     }
 
-    public int getGroupColor() {
+    public GroupColor getGroupColor() {
         return groupColor;
     }
 
-    public void setGroupColor(int groupColor) {
+    public void setGroupColor(GroupColor groupColor) {
         this.groupColor = groupColor;
     }
 
-    public Expense getExpenses(String id) {
+    public Expense getExpense(String id) {
         return expenses.get(id);
+    }
+    public Collection<Expense> getExpenses() {
+        List l = new ArrayList(expenses.values());
+         Collections.sort(l, new Comparator<Expense>() {
+            @Override
+            public int compare(Expense o1, Expense o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        return l;
     }
 
     public void addExpense( Expense e){
-        if(!expenses.containsKey(e.getId())){
+
             expenses.put(e.getId(), e);
-        }
+
+    }
+
+    public Map<String,Double> debtUsers(){
+
+
+        Map<String, Double> f = new TreeMap<String,Double>();
+        for( Expense i : expenses.values())
+            if(i.getType()!=TYPE_EXPENSE.NOTMANDATORY)
+                for(User u : i.getPartecipants())
+                    if(u instanceof User_expense)
+                        f.put(u.getId(),f.get(u.getId())+((User_expense) u).getDebt());
+        return f;
     }
     public User getMember(String id){
         return members.get(id);
     }
+
+
     public List<User> getMembers(){
         ArrayList<User> new_list= new ArrayList<>(members.values());
         return new_list;
+
     }
 
     public void addMember( User u){

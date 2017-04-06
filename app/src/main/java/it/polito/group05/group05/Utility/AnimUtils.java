@@ -14,13 +14,13 @@ import it.polito.group05.group05.R;
 
 public class AnimUtils {
 
-    public static void toggleOn(final FloatingActionButton fab, int duration, Context context){
+    public static void toggleOn(final View v, int duration, Context context){
         final Animation animation = AnimationUtils.loadAnimation(context, R.anim.fab_open);
-        if(fab.getVisibility() == View.INVISIBLE) {
+        if(v.getVisibility() == View.INVISIBLE) {
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    fab.setVisibility(View.VISIBLE);
+                    v.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -35,13 +35,13 @@ public class AnimUtils {
             });
             animation.setStartOffset(duration);
 
-            fab.startAnimation(animation);
+            v.startAnimation(animation);
         }
     }
-    public static void toggleOff(final FloatingActionButton fab, int duration, Context context){
+    public static void toggleOff(final View v, int duration, Context context){
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fab_close);
         animation.setDuration(duration);
-        if(fab.getVisibility() == View.VISIBLE) {
+        if(v.getVisibility() == View.VISIBLE) {
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -50,7 +50,7 @@ public class AnimUtils {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                        fab.setVisibility(View.INVISIBLE);
+                        v.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
@@ -58,8 +58,40 @@ public class AnimUtils {
 
                 }
             });
-            fab.startAnimation(animation);
+            v.startAnimation(animation);
 
+        }
+    }
+
+    public static void bounce(View v, int duration, Context context, boolean infinite) {
+        Animation anim = AnimationUtils.loadAnimation(context, R.anim.bounce);
+        anim.setDuration(duration);
+        MyBounceInterpolator interpolator;
+        if(infinite) {
+            anim.setRepeatCount(Animation.INFINITE);
+            interpolator = new MyBounceInterpolator(0.3, 20);
+        } else
+            interpolator = new MyBounceInterpolator(0.06, 50);
+        anim.setInterpolator(interpolator);
+        v.setVisibility(View.VISIBLE);
+        v.startAnimation(anim);
+
+
+
+    }
+
+    static class MyBounceInterpolator implements android.view.animation.Interpolator {
+        double mAmplitude = 1;
+        double mFrequency = 10;
+
+        MyBounceInterpolator(double amplitude, double frequency) {
+            mAmplitude = amplitude;
+            mFrequency = frequency;
+        }
+
+        public float getInterpolation(float time) {
+            return (float) (-1 * Math.pow(Math.E, -time/ mAmplitude) *
+                    Math.cos(mFrequency * time) + 1);
         }
     }
 }

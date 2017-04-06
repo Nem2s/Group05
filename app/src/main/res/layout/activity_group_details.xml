@@ -13,13 +13,18 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/abl_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:transitionName="@string/transition_appbar"
+        >
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:background="@color/colorPrimaryDark"
+            android:transitionName="@string/transition_toolbar"
+
+
             >
             <LinearLayout
                 android:id="@+id/cv_header_ll"
@@ -34,7 +39,6 @@
                     android:layout_width="58dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/group_profile"
                     android:transitionName="@string/transition_group_image"
                     android:focusableInTouchMode="true"
                     >
@@ -46,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
+                    android:transitionName="@string/transition_text"
                     android:layout_marginRight="16dp"
                     android:orientation="vertical">
 
@@ -53,7 +58,6 @@
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:text="GroupName05"
                         android:textStyle="bold"
                         android:textSize="16sp" />
@@ -74,7 +78,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_below="@id/abl_header"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:fillViewport="true"
         android:scrollbars = "vertical"
         android:scrollbarStyle="outsideInset"
@@ -86,15 +90,17 @@
 <android.support.design.widget.CoordinatorLayout
     android:id="@+id/coord_layout"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="match_parent"
 
     >
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="48dp"
         app:cardCornerRadius="2dp"
+        app:cardPreventCornerOverlap="true"
         >
 
         <LinearLayout
@@ -112,13 +118,15 @@
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="18sp" />
 
-            <ListView
-                android:id="@+id/lv_group_members"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_group_members"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="24dp"
-                android:divider="@null"
-                android:dividerHeight="0dp"></ListView>
+                app:stackFromEnd="true"
+
+                android:paddingBottom="32dp"
+                android:dividerHeight="2dp"
+                />
 
         </LinearLayout>
 
@@ -127,26 +135,25 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_action_add_black"
         app:layout_anchor="@+id/card_view"
-        app:layout_anchorGravity="bottom|right"
+        app:layout_anchorGravity="bottom|right|end"
         android:clickable="true"
         android:visibility="invisible"
-        app:useCompatPadding="true"
         />
 </android.support.design.widget.CoordinatorLayout>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/coord_layout"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="8dp"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_chart"
@@ -161,8 +168,7 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/group_chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
+            android:layout_height="350dp"
             >
         </com.github.mikephil.charting.charts.BarChart>
         </LinearLayout>

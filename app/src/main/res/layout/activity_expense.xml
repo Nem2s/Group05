@@ -1,161 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:context="it.polito.group05.group05.Expense_activity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="40dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/name_exp"
+
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="NAME"
-            android:textSize="16sp" />
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:transitionName="@string/transition_appbar"
 
-        <EditText
-            android:id="@+id/insert1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/edittext_design" />
+            >
 
-        <TextView
-            android:id="@+id/descizione_exp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="DESCRIPTION"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/insert2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/edittext_design" />
-
-        <TextView
-            android:id="@+id/cost_exp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="COST"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <EditText
-                android:id="@+id/insert3"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="@drawable/edittext_design" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.75"
-                android:text="€"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="LINK FILE"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="10dp">
-
-            <EditText
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/edittext_design" />
+                android:paddingTop="8dp"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:transitionName="@string/transition_toolbar"
+
+                >
+                <LinearLayout
+                    android:id="@+id/cv_header_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:transitionName="@string/transition_group_image"
+                    >
+
+                    <com.pkmmte.view.CircularImageView
+                        android:id="@+id/iv_group_image"
+                        android:layout_height="48dp"
+                        android:layout_width="48dp"
+                        android:focusableInTouchMode="true"
+                        android:transitionName="@string/transition_group_image"
+                        >
+
+                    </com.pkmmte.view.CircularImageView>
+
+                    <TextView
+                        android:id="@+id/tv_group_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GroupName05"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
+                        android:textStyle="bold"
+                        android:transitionName="@string/transition_text"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
 
 
-            <ImageButton
-                android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="21dp"
-                android:layout_gravity="right"
-                android:layout_weight="3"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/allega" />
-        </LinearLayout>
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="20dp"
-            android:weightSum="2">
+            android:layout_height="match_parent"
+            android:background="#FFFFFF">
 
-            <TextView
-                android:id="@+id/dead_exp"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="DEADLINE"
-                android:textSize="16sp"/>
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:padding="32dp"
+                android:paddingTop="10dp">
 
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:entries="@array/deadline_name"
-                android:popupBackground="#000000"></Spinner>
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="20dp"
-            android:weightSum="2">
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/et_name_expense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:hint="Name"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:met_baseColor="@color/colorPrimary"
+                        app:met_errorColor="#646464"
+                        app:met_floatingLabel="highlight"
+                        app:met_minCharacters="2" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:layout_weight="1"
-                android:text="DIVIDE INTO"
-                android:textSize="16sp" />
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/et_cost_expense"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:digits="0123456789.,"
+                        android:hint="Cost"
+                        android:inputType="numberDecimal"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:met_baseColor="@color/colorPrimary"
+                        app:met_errorColor="#646464"
+                        app:met_floatingLabel="highlight"
+                        app:met_iconRight="@drawable/euro"
+                        app:met_minCharacters="2" />
 
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:layout_weight="1"
-                android:entries="@array/policy">
-            </Spinner>
 
-        </LinearLayout>
+                    <CheckBox
+                        android:id="@+id/cb1_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:onClick="description_handler"
+                        android:text="Description"
+                        android:textStyle="normal"
+                        app:buttonTint="@color/colorPrimary"
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginTop="40sp"
-            android:text="SAVE"
-            android:background="@drawable/edittext_design"/>
+                        />
+                    <!--content to hide/show -->
+
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/et_description_expense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:inputType="textMultiLine"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:met_baseColor="@color/colorPrimary"
+                        app:met_errorColor="#646464"
+                        app:met_floatingLabel="highlight"
+
+                        app:met_minCharacters="2" />
+
+                    <RelativeLayout
+                        android:id="@+id/rel_lay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+
+                        <CheckBox
+                            android:id="@+id/cb2_addfile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:onClick="file_handler"
+                            android:layout_margin="8dp"
+                            android:text="Add a File"
+                            android:textStyle="normal"
+                            app:buttonTint="@color/colorPrimary" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:visibility="visible"
+                            android:layout_margin="8dp"
+                            android:textAlignment="center"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/clip"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+
+                        <CheckBox
+                            android:id="@+id/cb3_deadline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:onClick="deadline_handler"
+                            android:text="Add a deadline"
+                            android:textStyle="normal"
+                            android:layout_margin="8dp"
+                            app:buttonTint="@color/colorPrimary" />
+
+                        <Spinner
+                            android:id="@+id/spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_margin="8dp"
+                            android:entries="@array/deadline_name"
+                            android:textAlignment="center">
+
+                        </Spinner>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+
+                        <CheckBox
+                            android:id="@+id/cb4_proposal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:clickable="true"
+                            android:onClick="proposal_handler"
+                            android:text="Proposal"
+                            android:layout_margin="8dp"
+                            android:textStyle="normal"
+                            app:buttonTint="@color/colorPrimary" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/cb4_proposal"
+                            android:layout_margin="8dp"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_policy"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="8dp"
+                                android:text="Split"
+                                android:textStyle="normal" />
+
+                            <Spinner
+                                android:id="@+id/spinner_policy"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="8dp"
+                                android:textAlignment="center"></Spinner>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recyclerView_members"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </ScrollView>
 
     </LinearLayout>
-</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_action_add_black"
+        android:layout_gravity="bottom|end"
+        android:transitionName="@string/transition_fab"
+        />
+</android.support.design.widget.CoordinatorLayout>
