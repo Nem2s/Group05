@@ -204,7 +204,7 @@ public class HomeScreen extends AppCompatActivity
                     Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
                 else {
                     Random r = new Random();
-                    int m=2;
+                    int m=21;
                     for(int i = 0; i < m; i++) {
 
                         Expense s = new Expense(String.valueOf(i), newgroup.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));

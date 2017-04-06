@@ -30,10 +30,7 @@ public User(){}
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
     }
-
-    public User() {
-
-    }
+    
 
     public String getId() {
         return id;
