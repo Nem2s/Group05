@@ -3,6 +3,7 @@ package it.polito.group05.group05;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,6 +87,12 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        setSupportActionBar(toolbar);
+        iv_group_image.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
+
         et_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -97,7 +104,7 @@ public class Expense_activity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
+        expense_price = 0.0;
         et_cost.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -107,12 +114,15 @@ public class Expense_activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                expense_price = 0.0;
+
                 if (s != null) {
                     try {
                         expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+
+
+
                     } catch (NumberFormatException e) {
-                        //Error
+                        expense_price=0.0;
                     }
                 }
             }
@@ -180,7 +190,7 @@ public class Expense_activity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-
+/*
         spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view,
@@ -195,7 +205,7 @@ public class Expense_activity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
                 // TODO Auto-generated method stub
             }
-        });
+        });*/
 
 
 
@@ -203,12 +213,17 @@ public class Expense_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Expense e = new Expense(id_expense,expense_owner,expense_name,expense_description==null?"":expense_description,
-                        expense_price, expense_type, expense_deadline, expense_timestamp);
-                List<User> l= User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(),e);
-                e.setPartecipants(l);
-                Singleton.getInstance().getmCurrentGroup().addExpense(e);
-                finish();
+                if(expense_name == null || expense_price==0 ) {
+                    Snackbar.make(view,"Insert values",Snackbar.LENGTH_SHORT).show();}
+                else if(expense_price.toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
+ else {
+                    Expense e = new Expense(id_expense, expense_owner, expense_name, expense_description == null ? "" : expense_description,
+                            expense_price, expense_type, expense_deadline, expense_timestamp);
+                    List<User> l = User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(), e);
+                    e.setPartecipants(l);
+                    Singleton.getInstance().getmCurrentGroup().addExpense(e);
+                    finish();
+                }
             }
         });
     }
@@ -221,6 +236,11 @@ public class Expense_activity extends AppCompatActivity {
         spinner.setVisibility(spinner.isShown() ? View.GONE : View.VISIBLE);
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
 
 

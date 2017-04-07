@@ -6,6 +6,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -86,6 +88,7 @@ public class ColorUtils {
             this.starterColor = starterColor;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
         public void build() {
 
             switch (bright) {
@@ -227,6 +230,7 @@ public class ColorUtils {
             return this;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
         public void build() {
             p.build();
         }

@@ -1,6 +1,8 @@
 package it.polito.group05.group05.Utility;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -141,32 +143,42 @@ class ExpenseAdapterHolder extends ViewHolder {
         rv.setAdapter(adapter);
         rv.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
-    if(expense.getType()== TYPE_EXPENSE.NOTMANDATORY)
+    if(expense.getType()== TYPE_EXPENSE.NOTMANDATORY){
+        price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        if(expense.getDebtUser(Singleton.getInstance().getId())==0.0) {
+            AnimUtils.bounce((View) price, 15000, context, true);
+        }
         price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                View s =LayoutInflater.from(context).inflate(R.layout.layout,null,false);
+                View s = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
                 dialog.setView(s);
                 dialog.setTitle("Choose your amount");
                 dialog.setCanceledOnTouchOutside(true);
-                ((Button)s.findViewById(R.id.expense_done)).setOnClickListener(new View.OnClickListener() {
+                dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        Double d = Double.valueOf(((EditText)dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
-                        d =d*(-1.00);
-                        expense.setDebtUser(Singleton.getInstance().getId(),d);
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
+                        d = d * (-1.00);
+                        expense.setDebtUser(Singleton.getInstance().getId(), d);
                         adapter.notifyDataSetChanged();
-
-                        dialog.cancel();
-
                     }
                 });
-
+                dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog.cancel();
+                    }
+                });
                 dialog.show();
-
             }
+
+
+
+
         });
+    }
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
