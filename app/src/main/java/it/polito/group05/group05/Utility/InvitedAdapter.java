@@ -100,6 +100,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
         CircularImageView img_profile;
         TextView name;
         FloatingActionButton button;
+
         public ViewHolder(View itemView) {
             super(itemView);
             img_profile = (CircularImageView)itemView.findViewById(R.id.cv_invited_image);
