@@ -138,14 +138,16 @@ public class HomeScreen extends AppCompatActivity
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
+        currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
+        Singleton.getInstance().setId(currentUser.getId());
 
-        final List<UserContact> all = new ArrayList<>();
-        final InvitedAdapter invitedAdapter = new InvitedAdapter(all, this);
+        final InvitedAdapter invitedAdapter = new InvitedAdapter(currentUser.getContacts(), this);
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
         rv_invited.setHasFixedSize(true);
         rv_invited.setLayoutManager(invitedManager);
         rv_invited.setAdapter(invitedAdapter);
-        all.addAll(retriveAllPeople());
+        //all.addAll(retriveAllPeople());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
@@ -153,8 +155,6 @@ public class HomeScreen extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        currentUser = new User("q" + 1, "User " + 1, new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
-        Singleton.getInstance().setId(currentUser.getId());
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -194,34 +194,27 @@ public class HomeScreen extends AppCompatActivity
             public void onClick(View view) {
                 newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
                 newgroup.addMember(currentUser);
-                for (UserContact u : all) {
+                Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), newgroup);
+                for (UserContact u : currentUser.getContacts()) {
                     if(u.isSelected()) {
                         newgroup.addMember(u);
                         u.setSelected(false);
                     }
-                }
-                if(newgroup.getMembers().isEmpty() || et_group_name.getText().toString().equals(""))
-                    Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
-                else {
-                    Random r = new Random();
-                    int m=21;
-                    for(int i = 0; i < m; i++) {
 
-                        Expense s = new Expense(String.valueOf(i), newgroup.getMember("q"+0), "Expense"+i, "description"+i, i+1.2, TYPE_EXPENSE.MANDATORY, 2, new java.sql.Timestamp(System.currentTimeMillis()));
-                        s.setImage(String.valueOf(R.drawable.idea));
-                        List<User> l = newgroup.getMembers();
-                        int n = r.nextInt(l.size());
-                        s.setOwner(l.get(n));
-                        l= User_expense.createListUserExpense(newgroup,s);
-                        s.setPartecipants(l);
-                        newgroup.addExpense(s);
-                    }
+                }
+
+                if(newgroup.getMembers().isEmpty() || et_group_name.getText().toString().equals("")) {
+                    Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
+
+                }
+                else {
                     items.add(newgroup);
                     groupAdapter.notifyDataSetChanged();
-                    reinitializeNewGroupView(all);
+                    reinitializeNewGroupView(currentUser.getContacts());
                     no_groups.setVisibility(View.INVISIBLE);
                     onBackPressed();
                 }
+                invitedAdapter.notifyDataSetChanged();
             }
         });
 
@@ -333,10 +326,7 @@ public class HomeScreen extends AppCompatActivity
         }
     }
 
-    private void reinitializeNewGroupView(List<UserContact> users) { ///DA RIVEDERE!
-        rv_invited.scrollToPosition(users.size());
-        rv_invited.scrollToPosition(0);
-        rv_invited.invalidate();
+    private void reinitializeNewGroupView(List<UserContact> users) {
         et_group_name.setText("");
         iv_new_group.setImageResource(R.drawable.network);
     }

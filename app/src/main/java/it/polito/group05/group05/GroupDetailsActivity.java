@@ -12,12 +12,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +73,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private BarChart chart;
     private Toolbar toolbar;
     private TextView tv_group_name;
+    private ImageView expand_cardview;
+    private LinearLayout cardView_layout;
+    private boolean isExpanded;
 
 
     @Override
@@ -80,12 +88,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
         tv_chart = (TextView)findViewById(R.id.tv_chart);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
         tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
-
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
+        expand_cardview = (ImageView)findViewById(R.id.expand_cardview);
+        cardView_layout = (LinearLayout) findViewById(R.id.cardview_layout);
+        isExpanded = false;
+        final RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
         AnimUtils.toggleOn(fab, 500, this);
+
 
         ArrayList<User> users = new ArrayList<>();
         UserAdapter adapter = new UserAdapter(users, this);
@@ -94,6 +105,76 @@ public class GroupDetailsActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
         users.addAll(currentGroup.getMembers());
         populateChart(this, users);
+
+        expand_cardview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(isExpanded) {
+                    collapse(rv);
+                    isExpanded = false;
+                    expand_cardview.setImageResource(R.drawable.ic_expand_more);
+                }
+                else {
+                    expand(rv);
+                    isExpanded = true;
+                    expand_cardview.setImageResource(R.drawable.ic_expand_less);
+                }
+            }
+        });
+    }
+
+
+    public static void expand(final View v) {
+        final int initialHeight= v.getHeight();
+        v.measure(v.getMinimumWidth(), RecyclerView.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+        if(targetHeight < 20)
+            return;
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = (int)((targetHeight * interpolatedTime));
+                if(v.getLayoutParams().height >= initialHeight)
+                    v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight/ v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int currHeight = v.getHeight();
+        final int targetHeight = v.getMinimumHeight();
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+
+                    v.getLayoutParams().height = v.getHeight() <= targetHeight ?  targetHeight : (currHeight - (int)(currHeight * interpolatedTime));
+                if(v.getLayoutParams().height >= targetHeight)
+                     v.requestLayout();
+
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(currHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
     private void populateChart(Context context, ArrayList<User> users) {

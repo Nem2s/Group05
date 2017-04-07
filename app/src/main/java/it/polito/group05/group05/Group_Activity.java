@@ -1,10 +1,14 @@
 package it.polito.group05.group05;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -30,7 +34,7 @@ import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
 
-import it.polito.group05.group05.Utility.activity_expense;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +65,8 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     Context context;
     static Toolbar toolbar;
     static FloatingActionButton fab;
+    static AppBarLayout appBar;
+    static CoordinatorLayout main_content;
     static List<Expense> expenses;
 
 
@@ -71,17 +77,18 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         context = this;
         final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
-        final AppBarLayout appbar = (AppBarLayout)findViewById(R.id.appbar);
+        appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        main_content = (CoordinatorLayout)findViewById(R.id.main_content);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Pair<View, String> p1 = Pair.create((View)appbar, getString(R.string.transition_appbar));
+                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
@@ -139,16 +146,18 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
 
     private static void hideViews() {
-        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
         //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
         //int fabBottomMargin = lp.bottomMargin;
         //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
+
     private static void showViews() {
+
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
         fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+
     }
 
     @Override
@@ -177,6 +186,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 /*
 
     public static class PlaceholderFragment extends Fragment {
