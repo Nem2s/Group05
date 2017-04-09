@@ -27,14 +27,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Expense_activity"
-            android:label="@string/title_activity_expense" android:theme="@style/AppTheme.NoActionBar">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".Group_Activity"/> </activity>
+            android:label="@string/title_activity_expense"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Group_Activity" />
+        </activity>
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_group_"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".NewGroup" android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

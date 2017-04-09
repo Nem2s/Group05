@@ -8,4 +8,6 @@
         <!-- Add this line -->
         <item name="android:windowContentTransitions">true</item>
     </style>
+
+
 </resources>

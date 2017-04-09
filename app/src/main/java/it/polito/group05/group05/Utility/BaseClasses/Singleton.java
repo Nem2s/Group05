@@ -20,6 +20,7 @@ public class Singleton {
     private List<User> mCurrenUsersList;
     private Group mCurrentGroup;
     private String user;
+    private User currentUser;
 
     private Singleton(){
         mCurrentGroups = new ArrayList<>();
@@ -59,9 +60,17 @@ public class Singleton {
         List<UserContact> users = new ArrayList<>();
         for(int i = 0; i < n; i++) {
             UserContact u = new UserContact(""+i, "User " + i, new Balance(r.nextInt(n),r.nextInt(n)),
-                    ImageUtils.getBitmpaFromDrawable(context.getResources().getDrawable( i%2 == 0 ? R.drawable.boy : R.drawable.girl)), g, true, false);
+                    ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable( i%2 == 0 ? R.drawable.boy : R.drawable.girl)), g, true, false);
             users.add(u);
         }
         return users;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }

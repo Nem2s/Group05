@@ -2,13 +2,17 @@ package it.polito.group05.group05;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -68,7 +73,7 @@ import it.polito.group05.group05.Utility.PicassoRoundTransform;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public  static int REQUEST_FROM_NEW_GROUP;
+
     public  static int REQUEST_FROM_NEW_USER;
 
 
@@ -79,13 +84,10 @@ public class HomeScreen extends AppCompatActivity
     NavigationView navigationView;
     LinearLayout ll_header;
     Activity activity;
-    LinearLayout reveal_layout;
-    Button addButton;
-    MaterialEditText et_group_name;
-    RecyclerView rv_invited;
     RecyclerView rv_groups;
-    CircularImageView iv_new_group;
+
     RelativeLayout no_groups;
+    private Context context;
 
 
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
@@ -97,11 +99,8 @@ public class HomeScreen extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
         Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
-        if(bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
-            iv_new_group.setImageBitmap(bitmap);
-            REQUEST_FROM_NEW_GROUP = -1;
-        }
-        else if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
+
+        if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
             cv_user_drawer.setImageBitmap(bitmap);
             drawer.closeDrawers();
             REQUEST_FROM_NEW_USER = -1;
@@ -123,12 +122,7 @@ public class HomeScreen extends AppCompatActivity
 
 
 
-        reveal_layout = (LinearLayout) findViewById(R.id.reveal_layout);
-        rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-        addButton = (Button)findViewById(R.id.add_to_group_button);
-        et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
-        iv_new_group = (CircularImageView) findViewById(R.id.iv_new_group);
-        addButton.setVisibility(View.INVISIBLE);
+        context = this;
         no_groups = (RelativeLayout)findViewById(R.id.no_groups_layout);
         activity = this;
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
@@ -141,16 +135,9 @@ public class HomeScreen extends AppCompatActivity
         currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
         Singleton.getInstance().setId(currentUser.getId());
+        Singleton.getInstance().setCurrentUser(currentUser);
 
-        final InvitedAdapter invitedAdapter = new InvitedAdapter(currentUser.getContacts(), this);
-        LinearLayoutManager invitedManager = new LinearLayoutManager(this);
-        rv_invited.setHasFixedSize(true);
-        rv_invited.setLayoutManager(invitedManager);
-        rv_invited.setAdapter(invitedAdapter);
-        //all.addAll(retriveAllPeople());
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
-                invitedManager.getOrientation());
-        rv_invited.addItemDecoration(dividerItemDecoration);
+
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -158,6 +145,9 @@ public class HomeScreen extends AppCompatActivity
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fab.setTransitionName(getResources().getString(R.string.transition_fab));
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,66 +157,20 @@ public class HomeScreen extends AppCompatActivity
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation(activity, p1);
                 startActivity(intent,options.toBundle());*/
-                int cx = (fab.getLeft() + fab.getRight())/2;
-                int cy = (fab.getBottom() + fab.getTop())/2;
-                int dx = Math.max(cx, fab.getWidth() - cx);
-                int dy = Math.max(cy, fab.getHeight() - cy);
-                float radius = (float) Math.hypot(dx, dy);
-                toogleCreateGroupView(cx, cy, radius, reveal_layout, 350);
-
+                Intent i = new Intent(getApplicationContext(), NewGroup.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    fab.setTransitionName(getResources().getString(R.string.transition_appbar));
+                    Pair<View, String> p = Pair.create((View)fab, getResources().getString(R.string.transition_appbar));
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p);
+                    startActivity(i, options.toBundle());
+                } else
+                    startActivity(i);
 
 
             }
         });
 
-        iv_new_group.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImagePicker.pickImage(activity, "Select Image:");
-                REQUEST_FROM_NEW_GROUP = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-
-            }
-        });
-
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
-                newgroup.addMember(currentUser);
-                Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), newgroup);
-                for (UserContact u : currentUser.getContacts()) {
-                    if(u.isSelected()) {
-                        newgroup.addMember(u);
-                        u.setSelected(false);
-                    }
-
-                }
-
-                if(newgroup.getMembers().isEmpty() || et_group_name.getText().toString().equals("")) {
-                    Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
-
-                }
-                else {
-                    items.add(newgroup);
-                    groupAdapter.notifyDataSetChanged();
-                    reinitializeNewGroupView(currentUser.getContacts());
-                    no_groups.setVisibility(View.INVISIBLE);
-                    onBackPressed();
-                }
-                invitedAdapter.notifyDataSetChanged();
-            }
-        });
-
-        KeyboardVisibilityEvent.setEventListener(this, new KeyboardVisibilityEventListener() {
-            @Override
-            public void onVisibilityChanged(boolean isOpen) {
-                if(isOpen)
-                    addButton.setVisibility(View.INVISIBLE);
-                else
-                    addButton.setVisibility(View.VISIBLE);
-            }
-        });
 
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -326,11 +270,6 @@ public class HomeScreen extends AppCompatActivity
         }
     }
 
-    private void reinitializeNewGroupView(List<UserContact> users) {
-        et_group_name.setText("");
-        iv_new_group.setImageResource(R.drawable.network);
-    }
-
     private List<UserContact> retriveAllPeople() {
         List<UserContact> res = new ArrayList<>();
         for(int i = 0; i < 76; i++) {
@@ -349,9 +288,7 @@ public class HomeScreen extends AppCompatActivity
 
         if (revealLayout.getVisibility() == View.INVISIBLE) {
             fab.setEnabled(false);
-            revealLayout.setVisibility(View.VISIBLE);
             ((GroupAdapter)rv_groups.getAdapter()).isEnabled = false;
-            AnimUtils.bounce((View)addButton,2000, this, false);
             animator.start();
         } else {
             animator_reverse.addListener(new Animator.AnimatorListener() {
@@ -362,10 +299,8 @@ public class HomeScreen extends AppCompatActivity
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
-                    revealLayout.setVisibility(View.INVISIBLE);
                     fab.setEnabled(true);
                     ((GroupAdapter)rv_groups.getAdapter()).isEnabled = true;
-                    addButton.setVisibility(View.INVISIBLE);
 
                 }
 
@@ -393,6 +328,7 @@ public class HomeScreen extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        rv_groups.getAdapter().notifyDataSetChanged();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);
     }
@@ -400,15 +336,6 @@ public class HomeScreen extends AppCompatActivity
     @Override
     public void onBackPressed() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if(reveal_layout.getVisibility() == View.VISIBLE) {
-            int cx = (fab.getLeft() + fab.getRight())/2;
-            int cy = (fab.getBottom() + fab.getTop())/2;
-            int dx = Math.max(cx, fab.getWidth() - cx);
-            int dy = Math.max(cy, fab.getHeight() - cy);
-            float radius = (float) Math.hypot(dx, dy);
-            toogleCreateGroupView(cx, cy, radius, reveal_layout, 350);
-            return;
-        }
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

@@ -26,6 +26,16 @@ import it.polito.group05.group05.R;
 
 public class ColorUtils {
 
+    public static int returnDarkerColor(int color){
+        float ratio = 1.0f - 0.2f;
+        int a = (color >> 24) & 0xFF;
+        int r = (int) (((color >> 16) & 0xFF) * ratio);
+        int g = (int) (((color >> 8) & 0xFF) * ratio);
+        int b = (int) ((color & 0xFF) * ratio);
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     public enum type {DOMINANT, VIBRANT, MUTED};
     public enum bright {LIGHT, DARK, NORMAL};
     public static Context context;
