@@ -51,6 +51,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.setData(member.get(position));
+       /*
         holder.costo_person.setText(String.valueOf(member.get(position).getBalance().getDebit()));
         holder.costo_person.addTextChangedListener(new TextWatcher() {
             @Override
@@ -66,7 +67,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
             public void afterTextChanged(Editable s) {
             }
         });
-
+*/
     }
 
     @Override
