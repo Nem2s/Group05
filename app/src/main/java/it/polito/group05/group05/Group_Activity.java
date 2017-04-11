@@ -123,7 +123,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(getBaseContext(), Expense_activity.class);
+                Intent i = new Intent(getBaseContext(), Expense_activity_Vertical_stepper.class);
                 startActivity(i);
                 
             }

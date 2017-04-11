@@ -27,11 +27,18 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Expense_activity"
-            android:label="@string/title_activity_expense" android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/title_activity_expense"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_group_"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Expense_activity_Vertical_stepper"
+            android:label="@string/title_activity_expense__vertical_stepper"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>
