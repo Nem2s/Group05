@@ -2,9 +2,6 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-
-import com.github.lzyzsd.randomcolor.RandomColor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -101,7 +98,7 @@ public User(){}
     public int generateRandomColor() {
 
         // This is the base color which will be mixed with the generated one
-        return new RandomColor().randomColor();
+        return 3;
 
     }
 

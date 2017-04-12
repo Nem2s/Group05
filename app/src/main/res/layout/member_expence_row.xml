@@ -23,6 +23,8 @@
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:layout_margin="8dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
                 android:transitionName="@string/transition_group_image">
 
             </com.pkmmte.view.CircularImageView>

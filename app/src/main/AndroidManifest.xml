@@ -37,7 +37,14 @@
             android:name=".Group_Activity"
             android:label="@string/title_activity_group_"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NewGroup" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".NewGroup"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".AddMember" android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GroupDetailsActivity" />
+        </activity>
     </application>
 
 </manifest>

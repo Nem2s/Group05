@@ -41,10 +41,6 @@ import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -152,20 +148,9 @@ public class HomeScreen extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                /*Intent intent = new Intent(HomeScreen.this);
-                Pair<View, String> p1 = Pair.create((View)fab, getResources().getString(R.string.transition_fab));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(activity, p1);
-                startActivity(intent,options.toBundle());*/
                 Intent i = new Intent(getApplicationContext(), NewGroup.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    fab.setTransitionName(getResources().getString(R.string.transition_appbar));
-                    Pair<View, String> p = Pair.create((View)fab, getResources().getString(R.string.transition_appbar));
-                    ActivityOptionsCompat options =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p);
-                    startActivity(i, options.toBundle());
-                } else
-                    startActivity(i);
+                AnimUtils.toggleOff(fab, 250, context);
+                startActivity(i);
 
 
             }
@@ -188,7 +173,7 @@ public class HomeScreen extends AppCompatActivity
                 builder
                         .load(((BitmapDrawable)cv_user_drawer.getDrawable()).getBitmap())
                         .brighter(ColorUtils.bright.DARK)
-                        .method(ColorUtils.type.MUTED)
+                        .method(ColorUtils.type.VIBRANT)
                         .set(ll_header)
                         .set(tv_username)
                         .set(tv_email)
@@ -277,45 +262,6 @@ public class HomeScreen extends AppCompatActivity
             res.add(u);
         }
         return res;
-    }
-
-    public void toogleCreateGroupView (int cx, int cy, float radius, final View revealLayout, int duration) {
-        Animator animator =
-                ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, 0, radius);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(duration);
-        Animator animator_reverse = ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, radius, 0);
-
-        if (revealLayout.getVisibility() == View.INVISIBLE) {
-            fab.setEnabled(false);
-            ((GroupAdapter)rv_groups.getAdapter()).isEnabled = false;
-            animator.start();
-        } else {
-            animator_reverse.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    fab.setEnabled(true);
-                    ((GroupAdapter)rv_groups.getAdapter()).isEnabled = true;
-
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            animator_reverse.start();
-        }
     }
 
     private void initDrawer() {

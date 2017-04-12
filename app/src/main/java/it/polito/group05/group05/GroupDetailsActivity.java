@@ -3,6 +3,7 @@ package it.polito.group05.group05;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -91,6 +92,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private ImageView expand_cardview;
     private LinearLayout cardView_layout;
     private boolean isExpanded;
+    CircularImageView cv_group;
     RecyclerView rv_users_under_chart;
     Entry entry;
     Highlight highlighted;
@@ -107,17 +109,18 @@ public class GroupDetailsActivity extends AppCompatActivity {
         tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
         expand_cardview = (ImageView)findViewById(R.id.expand_cardview);
         cardView_layout = (LinearLayout) findViewById(R.id.cardview_layout);
+        cv_group = (CircularImageView)findViewById(R.id.iv_group_image);
         isExpanded = false;
 
         final RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        customizeToolbar(toolbar);
+        //customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
         tv_chart.setTextColor(toolbar.getSolidColor());
         partecipants.setTextColor(toolbar.getSolidColor());
         AnimUtils.toggleOn(fab, 500, this);
-
-
+        tv_group_name.setText(currentGroup.getName());
+        cv_group.setImageBitmap(currentGroup.getGroupProfile());
         ArrayList<User> users = new ArrayList<>();
         UserAdapter adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
@@ -143,6 +146,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), AddMember.class);
+                startActivity(i);
+            }
+        });
+
     }
 
 

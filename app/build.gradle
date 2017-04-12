@@ -42,7 +42,6 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.github.Mariovc:ImagePicker:1.0.5'
     compile 'com.jaredrummler:material-spinner:1.1.0'
-    compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
-    compile 'com.github.lzyzsd.randomcolor:library:1.0.0'
+    compile 'com.github.arimorty:floatingsearchview:2.0.3'
     testCompile 'junit:junit:4.12'
 }
