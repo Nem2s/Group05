@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -71,6 +71,7 @@ public class Expense_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_v2);
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
+        et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
         //iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
@@ -175,25 +176,26 @@ public class Expense_activity extends AppCompatActivity {
         List<String> array= new ArrayList<>();
         array.add("Equal part");
         array.add("Unequal part");
-        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                array);
+        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_policy.setAdapter(dataAdapter);
-
-        MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers());
+        final MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers(),
+                new MemberExpenseAdapter.OnItemClickListener() {
+                    @Override
+                    public void OnItemClicked(User position) {
+                        //et_name.setText("CIAO" + position.getId().toString());
+                        //et_cost.setText("0.0");
+                    }
+                });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
-        //   recyclerView.setItemViewCacheSize(Singleton.getInstance().getmCurrentGroup().getMembers().size());
-
         id_owner= Singleton.getInstance().getId();
         expense_owner = Singleton.getInstance().getmCurrentGroup().getMember(id_owner);
         id_expense=String.valueOf( Singleton.getInstance().getmCurrentGroup().getExpenses().size() +1) ;
-
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-
         spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view,
