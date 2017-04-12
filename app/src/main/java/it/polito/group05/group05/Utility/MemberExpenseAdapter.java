@@ -56,6 +56,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
             member.get(position).setSelection();
             }
         });
+        holder.costo_person.invalidate();
         holder.costo_person.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

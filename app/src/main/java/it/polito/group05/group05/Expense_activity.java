@@ -187,6 +187,7 @@ public class Expense_activity extends AppCompatActivity {
                         //et_cost.setText("0.0");
                     }
                 });
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
@@ -224,11 +225,9 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
                 if(expense_name == null || expense_price==0 ) {
                     Snackbar.make(view,"Insert values",Snackbar.LENGTH_SHORT).show();}
                 else if(expense_price.toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
