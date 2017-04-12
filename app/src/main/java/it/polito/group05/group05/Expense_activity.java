@@ -126,6 +126,7 @@ public class Expense_activity extends AppCompatActivity {
                 if (s != null) {
                     try {
                         expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+                        et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
                     } catch (NumberFormatException e) {
                         expense_price=0.0;
