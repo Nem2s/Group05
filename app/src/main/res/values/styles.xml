@@ -65,8 +65,6 @@
 
 
 
-
-
     <style name="chat_timings">
 
         <item name="android:layout_width">wrap_content</item>

@@ -20,6 +20,7 @@ public class User {
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
+    private boolean isSelected;
     private List<UserContact> contacts;
 public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
@@ -32,6 +33,7 @@ public User(){}
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
+        isSelected = false;
     }
     
 
@@ -125,4 +127,15 @@ public User(){}
     public void addContact(UserContact user) {
         contacts.add(user);
     }
+
+    public void setSelection(){
+        isSelected = true;
+    }
+    public boolean getSelection(){
+        return  isSelected;
+    }
+
 }
+
+
+

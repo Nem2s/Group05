@@ -5,16 +5,19 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,16 +41,18 @@ public class Expense_activity extends AppCompatActivity {
 
 
     private MaterialEditText et_name, et_description, et_cost;
-    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal;
+    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
     private TextView tv_policy, tv_members;
-    private Spinner spinner, spinner_policy;
+    private Spinner  spinner_deadline, spinner_policy;
     private Button addExpense;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
     private CircularImageView iv_group_image;
+    private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
+    private ImageView image_network;
 
     private String expense_name;
     private String expense_description;
@@ -65,21 +70,25 @@ public class Expense_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expense);
+        setContentView(R.layout.activity_expense_v2);
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
+        et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
-        iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
-        iv_group_image.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+        //iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
+        image_network = (ImageView) findViewById(R.id.image_network);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
+        cb_details= (CheckBox) findViewById(R.id.more_details);
+        cardView = (CardView) findViewById(R.id.card_view2_toshow);
+        cardView.setVisibility(View.GONE);
         cb_description = (CheckBox) findViewById(R.id.cb1_description);
         et_description = (MaterialEditText) findViewById(R.id.et_description_expense);
         et_description.setVisibility(View.GONE);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         cb_adddeadline = (CheckBox) findViewById(R.id.cb3_deadline);
-        spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setVisibility(View.GONE);
+        spinner_deadline = (Spinner) findViewById(R.id.spinner);
+        spinner_deadline.setVisibility(View.GONE);
         cb_proposal = (CheckBox) findViewById(R.id.cb4_proposal);
         expense_type=TYPE_EXPENSE.MANDATORY;
         tv_policy= (TextView) findViewById(R.id.tv_policy);
@@ -118,8 +127,7 @@ public class Expense_activity extends AppCompatActivity {
                 if (s != null) {
                     try {
                         expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-
-
+                        et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
                     } catch (NumberFormatException e) {
                         expense_price=0.0;
@@ -139,7 +147,7 @@ public class Expense_activity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner_deadline.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 expense_deadline= 12 + 12*position; //Measured in hours
@@ -169,28 +177,27 @@ public class Expense_activity extends AppCompatActivity {
         List<String> array= new ArrayList<>();
         array.add("Equal part");
         array.add("Unequal part");
-        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                array);
+        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_policy.setAdapter(dataAdapter);
-
-
-
-        MemberExpenseAdapter adapter= new MemberExpenseAdapter(this,
-                Singleton.getInstance().getmCurrentGroup().getMembers());
+        final MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers(),
+                new MemberExpenseAdapter.OnItemClickListener() {
+                    @Override
+                    public void OnItemClicked(User position) {
+                        //et_name.setText("CIAO" + position.getId().toString());
+                        //et_cost.setText("0.0");
+                    }
+                });
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
-     //   recyclerView.setItemViewCacheSize(Singleton.getInstance().getmCurrentGroup().getMembers().size());
-
         id_owner= Singleton.getInstance().getId();
         expense_owner = Singleton.getInstance().getmCurrentGroup().getMember(id_owner);
         id_expense=String.valueOf( Singleton.getInstance().getmCurrentGroup().getExpenses().size() +1) ;
-
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-/*
         spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view,
@@ -205,18 +212,27 @@ public class Expense_activity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
                 // TODO Auto-generated method stub
             }
-        });*/
+        });
 
-
+        cb_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               if(cb_details.isChecked()){
+                   cardView.setVisibility(View.VISIBLE);
+               }
+               else {
+                   cardView.setVisibility(View.GONE);
+               }
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
                 if(expense_name == null || expense_price==0 ) {
                     Snackbar.make(view,"Insert values",Snackbar.LENGTH_SHORT).show();}
                 else if(expense_price.toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
- else {
+                else {
                     Expense e = new Expense(id_expense, expense_owner, expense_name, expense_description == null ? "" : expense_description,
                             expense_price, expense_type, expense_deadline, expense_timestamp);
                     List<User> l = User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(), e);
@@ -233,7 +249,7 @@ public class Expense_activity extends AppCompatActivity {
     }
 
     public void deadline_handler(View v){
-        spinner.setVisibility(spinner.isShown() ? View.GONE : View.VISIBLE);
+        spinner_deadline.setVisibility(spinner_deadline.isShown() ? View.GONE : View.VISIBLE);
     }
 
     @Override

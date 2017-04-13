@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:layout_marginTop="3dp"
+            android:background="?android:attr/selectableItemBackground"
             android:orientation="horizontal">
 
 
@@ -74,12 +75,11 @@
                     android:layout_height="20dp"
                     android:inputType="numberDecimal"
                     android:textSize="13sp"
+                    android:visibility="visible"
+                    android:textColor="#000000"
                     android:layout_centerInParent="true"
                     android:layout_toLeftOf="@+id/euro_member"
-
                     />
-
-
             </RelativeLayout>
 
         </LinearLayout>

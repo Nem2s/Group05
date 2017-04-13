@@ -11,34 +11,33 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Balance;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-
-import static it.polito.group05.group05.Utility.MemberExpenseAdapter.ViewHolder.*;
 
 /**
  * Created by user on 04/04/2017.
  */
 
 public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdapter.ViewHolder> {
+
+    public interface OnItemClickListener{
+        void OnItemClicked(User position);
+    }
+
+    private final OnItemClickListener listener;
     private List<User> member;
+    private Double cost_procapite;
     LayoutInflater lin;
     Context c;
 
-    public MemberExpenseAdapter(Context c, List<User> member) {
+    public MemberExpenseAdapter(Context c, List<User> member, OnItemClickListener listener) {
         lin = LayoutInflater.from(c);
         this.member = member;
         this.c = c;
-
+        this.listener= listener;
+        cost_procapite= 0.0;
     }
 
     @Override
@@ -50,23 +49,34 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.setData(member.get(position));
-        holder.costo_person.setText(String.valueOf(member.get(position).getBalance().getDebit()));
-        holder.costo_person.addTextChangedListener(new TextWatcher() {
+        holder.setData(member.get(position), listener);
+        holder.include_person.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            member.get(position).setSelection();
+            }
+        });
+        holder.costo_person.invalidate();
+        holder.costo_person.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-               holder.costo_person.setText(s.toString());
             }
-
             @Override
             public void afterTextChanged(Editable s) {
+                if(s != null){
+                  try{
+                    cost_procapite =Double.parseDouble(s.toString().replace(',', '.'));
+                    holder.costo_person.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                    }
+                    catch (NumberFormatException e){
+                        cost_procapite = 0.0;
+                    }
+                }
             }
         });
-
     }
 
     @Override
@@ -75,10 +85,9 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     }
 
 
+
     //VIEWHOLDER CLASS
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public CircularImageView image_person;
         public TextView name_person;
         public CheckBox include_person;
@@ -96,9 +105,16 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
         }
 
 
-        public void setData(User u) {
+        public void setData(final User u, final OnItemClickListener listener) {
             image_person.setImageBitmap(u.getProfile_image());
             name_person.setText(u.getUser_name());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.OnItemClicked(u);
+                }
+            });
         }
+
     }
 }
