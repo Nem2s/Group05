@@ -1,6 +1,11 @@
 package it.polito.group05.group05;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,8 +16,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,10 +27,13 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -36,6 +46,8 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.MemberExpenseAdapter;
 
+import static it.polito.group05.group05.Utility.ColorUtils.context;
+
 public class Expense_activity extends AppCompatActivity {
 
 
@@ -43,15 +55,18 @@ public class Expense_activity extends AppCompatActivity {
     private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
     private TextView tv_policy, tv_members;
     private Spinner  spinner_deadline, spinner_policy;
-    private Button addExpense;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
-    private CircularImageView iv_group_image;
     private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network;
+    private ParcelFileDescriptor mInputPFD;
+    private Intent intent_file;
+    private FileDescriptor fd;
+    private Uri returnUri;
+    private boolean newFile = false;
 
     private String expense_name;
     private String expense_description;
@@ -63,6 +78,7 @@ public class Expense_activity extends AppCompatActivity {
     private User expense_owner;
     private String id_owner;
     private String id_expense;
+
 
 
 
@@ -167,9 +183,12 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-        cb_addfile.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v){
+        cb_addfile.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                startActivityForResult(intent,0);
             }
         });
 
@@ -234,6 +253,9 @@ public class Expense_activity extends AppCompatActivity {
                 else {
                     Expense e = new Expense(id_expense, expense_owner, expense_name, expense_description == null ? "" : expense_description,
                             expense_price, expense_type, expense_deadline, expense_timestamp);
+                    if(newFile){
+                        e.addFile(returnUri);
+                        e.setFileTrue();}
                     List<User> l = User_expense.createListUserExpense(Singleton.getInstance().getmCurrentGroup(), e);
                     e.setPartecipants(l);
                     Singleton.getInstance().getmCurrentGroup().addExpense(e);
@@ -257,8 +279,24 @@ public class Expense_activity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        } else {
+            returnUri = data.getData();
+            newFile= true;
+            try {
+                mInputPFD = getContentResolver().openFileDescriptor(returnUri, "r");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.e("MainActivity", "File not found.");
+                return;
+            }
+            fd = mInputPFD.getFileDescriptor();
+        }
+        }
+    }
 
 
 
-
-}

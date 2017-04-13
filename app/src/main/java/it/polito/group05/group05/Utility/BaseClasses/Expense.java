@@ -1,5 +1,7 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.net.Uri;
+
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -15,21 +17,25 @@ public class Expense{
     private String description;
     private Double price;
     private TYPE_EXPENSE type;
+    private Uri uri_file;
     private File file;
-    private int deadline;           //days
+    private int deadline;//days
     private Timestamp timestamp;
     private TreeMap<String, User> lista_partecipanti=new TreeMap<>();
     private String image;
+    private boolean hasFile = false;
 
 
-    public Expense(String id, User owner, String name, String description, Double price, TYPE_EXPENSE type, File file, int deadline,
+    public Expense(String id, User owner, String name, String description, Double price,
+                   TYPE_EXPENSE type, Uri uri_file, File file, int deadline,
                    Timestamp timestamp){
         this.id = id;
         this.name= name;
         this.description= description;
         this.price=price;
         this.type=type;
-        this.file=file;
+        this.uri_file=uri_file;
+        this.file = file;
         this.deadline= deadline;
 
         this.timestamp= timestamp;
@@ -102,10 +108,22 @@ public class Expense{
     public File getFile() {
         return file;
     }
-
-    public void setFile(File file) {
-        this.file = file;
+    public Uri getUri_file(){
+        return  uri_file;
     }
+
+    public void addFile( Uri u){
+        file = new File(u.getPath());
+        uri_file = u;
+    }
+
+    public void setFileTrue(){
+        hasFile = true;
+    }
+    public boolean getFilePresence(){
+        return hasFile;
+    }
+
 
     public int getDeadline() {
         return deadline;

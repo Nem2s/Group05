@@ -3,6 +3,8 @@ package it.polito.group05.group05.Utility.BaseClasses;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.github.lzyzsd.randomcolor.RandomColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +25,6 @@ public class User {
     private boolean isCardEnabled;
     private boolean isSelected;
     private List<UserContact> contacts;
-
 public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
@@ -100,19 +101,9 @@ public User(){}
     }
 
     public int generateRandomColor() {
-        Random mRandom = new Random();
+
         // This is the base color which will be mixed with the generated one
-        final int baseColor = Color.WHITE;
-
-        final int baseRed = Color.red(baseColor);
-        final int baseGreen = Color.green(baseColor);
-        final int baseBlue = Color.blue(baseColor);
-
-        final int red = (baseRed + mRandom.nextInt(256)) / 2;
-        final int green = (baseGreen + mRandom.nextInt(256)) / 2;
-        final int blue = (baseBlue + mRandom.nextInt(256)) / 2;
-
-        return Color.rgb(red, green, blue);
+        return new RandomColor().randomColor();
 
     }
 

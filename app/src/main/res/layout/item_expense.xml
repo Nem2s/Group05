@@ -21,7 +21,7 @@
     android:orientation="horizontal"
     android:weightSum="1">
 
-    <com.pkmmte.view.CircularImageView
+    <ImageView
         android:id="@+id/expense_image"
         android:layout_height="48dp"
         android:layout_width="48dp"
@@ -51,6 +51,7 @@
         android:layout_alignParentEnd="true"
         android:gravity="right"
 
+
         />
 </RelativeLayout>
 
@@ -73,6 +74,20 @@
             android:gravity="right"
 
             />
+        <TextView
+            android:id="@+id/expense_file"
+            android:textStyle="normal"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:gravity="left"
+
+            />
+
            <!--
         <TextView
             android:layout_width="match_parent"

@@ -15,27 +15,6 @@
     android:id="@+id/expense_amount_not_mandatory"
 
     />
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:weightSum="2">
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="1"
-        android:textSize="10sp"
-        android:text="Abort"
-        android:id="@+id/expense_abort"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="16dp"
-        android:text="Done"
-        android:textSize="10sp"
-        android:layout_weight="1"
-        android:id="@+id/expense_done"/>
-</LinearLayout>
 
 
 

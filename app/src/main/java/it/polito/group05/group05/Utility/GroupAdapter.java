@@ -3,14 +3,18 @@ package it.polito.group05.group05.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -97,9 +101,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 // Define the view that the animation will start from
                 View groupImage = view.findViewById(R.id.iv_group_image);
                 FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
+                TextView tv = (TextView)((Activity)context).findViewById(R.id.tv_group_name);
                 Pair <View, String> p1 = Pair.create((View)groupImage, transitionImage);
+                Pair<View, String> p2 = Pair.create((View)tv, context.getString(R.string.transition_text));
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1);
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2);
                 //Start the Intent
                 Singleton.getInstance().setmCurrentGroup(groups.get(currentPosition));
                 //ActivityCompat.startActivity(context, intent, options.toBundle());
@@ -118,9 +124,30 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 Singleton.getInstance().setmCurrentGroup(groups.get(position));
                 String transitionFab = context.getString(R.string.transition_fab);
                 FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
-                Pair <View, String> p1 = Pair.create((View)fab, transitionFab);
+                Toolbar toolbar = (Toolbar)((Activity)context).findViewById(R.id.toolbar);
+                AppBarLayout appBar = (AppBarLayout)((Activity)context).findViewById(R.id.appbar);
+                CircularImageView cv = (CircularImageView)((Activity)context).findViewById(R.id.iv_group_image);
+                TextView tv = (TextView)((Activity)context).findViewById(R.id.tv_group_name);
+                TextView title = null;
+                for (int i = 0; i < toolbar.getChildCount(); ++i) {
+                    View child = toolbar.getChildAt(i);
+
+                    // assuming that the title is the first instance of TextView
+                    // you can also check if the title string matches
+
+                    if (child instanceof TextView) {
+                        title = (TextView) child;
+                        break;
+                    }
+                }
+                Pair <View, String> p0 = Pair.create((View)fab, transitionFab);
+                Pair<View, String> p1 = Pair.create((View)appBar,context.getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, context.getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)cv, context.getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, context.getString(R.string.transition_text));
+                Pair<View, String> p5 = Pair.create((View)title, context.getString(R.string.transition_text));
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1);
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p0, p1, p2, p3, p4, p5);
                 context.startActivity(intent, options.toBundle());
             }
         });

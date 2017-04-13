@@ -44,5 +44,6 @@ dependencies {
     compile 'com.github.Mariovc:ImagePicker:1.0.5'
     compile 'com.jaredrummler:material-spinner:1.1.0'
     compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
+    compile 'com.github.lzyzsd.randomcolor:library:1.0.0'
     testCompile 'junit:junit:4.12'
 }
