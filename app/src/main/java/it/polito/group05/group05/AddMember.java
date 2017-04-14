@@ -5,8 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -26,18 +26,20 @@ import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
-import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.ColorUtils;
+import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 
 public class AddMember extends AppCompatActivity {
@@ -56,6 +58,7 @@ public class AddMember extends AppCompatActivity {
     private final User currentUser = Singleton.getInstance().getCurrentUser();
     private InvitedAdapter invitedAdapter;
     private Context context;
+    private List<UserContact> contacts;
 
     final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
 
@@ -78,17 +81,23 @@ public class AddMember extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        List<UserContact> contacts = new ArrayList<>();
+        contacts = new ArrayList<>();
 
         /**DA AGGIUSTARE **/
-        for (UserContact u :
-                currentUser.getContacts()) {
-            if(!currentGroup.getMembers().contains(u))
-                contacts.add(u);
+        for (UserContact u : currentUser.getContacts()) {
+            boolean found = false;
+            for (User user : currentGroup.getMembers()) {
+                if (user.getUser_name().equals(u.getUser_name())) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){ contacts.add(u);}
+
         }
 
 
-        invitedAdapter = new InvitedAdapter(currentUser.getContacts(), this);
+        invitedAdapter = new InvitedAdapter(contacts, this);
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
         rv_invited.setHasFixedSize(true);
@@ -98,25 +107,32 @@ public class AddMember extends AppCompatActivity {
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
 
+    }
 
+
+
+    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
+        if(event.isValid())
+            mConfirmItem.setVisible(true);
+        else
+            mConfirmItem.setVisible(false);
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
-    public void onBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
-            builder
-                    .load(currentGroup.getGroupProfile())
-                    .set(mToolbar)
-                    .set(tv_group_name)
-                    .setContext(this)
-                    .anim()
-                    .comeBack(getResources().getColor(R.color.colorPrimary))
-                    .method(ColorUtils.type.VIBRANT)
-                    .brighter(ColorUtils.bright.LIGHT)
-                    .build();
-        }
-        super.onBackPressed();
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -124,21 +140,18 @@ public class AddMember extends AppCompatActivity {
         int id = item.getItemId();
         if(id == R.id.m_confirm) {
             List<UserContact> newMembers = new ArrayList<>();
-            for (UserContact u : currentUser.getContacts()) {
+            for (UserContact u : contacts) {
                 if(u.isSelected()) {
                     newMembers.add(u);
+                    EventBus.getDefault().post(new ObjectChangedEvent(u));
                     u.setSelected(false);
                 }
-
             }
             if(!newMembers.isEmpty()) {
-                Singleton.getInstance().getmCurrentGroup().getMembers().addAll(newMembers);
-                invitedAdapter.notifyDataSetChanged();
-                onBackPressed();
+                finish();
             }
             else {
-                Snackbar.make(findViewById(R.id.parent_layout), "Missing some Informations!", Snackbar.LENGTH_LONG).show();
-                invitedAdapter.notifyDataSetChanged();
+                Snackbar.make(findViewById(R.id.parent_layout), "Select someone!", Snackbar.LENGTH_LONG).show();
                 return false;
 
             }
@@ -146,19 +159,7 @@ public class AddMember extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void customizeToolbar(final Toolbar toolbar) {
-        final ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
-                builder
-                        .load(currentGroup.getGroupProfile())
-                        .set(toolbar)
-                        .set(tv_group_name)
-                        .set(appBar)
-                        .set(partecipants)
-                        .anim()
-                        .method(ColorUtils.type.VIBRANT)
-                        .brighter(ColorUtils.bright.LIGHT)
-                        .build();
-    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

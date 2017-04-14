@@ -22,7 +22,10 @@ public class User {
     private boolean isCardEnabled;
     private boolean isSelected;
     private List<UserContact> contacts;
-public User(){}
+
+    private double customValue;
+
+    public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -34,8 +37,18 @@ public User(){}
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
         isSelected = false;
+        this.customValue = 0;
     }
-    
+
+    public boolean hasCustomValue() {
+        return customValue > 0;
+    }
+    public double getCustomValue() {
+        return customValue;
+    }
+    public void setCustomValue(double customValue) {
+        this.customValue = customValue;
+    }
 
     public String getId() {
         return id;
@@ -128,13 +141,13 @@ public User(){}
         contacts.add(user);
     }
 
-    public void setSelection(){
-        isSelected = true;
-    }
-    public boolean getSelection(){
-        return  isSelected;
+    public boolean isSelected() {
+        return isSelected;
     }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }
 
 

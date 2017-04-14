@@ -5,4 +5,15 @@ package it.polito.group05.group05.Utility.EventClasses;
  */
 
 public class TextChangedEvent {
+    boolean valid = false;
+
+    public TextChangedEvent(boolean b) {
+        valid = b;
+    };
+    public boolean isValid() {
+        return valid;
+    }
+
+
+
 }

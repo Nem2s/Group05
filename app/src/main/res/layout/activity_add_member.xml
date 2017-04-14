@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="it.polito.group05.group05.NewGroup">
 
     <android.support.design.widget.AppBarLayout
@@ -22,13 +21,16 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="match_parent"
                 android:background="?attr/colorPrimary"
                 app:collapseIcon="@drawable/ic_action_back"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:theme="@style/ToolbarTheme" >
+                app:theme="@style/ToolbarTheme"
+                android:transitionName="@string/transition_toolbar"
+                >
                 <LinearLayout
                     android:id="@+id/cv_header_ll"
+                    android:padding="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"

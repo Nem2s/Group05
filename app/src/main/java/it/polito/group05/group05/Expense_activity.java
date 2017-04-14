@@ -2,11 +2,11 @@ package it.polito.group05.group05;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -20,26 +20,37 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.EventClasses.ExpenseDividerEvent;
+import it.polito.group05.group05.Utility.EventClasses.PartecipantsNumberChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.PriceChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.PriceErrorEvent;
 import it.polito.group05.group05.Utility.MemberExpenseAdapter;
+import it.polito.group05.group05.Utility.MyLinearLayoutManager;
 
 public class Expense_activity extends AppCompatActivity {
 
 
+
+    private CoordinatorLayout parent;
     private MaterialEditText et_name, et_description, et_cost;
     private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
     private TextView tv_policy, tv_members;
@@ -53,7 +64,6 @@ public class Expense_activity extends AppCompatActivity {
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network;
-
     private String expense_name;
     private String expense_description;
     private Double expense_price;
@@ -65,17 +75,89 @@ public class Expense_activity extends AppCompatActivity {
     private String id_owner;
     private String id_expense;
 
+    private List<User> partecipants;
+    private double costPerUser;
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+             EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe
+    public void onPartecipantsChanged(PartecipantsNumberChangedEvent event) {
+
+        int n_custom = 0;
+        double p_custom = 0;
+        if(event.hasExpenseEvent()) {
+            n_custom = event.getEvent().getNPeople();
+            p_custom = event.getEvent().getTotal();
+        }
+        if(event.getN() < 0) {
+            partecipants.remove(event.getUser());
+            Toast.makeText(getApplicationContext(), "Removed " + event.getUser().getUser_name(), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            partecipants.add(event.getUser());
+            Toast.makeText(getApplicationContext(), "Added " + event.getUser().getUser_name(), Toast.LENGTH_SHORT).show();
+        }
+
+        costPerUser = ((expense_price - p_custom)/(partecipants.size() - n_custom));
+        DecimalFormat df=new DecimalFormat("0.00");
+        String formate = df.format(costPerUser);
+        double finalValue = Double.parseDouble(formate.replace(',', '.'));
+        EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+    }
+
+    @Subscribe
+    public void onCustomValueSetted(ExpenseDividerEvent event) {
+        if(event.getTotal() > expense_price) {
+            Snackbar.make(parent, "Defined cost is higher than the total expense cost!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            costPerUser =  (expense_price/(partecipants.size()));
+                            DecimalFormat df=new DecimalFormat("0.00");
+                            String formate = df.format(costPerUser);
+                            double finalValue = Double.parseDouble(formate.replace(',', '.'));
+                            EventBus.getDefault().post(new PriceErrorEvent());
+                            EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+                        }
+                    })
+                    .show();
+        }
+        double total = expense_price - event.getTotal();
+        costPerUser =  (total/(partecipants.size() - event.getNPeople()));
+        DecimalFormat df=new DecimalFormat("0.00");
+        String formate = df.format(costPerUser);
+        double finalValue = Double.parseDouble(formate.replace(',', '.'));
+        EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_v2);
+
+        parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
+        costPerUser = 0;
+        partecipants = new ArrayList<>();
+        partecipants.addAll(Singleton.getInstance().getmCurrentGroup().getMembers());
+
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
-        //iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
+        iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
         image_network = (ImageView) findViewById(R.id.image_network);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
@@ -126,8 +208,13 @@ public class Expense_activity extends AppCompatActivity {
 
                 if (s != null) {
                     try {
-                        expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                        et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                        expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
+                        costPerUser = (expense_price/partecipants.size());
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        String formate = df.format(costPerUser);
+                        double finalValue = Double.parseDouble(formate.replace(',', '.'));
+                        //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                        EventBus.getDefault().post(new PriceChangedEvent(finalValue));
 
                     } catch (NumberFormatException e) {
                         expense_price=0.0;
@@ -180,17 +267,11 @@ public class Expense_activity extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_policy.setAdapter(dataAdapter);
-        final MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers(),
-                new MemberExpenseAdapter.OnItemClickListener() {
-                    @Override
-                    public void OnItemClicked(User position) {
-                        //et_name.setText("CIAO" + position.getId().toString());
-                        //et_cost.setText("0.0");
-                    }
-                });
-        adapter.notifyDataSetChanged();
+        List<User> list = new ArrayList<>();
+        list.addAll(Singleton.getInstance().getmCurrentGroup().getMembers());
+        final MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, list, this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
         id_owner= Singleton.getInstance().getId();
         expense_owner = Singleton.getInstance().getmCurrentGroup().getMember(id_owner);

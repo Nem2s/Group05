@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import it.polito.group05.group05.NewGroup;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 
 /**
  * Created by Marco on 04/04/2017.
@@ -39,11 +42,13 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
     ViewGroup parent;
     public List<User> selected;
     private List<UserContact> orig;
+    private int validGroup;
 
     public InvitedAdapter(List<UserContact> invited, Context context) {
         this.context = context;
         this.invited = invited;
         selected = new ArrayList<>();
+        validGroup = 0;
 
     }
 
@@ -79,28 +84,28 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 if(holder.button.getVisibility() == View.INVISIBLE) {
+                    validGroup++;
                     currentUser.setSelected(true);
                     AnimUtils.toggleOn(holder.button, 100, context);
 
                 }
                 else {
+                    validGroup--;
                     currentUser.setSelected(false);
                     AnimUtils.toggleOff(holder.button, 100, context);
 
                 }
+                EventBus.getDefault().post(new SelectionChangedEvent(isValid()));
             }
         });
         holder.name.setText(currentUser.getUser_name());
     }
 
-
-    public boolean oneIsSelected() {
-        for (UserContact u : invited) {
-            if(u.isSelected())
-                return true;
-        }
-        return false;
+    public boolean isValid() {
+        return validGroup > 0;
     }
+
+
     @Override
     public int getItemCount() {
         return invited.size();

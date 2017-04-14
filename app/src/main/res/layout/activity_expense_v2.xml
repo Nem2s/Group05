@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/parent_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
     tools:context="it.polito.group05.group05.Expense_activity">
-
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,31 +25,44 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:paddingTop="8dp"
+                android:fitsSystemWindows="true"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
                 android:transitionName="@string/transition_toolbar"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
 
                 >
-
                 <LinearLayout
                     android:id="@+id/cv_header_ll"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:orientation="horizontal"
-                    android:transitionName="@string/transition_group_image">
+                    android:transitionName="@string/transition_group_image"
+                    >
+
+                    <com.pkmmte.view.CircularImageView
+                        android:id="@+id/iv_group_image"
+                        android:layout_height="48dp"
+                        android:layout_width="48dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:focusableInTouchMode="true"
+                        android:transitionName="@string/transition_group_image"
+                        >
+
+                    </com.pkmmte.view.CircularImageView>
 
                     <TextView
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:text="New expense"
-                        android:textSize="20sp"
+                        android:text="GroupName05"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
                         android:textStyle="bold"
-                        android:transitionName="@string/transition_text" />
+                        android:transitionName="@string/transition_text"
+                        android:textSize="20sp" />
 
                 </LinearLayout>
 
@@ -60,12 +70,12 @@
 
         </android.support.design.widget.AppBarLayout>
 
-
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFFFFF"
-            android:padding="16dp">
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,7 +89,7 @@
                     android:layout_marginTop="32dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/cardview_light_background"
                     app:cardCornerRadius="2dp">
 
                     <LinearLayout
@@ -152,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
+                    android:layout_marginBottom="32dp"
                     app:cardCornerRadius="2dp">
 
                     <LinearLayout
@@ -205,8 +216,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_alignParentEnd="true"
                                 android:layout_margin="8dp"
+                                android:layout_toRightOf="@id/cb2_addfile"
                                 android:src="@drawable/clip"
                                 android:layout_centerInParent="true"
                                 android:visibility="visible" />
@@ -307,7 +318,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -318,5 +329,8 @@
         android:src="@drawable/ic_action_add_black"
         android:layout_gravity="bottom|end"
         android:transitionName="@string/transition_fab"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_anchor="@id/scrollView"
+        app:layout_behavior="it.polito.group05.group05.Utility.ScrollAwareFABBehavior"
         />
 </android.support.design.widget.CoordinatorLayout>

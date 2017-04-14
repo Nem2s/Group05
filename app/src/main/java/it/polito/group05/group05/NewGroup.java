@@ -28,27 +28,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mvc.imagepicker.ImagePicker;
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.Calendar;
 
 import io.codetail.animation.ViewAnimationUtils;
-import io.codetail.widget.RevealFrameLayout;
-import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 
 public class NewGroup extends AppCompatActivity{
@@ -69,6 +67,8 @@ public class NewGroup extends AppCompatActivity{
     private final User currentUser = Singleton.getInstance().getCurrentUser();
     private InvitedAdapter invitedAdapter;
     private Context context;
+    private boolean textIsValid;
+    private boolean selectionIsValid;
 
 
     @Override
@@ -114,8 +114,7 @@ public class NewGroup extends AppCompatActivity{
             }
         });
         /**TROVARE METODO ALTERNATIVO **/
-        checkSelected();
-
+        //checkSelected();
 
         et_group_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -125,37 +124,45 @@ public class NewGroup extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                isNameEmpty = charSequence.length() <= 0;
-
+                EventBus.getDefault().post(new TextChangedEvent(charSequence.length() > 0));
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-                checkSelected();
+            public void afterTextChanged(Editable editable){
             }
         });
 
 
     }
 
-    public void checkSelected() {
-        final Handler h = new Handler();
-        final int delay = 500; //milliseconds
+    @Subscribe public void onTextChangedEvent(TextChangedEvent event) {
+        this.textIsValid = event.isValid();
+        if(textIsValid && selectionIsValid)
+            mConfirmItem.setVisible(true);
+        else
+            mConfirmItem.setVisible(false);
+    }
 
-        h.postDelayed(new Runnable(){
-            public void run(){
-                if(invitedAdapter.oneIsSelected() && !isNameEmpty) {
-                    if(!mConfirmItem.isVisible())
-                        mConfirmItem.setVisible(true);
-                    h.postDelayed(this, delay);
-                }
-                else{
-                    if(mConfirmItem.isVisible())
-                        mConfirmItem.setVisible(false);
-                    h.postDelayed(this, delay);
-                }
-            }
-        }, delay);
+    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
+        this.selectionIsValid = event.isValid();
+        if(textIsValid && selectionIsValid)
+            mConfirmItem.setVisible(true);
+        else
+            mConfirmItem.setVisible(false);
+    }
+
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @Override
@@ -246,7 +253,6 @@ public class NewGroup extends AppCompatActivity{
     public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
 
         mToolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
-        RevealFrameLayout reveal = (RevealFrameLayout)findViewById(R.id.reveal_parent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.quantum_grey_600));
         }
@@ -266,7 +272,7 @@ public class NewGroup extends AppCompatActivity{
                         (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
                         ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
                 Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
-                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getHeight() / 2, (float) width, 0.0f);
+                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getMeasuredHeight() / 2, (float) width, 0.0f);
                 createCircularReveal.setDuration(250);
                 createCircularReveal.addListener(new AnimatorListenerAdapter() {
                     @Override

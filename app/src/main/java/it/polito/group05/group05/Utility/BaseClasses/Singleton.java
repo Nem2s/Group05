@@ -15,7 +15,6 @@ import it.polito.group05.group05.Utility.ImageUtils;
 
 public class Singleton {
     private static Singleton mInstance = null;
-
     private List<Group> mCurrentGroups;
     private List<User> mCurrenUsersList;
     private Group mCurrentGroup;

@@ -149,7 +149,6 @@ public class HomeScreen extends AppCompatActivity
             public void onClick(View view) {
 
                 Intent i = new Intent(getApplicationContext(), NewGroup.class);
-                AnimUtils.toggleOff(fab, 250, context);
                 startActivity(i);
 
 
@@ -241,16 +240,15 @@ public class HomeScreen extends AppCompatActivity
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        init();
 
     }
 
     private void init() {
         if(rv_groups.getAdapter().getItemCount() == 0) {
-
             no_groups.setVisibility(View.VISIBLE);
             AnimUtils.bounce(fab, 3000,getApplicationContext(), true);
         } else {
+            no_groups.setVisibility(View.INVISIBLE);
             AnimUtils.toggleOn(fab, 350, getApplicationContext());
         }
     }
@@ -274,6 +272,7 @@ public class HomeScreen extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        init();
         rv_groups.getAdapter().notifyDataSetChanged();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);

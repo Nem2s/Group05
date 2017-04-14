@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility.BaseClasses;
+package it.polito.group05.group05.Utility.EventClasses;
 
 import java.util.List;
 import java.util.Objects;
