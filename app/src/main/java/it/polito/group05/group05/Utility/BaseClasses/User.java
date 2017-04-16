@@ -2,6 +2,9 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+
+import com.github.lzyzsd.randomcolor.RandomColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,10 +25,7 @@ public class User {
     private boolean isCardEnabled;
     private boolean isSelected;
     private List<UserContact> contacts;
-
-    private double customValue;
-
-    public User(){}
+public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -37,18 +37,8 @@ public class User {
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
         isSelected = false;
-        this.customValue = 0;
     }
-
-    public boolean hasCustomValue() {
-        return customValue > 0;
-    }
-    public double getCustomValue() {
-        return customValue;
-    }
-    public void setCustomValue(double customValue) {
-        this.customValue = customValue;
-    }
+    
 
     public String getId() {
         return id;
@@ -113,7 +103,7 @@ public class User {
     public int generateRandomColor() {
 
         // This is the base color which will be mixed with the generated one
-        return 3;
+        return new RandomColor().randomColor();
 
     }
 
@@ -141,13 +131,13 @@ public class User {
         contacts.add(user);
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public void setSelection(){
+        isSelected = true;
+    }
+    public boolean getSelection(){
+        return  isSelected;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
 }
 
 

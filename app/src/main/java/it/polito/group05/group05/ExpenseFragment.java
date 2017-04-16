@@ -123,7 +123,6 @@ public class ExpenseFragment extends Fragment {
         });
 
         expenses =new ArrayList<>(currentGroup.getExpenses());
-
         ea = new ExpenseAdapter(getContext(),expenses);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
         rv.setOnTouchListener(new View.OnTouchListener() {
@@ -135,12 +134,9 @@ public class ExpenseFragment extends Fragment {
                 return false;
             }
         });
-
         rv.setLayoutManager(llm);
         rv.setAdapter(ea);
-
         return rootView;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

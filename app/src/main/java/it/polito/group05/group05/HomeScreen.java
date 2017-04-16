@@ -41,6 +41,10 @@ import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -128,7 +132,7 @@ public class HomeScreen extends AppCompatActivity
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
-        currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        currentUser = new User("q" + 1, "You", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
         Singleton.getInstance().setId(currentUser.getId());
         Singleton.getInstance().setCurrentUser(currentUser);
@@ -148,8 +152,20 @@ public class HomeScreen extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
+                /*Intent intent = new Intent(HomeScreen.this);
+                Pair<View, String> p1 = Pair.create((View)fab, getResources().getString(R.string.transition_fab));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(activity, p1);
+                startActivity(intent,options.toBundle());*/
                 Intent i = new Intent(getApplicationContext(), NewGroup.class);
-                startActivity(i);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    fab.setTransitionName(getResources().getString(R.string.transition_appbar));
+                    Pair<View, String> p = Pair.create((View)fab, getResources().getString(R.string.transition_appbar));
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p);
+                    startActivity(i, options.toBundle());
+                } else
+                    startActivity(i);
 
 
             }
@@ -172,7 +188,7 @@ public class HomeScreen extends AppCompatActivity
                 builder
                         .load(((BitmapDrawable)cv_user_drawer.getDrawable()).getBitmap())
                         .brighter(ColorUtils.bright.DARK)
-                        .method(ColorUtils.type.VIBRANT)
+                        .method(ColorUtils.type.MUTED)
                         .set(ll_header)
                         .set(tv_username)
                         .set(tv_email)
@@ -240,15 +256,16 @@ public class HomeScreen extends AppCompatActivity
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+        init();
 
     }
 
     private void init() {
         if(rv_groups.getAdapter().getItemCount() == 0) {
+
             no_groups.setVisibility(View.VISIBLE);
             AnimUtils.bounce(fab, 3000,getApplicationContext(), true);
         } else {
-            no_groups.setVisibility(View.INVISIBLE);
             AnimUtils.toggleOn(fab, 350, getApplicationContext());
         }
     }
@@ -262,6 +279,45 @@ public class HomeScreen extends AppCompatActivity
         return res;
     }
 
+    public void toogleCreateGroupView (int cx, int cy, float radius, final View revealLayout, int duration) {
+        Animator animator =
+                ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, 0, radius);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        Animator animator_reverse = ViewAnimationUtils.createCircularReveal(revealLayout, cx, cy, radius, 0);
+
+        if (revealLayout.getVisibility() == View.INVISIBLE) {
+            fab.setEnabled(false);
+            ((GroupAdapter)rv_groups.getAdapter()).isEnabled = false;
+            animator.start();
+        } else {
+            animator_reverse.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    fab.setEnabled(true);
+                    ((GroupAdapter)rv_groups.getAdapter()).isEnabled = true;
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            animator_reverse.start();
+        }
+    }
+
     private void initDrawer() {
 
         Menu menu = navigationView.getMenu();
@@ -272,7 +328,6 @@ public class HomeScreen extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        init();
         rv_groups.getAdapter().notifyDataSetChanged();
         if(fab.getVisibility() == View.INVISIBLE)
             AnimUtils.toggleOn(fab, 150, this);
