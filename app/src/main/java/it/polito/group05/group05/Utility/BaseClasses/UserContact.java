@@ -20,6 +20,9 @@ public class UserContact extends User {
         return selected;
     }
 
+    public UserContact() {
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

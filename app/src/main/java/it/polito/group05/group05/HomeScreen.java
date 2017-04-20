@@ -2,10 +2,16 @@ package it.polito.group05.group05;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -23,19 +29,21 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -46,30 +54,37 @@ import java.util.List;
 import java.util.Random;
 
 import io.codetail.animation.ViewAnimationUtils;
-import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.ColorUtils;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.GroupAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 
 import it.polito.group05.group05.Utility.InvitedAdapter;
-import it.polito.group05.group05.Utility.PicassoRoundTransform;
-
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static  Context HomeScreenContext;
+
     public  static int REQUEST_FROM_NEW_GROUP;
+    static public  GroupAdapter groupAdapter;
     public  static int REQUEST_FROM_NEW_USER;
+
+   // private static FirebaseDatabase database1;
+
+    private static final String TAG = "AnonymousAuth";
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_auth_listener]
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    // [END declare_auth_listener]
 
 
     FloatingActionButton fab;
@@ -110,16 +125,22 @@ public class HomeScreen extends AppCompatActivity
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        HomeScreenContext = this;
+
+        //--------------------------------------------------------------------
+
+       // final DB_Manager db1 = new DB_Manager();
+        DB_Manager.getInstance();
+    //---------------------------------------------------------------------
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final List<Group> items = Singleton.getInstance().getmCurrentGroups();
-
 
 
 
@@ -134,7 +155,7 @@ public class HomeScreen extends AppCompatActivity
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
 
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
-        final GroupAdapter groupAdapter = new GroupAdapter(items, this);
+        groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
@@ -205,7 +226,21 @@ public class HomeScreen extends AppCompatActivity
                     Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
                 else {
 
-                    items.add(newgroup);
+                    //items.add(newgroup);
+                    DB_Manager.getInstance().PushGroupToDB(newgroup);
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                   DB_Manager.getInstance().PullGroupFromDB(newgroup);
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                    System.out.print("");
+                    Singleton.getInstance().addGroup(newgroup);
+
                     groupAdapter.notifyDataSetChanged();
                     reinitializeNewGroupView(currentUser.getContacts());
                     no_groups.setVisibility(View.INVISIBLE);
@@ -307,16 +342,20 @@ public class HomeScreen extends AppCompatActivity
             }
         });
         drawer.setDrawerListener(toggle);
+       // DB_Manager.getInstance().PullGroupFromDBWithUserId(groupAdapter);
         toggle.syncState();
+        groupAdapter.notifyDataSetChanged();
         init();
 
     }
 
     private void init() {
-        if(rv_groups.getAdapter().getItemCount() == 0) {
+        //if(rv_groups.getAdapter().getItemCount() == 0) {
 
-            no_groups.setVisibility(View.VISIBLE);
-            AnimUtils.bounce(fab, 3000,getApplicationContext(), true);
+            if(Singleton.getInstance().getmCurrentGroups().isEmpty()){
+
+            //no_groups.setVisibility(View.VISIBLE);
+            AnimUtils.bounce(fab, 1000,getApplicationContext(), true);
         } else {
             AnimUtils.toggleOn(fab, 350, getApplicationContext());
         }
@@ -446,9 +485,16 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
+            DB_Manager.signOut();
+            startActivity(new Intent(this, GeneralAuthentication.class));
+            finish();
 
         } else if (id == R.id.nav_share) {
 
+                Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
+                        .setMessage("ciao ciao ciao")
+                        .build();
+                startActivityForResult(intent, 1);
         } else if (id == R.id.nav_contacts) {
 
         }
@@ -476,6 +522,7 @@ public class HomeScreen extends AppCompatActivity
 
         return ret;
     }
+
 
 
 }

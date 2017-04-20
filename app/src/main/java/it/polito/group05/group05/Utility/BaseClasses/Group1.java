@@ -11,16 +11,16 @@ import cn.nekocode.badge.BadgeDrawable;
 public class Group1 {
 
     private String name;
-    private Balance balance;
-    private BadgeDrawable badge;
-    private String lmTime;
-    private String groupProfile;
-    private int groupColor;
-    private HashMap<String, String> members;
+    //private Balance balance;
+    //private BadgeDrawable badge;
+    //private String lmTime;
+    //private String groupProfile;
+    //private int groupColor;
+  //  private HashMap<String, String> members;
     //private HashMap<String, Expense> expenses;
 
 
-    public Group1(String name, Balance balance, BadgeDrawable badge, String lmTime, String groupProfile, int groupColor) {
+   /*public Group1(String name, Balance balance, BadgeDrawable badge, String lmTime, String groupProfile, int groupColor) {
         this.name = name;
         this.balance = balance;
         this.badge = badge;
@@ -96,6 +96,17 @@ public class Group1 {
 
     public void setGroupColor(int groupColor) {
         this.groupColor = groupColor;
+    }*/
+
+    public Group1() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+
+import it.polito.group05.group05.Utility.DB_Manager;
 
 /**
  * Created by andre on 04-Apr-17.
@@ -101,18 +104,22 @@ public class GeneralAuthentication extends AppCompatActivity implements
 
     private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
-       /* if (!validateForm()) {
+       if (!validateForm()) {
             return;
-        }*/
+        }
+        final String email1 = new String(email);
 
         showProgressDialog();
-
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                        final DB_Manager db1 = new DB_Manager();
+                        FirebaseDatabase database1 = db1.getDatabase();
+                        db1.pushNewUser(email1, mAuth.getCurrentUser().getUid());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -128,13 +135,16 @@ public class GeneralAuthentication extends AppCompatActivity implements
                     }
                 });
         // [END create_user_with_email]
+
+
+
     }
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
-      /*  if (!validateForm()) {
+        if (!validateForm()) {
             return;
-        }*/
+        }
 
         showProgressDialog();
 
@@ -226,9 +236,9 @@ public class GeneralAuthentication extends AppCompatActivity implements
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-          startActivity(new Intent(this, HomeScreen.class));
+          startActivity(new Intent(this, Init.class));
             finish();
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
+           /* mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
                     user.getEmail(), user.isEmailVerified()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
 
@@ -236,7 +246,7 @@ public class GeneralAuthentication extends AppCompatActivity implements
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
             findViewById(R.id.signed_in_buttons).setVisibility(View.VISIBLE);
 
-            findViewById(R.id.verify_email_button).setEnabled(!user.isEmailVerified());
+            findViewById(R.id.verify_email_button).setEnabled(!user.isEmailVerified());*/
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);

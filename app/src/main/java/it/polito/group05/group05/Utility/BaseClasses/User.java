@@ -22,7 +22,7 @@ public class User {
     private boolean isAdministrator;
     private boolean isCardEnabled;
     private List<UserContact> contacts;
-public User(){}
+
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -114,6 +114,10 @@ public User(){}
 
         return Color.rgb(red, green, blue);
 
+    }
+
+    public void setUser_color(int user_color) {
+        this.user_color = user_color;
     }
 
     public float getTot_expenses() {

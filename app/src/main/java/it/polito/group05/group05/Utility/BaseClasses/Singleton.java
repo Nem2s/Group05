@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.ImageUtils;
 
 /**
@@ -46,12 +47,21 @@ public class Singleton {
     public void addGroup(Group g) {
         this.mCurrentGroups.add(g);
   }
+
+  public void deleteGroup (Group g) {
+      this.mCurrentGroups.remove(g);
+  }
+
     public List<Group> getmCurrentGroups() {
         return this.mCurrentGroups;
     }
     public void setId(String s){this.user=new String(s);}
     public String getId() {
         return user;
+    }
+
+    public void clearGroups(){
+        this.mCurrentGroups.clear();
     }
 
     public List<UserContact> createRandomListUsers(int n, Context context, Group g) {
