@@ -104,7 +104,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         tv_chart.setTextColor(toolbar.getSolidColor());
         partecipants.setTextColor(toolbar.getSolidColor());
-        AnimUtils.toggleOn(fab, 500, this);
+        AnimUtils.toggleOn(fab, 350, this);
         tv_group_name.setText(currentGroup.getName());
         cv_group.setImageBitmap(currentGroup.getGroupProfile());
         users = new ArrayList<>();
@@ -342,7 +342,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AnimUtils.toggleOff(fab, 250, this);
+        AnimUtils.toggleOff(fab, 350, this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
             builder

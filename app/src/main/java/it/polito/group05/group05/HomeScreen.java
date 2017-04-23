@@ -249,7 +249,7 @@ public class HomeScreen extends AppCompatActivity
             AnimUtils.bounce(fab, 3000,getApplicationContext(), true);
         } else {
             no_groups.setVisibility(View.INVISIBLE);
-            AnimUtils.toggleOn(fab, 350, getApplicationContext());
+            //AnimUtils.toggleOn(fab, 350, getApplicationContext());
         }
     }
 
