@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,14 +27,19 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
+
+import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 /**
  * Created by antonino on 03/04/2017.
@@ -105,7 +111,7 @@ class ExpenseAdapterHolder extends ViewHolder {
     TextView description;
     TextView file;
     CardView cv;
-
+    Intent intent;
 
 
     public ExpenseAdapterHolder(View itemView, ImageView expense_image, TextView name, TextView price,
@@ -133,6 +139,7 @@ class ExpenseAdapterHolder extends ViewHolder {
             return e;
         }
 
+
     public void setData(final Expense expense, final Context context){
 
         if(expense.getImage()==null)
@@ -140,13 +147,14 @@ class ExpenseAdapterHolder extends ViewHolder {
         expense_image.setImageResource(Integer.parseInt(expense.getImage()));
         name.setText(expense.getName());
         if(expense.getFilePresence()){
-            file.setText("Attached File");
+            file.setText(expense.getNameFile());
+            //ANDREA GIULIANO
             file.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     File url = expense.getFile();
                     Uri uri = Uri.fromFile(url);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent = new Intent(Intent.ACTION_VIEW);
                     if (url.toString().contains(".doc") || url.toString().contains(".docx")) {
                         // Word document
                         intent.setDataAndType(uri, "application/msword");
@@ -181,13 +189,8 @@ class ExpenseAdapterHolder extends ViewHolder {
                         // Video files
                         intent.setDataAndType(uri, "video/*");
                     } else {
-                        //if you want you can also define the intent type for any other file
-                        //additionally use else clause below, to manage other unknown extensions
-                        //in this case, Android will show all applications installed on the device
-                        //so you can choose which application to use
                         intent.setDataAndType(uri, "*/*");
                     }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
             });

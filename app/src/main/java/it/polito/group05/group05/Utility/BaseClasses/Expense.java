@@ -19,6 +19,7 @@ public class Expense{
     private TYPE_EXPENSE type;
     private Uri uri_file;
     private File file;
+    private String nameFile;
     private int deadline;//days
     private Timestamp timestamp;
     private TreeMap<String, User> lista_partecipanti=new TreeMap<>();
@@ -115,6 +116,12 @@ public class Expense{
     public void addFile( Uri u){
         file = new File(u.getPath());
         uri_file = u;
+    }
+    public void  setFileName(String s){
+        nameFile= s;
+    }
+    public String getNameFile(){
+        return nameFile;
     }
 
     public void setFileTrue(){
