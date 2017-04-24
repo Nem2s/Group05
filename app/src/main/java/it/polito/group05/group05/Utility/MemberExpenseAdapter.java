@@ -23,8 +23,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.EventClasses.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.EventClasses.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.PriceChangedEvent;

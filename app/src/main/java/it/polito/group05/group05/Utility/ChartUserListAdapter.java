@@ -10,10 +10,8 @@ import android.widget.TextView;
 import com.pkmmte.view.CircularImageView;
 
 import java.util.List;
-import java.util.Objects;
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 
 /**
  * Created by Marco on 08/04/2017.

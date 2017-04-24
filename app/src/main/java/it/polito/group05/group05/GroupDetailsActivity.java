@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -57,10 +56,7 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.UserAdapter;
-
-import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 public class GroupDetailsActivity extends AppCompatActivity {
 

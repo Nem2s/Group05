@@ -15,7 +15,6 @@ import java.util.List;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 /**

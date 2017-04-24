@@ -2,8 +2,6 @@ package it.polito.group05.group05.Utility.EventClasses;
 
 import android.support.v4.util.Pair;
 
-import it.polito.group05.group05.Utility.BaseClasses.User;
-
 /**
  * Created by Marco on 13/04/2017.
  */
