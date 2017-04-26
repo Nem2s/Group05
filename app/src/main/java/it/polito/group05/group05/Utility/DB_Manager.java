@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.sip.SipAudioCall;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.pkmmte.view.CircularImageView;
 
 import junit.framework.TestResult;
 
@@ -33,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
@@ -44,6 +48,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import it.polito.group05.group05.HomeScreen;
+import it.polito.group05.group05.Init;
+import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Group1;
@@ -71,13 +78,24 @@ public class DB_Manager {
     private static DatabaseReference userRef;
     private static DatabaseReference groupRef;
     private static DatabaseReference expenseRef;
+    private static DatabaseReference usernumberRef;
     private static FirebaseStorage storage;
     private static StorageReference storageGroupRef;
+    private static StorageReference storageUserRef;
+    private static StorageReference storageExpenseRef;
+
+    private static ValueEventListener groupListener;
+    private static ChildEventListener userListener;
 
     public DB_Manager() {
     }
 
     public static void signOut(){
+
+        currentUserID = null;
+        Singleton.getInstance().clearGroups();
+//        DB_Manager.getInstance().removeuserlistener();
+
         mAuth.signOut();
     }
 
@@ -93,15 +111,25 @@ public class DB_Manager {
         return mInstance;
     }
 
+    public static void removeInstance(){
+        mInstance = null;
+        return;
+    }
+
 
     public static FirebaseDatabase getDatabase() {
+
+
         if (database == null) {
 
             //Realtime Database Init
+
             database = FirebaseDatabase.getInstance();
             database.setPersistenceEnabled(true);
             userRef = database.getReference("users");
             userRef.keepSynced(true);
+            usernumberRef = database.getReference("usersNumber");
+            usernumberRef.keepSynced(true);
             groupRef = database.getReference("groups");
             groupRef.keepSynced(true);
             //expenseRef = database.getReference("expense");
@@ -110,13 +138,26 @@ public class DB_Manager {
             //Storege Init
             storage = FirebaseStorage.getInstance();
             storageGroupRef = storage.getReference("groups");
+            storageUserRef = storage.getReference("users");
+            storageExpenseRef = storage.getReference("expenses");
 
             //Authentication Init
             mAuth = FirebaseAuth.getInstance();
-            getCurrentUserID();
+
         }
+        if(currentUserID == null) {
+            Singleton.getInstance().clearGroups();
+            HomeScreen.currentUser = new User();
+            getCurrentUserID(HomeScreen.currentUser);
+        }
+        else {
+            currentUserInfo(HomeScreen.currentUser);
+        }
+
         return database;
     }
+
+
 
     public static void PushGroupToDB(Group G){
         DatabaseReference ref = groupRef.push();
@@ -127,53 +168,88 @@ public class DB_Manager {
             temp.put(grouptopush.getId(), true);
             userRef.child(s).child("userGroups").updateChildren(temp);
         }
-        photoMemoryUpload(grouptopush.getId(), G.getGroupProfile());
-        grouptopush.setPictureUrl(storageGroupRef + grouptopush.getId() +"/gruoprofile");
+        photoMemoryUpload(2, grouptopush.getId(), G.getGroupProfile());
+        grouptopush.setPictureUrl(storageGroupRef +"/"+ grouptopush.getId() +"/grouprofile.png");
         ref.setValue(grouptopush);
         G.setGroupID(ref.getKey());
         return;
     }
 
-    public static Group PullGroupFromDB(Group G){
+    /*
+    *   Listener sul singolo gruppo per tenerlo aggirnato
+     */
+
+    public static Group MonitorOnGroup(Group G){
         final Group g1 = G;
         DatabaseReference ref = database.getReference("groups");
-         ref.orderByKey()
+        groupListener = ref.orderByKey()
                  .equalTo(G.getGroupID())
                  .limitToFirst(1)
-                 .addChildEventListener(new ChildEventListener() {
+                 .addValueEventListener(new ValueEventListener() {
                      @Override
-                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                     public void onDataChange(DataSnapshot dataSnapshot) {
+                         for(DataSnapshot child : dataSnapshot.getChildren()) {
+                             GroupDatabase g = child.getValue(GroupDatabase.class);
+                             g1.setName(g.getName());
+                             g1.setBalance(g.getBalance());
+                             g1.setLmTime(g.getLmTime());
+                             g1.setGroupColor(g.getGroupColor());
+                             g1.setBadge(1);
+                             try {
+                                 photoGroupDownload(g1);
+                             } catch (IOException e) {
+                                 e.printStackTrace();
+                             }
+                             //fare aggiunta di un membroal gruppo
+                             for(String s : g.getMembers().keySet())
+                             {
+                                 g1.addMember(s);
+                             }
+                             HomeScreen.groupAdapter.notifyDataSetChanged();
 
+                         }
                      }
-
-                     @Override
-                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                         GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
-                         g1.setName(g.getName());
-                         g1.setBalance(g.getBalance());
-                         //fare aggiunta di un membroal gruppo
-                         HomeScreen.groupAdapter.notifyDataSetChanged();
-                     }
-
-                     @Override
-                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                     }
-
-                     @Override
-                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                     }
-
                      @Override
                      public void onCancelled(DatabaseError databaseError) {
-
                      }
                  });
         return g1;
     }
 
-    public static void PullGroupFromDBWithUserId(){
+    public static void removegrouplistener(){
+        database.getReference("groups").removeEventListener(groupListener);
+    }
+    public static void removeuserlistener(){
+        userRef.child(currentUserID).child("userGroups").removeEventListener(userListener);
+    }
+
+    /*
+     *   Listener singolo per Inizializzazione utenti dentro il gruppo
+     */
+
+    public static void retriveUserInfo(Group G, final ArrayList<User> users){
+        for (String s : G.getMembersId()) {
+            userRef.child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
+                    User u = new User(ud.getId(), ud.getName());
+                    //photoMemoryDownload();
+                    users.add(u);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    /*
+     *   Listener singolo per Inizializzazione gruppi
+     */
+
+  /*  public static void PullGroupFromDBWithUserId(){
 
         for(String s : groupUser){
             final Group g;
@@ -192,25 +268,28 @@ public class DB_Manager {
                                     e.printStackTrace();
                                 }
                                 Singleton.getInstance().addGroup(g);
-                                PullGroupFromDB(g);
+                                MonitorOnGroup(g);
                                 HomeScreen.groupAdapter.notifyDataSetChanged();
                             }
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            HomeScreen.groupAdapter.notifyDataSetChanged();
                         }
                     });
         }
 
-    }
+    }*/
 
 
     public static void pushExpensetoDB(Expense e){
 
     }
 
-    public static void getCurrentUserID(){
+    /*
+    *   Listener singolo per ricavare id e gruppi utente
+    */
+
+    public static void getCurrentUserID(final User U){
         userRef.orderByChild("authKey")
                 .equalTo(mAuth.getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -218,10 +297,23 @@ public class DB_Manager {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     UserDatabase u = child.getValue(UserDatabase.class);
+                    U.setId(u.getId());
+                    U.setUser_name(u.getName());
+                    U.setEmail(u.getEmail());
+                    U.setBalance(new Balance(3, 1));
+                    try {
+                        photoUserDownload(U);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    U.setUser_group(null);
+                    U.setAdministrator(true);
+                    U.setCardEnabled(true);
                     currentUserID = u.getId();
-                    groupUser = u.getUserGruopsList();
-                    Singleton.getInstance().clearGroups();
-                    DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                    groupUser = u.UserGruopsList();
+                   // Singleton.getInstance().clearGroups();
+                   // DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                    DB_Manager.getInstance().CurrentUserGroupMonitor();
 
                 }
             }
@@ -234,22 +326,195 @@ public class DB_Manager {
 
     }
 
-    public static void pushNewUser(String email, String cID)
+    /*
+    * Listeners che rimangono attivi per monitorare userGroups all'interno dell'utente
+    */
+
+    private void CurrentUserGroupMonitor() {
+        //Singleton.getInstance().clearGroups();
+        userListener = userRef
+            .child(currentUserID)
+            .child("userGroups")
+            .orderByKey()
+            .addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        String gId = dataSnapshot.getKey();
+                    DatabaseReference ref = database.getReference("groups");
+                    ref.orderByKey()
+                            .equalTo(gId)
+                            .limitToFirst(1)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot child : dataSnapshot.getChildren()) {
+                                        GroupDatabase gd = child.getValue(GroupDatabase.class);
+                                        Group g = new Group(gd.getName(), gd.getId(), gd.getBalance(), gd.getLmTime(), 1);
+                                        try {
+                                            photoGroupDownload(g);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        Singleton.getInstance().addGroup(g);
+                                        MonitorOnGroup(g);
+                                        HomeScreen.groupAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                  /*  for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String gId = child.getKey();
+                        Group g = new Group();
+                        g.setGroupID(gId);
+                    try {
+                        photoMemoryDownload(g.getGroupID(), g);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                        Singleton.getInstance().addGroup(g);
+                        MonitorOnGroup(g);
+                        HomeScreen.groupAdapter.notifyDataSetChanged();
+                    }*/
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    String gId = dataSnapshot.getKey();
+                    int i = Singleton.getInstance().getPositionGroup(gId);
+                    Singleton.getInstance().getmCurrentGroups().remove(i);
+                    HomeScreen.groupAdapter.notifyDataSetChanged();
+                    //groupRef.child(gId).removeEventListener(null);
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+    }
+
+
+    public static void pushNewUser(String email, String name, String cID)
     {
         DatabaseReference ref = userRef.push();
         currentUserID = ref.getKey();
-        UserDatabase newuser = new UserDatabase(ref.getKey(), cID, "380xxxxxx2", email);
+        UserDatabase newuser = new UserDatabase(ref.getKey(), name, cID, "380xxxxxx2", email);
+
+        Map<String, Object> memb = new HashMap<String, Object>();
+        memb.put("00", true);
+        newuser.setUserGroups(memb);
         ref.setValue(newuser);
+        usernumberRef.child(newuser.getTelNumber()).setValue(newuser.getAuthKey());
+       // DB_Manager.getInstance().photoMemoryUpload(1, newuser.getId(), bitmap);
+        DB_Manager.getInstance().CurrentUserGroupMonitor();
     }
 
-    public static void photoMemoryUpload(String Gid, Bitmap bitmap)
+    public static void currentUserInfo(final User U)
     {
+        if(currentUserID != null) {
+            userRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
+                    U.setId(ud.getId());
+                    U.setUser_name(ud.getName());
+                    U.setEmail(ud.getEmail());
+                    U.setBalance(new Balance(3, 1));
+                    try {
+                        photoUserDownload(U);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    U.setUser_group(null);
+                    U.setAdministrator(true);
+                    U.setCardEnabled(true);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    /*
+    type:
+    1: user profile
+    2: group profile
+    3: expense profile
+    4: expense attached
+
+     */
+
+    public static void photoMemoryUpload(int type, String Id, Bitmap bitmap)
+    {
+        StorageReference ref;
+        String name;
+        switch(type) {
+            case (1):
+                ref = storageUserRef;
+                name = new String("userprofile.jpg");
+                break;
+            case (2):
+                ref = storageGroupRef;
+                name = new String("grouprofile.jpg");
+                break;
+            case (3):
+                ref = storageExpenseRef;
+                name = new String("expenseprofile.jpg");
+                break;
+            case (4):
+                ref = storageExpenseRef;
+                name = new String("expenseattached.jpg");
+                break;
+            default:
+                return;
+        }
+
+        final File localdir = new File(Init.getAppContext().getFilesDir(), Id);
+
+        if(!localdir.exists())
+            localdir.mkdir();
+
+        final File localFile = new File(Init.getAppContext().getFilesDir(), Id + "/" + name);
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(localFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageGroupRef.child(Gid).child("gruoprofile").putBytes(data);
+        UploadTask uploadTask = ref.child(Id).child(name).putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -264,17 +529,21 @@ public class DB_Manager {
         });
     }
 
-    public static void photoMemoryDownload(String Gid, final Group G) throws IOException {
+    public static void photoGroupDownload(final Group G) throws IOException {
 
+        final File localdir = new File(Init.getAppContext().getFilesDir(), G.getGroupID());
 
-        final File localFile = new File(HomeScreen.HomeScreenContext.getFilesDir(), Gid + "images.jpg");
+        if(!localdir.exists())
+            localdir.mkdir();
 
+        final File localFile = new File(Init.getAppContext().getFilesDir(), G.getGroupID() + "/grouprofile.jpg");
         if(localFile.exists()) {
-            G.setGroupProfile(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+             G.setGroupProfile(BitmapFactory.decodeStream(new FileInputStream(localFile)));
             HomeScreen.groupAdapter.notifyDataSetChanged();
         }
+        //final File localFile = File.createTempFile("images", "jpg");
 
-            StorageReference islandRef = storageGroupRef.child(Gid).child("gruoprofile");
+            StorageReference islandRef = storageGroupRef.child(G.getGroupID()).child("grouprofile.jpg");
 
             islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
@@ -293,5 +562,39 @@ public class DB_Manager {
                 }
             });
         }
+
+    public static void photoUserDownload(final User U) throws IOException {
+
+       final File localdir = new File(Init.getAppContext().getFilesDir(), U.getId());
+
+        if(!localdir.exists())
+            localdir.mkdir();
+
+        final File localFile = new File(Init.getAppContext().getFilesDir(), U.getId() + "/userprofile.jpg");
+        if(localFile.exists()) {
+            U.setProfile_image(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+            //HomeScreen.groupAdapter.notifyDataSetChanged();
+        }
+        //final File localFile = File.createTempFile("images", "jpg");
+
+        StorageReference islandRef = storageGroupRef.child(U.getId()).child("userprofile.jpg");
+
+        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                try {
+                    U.setProfile_image(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                //HomeScreen.groupAdapter.notifyDataSetChanged();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
 
 }

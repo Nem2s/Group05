@@ -45,6 +45,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
 import it.polito.group05.group05.Utility.InvitedAdapter;
@@ -131,6 +132,8 @@ public class NewGroup extends AppCompatActivity{
             public void afterTextChanged(Editable editable){
             }
         });
+
+
 
 
     }
@@ -235,7 +238,7 @@ public class NewGroup extends AppCompatActivity{
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
                 Singleton.getInstance().addGroup(newgroup);
-                invitedAdapter.notifyDataSetChanged();
+                //invitedAdapter.notifyDataSetChanged();
                 finish();
 
 
@@ -247,6 +250,10 @@ public class NewGroup extends AppCompatActivity{
 
             }
         }
+
+        DB_Manager.getInstance().PushGroupToDB(newgroup);
+        //DB_Manager.getInstance().MonitorOnGroup(newgroup);
+
         return super.onOptionsItemSelected(item);
     }
 

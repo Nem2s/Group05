@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.DB_Manager;
 
 /**
@@ -117,10 +118,6 @@ public class GeneralAuthentication extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                        final DB_Manager db1 = new DB_Manager();
-                        FirebaseDatabase database1 = db1.getDatabase();
-                        db1.pushNewUser(email1, mAuth.getCurrentUser().getUid());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -130,14 +127,12 @@ public class GeneralAuthentication extends AppCompatActivity implements
                         }
 
                         // [START_EXCLUDE]
+                       // DB_Manager.getInstance().pushNewUser(email1, mAuth.getCurrentUser().getUid());
                         hideProgressDialog();
                         // [END_EXCLUDE]
                     }
                 });
         // [END create_user_with_email]
-
-
-
     }
 
     private void signIn(String email, String password) {

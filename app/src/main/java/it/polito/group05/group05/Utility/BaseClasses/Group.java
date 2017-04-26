@@ -144,7 +144,6 @@ public class Group {
 
     }
 
-    public Map<String,Balance> debtUsers(){
     public void setBadge(BadgeDrawable badge) {
         this.badge = badge;
     }
@@ -157,7 +156,7 @@ public class Group {
         this.expenses = expenses;
     }
 
-    public Map<String,Double> debtUsers(){
+    public Map<String,Balance> debtUsers(){
 
 
         Map<String, Balance> f = new TreeMap<String,Balance>();
@@ -189,10 +188,19 @@ public class Group {
 
     }
 
+    public List<String> getMembersId(){
+        ArrayList<String> new_list= new ArrayList<>(members.keySet());
+        return new_list;
+
+    }
+
     public void addMember( User u){
         if(!members.containsKey(u.getId())){
             members.put(u.getId(), u);
         }
+    }
+    public void addMember(String id){
+            members.put(id, null);
     }
 
 }

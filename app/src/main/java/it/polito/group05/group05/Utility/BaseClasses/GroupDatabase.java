@@ -97,7 +97,7 @@ public class GroupDatabase {
         for(User u : users){
             memb.put(u.getUser_name(), true);
         }
-        memb.remove("You");
+        memb.remove("User");
         memb.put(id, true);
         this.setMembers(memb);
         return memb;

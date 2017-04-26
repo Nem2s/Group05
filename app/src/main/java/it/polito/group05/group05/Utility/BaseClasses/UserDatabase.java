@@ -9,17 +9,25 @@ import java.util.Map;
 public class UserDatabase {
 
     public String id;
+    public String name;
     public String authKey;
     public String telNumber;
     public String email;
+    public String profileImmage;
+    public Balance balance;
     public Map<String, Object> userGroups;
 
-    public UserDatabase(String id, String authKey, String telNumber, String email) {
+    public UserDatabase(String id, String name, String authKey, String telNumber, String email) {
         this.id = id;
+        this.name = name;
         this.authKey = authKey;
         this.telNumber = telNumber;
         this.email = email;
     }
+
+
+
+
 
     public UserDatabase() {
     }
@@ -30,6 +38,14 @@ public class UserDatabase {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAuthKey() {
@@ -56,11 +72,27 @@ public class UserDatabase {
         this.email = email;
     }
 
+    public String getProfileImmage() {
+        return profileImmage;
+    }
+
+    public void setProfileImmage(String profileImmage) {
+        this.profileImmage = profileImmage;
+    }
+
+    public Balance getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Balance balance) {
+        this.balance = balance;
+    }
+
     public Map<String, Object> getUserGroups() {
         return userGroups;
     }
 
-    public List<String> getUserGruopsList() {
+    public List<String> UserGruopsList() {
 
 
         return new ArrayList<>(userGroups.keySet());

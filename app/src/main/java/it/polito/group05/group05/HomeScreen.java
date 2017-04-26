@@ -96,7 +96,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    User currentUser;
+    static public User currentUser;// = new User();
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -156,9 +156,10 @@ public class HomeScreen extends AppCompatActivity
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
-        currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+
+        //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        Singleton.getInstance().setId(currentUser.getId());
+        //Singleton.getInstance().setId(currentUser.getId());
         Singleton.getInstance().setCurrentUser(currentUser);
 
 
@@ -194,7 +195,9 @@ public class HomeScreen extends AppCompatActivity
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 cv_user_drawer = (CircularImageView)findViewById(R.id.drawer_header_image);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
+                tv_username.setText(currentUser.getUser_name());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
+                tv_email.setText(currentUser.getEmail());
                 ll_header = (LinearLayout)findViewById(R.id.drawer_ll_header);
                 ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
                 builder
@@ -205,7 +208,7 @@ public class HomeScreen extends AppCompatActivity
                         .set(tv_username)
                         .set(tv_email)
                         .build();
-
+                DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), ((BitmapDrawable) cv_user_drawer.getDrawable()).getBitmap());
                 /*Picasso
                         .with(getApplicationContext())
                         .load(Integer.parseInt(currentUser.getProfile_image()))
@@ -243,8 +246,6 @@ public class HomeScreen extends AppCompatActivity
                     public void onClick(View view) {
                         ImagePicker.pickImage(activity, "Select Imageqweqeqwe:");
                         REQUEST_FROM_NEW_USER = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-
-
                     }
                 });
 
@@ -349,7 +350,7 @@ public class HomeScreen extends AppCompatActivity
 
         if (id == R.id.nav_manage) {
             DB_Manager.signOut();
-            startActivity(new Intent(this, GeneralAuthentication.class));
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
 
         } else if (id == R.id.nav_share) {

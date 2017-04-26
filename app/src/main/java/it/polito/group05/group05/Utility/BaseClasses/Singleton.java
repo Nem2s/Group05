@@ -75,6 +75,16 @@ public class Singleton {
         return users;
     }
 
+    public int getPositionGroup(String id) {
+        int i = 0;
+        for (Group g : this.mCurrentGroups) {
+            if (g.getGroupID().equals(id))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
