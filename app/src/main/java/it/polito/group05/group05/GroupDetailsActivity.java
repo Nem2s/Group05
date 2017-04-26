@@ -110,7 +110,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         cv_group.setImageBitmap(currentGroup.getGroupProfile());
         users = new ArrayList<>();
         //users.addAll(currentGroup.getMembers());
-        DB_Manager.getInstance().retriveUserInfo(currentGroup, users);
+        DB_Manager.getInstance().retriveUsersInfo(currentGroup, users);
         adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);

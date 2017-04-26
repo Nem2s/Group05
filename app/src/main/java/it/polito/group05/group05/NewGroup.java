@@ -284,9 +284,9 @@ public class NewGroup extends AppCompatActivity{
             }
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-                EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
-                DB_Manager.PushGroupToDB(newgroup);
-                invitedAdapter.notifyDataSetChanged();
+                DB_Manager.getInstance().PushGroupToDB(newgroup);
+                //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
+
                 finish();
 
 
@@ -299,7 +299,7 @@ public class NewGroup extends AppCompatActivity{
             }
         }
 
-        DB_Manager.getInstance().PushGroupToDB(newgroup);
+        //DB_Manager.getInstance().PushGroupToDB(newgroup);
         //DB_Manager.getInstance().MonitorOnGroup(newgroup);
 
         return super.onOptionsItemSelected(item);
