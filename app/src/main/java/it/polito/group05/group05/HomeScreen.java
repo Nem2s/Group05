@@ -199,7 +199,7 @@ public class HomeScreen extends AppCompatActivity
         rv_groups.setAdapter(groupAdapter);
 
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
-        currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
+        //currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
         //Singleton.getInstance().setId(currentUser.getId());
         Singleton.getInstance().setCurrentUser(currentUser);
 

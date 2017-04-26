@@ -153,12 +153,11 @@ public class DB_Manager {
         }
         if(currentUserID == null) {
             Singleton.getInstance().clearGroups();
-            User user = new User();
-            EventBus.getDefault().post(new CurrentUserChangedEvent(user));
-            getCurrentUserID(user);
+            HomeScreen.currentUser = new User();
+            getCurrentUserID(HomeScreen.currentUser);
         }
         else {
-            currentUserInfo(Singleton.getInstance().getCurrentUser());
+            currentUserInfo(HomeScreen.currentUser);
         }
 
         return database;
@@ -331,6 +330,7 @@ public class DB_Manager {
                    // Singleton.getInstance().clearGroups();
                    // DB_Manager.getInstance().PullGroupFromDBWithUserId();
                     DB_Manager.getInstance().CurrentUserGroupMonitor();
+                    EventBus.getDefault().post(new CurrentUserChangedEvent(HomeScreen.currentUser));
 
                 }
             }
@@ -460,6 +460,7 @@ public class DB_Manager {
                     U.setUser_group(null);
                     U.setAdministrator(true);
                     U.setCardEnabled(true);
+                    EventBus.getDefault().post(new CurrentUserChangedEvent(HomeScreen.currentUser));
                 }
 
                 @Override

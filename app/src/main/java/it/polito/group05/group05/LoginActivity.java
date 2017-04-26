@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
         Intent i = new Intent(this, Init.class);
         startActivity(i);
+        finish();
     }
 
     public void onLoginFailed() {
