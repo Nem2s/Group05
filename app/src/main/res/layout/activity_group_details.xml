@@ -163,7 +163,7 @@
         app:layout_anchor="@+id/card_view"
         app:layout_anchorGravity="bottom|right|end"
         android:clickable="true"
-        android:visibility="invisible"
+        android:transitionName="@string/transition_fab"
         />
 </android.support.design.widget.CoordinatorLayout>
 

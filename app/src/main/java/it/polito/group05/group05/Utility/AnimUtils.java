@@ -18,6 +18,7 @@ public class AnimUtils {
 
     public static void toggleOn(final View v, int duration, Context context){
         final Animation animation = AnimationUtils.loadAnimation(context, R.anim.fab_open);
+            animation.setStartOffset(duration);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {

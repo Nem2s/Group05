@@ -65,7 +65,6 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
                 .transform(new PicassoRoundTransform())
                 .into(holder.img_profile);*/
         holder.img_profile.setImageBitmap(currentUser.getProfile_image());
-        holder.button.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorPrimary)));
         if(currentUser.isSelected())
             holder.button.setVisibility(View.VISIBLE);
         else
@@ -74,16 +73,16 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(holder.button.getVisibility() == View.INVISIBLE) {
+                if(holder.button.getVisibility() != View.VISIBLE) {
                     validGroup++;
                     currentUser.setSelected(true);
-                    AnimUtils.toggleOn(holder.button, 100, context);
+                   holder.button.show();
 
                 }
                 else {
                     validGroup--;
                     currentUser.setSelected(false);
-                    AnimUtils.toggleOff(holder.button, 100, context);
+                    holder.button.hide();
 
                 }
                 EventBus.getDefault().post(new SelectionChangedEvent(isValid()));
