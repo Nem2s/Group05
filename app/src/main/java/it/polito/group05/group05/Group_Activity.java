@@ -122,9 +122,15 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
                 Intent i = new Intent(getBaseContext(), Expense_activity.class);
-                startActivity(i);
+
+                startActivity(i, options.toBundle());
                 
             }
         });
@@ -137,12 +143,12 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         return true;
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_group_, menu);
         return true;
-    }
+    }*/
 
 
     private static void hideViews() {

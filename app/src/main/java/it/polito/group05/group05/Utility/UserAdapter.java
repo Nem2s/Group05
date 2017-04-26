@@ -68,10 +68,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 .transform(new PicassoRoundTransform())
                 .into(holder.img_profile);*/
         holder.img_profile.setImageBitmap(currentUser.getProfile_image());
-        holder.img_profile.setBorderColor(currentUser.getUser_color());
-        holder.color.setBackgroundTintList(ColorStateList.valueOf(currentUser.getUser_color()));
-        String text = "<font color='green'>" + currentUser.getBalance().getCredit() + "</font> / <font color='red'>" + currentUser.getBalance().getDebit() + "</font>";
-        holder.balance.setText(Html.fromHtml(text), TextView.BufferType.SPANNABLE);
         if(!currentUser.isAdministrator())
             holder.administrator.setVisibility(View.INVISIBLE);
         if(!currentUser.isCardEnabled())
@@ -110,7 +106,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             user_name = (TextView)itemView.findViewById(R.id.tv_user_name);
             payByCard = (ImageView)itemView.findViewById(R.id.iv_paycard);
             administrator = (TextView)itemView.findViewById(R.id.tv_admin);
-            color = (FloatingActionButton) itemView.findViewById(R.id.member_color);
         }
     }
 

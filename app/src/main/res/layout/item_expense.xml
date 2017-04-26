@@ -21,7 +21,7 @@
     android:orientation="horizontal"
     android:weightSum="1">
 
-    <com.pkmmte.view.CircularImageView
+    <ImageView
         android:id="@+id/expense_image"
         android:layout_height="48dp"
         android:layout_width="48dp"
@@ -50,6 +50,7 @@
         android:layout_marginRight="16dp"
         android:layout_alignParentEnd="true"
         android:gravity="right"
+
 
         />
 </RelativeLayout>

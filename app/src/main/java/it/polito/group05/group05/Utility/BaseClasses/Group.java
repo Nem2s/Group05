@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
+import android.util.Pair;
 
 import com.pkmmte.view.CircularImageView;
 
@@ -143,6 +144,7 @@ public class Group {
 
     }
 
+    public Map<String,Balance> debtUsers(){
     public void setBadge(BadgeDrawable badge) {
         this.badge = badge;
     }
@@ -158,12 +160,22 @@ public class Group {
     public Map<String,Double> debtUsers(){
 
 
-        Map<String, Double> f = new TreeMap<String,Double>();
+        Map<String, Balance> f = new TreeMap<String,Balance>();
         for( Expense i : expenses.values())
             if(i.getType()!=TYPE_EXPENSE.NOTMANDATORY)
                 for(User u : i.getPartecipants())
-                    if(u instanceof User_expense)
-                        f.put(u.getId(),f.get(u.getId())+((User_expense) u).getDebt());
+                    if(u instanceof User_expense) {
+                        if(((User_expense) u).getDebt()>0){
+                            Double d =(f.get(u.getId()).getCredit()+((User_expense) u).getDebt());
+                            f.get(u.getId()).setCredit(d);
+                        }
+                        else{
+                            Double d =(f.get(u.getId()).getDebit()-((User_expense) u).getDebt());
+                            f.get(u.getId()).setDebit(d);
+
+                        }
+
+                    }
         return f;
     }
     public User getMember(String id){

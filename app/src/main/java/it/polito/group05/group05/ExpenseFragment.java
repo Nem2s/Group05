@@ -2,7 +2,9 @@ package it.polito.group05.group05;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
 import it.polito.group05.group05.Utility.HideScrollListener;
 
+import static it.polito.group05.group05.Group_Activity.appBar;
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
 

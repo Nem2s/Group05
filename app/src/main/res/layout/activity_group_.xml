@@ -22,10 +22,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:paddingTop="8dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="match_parent"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:layout_scrollFlags="scroll|enterAlways"
+            android:fitsSystemWindows="true"
             android:transitionName="@string/transition_toolbar"
 
             >
@@ -39,7 +40,8 @@
 
                 <com.pkmmte.view.CircularImageView
                     android:id="@+id/iv_group_image"
-                    android:layout_height="48dp"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"                    android:layout_height="48dp"
                     android:layout_width="48dp"
                     android:focusableInTouchMode="true"
                     android:transitionName="@string/transition_group_image"
@@ -83,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
+        app:layout_behavior="it.polito.group05.group05.Utility.ScrollAwareFABBehavior"
         android:transitionName="@string/transition_fab"
         app:srcCompat="@drawable/ic_action_add_black" />
 </android.support.design.widget.CoordinatorLayout>

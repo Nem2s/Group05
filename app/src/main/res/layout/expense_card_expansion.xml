@@ -7,6 +7,8 @@
     <com.pkmmte.view.CircularImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:id="@+id/expense_member_image"

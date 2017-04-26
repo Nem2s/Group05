@@ -2,7 +2,6 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,8 +20,12 @@ public class User {
     private float tot_expenses;
     private boolean isAdministrator;
     private boolean isCardEnabled;
+    private boolean isSelected;
     private List<UserContact> contacts;
 
+    private double customValue;
+
+    public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -33,10 +36,18 @@ public class User {
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
+        isSelected = false;
+        this.customValue = 0;
     }
-    
 
-    public User() {
+    public boolean hasCustomValue() {
+        return customValue > 0;
+    }
+    public double getCustomValue() {
+        return customValue;
+    }
+    public void setCustomValue(double customValue) {
+        this.customValue = customValue;
     }
 
     public String getId() {
@@ -100,24 +111,10 @@ public class User {
     }
 
     public int generateRandomColor() {
-        Random mRandom = new Random();
+
         // This is the base color which will be mixed with the generated one
-        final int baseColor = Color.WHITE;
+        return 3;
 
-        final int baseRed = Color.red(baseColor);
-        final int baseGreen = Color.green(baseColor);
-        final int baseBlue = Color.blue(baseColor);
-
-        final int red = (baseRed + mRandom.nextInt(256)) / 2;
-        final int green = (baseGreen + mRandom.nextInt(256)) / 2;
-        final int blue = (baseBlue + mRandom.nextInt(256)) / 2;
-
-        return Color.rgb(red, green, blue);
-
-    }
-
-    public void setUser_color(int user_color) {
-        this.user_color = user_color;
     }
 
     public float getTot_expenses() {
@@ -143,4 +140,15 @@ public class User {
     public void addContact(UserContact user) {
         contacts.add(user);
     }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }
+
+
+

@@ -11,6 +11,8 @@
 
     <com.pkmmte.view.CircularImageView
         android:id="@+id/iv_group_image"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
         android:layout_height="58dp"
         android:layout_width="58dp"
         android:layout_marginTop="8dp"
