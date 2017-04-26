@@ -32,6 +32,8 @@ import com.pkmmte.view.CircularImageView;
 
 import junit.framework.TestResult;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,6 +61,8 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static it.polito.group05.group05.Utility.ColorUtils.context;
@@ -147,11 +151,12 @@ public class DB_Manager {
         }
         if(currentUserID == null) {
             Singleton.getInstance().clearGroups();
-            HomeScreen.currentUser = new User();
-            getCurrentUserID(HomeScreen.currentUser);
+            User user = new User();
+            EventBus.getDefault().post(new CurrentUserChangedEvent(user));
+            getCurrentUserID(user);
         }
         else {
-            currentUserInfo(HomeScreen.currentUser);
+            currentUserInfo(Singleton.getInstance().getCurrentUser());
         }
 
         return database;
@@ -205,7 +210,7 @@ public class DB_Manager {
                              {
                                  g1.addMember(s);
                              }
-                             HomeScreen.groupAdapter.notifyDataSetChanged();
+                             EventBus.getDefault().post(new GroupAddedEvent());
 
                          }
                      }
@@ -357,7 +362,7 @@ public class DB_Manager {
                                         }
                                         Singleton.getInstance().addGroup(g);
                                         MonitorOnGroup(g);
-                                        HomeScreen.groupAdapter.notifyDataSetChanged();
+                                        EventBus.getDefault().post(new GroupAddedEvent());
                                     }
                                 }
                                 @Override
@@ -391,7 +396,7 @@ public class DB_Manager {
                     String gId = dataSnapshot.getKey();
                     int i = Singleton.getInstance().getPositionGroup(gId);
                     Singleton.getInstance().getmCurrentGroups().remove(i);
-                    HomeScreen.groupAdapter.notifyDataSetChanged();
+                    EventBus.getDefault().post(new GroupAddedEvent());
                     //groupRef.child(gId).removeEventListener(null);
 
                 }
@@ -539,7 +544,7 @@ public class DB_Manager {
         final File localFile = new File(Init.getAppContext().getFilesDir(), G.getGroupID() + "/grouprofile.jpg");
         if(localFile.exists()) {
              G.setGroupProfile(BitmapFactory.decodeStream(new FileInputStream(localFile)));
-            HomeScreen.groupAdapter.notifyDataSetChanged();
+            EventBus.getDefault().post(new GroupAddedEvent());
         }
         //final File localFile = File.createTempFile("images", "jpg");
 
@@ -553,7 +558,7 @@ public class DB_Manager {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-                    HomeScreen.groupAdapter.notifyDataSetChanged();
+                    EventBus.getDefault().post(new GroupAddedEvent());
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

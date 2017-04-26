@@ -69,6 +69,8 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
@@ -131,6 +133,18 @@ public class HomeScreen extends AppCompatActivity
         groups.add(g);
         groupAdapter.notifyDataSetChanged();
     }
+
+    @Subscribe
+    public void onGroupAdded(GroupAddedEvent e) {
+        groupAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onCurrentUserChanged(CurrentUserChangedEvent e) {
+        currentUser = (User)e.getUser();
+        Singleton.getInstance().setCurrentUser(currentUser);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
