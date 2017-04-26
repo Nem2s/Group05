@@ -2,6 +2,8 @@ package it.polito.group05.group05;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +13,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.pkmmte.view.CircularImageView;
+
+import it.polito.group05.group05.Utility.DB_Manager;
+
 public class SignupActivity extends AppCompatActivity {
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
 
     private static final String TAG = "SignupActivity";
 
@@ -31,6 +46,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton = (Button)findViewById(R.id.btn_signup);
         _loginLink = (TextView)findViewById(R.id.link_login);
 
+        mAuth = FirebaseAuth.getInstance();
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +84,32 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
+        final String emailfordb = new String(email);
+        final String namefordb = new String(name);
 
-        new android.os.Handler().postDelayed(
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                       // pushNewUser(email1, mAuth.getCurrentUser().getUid());
+                        final DB_Manager db1 = new DB_Manager();
+                        FirebaseDatabase database1 = db1.getDatabase();
+                        //db1.pushNewUser(emailfordb, namefordb, mAuth.getCurrentUser().getUid(), ((BitmapDrawable) ((CircularImageView)findViewById(R.id.drawer_header_image)).getDrawable()).getBitmap());
+                        db1.pushNewUser(emailfordb, namefordb, mAuth.getCurrentUser().getUid());
+                        //DB_Manager.getInstance().pushNewUser(emailfordb, mAuth.getCurrentUser().getUid());
+                        progressDialog.dismiss();
+
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(SignupActivity.this, R.string.auth_failed,
+                                    Toast.LENGTH_SHORT).show();
+                            onSignupFailed();
+                        }
+
+                        onSignupSuccess();
+                    }
+                });
+
+        /*new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onSignupSuccess or onSignupFailed
@@ -79,15 +118,16 @@ public class SignupActivity extends AppCompatActivity {
                         // onSignupFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 3000);*/
     }
 
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        Intent i = new Intent(this, HomeScreen.class);
+        Intent i = new Intent(this, Init.class);
         startActivity(i);
+        finish();
      }
 
     public void onSignupFailed() {

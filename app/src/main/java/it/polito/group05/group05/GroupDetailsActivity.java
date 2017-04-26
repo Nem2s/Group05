@@ -54,6 +54,7 @@ import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.ChartUserMarker;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -108,7 +109,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
         tv_group_name.setText(currentGroup.getName());
         cv_group.setImageBitmap(currentGroup.getGroupProfile());
         users = new ArrayList<>();
-        users.addAll(currentGroup.getMembers());
+        //users.addAll(currentGroup.getMembers());
+        DB_Manager.getInstance().retriveUserInfo(currentGroup, users);
         adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);

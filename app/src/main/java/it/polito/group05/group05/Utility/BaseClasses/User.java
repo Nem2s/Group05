@@ -13,6 +13,7 @@ import java.util.Random;
 public class User {
     private String id;
     private String user_name;
+    private String email;
     private Balance balance;
     private Bitmap profile_image;
     private Group user_group;
@@ -41,6 +42,13 @@ public class User {
         this.customValue = 0;
     }
 
+    public User(String id, String user_name )
+    {
+        this.id = id;
+        this.user_name = user_name;
+        this.profile_image = profile_image;
+    }
+
     public boolean hasCustomValue() {
         return customValue > 0;
     }
@@ -65,6 +73,14 @@ public class User {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Balance getBalance() {

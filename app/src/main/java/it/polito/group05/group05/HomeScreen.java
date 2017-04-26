@@ -6,8 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -28,54 +33,70 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
 import io.codetail.animation.ViewAnimationUtils;
-import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.ColorUtils;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.GroupAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 
 import it.polito.group05.group05.Utility.InvitedAdapter;
-import it.polito.group05.group05.Utility.PicassoRoundTransform;
-
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    public static  Context HomeScreenContext;
+
+    public  static int REQUEST_FROM_NEW_GROUP;
+    static public  GroupAdapter groupAdapter;
     public  static int REQUEST_FROM_NEW_USER;
+
+   // private static FirebaseDatabase database1;
+
+    private static final String TAG = "AnonymousAuth";
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_auth_listener]
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    // [END declare_auth_listener]
 
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    User currentUser;
+    static public User currentUser;// = new User();
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -105,9 +126,16 @@ public class HomeScreen extends AppCompatActivity
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        HomeScreenContext = this;
+
+        //--------------------------------------------------------------------
+
+       // final DB_Manager db1 = new DB_Manager();
+        DB_Manager.getInstance();
+    //---------------------------------------------------------------------
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
@@ -124,13 +152,14 @@ public class HomeScreen extends AppCompatActivity
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
 
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
-        final GroupAdapter groupAdapter = new GroupAdapter(items, this);
+        groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
-        currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+
+        //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        Singleton.getInstance().setId(currentUser.getId());
+        //Singleton.getInstance().setId(currentUser.getId());
         Singleton.getInstance().setCurrentUser(currentUser);
 
 
@@ -166,7 +195,9 @@ public class HomeScreen extends AppCompatActivity
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 cv_user_drawer = (CircularImageView)findViewById(R.id.drawer_header_image);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
+                tv_username.setText(currentUser.getUser_name());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
+                tv_email.setText(currentUser.getEmail());
                 ll_header = (LinearLayout)findViewById(R.id.drawer_ll_header);
                 ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
                 builder
@@ -177,7 +208,7 @@ public class HomeScreen extends AppCompatActivity
                         .set(tv_username)
                         .set(tv_email)
                         .build();
-
+                DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), ((BitmapDrawable) cv_user_drawer.getDrawable()).getBitmap());
                 /*Picasso
                         .with(getApplicationContext())
                         .load(Integer.parseInt(currentUser.getProfile_image()))
@@ -215,8 +246,6 @@ public class HomeScreen extends AppCompatActivity
                     public void onClick(View view) {
                         ImagePicker.pickImage(activity, "Select Imageqweqeqwe:");
                         REQUEST_FROM_NEW_USER = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-
-
                     }
                 });
 
@@ -240,6 +269,7 @@ public class HomeScreen extends AppCompatActivity
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+        groupAdapter.notifyDataSetChanged();
 
     }
 
@@ -319,9 +349,16 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
+            DB_Manager.signOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
 
         } else if (id == R.id.nav_share) {
 
+                Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
+                        .setMessage("ciao ciao ciao")
+                        .build();
+                startActivityForResult(intent, 1);
         } else if (id == R.id.nav_contacts) {
 
         }
