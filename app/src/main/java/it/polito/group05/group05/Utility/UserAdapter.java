@@ -15,6 +15,8 @@ import com.pkmmte.view.CircularImageView;
 import java.util.List;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 
 /**
  * Created by Marco on 28/03/2017.
@@ -39,15 +41,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(UserAdapter.ViewHolder holder, int position) {
         final int currentPosition = position;
-        final User currentUser = users.get(position);
-        /*Picasso
-                .with(context)
-                .load(Integer.parseInt(currentUser.getProfile_image()))
-                .placeholder(R.drawable.default_avatar)
-                .error(R.drawable.ic_visibility_off)
-                .transform(new PicassoRoundTransform())
-                .into(holder.img_profile);*/
-        holder.img_profile.setImageBitmap(currentUser.getProfile_image());
+        final UserGroup currentUser;
+        holder.img_profile.setImageBitmap(users.get(position).getProfile_image());
+        if(users.get(position) instanceof UserGroup)
+            currentUser =(UserGroup) users.get(position);
+        else
+            currentUser = new UserGroup(users.get(position));
+
+
         if(!currentUser.isAdministrator())
             holder.administrator.setVisibility(View.INVISIBLE);
         if(!currentUser.isCardEnabled())

@@ -12,6 +12,7 @@ import com.pkmmte.view.CircularImageView;
 import java.util.List;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 
 /**
  * Created by Marco on 08/04/2017.
@@ -20,12 +21,13 @@ import it.polito.group05.group05.R;
 public class ChartUserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     Context context;
-    List<User> users;
+    List<UserGroup> users;
     public boolean isSelected;
     View v;
 
-    public ChartUserListAdapter(List<User> list, Context context) {
+    public ChartUserListAdapter(List<UserGroup> list, Context context) {
         this.context = context;
+
         this.users = list;
     }
 

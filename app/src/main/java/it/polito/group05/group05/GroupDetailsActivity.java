@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,7 +41,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.pkmmte.view.CircularImageView;
 
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -53,9 +52,11 @@ import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.ChartUserMarker;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
-import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
-import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
+import it.polito.group05.group05.Utility.ColorUtils;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.UserAdapter;
 
 public class GroupDetailsActivity extends AppCompatActivity {
@@ -220,12 +221,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
         v.startAnimation(a);
     }
 
-    private void addEntry(User u) {
+    private void addEntry(User user) {
+        UserGroup u;
         int position = chart.getData().getEntryCount();
         final BarData data = chart.getData();
         XAxis xaxis = chart.getXAxis();
         xaxis.setTextSize(11f);
         List<BarEntry> barEntries = new ArrayList<>();
+        if(user instanceof UserGroup) u = (UserGroup) user;
+        else u= new UserGroup(user);
         BarEntry b = new BarEntry(position, (float)( u.getBalance().getCredit() - u.getBalance().getDebit()));
         barEntries.add(b);
         b.setData(u);
@@ -302,7 +306,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
             l.label = u.getUser_name();
-            l.formColor = u.getUser_color();
+            l.formColor = ((UserGroup) u).getUser_color();
             addEntry(u);
             legends.add(l);
         }

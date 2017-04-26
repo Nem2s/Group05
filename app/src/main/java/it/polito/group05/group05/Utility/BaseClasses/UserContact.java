@@ -12,7 +12,10 @@ public class UserContact extends User {
 
 
     public UserContact(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
-        super(id, user_name, balance, profile_image, user_group, isAdministrator, isCardEnabled);
+        super();
+        super.setId(id);
+        super.setUser_name(user_name);
+        super.setProfile_image(profile_image);
         selected = false;
     }
 
