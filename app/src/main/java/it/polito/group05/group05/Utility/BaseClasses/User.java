@@ -23,6 +23,7 @@ public class User {
     private boolean isSelected;
     private List<UserContact> contacts;
 
+
     private double customValue;
 
     public User(){}

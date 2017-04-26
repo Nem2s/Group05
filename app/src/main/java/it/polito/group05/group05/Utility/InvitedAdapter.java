@@ -98,6 +98,8 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
             }
         });
         holder.name.setText(currentUser.getUser_name());
+        holder.number.setText(currentUser.getPnumber());
+        holder.email.setText(currentUser.getEmail());
     }
 
     public boolean isValid() {
@@ -143,12 +145,16 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
 
         CircularImageView img_profile;
         TextView name;
+        TextView number;
+        TextView email;
         FloatingActionButton button;
 
         public ViewHolder(View itemView) {
             super(itemView);
             img_profile = (CircularImageView)itemView.findViewById(R.id.cv_invited_image);
             name = (TextView)itemView.findViewById(R.id.tv_invited_name);
+            number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
+            email = (TextView)itemView.findViewById(R.id.tv_invited_email);
             button = (FloatingActionButton)itemView.findViewById(R.id.add_to_group_button);
 
         }

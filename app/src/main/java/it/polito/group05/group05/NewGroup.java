@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -37,7 +40,9 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
@@ -47,6 +52,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
+import it.polito.group05.group05.Utility.ImageUtils;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 
 public class NewGroup extends AppCompatActivity{
@@ -80,6 +86,50 @@ public class NewGroup extends AppCompatActivity{
         }
     }
 
+    private List<UserContact> getContacts() {
+        // Run query
+        List<UserContact> result = new ArrayList<>();
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+
+        String[] projection =
+                new String[]{
+                        ContactsContract.CommonDataKinds.Photo.PHOTO_URI,
+                        ContactsContract.CommonDataKinds.Email.ADDRESS,
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                " COLLATE LOCALIZED ASC";
+        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+
+        int indexName   = query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+        int indexEmail =  query.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS);
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexPhoto = query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI);
+
+        query.moveToFirst();
+        do {
+            UserContact user = new UserContact();
+            String name   = query.getString(indexName);
+            String number = query.getString(indexNumber);
+            String photo = query.getString(indexPhoto);
+            String email = query.getString(indexEmail);
+            Cursor internalCursor = managedQuery(ContactsContract.CommonDataKinds.)
+
+            user.setName(name);
+            user.setPnumber(number);
+            user.setEmail(email);
+            user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photo)));
+
+            result.add(user);
+
+        }while(query.moveToNext());
+
+        return result;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,8 +143,7 @@ public class NewGroup extends AppCompatActivity{
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-
-        invitedAdapter = new InvitedAdapter(currentUser.getContacts(), this);
+        invitedAdapter = new InvitedAdapter(getContacts(), this);
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
         rv_invited.setHasFixedSize(true);
