@@ -75,14 +75,6 @@ public class User {
         this.user_name = user_name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public Balance getBalance() {
         return balance;
     }

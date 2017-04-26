@@ -26,6 +26,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,8 +52,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +69,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
 import it.polito.group05.group05.Utility.InvitedAdapter;
@@ -78,16 +80,11 @@ public class HomeScreen extends AppCompatActivity
     public static  Context HomeScreenContext;
 
     public  static int REQUEST_FROM_NEW_GROUP;
-    static public  GroupAdapter groupAdapter;
     public  static int REQUEST_FROM_NEW_USER;
 
    // private static FirebaseDatabase database1;
 
     private static final String TAG = "AnonymousAuth";
-
-    // [START declare_auth]
-    private FirebaseAuth mAuth;
-    // [END declare_auth]
 
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -96,7 +93,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    static public User currentUser;// = new User();
+    User currentUser;
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -104,13 +101,36 @@ public class HomeScreen extends AppCompatActivity
     RecyclerView rv_groups;
 
     RelativeLayout no_groups;
-    private Context context;
-
-
+    public static Context context;
+    private List<Group> groups = new ArrayList<>();
+    private GroupAdapter groupAdapter;
+    FirebaseAuth mAuth;
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
 
     Group newgroup = new Group();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+        Log.d("Details", "Registered for " + this);
+    }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        Log.d("Details", "Unregistered for " + this);
+        super.onDestroy();
+    }
+
+    @Subscribe
+    public void onObjectAdded(ObjectChangedEvent event) {
+        Log.d("Details", "New member in the group!");
+        Group g = (Group)event.retriveObject();
+        Singleton.getInstance().addGroup(g);
+        groups.add(g);
+        groupAdapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -123,6 +143,7 @@ public class HomeScreen extends AppCompatActivity
             REQUEST_FROM_NEW_USER = -1;
         }
     }
+
 
 
 
@@ -150,9 +171,9 @@ public class HomeScreen extends AppCompatActivity
         no_groups = (RelativeLayout)findViewById(R.id.no_groups_layout);
         activity = this;
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
-
+        mAuth = FirebaseAuth.getInstance();
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
-        groupAdapter = new GroupAdapter(items, this);
+        groupAdapter = new GroupAdapter(groups, context);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
@@ -349,6 +370,12 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_contacts) {
+
+        } else if (id == R.id.nav_logout) {
             DB_Manager.signOut();
             startActivity(new Intent(this, LoginActivity.class));
             finish();

@@ -51,6 +51,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
 import it.polito.group05.group05.Utility.ImageUtils;
@@ -90,14 +91,13 @@ public class NewGroup extends AppCompatActivity{
     private List<UserContact> getContacts() {
         // Run query
         List<UserContact> result = new ArrayList<>();
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
         String[] projection =
                 new String[]{
-                        ContactsContract.CommonDataKinds.Photo.PHOTO_URI,
-                        ContactsContract.CommonDataKinds.Email.ADDRESS,
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
                 };
         String selection = null;
         String[] selectionArgs = null;
@@ -105,25 +105,23 @@ public class NewGroup extends AppCompatActivity{
                 " COLLATE LOCALIZED ASC";
         Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
 
-        int indexName   = query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        int indexEmail =  query.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS);
-        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int indexPhoto = query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI);
 
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
         query.moveToFirst();
         do {
             UserContact user = new UserContact();
-            String name   = query.getString(indexName);
             String number = query.getString(indexNumber);
-            String photo = query.getString(indexPhoto);
-            String email = query.getString(indexEmail);
-            Cursor internalCursor = managedQuery(ContactsContract.CommonDataKinds.)
-
-            user.setName(name);
+            String name = query.getString(indexName);
+            user.setUser_name(name);
             user.setPnumber(number);
-            user.setEmail(email);
-            user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photo)));
-
+            user.setEmail("user@example.com");
+            String photoUri = query.getString(indexPhoto);
+            if(photoUri != null)
+                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
+            else
+                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
             result.add(user);
 
         }while(query.moveToNext());
@@ -286,8 +284,9 @@ public class NewGroup extends AppCompatActivity{
             }
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-                Singleton.getInstance().addGroup(newgroup);
-                //invitedAdapter.notifyDataSetChanged();
+                EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
+                DB_Manager.PushGroupToDB(newgroup);
+                invitedAdapter.notifyDataSetChanged();
                 finish();
 
 

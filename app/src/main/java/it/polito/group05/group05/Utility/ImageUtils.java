@@ -33,7 +33,7 @@ public class ImageUtils {
         return ((BitmapDrawable)d).getBitmap();
     }
 
-    public static Bitmap getBitmapFromUri(Uri uri) {
+    public static Bitmap getBitmapFromUri(Uri uri, Context context) {
         try {
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
         } catch (IOException e) {
