@@ -80,11 +80,16 @@ public class HomeScreen extends AppCompatActivity
     public static  Context HomeScreenContext;
 
     public  static int REQUEST_FROM_NEW_GROUP;
+    static public  GroupAdapter groupAdapter;
     public  static int REQUEST_FROM_NEW_USER;
 
    // private static FirebaseDatabase database1;
 
     private static final String TAG = "AnonymousAuth";
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
 
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -93,7 +98,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    User currentUser;
+    static public User currentUser;
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -103,8 +108,6 @@ public class HomeScreen extends AppCompatActivity
     RelativeLayout no_groups;
     public static Context context;
     private List<Group> groups = new ArrayList<>();
-    private GroupAdapter groupAdapter;
-    FirebaseAuth mAuth;
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
 
     Group newgroup = new Group();
@@ -139,6 +142,9 @@ public class HomeScreen extends AppCompatActivity
 
         if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
             cv_user_drawer.setImageBitmap(bitmap);
+            currentUser.setProfile_image(bitmap);
+            DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
+
             drawer.closeDrawers();
             REQUEST_FROM_NEW_USER = -1;
         }
@@ -173,7 +179,7 @@ public class HomeScreen extends AppCompatActivity
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
         mAuth = FirebaseAuth.getInstance();
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
-        groupAdapter = new GroupAdapter(groups, context);
+        groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
@@ -215,6 +221,7 @@ public class HomeScreen extends AppCompatActivity
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 cv_user_drawer = (CircularImageView)findViewById(R.id.drawer_header_image);
+                cv_user_drawer.setImageBitmap(currentUser.getProfile_image());
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
                 tv_username.setText(currentUser.getUser_name());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
@@ -229,7 +236,6 @@ public class HomeScreen extends AppCompatActivity
                         .set(tv_username)
                         .set(tv_email)
                         .build();
-                DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), ((BitmapDrawable) cv_user_drawer.getDrawable()).getBitmap());
                 /*Picasso
                         .with(getApplicationContext())
                         .load(Integer.parseInt(currentUser.getProfile_image()))
@@ -367,20 +373,21 @@ public class HomeScreen extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
-
+            DB_Manager.signOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_contacts) {
-
-        } else if (id == R.id.nav_logout) {
+        } /*else if (id == R.id.nav_logout) {
             DB_Manager.signOut();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
 
-        } else if (id == R.id.nav_share) {
+        } */else if (id == R.id.nav_share) {
 
                 Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
                         .setMessage("ciao ciao ciao")

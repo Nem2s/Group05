@@ -42,6 +42,19 @@ public class User {
         this.customValue = 0;
     }
 
+    public User(String id, String user_name, Balance balance, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
+        this.id = id;
+        this.user_name = user_name;
+        this.balance = balance;
+        this.user_group = user_group;
+        this.isAdministrator = isAdministrator;
+        this.isCardEnabled = isCardEnabled;
+        this.user_color = generateRandomColor();
+        this.contacts = new ArrayList<>();
+        isSelected = false;
+        this.customValue = 0;
+    }
+
     public User(String id, String user_name )
     {
         this.id = id;
@@ -73,6 +86,14 @@ public class User {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Balance getBalance() {

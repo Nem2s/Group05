@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.nekocode.badge.BadgeDrawable;
+import it.polito.group05.group05.HomeScreen;
 
 public class GroupDatabase {
 
@@ -97,7 +98,8 @@ public class GroupDatabase {
         for(User u : users){
             memb.put(u.getUser_name(), true);
         }
-        memb.remove("User");
+        //memb.remove("User");
+        memb.remove(HomeScreen.currentUser.getUser_name());
         memb.put(id, true);
         this.setMembers(memb);
         return memb;

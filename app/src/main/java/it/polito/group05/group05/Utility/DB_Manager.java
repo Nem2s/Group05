@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -11,6 +12,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.bitmap.StreamBitmapDataLoadProvider;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -227,14 +229,24 @@ public class DB_Manager {
      *   Listener singolo per Inizializzazione utenti dentro il gruppo
      */
 
-    public static void retriveUserInfo(Group G, final ArrayList<User> users){
+    public static void retriveUsersInfo(Group G, final ArrayList<User> users){
         for (String s : G.getMembersId()) {
             userRef.child(s).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
-                    User u = new User(ud.getId(), ud.getName());
-                    //photoMemoryDownload();
+                    User u;
+                    if(ud.getId().equals(HomeScreen.currentUser.getId())) {
+                        u = new User(ud.getId(), ud.getName(), new Balance(3, 2), null, true, true);
+                    }
+                    else{
+                        u = new User(ud.getId(), ud.getName(), new Balance(3, 2), null, true, false);
+                    }
+                    try {
+                        photoUserDownload(u);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     users.add(u);
                 }
                 @Override
@@ -420,7 +432,7 @@ public class DB_Manager {
         newuser.setUserGroups(memb);
         ref.setValue(newuser);
         usernumberRef.child(newuser.getTelNumber()).setValue(newuser.getAuthKey());
-       // DB_Manager.getInstance().photoMemoryUpload(1, newuser.getId(), bitmap);
+        DB_Manager.getInstance().photoMemoryUpload(1, newuser.getId(), BitmapFactory.decodeResource(Init.getAppContext().getResources(), R.drawable.man_1));
         DB_Manager.getInstance().CurrentUserGroupMonitor();
     }
 
@@ -573,11 +585,10 @@ public class DB_Manager {
         final File localFile = new File(Init.getAppContext().getFilesDir(), U.getId() + "/userprofile.jpg");
         if(localFile.exists()) {
             U.setProfile_image(BitmapFactory.decodeStream(new FileInputStream(localFile)));
-            //HomeScreen.groupAdapter.notifyDataSetChanged();
         }
         //final File localFile = File.createTempFile("images", "jpg");
 
-        StorageReference islandRef = storageGroupRef.child(U.getId()).child("userprofile.jpg");
+        StorageReference islandRef = storageUserRef.child(U.getId()).child("userprofile.jpg");
 
         islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
@@ -587,7 +598,6 @@ public class DB_Manager {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                //HomeScreen.groupAdapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
