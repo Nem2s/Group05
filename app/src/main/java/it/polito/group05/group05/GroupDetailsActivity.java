@@ -40,7 +40,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.pkmmte.view.CircularImageView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,7 +79,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private boolean isExpanded;
     private UserAdapter adapter;
     private Context context;
-    CircularImageView cv_group;
+    CircleImageView cv_group;
     RecyclerView rv;
     Entry entry;
     Highlight highlighted;
@@ -96,7 +96,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
         expand_cardview = (ImageView)findViewById(R.id.expand_cardview);
         cardView = (CardView) findViewById(R.id.card_view);
-        cv_group = (CircularImageView)findViewById(R.id.iv_group_image);
+        cv_group = (CircleImageView)findViewById(R.id.iv_group_image);
         isExpanded = false;
 
         rv = (RecyclerView)findViewById(R.id.rv_group_members);
@@ -362,7 +362,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void customizeToolbar(final Toolbar toolbar) {
-        final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         final GroupColor gc = new GroupColor();
             ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
             builder

@@ -18,7 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 .transform(new PicassoRoundTransform())
                 .into(holder.groupProfile);*/
         final int currentPosition = position;
+        if(getItemCount() == 0)
+            return;
         holder.groupProfile.setImageBitmap(groups.get(position).getGroupProfile());
         holder.name.setText(groups.get(position).getName());
         String text = "<font color='green'>" + groups.get(position).getBalance().getCredit() + "</font> / <font color='red'>" + groups.get(position).getBalance().getDebit() + "</font>";
@@ -158,7 +161,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        CircularImageView groupProfile;
+        CircleImageView groupProfile;
         TextView name;
         TextView balance;
         TextView badge;
@@ -168,7 +171,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            groupProfile = (CircularImageView)itemView.findViewById(R.id.iv_group_image);
+            groupProfile = (CircleImageView)itemView.findViewById(R.id.iv_group_image);
             balance = (TextView)itemView.findViewById(R.id.tv_group_balance);
             name = (TextView)itemView.findViewById(R.id.tv_group_name);
             badge = (TextView)itemView.findViewById(R.id.tv_badge_counter);

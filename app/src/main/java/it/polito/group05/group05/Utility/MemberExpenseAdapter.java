@@ -14,7 +14,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -182,7 +183,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     //VIEWHOLDER CLASS
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public RelativeLayout parent;
-        public CircularImageView image_person;
+        public CircleImageView image_person;
         public TextView name_person;
         public CheckBox include_person;
         public ImageView euro_person;
@@ -193,7 +194,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
         public ViewHolder(View itemView) {
             super(itemView);
             this.parent = (RelativeLayout)itemView.findViewById(R.id.et_quotae);
-            this.image_person = (CircularImageView) itemView.findViewById(R.id.iv_group_image);
+            this.image_person = (CircleImageView) itemView.findViewById(R.id.iv_group_image);
             this.name_person = (TextView) itemView.findViewById(R.id.tv_name_member);
             this.include_person = (CheckBox) itemView.findViewById(R.id.cb_include);
             this.euro_person = (ImageView) itemView.findViewById(R.id.euro_member);

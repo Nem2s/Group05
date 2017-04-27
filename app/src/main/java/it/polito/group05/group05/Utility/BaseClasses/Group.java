@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.text.SpannableString;
 import android.util.Pair;
 
-import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Collection;

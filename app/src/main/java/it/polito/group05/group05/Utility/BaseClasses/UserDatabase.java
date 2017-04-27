@@ -1,6 +1,8 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,17 +15,20 @@ public class UserDatabase {
     public String authKey;
     public String telNumber;
     public String email;
-    public String profileImmage;
+    public String iProfile;
     public Balance balance;
     public Map<String, Object> userGroups;
 
-    public UserDatabase(String id, String name, String authKey, String telNumber, String email) {
+    public UserDatabase(String id, String name, String authKey, String telNumber, String email, String iProfile) {
         this.id = id;
         this.name = name;
         this.authKey = authKey;
         this.telNumber = telNumber;
         this.email = email;
+        this.iProfile = iProfile;
     }
+
+
 
 
 
@@ -72,12 +77,12 @@ public class UserDatabase {
         this.email = email;
     }
 
-    public String getProfileImmage() {
-        return profileImmage;
+    public String getProfileImage() {
+        return iProfile;
     }
 
-    public void setProfileImmage(String profileImmage) {
-        this.profileImmage = profileImmage;
+    public void setProfileImage(String profileImmage) {
+        this.iProfile = profileImmage;
     }
 
     public Balance getBalance() {

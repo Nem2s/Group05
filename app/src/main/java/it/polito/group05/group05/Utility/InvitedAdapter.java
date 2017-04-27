@@ -16,7 +16,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.HomeScreen;
 import it.polito.group05.group05.NewGroup;
 import it.polito.group05.group05.R;
@@ -143,7 +145,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        CircularImageView img_profile;
+        CircleImageView img_profile;
         TextView name;
         TextView number;
         TextView email;
@@ -151,7 +153,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-            img_profile = (CircularImageView)itemView.findViewById(R.id.cv_invited_image);
+            img_profile = (CircleImageView)itemView.findViewById(R.id.cv_invited_image);
             name = (TextView)itemView.findViewById(R.id.tv_invited_name);
             number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
             email = (TextView)itemView.findViewById(R.id.tv_invited_email);

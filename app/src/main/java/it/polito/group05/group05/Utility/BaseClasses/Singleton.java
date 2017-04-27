@@ -26,6 +26,7 @@ public class Singleton {
         mCurrentGroups = new ArrayList<>();
         mCurrentGroup = new Group();
         mCurrenUsersList = new ArrayList<>();
+        currentUser = new User();
     }
 
     public static Singleton getInstance(){

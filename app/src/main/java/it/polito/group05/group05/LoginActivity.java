@@ -24,6 +24,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -95,6 +97,25 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // [START on_start_add_listener]
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    // [END on_start_add_listener]
+
+    // [START on_stop_remove_listener]
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+
+    }
+    // [END on_stop_remove_listener]
+
     public void login() {
         Log.d(TAG, "Login");
 
@@ -158,8 +179,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
-        Intent i = new Intent(this, Init.class);
-        startActivity(i);
+        if(mCurrentUser != null) {
+            Singleton.getInstance().setId(mCurrentUser.getUid());
+            Toast.makeText(context, "Logged as " + mCurrentUser.getUid(), Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, HomeScreen.class);
+            startActivity(i);
+            finish();
+        } else
+            onLoginFailed();
     }
 
     public void onLoginFailed() {

@@ -33,8 +33,9 @@ import android.view.View;
 
 import android.widget.TextView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import com.mvc.imagepicker.ImagePicker;
-import com.pkmmte.view.CircularImageView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,7 +63,7 @@ public class NewGroup extends AppCompatActivity{
     public  static int REQUEST_FROM_NEW_GROUP;
 
 
-    CircularImageView iv_new_group;
+    CircleImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
     private Group newgroup;
@@ -88,46 +89,7 @@ public class NewGroup extends AppCompatActivity{
         }
     }
 
-    private List<UserContact> getContacts() {
-        // Run query
-        List<UserContact> result = new ArrayList<>();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
-        String[] projection =
-                new String[]{
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
-                };
-        String selection = null;
-        String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
-                " COLLATE LOCALIZED ASC";
-        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
-
-
-        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-        query.moveToFirst();
-        do {
-            UserContact user = new UserContact();
-            String number = query.getString(indexNumber);
-            String name = query.getString(indexName);
-            user.setUser_name(name);
-            user.setPnumber(number);
-            user.setEmail("user@example.com");
-            String photoUri = query.getString(indexPhoto);
-            if(photoUri != null)
-                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
-            else
-                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
-            result.add(user);
-
-        }while(query.moveToNext());
-
-        return result;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,13 +98,27 @@ public class NewGroup extends AppCompatActivity{
         isNameEmpty = true;
         rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
         et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
-        iv_new_group = (CircularImageView) findViewById(R.id.iv_new_group);
+        iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
         no_people = (TextView)findViewById(R.id.no_people);
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
 
-        invitedAdapter = new InvitedAdapter(getContacts(), this);
+        if(contacts != null && contacts.size() > 0)
+            invitedAdapter = new InvitedAdapter(contacts, this);
+        else {
+            Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    }).show();
+            et_group_name.setEnabled(false);
+            iv_new_group.setEnabled(false);
+        }
+
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
         rv_invited.setHasFixedSize(true);
@@ -285,8 +261,7 @@ public class NewGroup extends AppCompatActivity{
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
                 DB_Manager.getInstance().PushGroupToDB(newgroup);
-                //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
-
+                EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
                 finish();
 
 

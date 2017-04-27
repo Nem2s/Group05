@@ -24,7 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,6 +33,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
@@ -46,7 +48,7 @@ public class AddMember extends AppCompatActivity {
 
     TextView tv_group_name;
     TextView partecipants ;
-    CircularImageView iv_group_image;
+    CircleImageView iv_group_image;
     TextView Tv_group_name;
     private MenuItem mSearchItem;
     private MenuItem mConfirmItem;
@@ -73,7 +75,7 @@ public class AddMember extends AppCompatActivity {
         tv_group_name = (TextView)findViewById(R.id.tv_group_name);
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
         no_people = (TextView)findViewById(R.id.no_people);
-        iv_group_image = (CircularImageView)findViewById(R.id.iv_group_image);
+        iv_group_image = (CircleImageView)findViewById(R.id.iv_group_image);
         tv_group_name = (TextView)findViewById(R.id.tv_group_name);
         appBar = (AppBarLayout)findViewById(R.id.appbar);
         iv_group_image.setImageBitmap(currentGroup.getGroupProfile());
