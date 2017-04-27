@@ -100,7 +100,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    static public User currentUser;
+    static public User currentUser;// = new User();
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -128,25 +128,25 @@ public class HomeScreen extends AppCompatActivity
         super.onDestroy();
     }
 
-    @Subscribe
+   /* @Subscribe
     public void onObjectAdded(ObjectChangedEvent event) {
         Log.d("Details", "New member in the group!");
         Group g = (Group)event.retriveObject();
         Singleton.getInstance().addGroup(g);
         groups.add(g);
         groupAdapter.notifyDataSetChanged();
-    }
+    }*/
 
     @Subscribe
     public void onGroupAdded(GroupAddedEvent e) {
         groupAdapter.notifyDataSetChanged();
     }
 
-    @Subscribe
+    /*@Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
         currentUser = (User)e.getUser();
         Singleton.getInstance().setCurrentUser(currentUser);
-    }
+    }*/
 
 
     @Override
@@ -199,8 +199,8 @@ public class HomeScreen extends AppCompatActivity
         rv_groups.setAdapter(groupAdapter);
 
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
-        //currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        //Singleton.getInstance().setId(currentUser.getId());
+        currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
+        Singleton.getInstance().setId(currentUser.getId());
         Singleton.getInstance().setCurrentUser(currentUser);
 
 
@@ -391,17 +391,15 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
-            DB_Manager.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+
         } else if (id == R.id.nav_share) {
 
-        } /*else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             DB_Manager.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, Init.class));
             finish();
 
-        } */else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
 
                 Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
                         .setMessage("ciao ciao ciao")

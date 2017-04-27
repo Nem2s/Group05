@@ -35,6 +35,7 @@ import com.pkmmte.view.CircularImageView;
 import junit.framework.TestResult;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,6 +66,8 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
+import it.polito.group05.group05.Utility.EventClasses.HomeScreenEvent;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static it.polito.group05.group05.Utility.ColorUtils.context;
@@ -74,7 +77,6 @@ import static it.polito.group05.group05.Utility.ColorUtils.context;
  */
 
 public class DB_Manager {
-
     private static DB_Manager mInstance = null;
 
     private static FirebaseAuth mAuth;
@@ -151,14 +153,16 @@ public class DB_Manager {
             mAuth = FirebaseAuth.getInstance();
 
         }
-        if(currentUserID == null) {
+        /*if(currentUserID == null) {
             Singleton.getInstance().clearGroups();
-            HomeScreen.currentUser = new User();
-            getCurrentUserID(HomeScreen.currentUser);
+            User u =  new User();
+            getCurrentUserID(u);
+            //HomeScreen.currentUser = new User();
+            //getCurrentUserID(HomeScreen.currentUser);
         }
         else {
             currentUserInfo(HomeScreen.currentUser);
-        }
+        }*/
 
         return database;
     }
@@ -265,9 +269,12 @@ public class DB_Manager {
      *   Listener singolo per Inizializzazione gruppi
      */
 
-  /*  public static void PullGroupFromDBWithUserId(){
+   /* public static void PullGroupFromDBWithUserId(){
+
+        if(groupUser.isEmpty()) EventBus.getDefault().post(new HomeScreenEvent());
 
         for(String s : groupUser){
+            if(s.equals("00")) continue;
             final Group g;
             groupRef.orderByKey()
                     .equalTo(s)
@@ -279,13 +286,14 @@ public class DB_Manager {
                                 GroupDatabase gd = child.getValue(GroupDatabase.class);
                                 Group g = new Group(gd.getName(), gd.getId(), gd.getBalance(), gd.getLmTime(), 1);
                                 try {
-                                    photoMemoryDownload(gd.getId(), g);
+                                    photoGroupDownload(g);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                Singleton.getInstance().addGroup(g);
-                                MonitorOnGroup(g);
-                                HomeScreen.groupAdapter.notifyDataSetChanged();
+                                EventBus.getDefault().post(new ObjectChangedEvent(g));
+                               // Singleton.getInstance().addGroup(g);
+                               // MonitorOnGroup(g);
+                               // HomeScreen.groupAdapter.notifyDataSetChanged();
                             }
                         }
                         @Override
@@ -328,9 +336,10 @@ public class DB_Manager {
                     currentUserID = u.getId();
                     groupUser = u.UserGruopsList();
                    // Singleton.getInstance().clearGroups();
-                   // DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                   //DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                   // DB_Manager.getInstance().CurrentUserGroupMonitor();
                     DB_Manager.getInstance().CurrentUserGroupMonitor();
-                    EventBus.getDefault().post(new CurrentUserChangedEvent(HomeScreen.currentUser));
+                    EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                 }
             }
@@ -342,12 +351,50 @@ public class DB_Manager {
         });
 
     }
+    public static void getCurrentUserID(){
+        userRef.orderByChild("authKey")
+                .equalTo(mAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot child : dataSnapshot.getChildren()) {
+                            UserDatabase u = child.getValue(UserDatabase.class);
+                            User U = new User();
+                            U.setId(u.getId());
+                            U.setUser_name(u.getName());
+                            U.setEmail(u.getEmail());
+                            U.setBalance(new Balance(3, 1));
+                            try {
+                                photoUserDownload(U);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            U.setUser_group(null);
+                            U.setAdministrator(true);
+                            U.setCardEnabled(true);
+                            currentUserID = u.getId();
+                            groupUser = u.UserGruopsList();
+                            // Singleton.getInstance().clearGroups();
+                            //DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                             DB_Manager.getInstance().CurrentUserGroupMonitor();
+                            EventBus.getDefault().post(new CurrentUserChangedEvent(U));
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
 
     /*
     * Listeners che rimangono attivi per monitorare userGroups all'interno dell'utente
     */
 
-    private void CurrentUserGroupMonitor() {
+    public void CurrentUserGroupMonitor() {
         //Singleton.getInstance().clearGroups();
         userListener = userRef
             .child(currentUserID)
@@ -357,30 +404,36 @@ public class DB_Manager {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         String gId = dataSnapshot.getKey();
-                    DatabaseReference ref = database.getReference("groups");
-                    ref.orderByKey()
-                            .equalTo(gId)
-                            .limitToFirst(1)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot child : dataSnapshot.getChildren()) {
-                                        GroupDatabase gd = child.getValue(GroupDatabase.class);
-                                        Group g = new Group(gd.getName(), gd.getId(), gd.getBalance(), gd.getLmTime(), 1);
-                                        try {
-                                            photoGroupDownload(g);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
+                    if(!gId.equals("00")) {
+                        DatabaseReference ref = database.getReference("groups");
+                        ref.orderByKey()
+                                .equalTo(gId)
+                                .limitToFirst(1)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                            GroupDatabase gd = child.getValue(GroupDatabase.class);
+                                            Group g = new Group(gd.getName(), gd.getId(), gd.getBalance(), gd.getLmTime(), 1);
+                                            try {
+                                                photoGroupDownload(g);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            Singleton.getInstance().addGroup(g);
+                                            MonitorOnGroup(g);
+                                            EventBus.getDefault().post(new GroupAddedEvent());
+                                            EventBus.getDefault().post(new ObjectChangedEvent(g));
                                         }
-                                        Singleton.getInstance().addGroup(g);
-                                        MonitorOnGroup(g);
-                                        EventBus.getDefault().post(new GroupAddedEvent());
                                     }
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                }
-                            });
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
+                    }
+                    else
+                        EventBus.getDefault().post(new ObjectChangedEvent(null));
                 }
 
                 @Override
@@ -460,7 +513,6 @@ public class DB_Manager {
                     U.setUser_group(null);
                     U.setAdministrator(true);
                     U.setCardEnabled(true);
-                    EventBus.getDefault().post(new CurrentUserChangedEvent(HomeScreen.currentUser));
                 }
 
                 @Override
@@ -591,6 +643,7 @@ public class DB_Manager {
         final File localFile = new File(Init.getAppContext().getFilesDir(), U.getId() + "/userprofile.jpg");
         if(localFile.exists()) {
             U.setProfile_image(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+            EventBus.getDefault().post(new CurrentUserChangedEvent(U));
         }
         //final File localFile = File.createTempFile("images", "jpg");
 
@@ -601,6 +654,7 @@ public class DB_Manager {
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 try {
                     U.setProfile_image(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+                    EventBus.getDefault().post(new CurrentUserChangedEvent(U));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
