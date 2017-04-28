@@ -195,7 +195,11 @@ public class SignupActivity extends AppCompatActivity {
         final DB_Manager db1 = new DB_Manager();
         FirebaseDatabase database1 = db1.getDatabase();
         if(mCurrentUser != null)
-            db1.pushNewUser(_emailText.getText().toString(), _nameText.getText().toString(), mCurrentUser.getUid());
+            db1.pushNewUser(_emailText.getText().toString(),
+                    _nameText.getText().toString()+
+                    _surnameText.getText().toString(),
+                    _pnumber.getText().toString(),
+                    mCurrentUser.getUid());
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         Intent i = new Intent(this, Init.class);

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -27,12 +28,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.TextView;
 
+import com.google.android.gms.appinvite.AppInviteApi;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.mvc.imagepicker.ImagePicker;
 import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -59,9 +63,9 @@ import it.polito.group05.group05.Utility.InvitedAdapter;
 
 public class NewGroup extends AppCompatActivity{
 
-    public  static int REQUEST_FROM_NEW_GROUP;
-
-
+    private static final String TAG = "Error";
+    public  static int REQUEST_FROM_NEW_GROUP, INVITE;
+    FloatingActionButton fab;
     CircularImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
@@ -77,11 +81,25 @@ public class NewGroup extends AppCompatActivity{
     private Context context;
     private boolean textIsValid;
     private boolean selectionIsValid;
-
-
+    String groupID="isrgjnierngien";
+    String[] ids;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+
+        if(requestCode==INVITE)
+        {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                ids= AppInviteInvitation.getInvitationIds(resultCode, data);
+
+
+
+            }
+
+
+
+        }
         if (bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
             iv_new_group.setImageBitmap(bitmap);
             REQUEST_FROM_NEW_GROUP = -1;
@@ -141,7 +159,7 @@ public class NewGroup extends AppCompatActivity{
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
+        fab = (FloatingActionButton)findViewById(R.id.fab_invite);
         invitedAdapter = new InvitedAdapter(getContacts(), this);
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
@@ -152,6 +170,20 @@ public class NewGroup extends AppCompatActivity{
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new AppInviteInvitation.IntentBuilder("")
+                        .setMessage("")
+                        .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
+                        .build();
+                startActivityForResult(intent, INVITE);
+
+            }
+        });
+
 
         iv_new_group.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -284,7 +316,13 @@ public class NewGroup extends AppCompatActivity{
             }
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-                DB_Manager.getInstance().PushGroupToDB(newgroup);
+
+                groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
+                for(String invite : ids){
+                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
+
+
+                }
                 //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
 
                 finish();

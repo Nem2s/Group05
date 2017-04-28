@@ -87,6 +87,7 @@ public class DB_Manager {
     private static DatabaseReference groupRef;
     private static DatabaseReference expenseRef;
     private static DatabaseReference usernumberRef;
+    private static DatabaseReference inviteRef;
     private static FirebaseStorage storage;
     private static StorageReference storageGroupRef;
     private static StorageReference storageUserRef;
@@ -142,6 +143,8 @@ public class DB_Manager {
             groupRef.keepSynced(true);
             //expenseRef = database.getReference("expense");
             //expenseRef.keepSynced(true);
+            inviteRef=database.getReference("invites");
+            inviteRef.keepSynced(true);
 
             //Storege Init
             storage = FirebaseStorage.getInstance();
@@ -169,7 +172,7 @@ public class DB_Manager {
 
 
 
-    public static void PushGroupToDB(Group G){
+    public static String PushGroupToDB(Group G){
         DatabaseReference ref = groupRef.push();
         GroupDatabase grouptopush = new GroupDatabase(ref.getKey(), G.getName(), G.getBalance(), G.getLmTime(), new GroupColor(1,2,3));
         grouptopush.setMembers(G.getMembers(), currentUserID);
@@ -182,7 +185,7 @@ public class DB_Manager {
         grouptopush.setPictureUrl(storageGroupRef +"/"+ grouptopush.getId() +"/grouprofile.png");
         ref.setValue(grouptopush);
         G.setGroupID(ref.getKey());
-        return;
+        return grouptopush.getId();
     }
 
     /*
@@ -215,7 +218,7 @@ public class DB_Manager {
                              {
                                  g1.addMember(s);
                              }
-                             EventBus.getDefault().post(new GroupAddedEvent());
+                             //EventBus.getDefault().post(new GroupAddedEvent());
 
                          }
                      }
@@ -396,6 +399,7 @@ public class DB_Manager {
 
     public void CurrentUserGroupMonitor() {
         //Singleton.getInstance().clearGroups();
+        if (groupUser.isEmpty() || groupUser.size() == 1) { EventBus.getDefault().post(new ObjectChangedEvent(null)); }
         userListener = userRef
             .child(currentUserID)
             .child("userGroups")
@@ -404,7 +408,7 @@ public class DB_Manager {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         String gId = dataSnapshot.getKey();
-                    if(!gId.equals("00")) {
+                    if(!gId.equals("00") ) {
                         DatabaseReference ref = database.getReference("groups");
                         ref.orderByKey()
                                 .equalTo(gId)
@@ -422,8 +426,8 @@ public class DB_Manager {
                                             }
                                             Singleton.getInstance().addGroup(g);
                                             MonitorOnGroup(g);
-                                            EventBus.getDefault().post(new GroupAddedEvent());
-                                            EventBus.getDefault().post(new ObjectChangedEvent(g));
+                                            //EventBus.getDefault().post(new GroupAddedEvent());
+                                            //EventBus.getDefault().post(new ObjectChangedEvent(g));
                                         }
                                     }
 
@@ -432,8 +436,6 @@ public class DB_Manager {
                                     }
                                 });
                     }
-                    else
-                        EventBus.getDefault().post(new ObjectChangedEvent(null));
                 }
 
                 @Override
@@ -479,19 +481,19 @@ public class DB_Manager {
     }
 
 
-    public static void pushNewUser(String email, String name, String cID)
+    public static void pushNewUser(String email, String name, String numb, String cID)
     {
         DatabaseReference ref = userRef.push();
         currentUserID = ref.getKey();
-        UserDatabase newuser = new UserDatabase(ref.getKey(), name, cID, "380xxxxxx2", email);
+        UserDatabase newuser = new UserDatabase(ref.getKey(), name, cID, numb, email);
 
         Map<String, Object> memb = new HashMap<String, Object>();
         memb.put("00", true);
         newuser.setUserGroups(memb);
         ref.setValue(newuser);
-        usernumberRef.child(newuser.getTelNumber()).setValue(newuser.getAuthKey());
+        usernumberRef.child(newuser.getTelNumber()).setValue(newuser.getId());
         DB_Manager.getInstance().photoMemoryUpload(1, newuser.getId(), BitmapFactory.decodeResource(Init.getAppContext().getResources(), R.drawable.man_1));
-        DB_Manager.getInstance().CurrentUserGroupMonitor();
+        //DB_Manager.getInstance().CurrentUserGroupMonitor();
     }
 
     public static void currentUserInfo(final User U)
@@ -609,6 +611,7 @@ public class DB_Manager {
         final File localFile = new File(Init.getAppContext().getFilesDir(), G.getGroupID() + "/grouprofile.jpg");
         if(localFile.exists()) {
              G.setGroupProfile(BitmapFactory.decodeStream(new FileInputStream(localFile)));
+            EventBus.getDefault().post(new ObjectChangedEvent(null));
             EventBus.getDefault().post(new GroupAddedEvent());
         }
         //final File localFile = File.createTempFile("images", "jpg");
@@ -623,6 +626,7 @@ public class DB_Manager {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
+                    EventBus.getDefault().post(new ObjectChangedEvent(null));
                     EventBus.getDefault().post(new GroupAddedEvent());
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -665,6 +669,38 @@ public class DB_Manager {
                 // Handle any errors
             }
         });
+    }
+
+    public void pushInviteUser(String invite, String groupID) {
+
+        inviteRef.child(invite)
+                .setValue(groupID);
+    }
+
+    public void getGroupInvited(final String inviteID){
+
+        inviteRef.child(inviteID).
+                addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    String s = dataSnapshot.getValue(String.class);
+                    Map<String, Object> mp = new HashMap<>();
+                    mp.put(s, true);
+                    userRef.child(currentUserID).child("userGroups").updateChildren(mp);
+                    mp.clear();
+                    mp.put(currentUserID, true);
+                    groupRef.child(s).child("members").updateChildren(mp);
+                    inviteRef.child(inviteID).removeValue();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 }
