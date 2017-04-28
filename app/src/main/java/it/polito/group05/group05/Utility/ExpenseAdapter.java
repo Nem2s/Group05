@@ -260,6 +260,14 @@ class ExpenseAdapterHolder extends ViewHolder {
             }
         });
 
+   /*     cv.setOnLongClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        */
+
     }
 
 

@@ -1,8 +1,10 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.provider.OpenableColumns;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,13 +26,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,18 +62,18 @@ import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 public class Expense_activity extends AppCompatActivity {
 
-
     private MaterialEditText et_name, et_description, et_cost;
     private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
     private TextView tv_policy, tv_members;
     private Spinner spinner_deadline, spinner_policy;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
+    private RelativeLayout rel_info;
     private Toolbar toolbar;
     private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
-    private ImageView image_network;
+    private ImageView image_network, info;
     private ParcelFileDescriptor mInputPFD;
     private Intent intent_file;
     private FileDescriptor fd;
@@ -110,6 +116,8 @@ public class Expense_activity extends AppCompatActivity {
         spinner_deadline = (Spinner) findViewById(R.id.spinner);
         spinner_deadline.setVisibility(View.GONE);
         cb_proposal = (CheckBox) findViewById(R.id.cb4_proposal);
+        rel_info= (RelativeLayout) findViewById(R.id.relative_info);
+        info = (ImageView) findViewById(R.id.InfoButton);
         expense_type = TYPE_EXPENSE.MANDATORY;
         tv_policy = (TextView) findViewById(R.id.tv_policy);
         spinner_policy = (Spinner) findViewById(R.id.spinner_policy);
@@ -158,6 +166,24 @@ public class Expense_activity extends AppCompatActivity {
                         expense_price = 0.0;
                     }
                 }
+            }
+        });
+
+      rel_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(Expense_activity.this);
+                builder.setTitle("PROPOSAL");
+                builder.setMessage("You can use this option to collect money from the users and ask them how much they want to get");
+                builder.setIcon(android.R.drawable.ic_dialog_info);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        dialoginterface.dismiss();
+                    }
+                });
+                builder.setCancelable(true);
+                final AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
