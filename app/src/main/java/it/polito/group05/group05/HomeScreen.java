@@ -47,7 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
-import com.pkmmte.view.CircularImageView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -60,6 +60,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
@@ -100,7 +101,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    /*static public */User currentUser;
+    User currentUser;
     CircleImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -171,15 +172,15 @@ public class HomeScreen extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         HomeScreenContext = this;
-
-        //--------------------------------------------------------------------
-
-       // final DB_Manager db1 = new DB_Manager();
-        DB_Manager.getInstance();
-    //---------------------------------------------------------------------
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        //--------------------------------------------------------------------
+        currentUser = Singleton.getInstance().getCurrentUser();
+        DB_Manager.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        //---------------------------------------------------------------------
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final List<Group> items = Singleton.getInstance().getmCurrentGroups();
@@ -191,7 +192,7 @@ public class HomeScreen extends AppCompatActivity
         no_groups = (RelativeLayout)findViewById(R.id.no_groups_layout);
         activity = this;
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
-        mAuth = FirebaseAuth.getInstance();
+
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
         groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
@@ -200,10 +201,6 @@ public class HomeScreen extends AppCompatActivity
 
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         //currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        Singleton.getInstance().setId(currentUser.getId());
-        Singleton.getInstance().setCurrentUser(currentUser);
-
-
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);

@@ -14,9 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -29,8 +32,12 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -65,7 +72,7 @@ public class NewGroup extends AppCompatActivity{
     private static final String TAG = "Error";
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
     FloatingActionButton fab;
-    CircularImageView iv_new_group;
+    CircleImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
     private Group newgroup;
@@ -75,11 +82,14 @@ public class NewGroup extends AppCompatActivity{
     private Toolbar mToolbar;
     private SearchView searchView;
     private TextView no_people;
+    private TextView tv_partecipants;
     private final User currentUser = Singleton.getInstance().getCurrentUser();
     private InvitedAdapter invitedAdapter;
     private Context context;
     private boolean textIsValid;
     private boolean selectionIsValid;
+    private String groupID;
+    private String[] ids;
 
 
     @Override
@@ -91,13 +101,17 @@ public class NewGroup extends AppCompatActivity{
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
                 ids= AppInviteInvitation.getInvitationIds(resultCode, data);
-
+                if( ids != null && ids.length > 0) {
+                    no_people.setText("You've invited " + ids.length + " people. Let's create your group!");
+                    et_group_name.setEnabled(true);
+                    iv_new_group.setEnabled(true);
+                    tv_partecipants.setVisibility(View.INVISIBLE);
+                    if(mSearchItem != null)
+                        mSearchItem.setEnabled(true);
+                }
 
 
             }
-
-
-
         }
         if (bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
             iv_new_group.setImageBitmap(bitmap);
@@ -157,23 +171,35 @@ public class NewGroup extends AppCompatActivity{
         no_people = (TextView)findViewById(R.id.no_people);
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        invitedAdapter = new InvitedAdapter(getContacts(), this);
         List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
 
         if(contacts != null && contacts.size() > 0)
             invitedAdapter = new InvitedAdapter(contacts, this);
         else {
-            Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            finish();
                         }
-                    }).show();
+                    });
+            snackbar.show();
+            final View snackbarView = snackbar.getView();
+            snackbarView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    snackbarView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    ((CoordinatorLayout.LayoutParams) snackbarView.getLayoutParams()).setBehavior(null);
+                    return true;
+                }
+            });
+
             et_group_name.setEnabled(false);
             iv_new_group.setEnabled(false);
+
+            no_people.setVisibility(View.VISIBLE);
         }
 
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
@@ -271,6 +297,10 @@ public class NewGroup extends AppCompatActivity{
         mConfirmItem.setVisible(false);
         searchView = (SearchView)mSearchItem.getActionView();
 
+        if(!et_group_name.isEnabled())
+            mSearchItem.setEnabled(false);
+        else
+            mSearchItem.setEnabled(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

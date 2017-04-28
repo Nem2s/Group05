@@ -100,7 +100,8 @@ public class ColorUtils {
 
         @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
         public void build() {
-
+            if(image == null)
+                return;
             switch (bright) {
                 case LIGHT:
                     if(type != null) {

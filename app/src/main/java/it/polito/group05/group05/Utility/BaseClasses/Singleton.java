@@ -19,14 +19,13 @@ public class Singleton {
     private List<Group> mCurrentGroups;
     private List<User> mCurrenUsersList;
     private Group mCurrentGroup;
-    private String user;
+    private String userId;
     private User currentUser;
 
     private Singleton(){
         mCurrentGroups = new ArrayList<>();
         mCurrentGroup = new Group();
         mCurrenUsersList = new ArrayList<>();
-        currentUser = new User();
     }
 
     public static Singleton getInstance(){
@@ -56,9 +55,9 @@ public class Singleton {
     public List<Group> getmCurrentGroups() {
         return this.mCurrentGroups;
     }
-    public void setId(String s){this.user=new String(s);}
+    public void setId(String s){this.userId=s;}
     public String getId() {
-        return user;
+        return userId;
     }
 
     public void clearGroups(){
@@ -92,5 +91,9 @@ public class Singleton {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        if(currentUser != null)
+            userId=currentUser.getId();
     }
+
+
 }

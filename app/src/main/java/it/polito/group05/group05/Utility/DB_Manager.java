@@ -30,7 +30,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.pkmmte.view.CircularImageView;
+
 
 import junit.framework.TestResult;
 
@@ -66,7 +66,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
-import it.polito.group05.group05.Utility.EventClasses.HomeScreenEvent;
+
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -247,7 +247,7 @@ public class DB_Manager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
                     User u;
-                    if(ud.getId().equals(HomeScreen.currentUser.getId())) {
+                    if(ud.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
                         u = new User(ud.getId(), ud.getName(), new Balance(3, 2), null, true, true);
                     }
                     else{
@@ -342,7 +342,7 @@ public class DB_Manager {
                    //DB_Manager.getInstance().PullGroupFromDBWithUserId();
                    // DB_Manager.getInstance().CurrentUserGroupMonitor();
                     DB_Manager.getInstance().CurrentUserGroupMonitor();
-                    EventBus.getDefault().post(new CurrentUserChangedEvent(U));
+                    //EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                 }
             }
@@ -379,8 +379,9 @@ public class DB_Manager {
                             groupUser = u.UserGruopsList();
                             // Singleton.getInstance().clearGroups();
                             //DB_Manager.getInstance().PullGroupFromDBWithUserId();
+                            Singleton.getInstance().setCurrentUser(U);
                              DB_Manager.getInstance().CurrentUserGroupMonitor();
-                            EventBus.getDefault().post(new CurrentUserChangedEvent(U));
+                            //EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                         }
                     }

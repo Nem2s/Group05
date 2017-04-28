@@ -28,14 +28,15 @@ public class UserDatabase {
         this.iProfile = iProfile;
     }
 
-
-
-
-
-
-
-    public UserDatabase() {
+    public UserDatabase(String id, String name, String authKey, String telNumber, String email) {
+        this.id = id;
+        this.name = name;
+        this.authKey = authKey;
+        this.telNumber = telNumber;
+        this.email = email;
     }
+
+    public UserDatabase() {}
 
     public String getId() {
         return id;
@@ -102,6 +103,14 @@ public class UserDatabase {
 
         return new ArrayList<>(userGroups.keySet());
 
+    }
+
+    public String getiProfile() {
+        return iProfile;
+    }
+
+    public void setiProfile(String iProfile) {
+        this.iProfile = iProfile;
     }
 
     public void setUserGroups(Map<String, Object> userGroups) {

@@ -2,6 +2,7 @@ package it.polito.group05.group05;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pkmmte.view.CircularImageView;
+import com.mvc.imagepicker.ImagePicker;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.DB_Manager;
 
 public class SignupActivity extends AppCompatActivity {
@@ -78,6 +80,7 @@ public class SignupActivity extends AppCompatActivity {
                     // User is signed in
                     String UserId = user.getUid();
                     mCurrentUser = user;
+
                     Toast.makeText(SignupActivity.this, "USER ID\n"+UserId,Toast.LENGTH_SHORT).show();
                 } else {
                     // User is signed out
