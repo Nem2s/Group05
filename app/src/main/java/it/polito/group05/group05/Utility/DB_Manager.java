@@ -342,7 +342,7 @@ public class DB_Manager {
                    //DB_Manager.getInstance().PullGroupFromDBWithUserId();
                    // DB_Manager.getInstance().CurrentUserGroupMonitor();
                     DB_Manager.getInstance().CurrentUserGroupMonitor();
-                    EventBus.getDefault().post(new CurrentUserChangedEvent(U));
+                    //EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                 }
             }
@@ -380,7 +380,7 @@ public class DB_Manager {
                             // Singleton.getInstance().clearGroups();
                             //DB_Manager.getInstance().PullGroupFromDBWithUserId();
                              DB_Manager.getInstance().CurrentUserGroupMonitor();
-                            EventBus.getDefault().post(new CurrentUserChangedEvent(U));
+                            //EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                         }
                     }

@@ -318,14 +318,14 @@ public class NewGroup extends AppCompatActivity{
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
 
                 groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
-                for(String invite : ids){
-                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
-
-
+                if(ids!= null) {
+                    for (String invite : ids) {
+                        DB_Manager.getInstance().pushInviteUser(invite, groupID);
+                    }
                 }
                 //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
-
-                finish();
+                onBackPressed();
+                //finish();
 
 
             }

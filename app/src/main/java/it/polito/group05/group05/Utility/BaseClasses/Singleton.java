@@ -91,5 +91,6 @@ public class Singleton {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        if(currentUser != null) user = currentUser.getId();
     }
 }

@@ -47,6 +47,11 @@ public class Init extends AppCompatActivity {
     @Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
         HomeScreen.currentUser = (User)e.getUser();
+        User U = (User)e.getUser();
+        Singleton.getInstance().setCurrentUser(U);
+        //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        U.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
+        Singleton.getInstance().setId(U.getId());
         Singleton.getInstance().setCurrentUser(HomeScreen.currentUser);
         Receiveinvite();
 
@@ -91,8 +96,8 @@ public class Init extends AppCompatActivity {
             EventBus.getDefault().unregister(this);
             startActivity(new Intent(this, LoginActivity.class));
             Singleton.getInstance().clearGroups();
-            if(HomeScreen.currentUser!=null) {
-                HomeScreen.currentUser = null;
+            if(Singleton.getInstance().getCurrentUser()!=null) {
+                Singleton.getInstance().setCurrentUser(null);
             }
             finish();
         }
@@ -114,7 +119,7 @@ public class Init extends AppCompatActivity {
     }
 
     public void Receiveinvite() {
-        boolean autoLaunchDeepLink = false;
+        boolean autoLaunchDeepLink = true;
         AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
                 .setResultCallback(
                         new ResultCallback<AppInviteInvitationResult>() {
