@@ -43,6 +43,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
 import it.polito.group05.group05.Utility.InvitedAdapter;
@@ -222,10 +223,10 @@ public class NewGroup extends AppCompatActivity{
         int id = item.getItemId();
         if(id == R.id.m_confirm) {
             newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
-            newgroup.addMember(currentUser);
+            newgroup.addMember(new UserGroup(currentUser));
             for (UserContact u : currentUser.getContacts()) {
                 if(u.isSelected()) {
-                    newgroup.addMember(u);
+                    newgroup.addMember(new UserGroup(u));
                     u.setSelected(false);
                 }
 

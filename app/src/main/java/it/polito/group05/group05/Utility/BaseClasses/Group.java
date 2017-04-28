@@ -1,12 +1,8 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
-import android.util.Pair;
-
-import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -159,5 +155,9 @@ public class Group {
             members.put(u.getId(), u);
         }
     }
+    public void deleteExpense(String id){
 
+
+        expenses.remove(id);
+    }
 }

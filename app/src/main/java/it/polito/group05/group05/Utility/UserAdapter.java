@@ -15,7 +15,6 @@ import com.pkmmte.view.CircularImageView;
 import java.util.List;
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 
 /**
@@ -25,8 +24,8 @@ import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     Context context;
-    List<User> users;
-    public UserAdapter(List<User> objects, Context context) {
+    List<UserGroup> users;
+    public UserAdapter(List<UserGroup> objects, Context context) {
         this.context = context;
         this.users = objects;
     }

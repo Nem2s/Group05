@@ -30,6 +30,7 @@ return userGroupList;
         super.setUser_name(u.getUser_name());
         super.setUser_group(u.getUser_group());
         super.setSelected(false);
+        balance = new Balance(0,0);
 
     }
     public boolean hasCustomValue() {

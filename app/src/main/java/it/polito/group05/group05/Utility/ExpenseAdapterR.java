@@ -40,6 +40,7 @@ public class ExpenseAdapterR extends ArrayAdapter<Expense> {
         TextView price;
         RecyclerView rv;
         TextView description;
+        CardView cv;
     }
     public int getCout(){return obj.size();}
     public Expense getItem(int position){return obj.get(position);}
@@ -49,7 +50,7 @@ public class ExpenseAdapterR extends ArrayAdapter<Expense> {
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final Expense expense = getItem(position);
         final ExpenseAdapterR.ViewHolder holder;
-
+        CardView cv;
 
         if (convertView==null){
             LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -58,13 +59,10 @@ public class ExpenseAdapterR extends ArrayAdapter<Expense> {
             holder.expense_image = (ImageView) convertView.findViewById(R.id.expense_image);
             holder.name= (TextView) convertView.findViewById(R.id.expense_name);
             holder.price= (TextView) convertView.findViewById(R.id.expense_price);
-           // holder.description=(TextView) convertView.findViewById(R.id.tv_example);
-           // holder.description.setText("drbgbdfvdjvbksd\nujgub\niuguyguy\n");
-            CardView cv = (CardView) convertView.findViewById(R.id.card_expense);
-          //  View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
+             holder.cv = (CardView) convertView.findViewById(R.id.card_expense);
             holder.rv = (RecyclerView) convertView.findViewById(R.id.expense_rv);
 
-            cv.setOnClickListener(new View.OnClickListener() {
+            holder.cv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -94,7 +92,6 @@ public class ExpenseAdapterR extends ArrayAdapter<Expense> {
           //  holder.expense_image.setImageResource(R.drawable.facebook);
             holder.name.setText(expense.getName());
             holder.description.setText("Posted by "+expense.getOwner().getUser_name()+" on "+expense.getTimestamp().toString());
-
             LinearLayoutManager l = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
             holder.rv.setLayoutManager(l);
             holder.price.setText(String.format("%.2f €",expense.getPrice()));
@@ -102,6 +99,7 @@ public class ExpenseAdapterR extends ArrayAdapter<Expense> {
             holder.rv.setAdapter(adapter);
             holder.rv.setVisibility(View.GONE);
             holder.description.setVisibility(View.GONE);
+
         }
         final View finalConvertView = convertView;
         return finalConvertView;

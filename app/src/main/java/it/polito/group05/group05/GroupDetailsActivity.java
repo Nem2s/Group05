@@ -71,7 +71,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private TextView tv_group_name;
     private ImageView expand_cardview;
     private CardView cardView;
-    private ArrayList<User> users;
+    private List<UserGroup> users;
     private boolean isExpanded;
     private UserAdapter adapter;
     private Context context;
@@ -104,8 +104,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
         AnimUtils.toggleOn(fab, 350, this);
         tv_group_name.setText(currentGroup.getName());
         cv_group.setImageBitmap(currentGroup.getGroupProfile());
-        users = new ArrayList<>();
-        users.addAll(currentGroup.getMembers());
+
+        users = UserGroup.listUserGroup(currentGroup.getMembers());
         adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -161,7 +161,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public void onObjectAdded(ObjectChangedEvent event) {
        Log.d("Details", "New member in the group!");
         User u = (User)event.retriveObject();
-        users.add(u);
+
+        users.add(new UserGroup(u));
         adapter.notifyDataSetChanged();
         Singleton.getInstance().getmCurrentGroup().addMember(u);
         cardView.callOnClick();
@@ -257,7 +258,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void populateChart(Context context, ArrayList<User> users) {
+    private void populateChart(Context context, List<UserGroup> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
         chart.setDoubleTapToZoomEnabled(false);
@@ -301,12 +302,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         final ArrayList<String> xvalues = new ArrayList<>();
         chart.setData(new BarData());
-        for (User u : users) {
+        for (UserGroup u : users) {
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
             l.label = u.getUser_name();
-            l.formColor = ((UserGroup) u).getUser_color();
+            l.formColor = u.getUser_color();
             addEntry(u);
             legends.add(l);
         }
