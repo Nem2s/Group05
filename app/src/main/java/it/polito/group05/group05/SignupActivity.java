@@ -1,9 +1,7 @@
 package it.polito.group05.group05;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +20,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import de.hdodenhof.circleimageview.CircleImageView;
-import com.mvc.imagepicker.ImagePicker;
-
-
-import org.greenrobot.eventbus.EventBus;
+import com.pkmmte.view.CircularImageView;
 
 import it.polito.group05.group05.Utility.DB_Manager;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
-import it.polito.group05.group05.Utility.ImageUtils;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -219,18 +211,19 @@ public class SignupActivity extends AppCompatActivity {
 
 
     public void onSignupSuccess() {
-        if(mCurrentUser != null) {
-            DB_Manager.setDbContext(getApplicationContext());
-            DB_Manager.getDatabase();
-            DB_Manager.getInstance().pushNewUser(_emailText.getText().toString(), _nameText.getText().toString(),_pnumber.getText().toString(), ((BitmapDrawable)_cvUserImage.getDrawable()).getBitmap(), mCurrentUser.getUid());
-            _signupButton.setEnabled(true);
-            Toast.makeText(getApplicationContext(), "Registered as " + mCurrentUser.getUid(), Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK, null);
-            Intent i = new Intent(this, HomeScreen.class);
-            startActivity(i);
-            finish();
-        } else
-            onSignupFailed();
+        final DB_Manager db1 = new DB_Manager();
+        FirebaseDatabase database1 = db1.getDatabase();
+        if(mCurrentUser != null)
+            db1.pushNewUser(_emailText.getText().toString(),
+                    _nameText.getText().toString()+
+                    _surnameText.getText().toString(),
+                    _pnumber.getText().toString(),
+                    mCurrentUser.getUid());
+        _signupButton.setEnabled(true);
+        setResult(RESULT_OK, null);
+        Intent i = new Intent(this, Init.class);
+        startActivity(i);
+        finish();
      }
 
     public void onSignupFailed() {

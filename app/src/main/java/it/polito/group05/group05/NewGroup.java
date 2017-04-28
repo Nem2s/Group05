@@ -34,6 +34,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import com.google.android.gms.appinvite.AppInviteApi;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.mvc.imagepicker.ImagePicker;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -60,10 +62,10 @@ import it.polito.group05.group05.Utility.InvitedAdapter;
 
 public class NewGroup extends AppCompatActivity{
 
-    public  static int REQUEST_FROM_NEW_GROUP;
-
-
-    CircleImageView iv_new_group;
+    private static final String TAG = "Error";
+    public  static int REQUEST_FROM_NEW_GROUP, INVITE;
+    FloatingActionButton fab;
+    CircularImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
     private Group newgroup;
@@ -83,13 +85,66 @@ public class NewGroup extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+
+        if(requestCode==INVITE)
+        {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                ids= AppInviteInvitation.getInvitationIds(resultCode, data);
+
+
+
+            }
+
+
+
+        }
         if (bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
             iv_new_group.setImageBitmap(bitmap);
             REQUEST_FROM_NEW_GROUP = -1;
         }
     }
 
+    private List<UserContact> getContacts() {
+        // Run query
+        List<UserContact> result = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
+        String[] projection =
+                new String[]{
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                };
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                " COLLATE LOCALIZED ASC";
+        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+
+
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+        query.moveToFirst();
+        do {
+            UserContact user = new UserContact();
+            String number = query.getString(indexNumber);
+            String name = query.getString(indexName);
+            user.setUser_name(name);
+            user.setPnumber(number);
+            user.setEmail("user@example.com");
+            String photoUri = query.getString(indexPhoto);
+            if(photoUri != null)
+                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
+            else
+                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
+            result.add(user);
+
+        }while(query.moveToNext());
+
+        return result;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +158,8 @@ public class NewGroup extends AppCompatActivity{
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        fab = (FloatingActionButton)findViewById(R.id.fab_invite);
+        invitedAdapter = new InvitedAdapter(getContacts(), this);
         List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
 
         if(contacts != null && contacts.size() > 0)
@@ -128,6 +185,20 @@ public class NewGroup extends AppCompatActivity{
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new AppInviteInvitation.IntentBuilder("")
+                        .setMessage("")
+                        .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
+                        .build();
+                startActivityForResult(intent, INVITE);
+
+            }
+        });
+
 
         iv_new_group.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,8 +331,15 @@ public class NewGroup extends AppCompatActivity{
             }
 
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-                DB_Manager.getInstance().PushGroupToDB(newgroup);
-                EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
+
+                groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
+                for(String invite : ids){
+                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
+
+
+                }
+                //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
+
                 finish();
 
 

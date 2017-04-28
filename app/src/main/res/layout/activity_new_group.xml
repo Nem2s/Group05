@@ -99,5 +99,21 @@
                 android:padding="16dp"/>
 
         </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+
+            android:id="@+id/fab_invite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_menu_share"
+            app:layout_anchor="@+id/card_view"
+            app:layout_anchorGravity="bottom|right|end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:transitionName="@string/transition_fab"
+            />
+
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

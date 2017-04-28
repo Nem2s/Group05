@@ -46,9 +46,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import com.mvc.imagepicker.ImagePicker;
-
+import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -61,7 +60,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
@@ -84,9 +82,20 @@ public class HomeScreen extends AppCompatActivity
     public static  Context HomeScreenContext;
 
     public  static int REQUEST_FROM_NEW_GROUP;
-    /*static public */ GroupAdapter groupAdapter;
+    static public  GroupAdapter groupAdapter;
     public  static int REQUEST_FROM_NEW_USER;
 
+   // private static FirebaseDatabase database1;
+
+    private static final String TAG = "AnonymousAuth";
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_auth_listener]
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    // [END declare_auth_listener]
 
 
     FloatingActionButton fab;
@@ -101,8 +110,6 @@ public class HomeScreen extends AppCompatActivity
     RelativeLayout no_groups;
     public static Context context;
     private List<Group> groups = new ArrayList<>();
-
-
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
 
     Group newgroup = new Group();
@@ -112,8 +119,6 @@ public class HomeScreen extends AppCompatActivity
         if(!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         Log.d("Details", "Registered for " + this);
-
-        currentUser = Singleton.getInstance().getCurrentUser();
     }
 
     @Override
@@ -123,25 +128,25 @@ public class HomeScreen extends AppCompatActivity
         super.onDestroy();
     }
 
-    @Subscribe
+   /* @Subscribe
     public void onObjectAdded(ObjectChangedEvent event) {
         Log.d("Details", "New member in the group!");
         Group g = (Group)event.retriveObject();
         Singleton.getInstance().addGroup(g);
         groups.add(g);
         groupAdapter.notifyDataSetChanged();
-    }
+    }*/
 
     @Subscribe
     public void onGroupAdded(GroupAddedEvent e) {
         groupAdapter.notifyDataSetChanged();
     }
 
-    @Subscribe
+    /*@Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
         currentUser = (User)e.getUser();
         Singleton.getInstance().setCurrentUser(currentUser);
-    }
+    }*/
 
 
     @Override
@@ -153,6 +158,7 @@ public class HomeScreen extends AppCompatActivity
             cv_user_drawer.setImageBitmap(bitmap);
             currentUser.setProfile_image(bitmap);
             DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
+
             drawer.closeDrawers();
             REQUEST_FROM_NEW_USER = -1;
         }
@@ -168,15 +174,15 @@ public class HomeScreen extends AppCompatActivity
 
         //--------------------------------------------------------------------
 
-        // final DB_Manager db1 = new DB_Manager();
+       // final DB_Manager db1 = new DB_Manager();
         DB_Manager.getInstance();
-        //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        final List<Group> items = Singleton.getInstance().getmCurrentGroups();
 
 
 
@@ -185,18 +191,19 @@ public class HomeScreen extends AppCompatActivity
         no_groups = (RelativeLayout)findViewById(R.id.no_groups_layout);
         activity = this;
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
-
-
+        mAuth = FirebaseAuth.getInstance();
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
-        groupAdapter = new GroupAdapter(groups, this);
+        groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
         rv_groups.setLayoutManager(groupsManager);
         rv_groups.setAdapter(groupAdapter);
 
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         //currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        //Singleton.getInstance().setId(currentUser.getId());
-        //Singleton.getInstance().setCurrentUser(currentUser);
+        Singleton.getInstance().setId(currentUser.getId());
+        Singleton.getInstance().setCurrentUser(currentUser);
+
+
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -234,6 +241,15 @@ public class HomeScreen extends AppCompatActivity
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
                 tv_email.setText(currentUser.getEmail());
                 ll_header = (LinearLayout)findViewById(R.id.drawer_ll_header);
+                ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
+                builder
+                        .load(((BitmapDrawable)cv_user_drawer.getDrawable()).getBitmap())
+                        .brighter(ColorUtils.bright.DARK)
+                        .method(ColorUtils.type.VIBRANT)
+                        .set(ll_header)
+                        .set(tv_username)
+                        .set(tv_email)
+                        .build();
                 /*Picasso
                         .with(getApplicationContext())
                         .load(Integer.parseInt(currentUser.getProfile_image()))
@@ -253,13 +269,18 @@ public class HomeScreen extends AppCompatActivity
                                         .build();
                                 cv.setImageBitmap(bitmap);
                             }
+
                             @Override
                             public void onBitmapFailed(Drawable errorDrawable) {
+
                             }
+
                             @Override
                             public void onPrepareLoad(Drawable placeHolderDrawable) {
+
                             }
                         });
+
 */
                 cv_user_drawer.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -370,18 +391,22 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_logout) {
             DB_Manager.signOut();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_share) {
 
-            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
-                    .setMessage("ciao ciao ciao")
-                    .build();
-            startActivityForResult(intent, 1);
+        } else if (id == R.id.nav_logout) {
+            DB_Manager.signOut();
+            startActivity(new Intent(this, Init.class));
+            finish();
+
+        } else if (id == R.id.nav_share) {
+
+                Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
+                        .setMessage("ciao ciao ciao")
+                        .build();
+                startActivityForResult(intent, 1);
         } else if (id == R.id.nav_contacts) {
 
         }
@@ -409,6 +434,9 @@ public class HomeScreen extends AppCompatActivity
 
         return ret;
     }
+
+
+
 
 
 }
