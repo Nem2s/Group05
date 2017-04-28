@@ -247,7 +247,7 @@ public class DB_Manager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
                     User u;
-                    if(ud.getId().equals(HomeScreen.currentUser.getId())) {
+                    if(ud.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
                         u = new User(ud.getId(), ud.getName(), new Balance(3, 2), null, true, true);
                     }
                     else{
@@ -700,6 +700,10 @@ public class DB_Manager {
 
             }
         });
+
+    }
+
+    public static void checkContact(){
 
     }
 

@@ -46,13 +46,14 @@ public class Init extends AppCompatActivity {
 
     @Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
-        HomeScreen.currentUser = (User)e.getUser();
+        //HomeScreen.currentUser = (User)e.getUser();
         User U = (User)e.getUser();
         Singleton.getInstance().setCurrentUser(U);
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         U.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
         Singleton.getInstance().setId(U.getId());
-        Singleton.getInstance().setCurrentUser(HomeScreen.currentUser);
+        Singleton.getInstance().setCurrentUser(U);
+       // Singleton.getInstance().setCurrentUser(HomeScreen.currentUser);
         Receiveinvite();
 
             // Check for App Invite invitations and launch deep-link activity if possible.
@@ -105,7 +106,7 @@ public class Init extends AppCompatActivity {
             //DB_Manager.getInstance().getDatabase();
             //if(DFT != null) DFT.cancel(true);
             //DFT = (DownloadFilesTask) new DownloadFilesTask().execute(null, null, null);
-            if(HomeScreen.currentUser==null) {
+            if(Singleton.getInstance().getCurrentUser()==null) {
                 //DB_Manager.getInstance().getDatabase();
                 DB_Manager.getInstance().getCurrentUserID();
             }

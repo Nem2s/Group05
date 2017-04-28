@@ -78,7 +78,7 @@ import it.polito.group05.group05.Utility.InvitedAdapter;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    User currentUser;
     public static  Context HomeScreenContext;
 
     public  static int REQUEST_FROM_NEW_GROUP;
@@ -100,7 +100,6 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    static public User currentUser;// = new User();
     CircularImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -172,6 +171,7 @@ public class HomeScreen extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         HomeScreenContext = this;
+         currentUser = Singleton.getInstance().getCurrentUser();
 
         //--------------------------------------------------------------------
 

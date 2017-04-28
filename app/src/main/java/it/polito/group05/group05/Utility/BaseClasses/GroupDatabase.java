@@ -99,7 +99,7 @@ public class GroupDatabase {
             memb.put(u.getUser_name(), true);
         }
         //memb.remove("User");
-        memb.remove(HomeScreen.currentUser.getUser_name());
+        memb.remove(Singleton.getInstance().getCurrentUser().getUser_name());
         memb.put(id, true);
         this.setMembers(memb);
         return memb;
