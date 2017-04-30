@@ -2,9 +2,6 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-
-import com.github.lzyzsd.randomcolor.RandomColor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,6 +13,7 @@ import java.util.Random;
 public class User {
     private String id;
     private String user_name;
+    private String email;
     private Balance balance;
     private Bitmap profile_image;
     private Group user_group;
@@ -25,7 +23,11 @@ public class User {
     private boolean isCardEnabled;
     private boolean isSelected;
     private List<UserContact> contacts;
-public User(){}
+
+
+    private double customValue;
+
+    public User(){}
     public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
         this.id = id;
         this.user_name = user_name;
@@ -37,8 +39,38 @@ public User(){}
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
         isSelected = false;
+        this.customValue = 0;
     }
-    
+
+    public User(String id, String user_name, Balance balance, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
+        this.id = id;
+        this.user_name = user_name;
+        this.balance = balance;
+        this.user_group = user_group;
+        this.isAdministrator = isAdministrator;
+        this.isCardEnabled = isCardEnabled;
+        this.user_color = generateRandomColor();
+        this.contacts = new ArrayList<>();
+        isSelected = false;
+        this.customValue = 0;
+    }
+
+    public User(String id, String user_name )
+    {
+        this.id = id;
+        this.user_name = user_name;
+        this.profile_image = profile_image;
+    }
+
+    public boolean hasCustomValue() {
+        return customValue > 0;
+    }
+    public double getCustomValue() {
+        return customValue;
+    }
+    public void setCustomValue(double customValue) {
+        this.customValue = customValue;
+    }
 
     public String getId() {
         return id;
@@ -54,6 +86,14 @@ public User(){}
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Balance getBalance() {
@@ -103,7 +143,7 @@ public User(){}
     public int generateRandomColor() {
 
         // This is the base color which will be mixed with the generated one
-        return new RandomColor().randomColor();
+        return 3;
 
     }
 
@@ -131,11 +171,12 @@ public User(){}
         contacts.add(user);
     }
 
-    public void setSelection(){
-        isSelected = true;
+    public boolean isSelected() {
+        return isSelected;
     }
-    public boolean getSelection(){
-        return  isSelected;
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
 }

@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -92,7 +92,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        CircularImageView img_profile;
+        CircleImageView img_profile;
         TextView user_name;
         TextView balance;
         TextView administrator;
@@ -101,7 +101,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            img_profile = (CircularImageView) itemView.findViewById(R.id.iv_user_image);
+            img_profile = (CircleImageView) itemView.findViewById(R.id.iv_user_image);
             balance = (TextView)itemView.findViewById(R.id.tv_user_balance);
             user_name = (TextView)itemView.findViewById(R.id.tv_user_name);
             payByCard = (ImageView)itemView.findViewById(R.id.iv_paycard);

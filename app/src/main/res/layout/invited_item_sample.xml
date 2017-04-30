@@ -2,40 +2,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_marginTop="8dp"
-    android:layout_height="52dp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_marginLeft="16dp"
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="true">
 
-    <com.pkmmte.view.CircularImageView
-        android:id="@+id/cv_invited_image"
+    <de.hdodenhof.circleimageview.CircleImageView        android:id="@+id/cv_invited_image"
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:layout_centerVertical="true"
-        >
-
-    </com.pkmmte.view.CircularImageView>
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_toEndOf="@+id/cv_invited_image">
         <TextView
             android:id="@+id/tv_invited_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="GroupName05"
             android:textStyle="bold"
+            android:layout_marginTop="16dp"
             android:textSize="16sp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toEndOf="@+id/cv_invited_image" />
+             />
+        <TextView
+            android:id="@+id/tv_invited_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user@example.it"
+            android:layout_marginTop="4dp"
+            />
+        <TextView
+            android:id="@+id/tv_invited_pnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3351671175"
+            android:textStyle="italic"
+            android:layout_marginTop="4dp"
+            android:alpha="0.8"
+            />
+
+    </LinearLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_to_group_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:background="@color/colorPrimary"
         app:elevation="0dp"
         android:src="@drawable/ic_action_tick_white"
         app:fabSize="mini"
-        app:rippleColor="@color/colorPrimaryLight"
+        app:rippleColor="@color/colorAccentLight"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="24dp" />

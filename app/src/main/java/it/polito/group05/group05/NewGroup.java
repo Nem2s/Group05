@@ -1,68 +1,183 @@
 package it.polito.group05.group05;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
+import android.widget.TextView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import com.google.android.gms.appinvite.AppInviteApi;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.mvc.imagepicker.ImagePicker;
-import com.pkmmte.view.CircularImageView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
+import it.polito.group05.group05.Utility.ImageUtils;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 
-public class NewGroup extends AppCompatActivity {
+public class NewGroup extends AppCompatActivity{
 
-    public  static int REQUEST_FROM_NEW_GROUP;
-
-
-    CircularImageView iv_new_group;
-    Button addButton;
+    private static final String TAG = "Error";
+    public  static int REQUEST_FROM_NEW_GROUP, INVITE;
+    FloatingActionButton fab;
+    CircleImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
-
     private Group newgroup;
-
+    private MenuItem mSearchItem;
+    public static MenuItem mConfirmItem;
+    public static boolean isNameEmpty;
+    private Toolbar mToolbar;
+    private SearchView searchView;
+    private TextView no_people;
+    private final User currentUser = Singleton.getInstance().getCurrentUser();
+    private InvitedAdapter invitedAdapter;
+    private Context context;
+    private boolean textIsValid;
+    private boolean selectionIsValid;
+    private String[] ids;
+    private String groupID;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
-        Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
+
+        if(requestCode==INVITE)
+        {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                ids= AppInviteInvitation.getInvitationIds(resultCode, data);
+
+
+
+            }
+
+
+
+        }
         if (bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
             iv_new_group.setImageBitmap(bitmap);
             REQUEST_FROM_NEW_GROUP = -1;
         }
     }
 
+    private List<UserContact> getContacts() {
+        // Run query
+        List<UserContact> result = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+        String[] projection =
+                new String[]{
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                };
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                " COLLATE LOCALIZED ASC";
+        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+
+
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+        query.moveToFirst();
+        do {
+            UserContact user = new UserContact();
+            String number = query.getString(indexNumber);
+            String name = query.getString(indexName);
+            user.setUser_name(name);
+            user.setPnumber(number);
+            user.setEmail("user@example.com");
+            String photoUri = query.getString(indexPhoto);
+            if(photoUri != null)
+                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
+            else
+                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
+            result.add(user);
+
+        }while(query.moveToNext());
+
+        return result;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_group);
-
+        isNameEmpty = true;
         rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-        addButton = (Button)findViewById(R.id.add_to_group_button);
         et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
-        iv_new_group = (CircularImageView) findViewById(R.id.iv_new_group);
+        iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
+        no_people = (TextView)findViewById(R.id.no_people);
+        context = this;
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        fab = (FloatingActionButton)findViewById(R.id.fab_invite);
+        invitedAdapter = new InvitedAdapter(getContacts(), this);
+        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
 
-        final User currentUser = Singleton.getInstance().getCurrentUser();
-        final InvitedAdapter invitedAdapter = new InvitedAdapter(currentUser.getContacts(), this);
+        if(contacts != null && contacts.size() > 0)
+            invitedAdapter = new InvitedAdapter(contacts, this);
+        else {
+            Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    }).show();
+            et_group_name.setEnabled(false);
+            iv_new_group.setEnabled(false);
+        }
+
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
         rv_invited.setHasFixedSize(true);
@@ -73,50 +188,230 @@ public class NewGroup extends AppCompatActivity {
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new AppInviteInvitation.IntentBuilder("")
+                        .setMessage("")
+                        .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
+                        .build();
+                startActivityForResult(intent, INVITE);
+
+            }
+        });
+
+
         iv_new_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePicker.pickImage(getParent(), "Select Image:");
+                ImagePicker.pickImage((Activity) context, "Select Image:");
                 REQUEST_FROM_NEW_GROUP = ImagePicker.PICK_IMAGE_REQUEST_CODE;
 
             }
         });
+        /**TROVARE METODO ALTERNATIVO **/
+        //checkSelected();
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        et_group_name.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
-                newgroup.addMember(currentUser);
-                Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), newgroup);
-                for (UserContact u : currentUser.getContacts()) {
-                    if(u.isSelected()) {
-                        newgroup.addMember(u);
-                        u.setSelected(false);
-                    }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
+            }
 
-                if(newgroup.getMembers().isEmpty() || et_group_name.getText().toString().equals("")) {
-                    Snackbar.make(view, "Missing some Informations!", Snackbar.LENGTH_LONG).show();
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                EventBus.getDefault().post(new TextChangedEvent(charSequence.length() > 0));
+            }
 
-                }
-                else {
-                    Singleton.getInstance().addGroup(newgroup);
-                    finish();
-                }
-                invitedAdapter.notifyDataSetChanged();
+            @Override
+            public void afterTextChanged(Editable editable){
             }
         });
 
 
-        KeyboardVisibilityEvent.setEventListener(this, new KeyboardVisibilityEventListener() {
-            @Override
-            public void onVisibilityChanged(boolean isOpen) {
-                if(isOpen)
-                    addButton.setVisibility(View.INVISIBLE);
-                else
-                    addButton.setVisibility(View.VISIBLE);
-            }
-        });
+
+
     }
+
+    @Subscribe public void onTextChangedEvent(TextChangedEvent event) {
+        this.textIsValid = event.isValid();
+        if(textIsValid && selectionIsValid)
+            mConfirmItem.setVisible(true);
+        else
+            mConfirmItem.setVisible(false);
+    }
+
+    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
+        this.selectionIsValid = event.isValid();
+        if(textIsValid && selectionIsValid)
+            mConfirmItem.setVisible(true);
+        else
+            mConfirmItem.setVisible(false);
+    }
+
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        mSearchItem = menu.findItem(R.id.m_search);
+        mConfirmItem = menu.findItem(R.id.m_confirm);
+        mConfirmItem.setVisible(false);
+        searchView = (SearchView)mSearchItem.getActionView();
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                no_people.setVisibility(View.GONE);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if ( TextUtils.isEmpty ( newText ) ) {
+                    ((InvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
+                    no_people.setVisibility(View.GONE);
+
+                } else {
+                    ((InvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
+                    if(((InvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0)
+                        no_people.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Called when SearchView is collapsing
+                if (mSearchItem.isActionViewExpanded()) {
+                    animateSearchToolbar(1, false, false);
+                    mConfirmItem.setIcon(R.drawable.ic_action_tick_white);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Called when SearchView is expanding
+                animateSearchToolbar(1, true, true);
+                mConfirmItem.setIcon(R.drawable.ic_action_tick);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.m_confirm) {
+            newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
+            newgroup.addMember(currentUser);
+            for (UserContact u : currentUser.getContacts()) {
+                if(u.isSelected()) {
+                    newgroup.addMember(u);
+                    u.setSelected(false);
+                }
+
+            }
+
+            if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
+
+                groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
+                for(String invite : ids){
+                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
+
+
+                }
+                //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
+
+                finish();
+
+
+            }
+            else {
+                Snackbar.make(findViewById(R.id.parent_layout), "Missing some Informations!", Snackbar.LENGTH_LONG).show();
+                invitedAdapter.notifyDataSetChanged();
+                return false;
+
+            }
+        }
+
+        //DB_Manager.getInstance().PushGroupToDB(newgroup);
+        //DB_Manager.getInstance().MonitorOnGroup(newgroup);
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
+
+        mToolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.quantum_grey_600));
+        }
+
+        if (show) {
+                int width = mToolbar.getWidth() -
+                        (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
+                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getHeight() / 2, 0.0f, (float) width);
+                createCircularReveal.setDuration(250);
+                createCircularReveal.start();
+
+        } else {
+
+                int width = mToolbar.getWidth() -
+                        (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
+                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getMeasuredHeight() / 2, (float) width, 0.0f);
+                createCircularReveal.setDuration(250);
+                createCircularReveal.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mToolbar.setBackgroundColor(getThemeColor(NewGroup.this, R.attr.colorPrimary));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getWindow().setStatusBarColor(getThemeColor(NewGroup.this, R.attr.colorPrimaryDark));
+                        }
+                    }
+                });
+                createCircularReveal.start();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(getThemeColor(NewGroup.this, R.attr.colorPrimaryDark));
+            }
+        }
+    }
+
+    private boolean isRtl(Resources resources) {
+        return resources.getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+    }
+
+    private static int getThemeColor(Context context, int id) {
+        Resources.Theme theme = context.getTheme();
+        TypedArray a = theme.obtainStyledAttributes(new int[]{id});
+        int result = a.getColor(0, 0);
+        a.recycle();
+        return result;
+    }
+
+
 }

@@ -1,35 +1,26 @@
 package it.polito.group05.group05;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -47,36 +38,30 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-import org.w3c.dom.Text;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import it.polito.group05.group05.Utility.AnimUtils;
-import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.ChartUserMarker;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
-import it.polito.group05.group05.Utility.ChartUserListAdapter;
+import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.ColorUtils;
-import it.polito.group05.group05.Utility.ExpenseCardAdapter;
-import it.polito.group05.group05.Utility.ImageUtils;
-import it.polito.group05.group05.Utility.PicassoRoundTransform;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.UserAdapter;
+
+import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 public class GroupDetailsActivity extends AppCompatActivity {
 
@@ -89,9 +74,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView tv_group_name;
     private ImageView expand_cardview;
-    private LinearLayout cardView_layout;
+    private CardView cardView;
+    private ArrayList<User> users;
     private boolean isExpanded;
-    RecyclerView rv_users_under_chart;
+    private UserAdapter adapter;
+    private Context context;
+    CircleImageView cv_group;
+    RecyclerView rv;
     Entry entry;
     Highlight highlighted;
 
@@ -106,45 +95,84 @@ public class GroupDetailsActivity extends AppCompatActivity {
         partecipants = (TextView)findViewById(R.id.tv_partecipants);
         tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
         expand_cardview = (ImageView)findViewById(R.id.expand_cardview);
-        cardView_layout = (LinearLayout) findViewById(R.id.cardview_layout);
+        cardView = (CardView) findViewById(R.id.card_view);
+        cv_group = (CircleImageView)findViewById(R.id.iv_group_image);
         isExpanded = false;
 
-        final RecyclerView rv = (RecyclerView)findViewById(R.id.rv_group_members);
+        rv = (RecyclerView)findViewById(R.id.rv_group_members);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        customizeToolbar(toolbar);
+        //customizeToolbar(toolbar);
         setSupportActionBar(toolbar);
         tv_chart.setTextColor(toolbar.getSolidColor());
         partecipants.setTextColor(toolbar.getSolidColor());
-        AnimUtils.toggleOn(fab, 500, this);
-
-
-        ArrayList<User> users = new ArrayList<>();
-        UserAdapter adapter = new UserAdapter(users, this);
+        AnimUtils.toggleOn(fab, 350, this);
+        tv_group_name.setText(currentGroup.getName());
+        cv_group.setImageBitmap(currentGroup.getGroupProfile());
+        users = new ArrayList<>();
+        //users.addAll(currentGroup.getMembers());
+        DB_Manager.getInstance().retriveUsersInfo(currentGroup, users);
+        adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
         rv.setAdapter(adapter);
-        users.addAll(currentGroup.getMembers());
+        context = this;
         populateChart(this, users);
-
-
-        expand_cardview.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(isExpanded) {
-                    collapse(rv);
-                    isExpanded = false;
-                    expand_cardview.setImageResource(R.drawable.ic_expand_more);
-                }
-                else {
-                    expand(rv);
-                    isExpanded = true;
-                    expand_cardview.setImageResource(R.drawable.ic_expand_less);
-                }
+                Intent i = new Intent(getApplicationContext(), AddMember.class);
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)cv_group, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv_group_name, getString(R.string.transition_text));
+
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context,p2, p3, p4);
+                startActivity(i, options.toBundle());
             }
         });
+
     }
 
+    public void onCardClick(View view) {
+        if(isExpanded) {
+            collapse(rv);
+            isExpanded = false;
+            expand_cardview.setImageResource(R.drawable.ic_expand_more);
+        }
+        else {
+            expand(rv);
+            isExpanded = true;
+            expand_cardview.setImageResource(R.drawable.ic_expand_less);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+        Log.d("Details", "Registered for " + this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        Log.d("Details", "Unregistered for " + this);
+        super.onDestroy();
+    }
+
+    @Subscribe
+    public void onObjectAdded(ObjectChangedEvent event) {
+       Log.d("Details", "New member in the group!");
+        User u = (User)event.retriveObject();
+        users.add(u);
+        adapter.notifyDataSetChanged();
+        Singleton.getInstance().getmCurrentGroup().addMember(u);
+        cardView.callOnClick();
+        addEntry(u);
+
+    }
 
     public static void expand(final View v) {
         final int initialHeight= v.getHeight();
@@ -198,6 +226,39 @@ public class GroupDetailsActivity extends AppCompatActivity {
         v.startAnimation(a);
     }
 
+    private void addEntry(User u) {
+        int position = chart.getData().getEntryCount();
+        final BarData data = chart.getData();
+        XAxis xaxis = chart.getXAxis();
+        xaxis.setTextSize(11f);
+        List<BarEntry> barEntries = new ArrayList<>();
+        BarEntry b = new BarEntry(position, (float)( u.getBalance().getCredit() - u.getBalance().getDebit()));
+        barEntries.add(b);
+        b.setData(u);
+        BarDataSet set = new BarDataSet(barEntries, u.getUser_name());
+        set.setDrawValues(false);
+        set.setColor(getResources().getColor(R.color.colorAccent));
+        data.setBarWidth(0.85f);
+        data.setValueTextSize(14f);
+        chart.setDrawValueAboveBar(true);
+        data.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return value + " €";
+            }
+        });
+        xaxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return data.getDataSetByIndex((int)value).getLabel();
+            }
+        });
+        data.addDataSet(set);
+        chart.notifyDataSetChanged();
+        chart.invalidate();
+
+    }
+
     private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
@@ -240,44 +301,19 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         List<LegendEntry> legends = new ArrayList<>();
 
-        int i = 0;
-        List<IBarDataSet> total = new ArrayList<>();
         final ArrayList<String> xvalues = new ArrayList<>();
+        chart.setData(new BarData());
         for (User u : users) {
-            List<BarEntry> barEntries = new ArrayList<>();
-            BarEntry b = new BarEntry(i, (float)( u.getBalance().getCredit() - u.getBalance().getDebit()));
-            barEntries.add(b);
-            b.setData(u);
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
             l.label = u.getUser_name();
             l.formColor = u.getUser_color();
-            i++;
-            BarDataSet set = new BarDataSet(barEntries, "user " + i);
-            set.setDrawValues(false);
-            set.setColor(getResources().getColor(R.color.colorAccent));
-            total.add(set);
+            addEntry(u);
             legends.add(l);
         }
         legend.setCustom(legends);
-        final BarData data = new BarData(total);
-        data.setBarWidth(0.85f);
-        data.setValueTextSize(14f);
-        chart.setDrawValueAboveBar(true);
-        data.setValueFormatter(new IValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return value + " €";
-            }
-        });
-        IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return xvalues.get((int)value);
-            }
-        };
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
@@ -285,7 +321,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             public void onValueSelected(Entry e, Highlight h) {
                 IBarDataSet set;
                 chart.setMarker(marker);
-                set = data.getDataSetForEntry(e);
+                set = chart.getData().getDataSetForEntry(e);
                 set.setDrawValues(true);
                 entry = e;
                 highlighted = h;
@@ -299,8 +335,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
         chart.highlightValues(null);
-        xAxis.setValueFormatter(formatter);
-        chart.setData(data);
         chart.setFitBars(true);
         chart.animateXY(750, 1500, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
         chart.setVisibleXRangeMaximum(8);
@@ -310,7 +344,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AnimUtils.toggleOff(fab, 250, this);
+        AnimUtils.toggleOff(fab, 350, this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
             builder
@@ -328,7 +362,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void customizeToolbar(final Toolbar toolbar) {
-        final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         final GroupColor gc = new GroupColor();
             ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
             builder
@@ -345,6 +379,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
             c.setImageBitmap(currentGroup.getGroupProfile());
 
     }
+
+
 
 
     public class SelfRemovingOnScrollListener extends RecyclerView.OnScrollListener {

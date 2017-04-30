@@ -11,15 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp">
 
-        <com.pkmmte.view.CircularImageView
-            android:id="@+id/iv_user_image"
+        <de.hdodenhof.circleimageview.CircleImageView            android:id="@+id/iv_user_image"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/group_profile">
-
-        </com.pkmmte.view.CircularImageView>
+            android:src="@drawable/group_profile"/>
 
         <TextView
             android:id="@+id/tv_user_name"

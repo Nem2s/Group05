@@ -7,39 +7,51 @@ import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.HomeScreen;
+import it.polito.group05.group05.NewGroup;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 
 /**
  * Created by Marco on 04/04/2017.
  */
 
-public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHolder> {
+public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHolder> implements Filterable {
 
     Context context;
     List<UserContact> invited;
     ViewGroup parent;
     public List<User> selected;
-    Button addButton;
+    private List<UserContact> orig;
+    private int validGroup;
 
     public InvitedAdapter(List<UserContact> invited, Context context) {
         this.context = context;
         this.invited = invited;
         selected = new ArrayList<>();
-        addButton = (Button)((Activity)context).findViewById(R.id.add_to_group_button);
+        validGroup = 0;
+
     }
 
 
@@ -64,7 +76,6 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
                 .transform(new PicassoRoundTransform())
                 .into(holder.img_profile);*/
         holder.img_profile.setImageBitmap(currentUser.getProfile_image());
-        holder.button.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorPrimary)));
         if(currentUser.isSelected())
             holder.button.setVisibility(View.VISIBLE);
         else
@@ -73,38 +84,79 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(holder.button.getVisibility() == View.INVISIBLE) {
-                    holder.button.setVisibility(View.VISIBLE);
+                if(holder.button.getVisibility() != View.VISIBLE) {
+                    validGroup++;
                     currentUser.setSelected(true);
-                    AnimUtils.toggleOn(holder.button, 500, context);
+                   holder.button.show();
 
                 }
                 else {
-                    holder.button.setVisibility(View.INVISIBLE);
+                    validGroup--;
                     currentUser.setSelected(false);
-                    AnimUtils.toggleOff(holder.button, 500, context);
+                    holder.button.hide();
 
                 }
+                EventBus.getDefault().post(new SelectionChangedEvent(isValid()));
             }
         });
         holder.name.setText(currentUser.getUser_name());
+        holder.number.setText(currentUser.getPnumber());
+        holder.email.setText(currentUser.getEmail());
     }
+
+    public boolean isValid() {
+        return validGroup > 0;
+    }
+
 
     @Override
     public int getItemCount() {
         return invited.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                final FilterResults oReturn = new FilterResults();
+                final List<UserContact> results = new ArrayList<UserContact>();
+                if (orig == null)
+                    orig = invited;
+                if (constraint != null) {
+                    if (orig != null & orig.size() > 0) {
+                        for (final UserContact u : orig) {
+                            if (u.getUser_name().toLowerCase().contains(constraint.toString().toLowerCase()))
+                                results.add(u);
+                        }
+                    }
+                    oReturn.values = results;
+                }
+                return oReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                invited = (ArrayList<UserContact>)filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        CircularImageView img_profile;
+        CircleImageView img_profile;
         TextView name;
+        TextView number;
+        TextView email;
         FloatingActionButton button;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            img_profile = (CircularImageView)itemView.findViewById(R.id.cv_invited_image);
+            img_profile = (CircleImageView)itemView.findViewById(R.id.cv_invited_image);
             name = (TextView)itemView.findViewById(R.id.tv_invited_name);
+            number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
+            email = (TextView)itemView.findViewById(R.id.tv_invited_email);
             button = (FloatingActionButton)itemView.findViewById(R.id.add_to_group_button);
 
         }

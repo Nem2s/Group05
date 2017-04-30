@@ -1,19 +1,14 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -24,84 +19,88 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
+import org.greenrobot.eventbus.EventBus;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.EventClasses.PriceChangedEvent;
 import it.polito.group05.group05.Utility.MemberExpenseAdapter;
-
-import static it.polito.group05.group05.Utility.ColorUtils.context;
+import it.polito.group05.group05.Utility.MyLinearLayoutManager;
 
 public class Expense_activity extends AppCompatActivity {
+
 
     private MaterialEditText et_name, et_description, et_cost;
     private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
     private TextView tv_policy, tv_members;
-    private Spinner spinner_deadline, spinner_policy;
+    private Spinner  spinner_deadline, spinner_policy;
+    private Button addExpense;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
-    private RelativeLayout rel_info;
     private Toolbar toolbar;
+    private CircleImageView iv_group_image;
     private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network, info;
-    private ParcelFileDescriptor mInputPFD;
-    private Intent intent_file;
-    private FileDescriptor fd;
-    private Uri returnUri;
-    private boolean newFile = false;
-    private String nameFILE= null;
+    private RelativeLayout rel_info;
     private String expense_name;
     private String expense_description;
     private Double expense_price;
     private int expense_deadline;
     private TYPE_EXPENSE expense_type;
     private Group actual_group;
-    private List<User> members_group;
+    private List<User> members_group ;
     private User expense_owner;
     private String id_owner;
     private String id_expense;
+    private CoordinatorLayout parent;
+    private List<User> partecipants;
+    private double costPerUser;
+    private Intent intent_file;
     private Uri uri;
+    private boolean newFile = false;
+    private String nameFILE= null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_v2);
+
+        parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
+        costPerUser = 0;
+        partecipants = new ArrayList<>();
+        partecipants.addAll(Singleton.getInstance().getmCurrentGroup().getMembers());
+
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
+        toolbar= (Toolbar) findViewById(R.id.toolbar);
+        iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
         image_network = (ImageView) findViewById(R.id.image_network);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
@@ -125,7 +124,7 @@ public class Expense_activity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         setSupportActionBar(toolbar);
-        //    iv_group_image.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+       // iv_group_image.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
@@ -139,7 +138,6 @@ public class Expense_activity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 expense_name = et_name.getText().toString();
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -159,8 +157,13 @@ public class Expense_activity extends AppCompatActivity {
 
                 if (s != null) {
                     try {
-                        expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                        et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                        expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
+                        costPerUser = (expense_price/partecipants.size());
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        String formate = df.format(costPerUser);
+                        double finalValue = Double.parseDouble(formate.replace(',', '.'));
+                        //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                        EventBus.getDefault().post(new PriceChangedEvent(finalValue));
 
                     } catch (NumberFormatException e) {
                         expense_price = 0.0;
@@ -235,20 +238,14 @@ public class Expense_activity extends AppCompatActivity {
         List<String> array = new ArrayList<>();
         array.add("Equal part");
         array.add("Unequal part");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_policy.setAdapter(dataAdapter);
-        final MemberExpenseAdapter adapter = new MemberExpenseAdapter(this, Singleton.getInstance().getmCurrentGroup().getMembers(),
-                new MemberExpenseAdapter.OnItemClickListener() {
-                    @Override
-                    public void OnItemClicked(User position) {
-                        //et_name.setText("CIAO" + position.getId().toString());
-                        //et_cost.setText("0.0");
-                    }
-                });
-        adapter.notifyDataSetChanged();
+        List<User> list = new ArrayList<>();
+        list.addAll(Singleton.getInstance().getmCurrentGroup().getMembers());
+        final MemberExpenseAdapter adapter= new MemberExpenseAdapter(this, list, this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(this));
         recyclerView.setVisibility(View.GONE);
         id_owner = Singleton.getInstance().getId();
         expense_owner = Singleton.getInstance().getmCurrentGroup().getMember(id_owner);
@@ -256,7 +253,7 @@ public class Expense_activity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-        spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view,
                                        int position, long id) {
@@ -311,11 +308,11 @@ public class Expense_activity extends AppCompatActivity {
         });
     }
 
-    public void description_handler(View v) {
+    public void description_handler(View v){
         et_description.setVisibility(et_description.isShown() ? View.GONE : View.VISIBLE);
     }
 
-    public void deadline_handler(View v) {
+    public void deadline_handler(View v){
         spinner_deadline.setVisibility(spinner_deadline.isShown() ? View.GONE : View.VISIBLE);
     }
 
@@ -354,5 +351,6 @@ public class Expense_activity extends AppCompatActivity {
                }
     }
 }
+
 
 

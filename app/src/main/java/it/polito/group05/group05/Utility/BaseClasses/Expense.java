@@ -5,6 +5,7 @@ import android.net.Uri;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -22,7 +23,7 @@ public class Expense{
     private String nameFile;
     private int deadline;//days
     private Timestamp timestamp;
-    private TreeMap<String, User> lista_partecipanti=new TreeMap<>();
+    private HashMap<String, User> lista_partecipanti=new HashMap<>();
     private String image;
     private boolean hasFile = false;
 
@@ -51,6 +52,9 @@ public class Expense{
         this.owner = owner;
         this.deadline= deadline;
         this.timestamp= timestamp;
+    }
+
+    public Expense() {
     }
 
     //METHODS
@@ -183,5 +187,16 @@ List<User> l = new ArrayList<>(lista_partecipanti.values());
 
     }
 
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public HashMap<String, User> getLista_partecipanti() {
+        return lista_partecipanti;
+    }
+
+    public void setLista_partecipanti(HashMap<String, User> lista_partecipanti) {
+        this.lista_partecipanti = lista_partecipanti;
+    }
 }
 

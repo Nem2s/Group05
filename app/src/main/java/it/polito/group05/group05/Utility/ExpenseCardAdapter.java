@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class ExpenseCardAdapter extends RecyclerView.Adapter<ExpenseCardAdapterH
 }
 
 class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
-    CircularImageView civ;
+    CircleImageView civ;
     TextView tv,tv_debt;
 
 
@@ -61,7 +62,7 @@ class ExpenseCardAdapterHolder extends RecyclerView.ViewHolder {
 
     public ExpenseCardAdapterHolder(View itemView) {
         super(itemView);
-        civ = (CircularImageView) itemView.findViewById(R.id.expense_member_image);
+        civ = (CircleImageView) itemView.findViewById(R.id.expense_member_image);
         tv = (TextView) itemView.findViewById(R.id.expense_member_name);
         tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
     }

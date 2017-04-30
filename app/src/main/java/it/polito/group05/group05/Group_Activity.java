@@ -32,12 +32,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -76,7 +77,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         setContentView(R.layout.activity_group_);
 
         context = this;
-        final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -6,12 +6,12 @@ import android.graphics.Color;
 import android.text.SpannableString;
 import android.util.Pair;
 
-import com.pkmmte.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,13 +25,14 @@ import cn.nekocode.badge.BadgeDrawable;
 public class Group {
 
     private String name;
+    private String groupID;
     private Balance balance;
     private BadgeDrawable badge;
     private String lmTime;
     private Bitmap groupProfile;
     private GroupColor groupColor;
-    private TreeMap<String, User> members;
-    private TreeMap<String, Expense> expenses;
+    private HashMap<String, User> members;
+    private HashMap<String, Expense> expenses;
 
     public Group(String groupName, Balance currentBalance, Bitmap groupProfile, String lmTime, int badgeCount) {
         this.name = groupName;
@@ -39,9 +40,21 @@ public class Group {
         this.groupProfile = groupProfile;
         this.lmTime = lmTime;
         setBadge(badgeCount);
-        this.members = new TreeMap<>();
-        this.expenses = new TreeMap<>();
+        this.members = new HashMap<>();
+        this.expenses = new HashMap<>();
     }
+
+    public Group(String groupName, String Id,  Balance currentBalance, String lmTime, int badgeCount) {
+        this.name = groupName;
+        this.groupID = Id;
+        this.balance = currentBalance;
+        this.groupProfile = groupProfile;
+        this.lmTime = lmTime;
+        setBadge(badgeCount);
+        this.members = new HashMap<>();
+        this.expenses = new HashMap<>();
+    }
+
     public Group(){}
 
     public String getName() {
@@ -50,6 +63,14 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGroupID() {
+        return groupID;
+    }
+
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
     }
 
     public Balance getBalance() {
@@ -122,6 +143,18 @@ public class Group {
 
     }
 
+    public void setBadge(BadgeDrawable badge) {
+        this.badge = badge;
+    }
+
+    public void setMembers(HashMap<String, User> members) {
+        this.members = members;
+    }
+
+    public void setExpenses(HashMap<String, Expense> expenses) {
+        this.expenses = expenses;
+    }
+
     public Map<String,Balance> debtUsers(){
 
 
@@ -154,10 +187,19 @@ public class Group {
 
     }
 
+    public List<String> getMembersId(){
+        ArrayList<String> new_list= new ArrayList<>(members.keySet());
+        return new_list;
+
+    }
+
     public void addMember( User u){
         if(!members.containsKey(u.getId())){
             members.put(u.getId(), u);
         }
+    }
+    public void addMember(String id){
+            members.put(id, null);
     }
 
 }

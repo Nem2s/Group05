@@ -18,13 +18,12 @@ public class AnimUtils {
 
     public static void toggleOn(final View v, int duration, Context context){
         final Animation animation = AnimationUtils.loadAnimation(context, R.anim.fab_open);
-        if(v.getVisibility() == View.INVISIBLE) {
+            animation.setStartOffset(duration);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     v.setVisibility(View.VISIBLE);
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
 
@@ -35,15 +34,11 @@ public class AnimUtils {
 
                 }
             });
-            animation.setStartOffset(duration);
-
             v.startAnimation(animation);
-        }
     }
     public static void toggleOff(final View v, int duration, Context context){
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fab_close);
         animation.setDuration(duration);
-        if(v.getVisibility() == View.VISIBLE) {
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -61,9 +56,7 @@ public class AnimUtils {
                 }
             });
             v.startAnimation(animation);
-
         }
-    }
 
     public static void bounce(View v, int duration, Context context, boolean infinite) {
         Animation anim = AnimationUtils.loadAnimation(context, R.anim.bounce);

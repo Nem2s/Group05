@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,12 +56,12 @@ public class ChartUserListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public CircularImageView img_profile;
+        public CircleImageView img_profile;
         public TextView name;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            img_profile = (CircularImageView)itemView.findViewById(R.id.iv_user_image);
+            img_profile = (CircleImageView)itemView.findViewById(R.id.iv_user_image);
             name = (TextView)itemView.findViewById(R.id.tv_user_name);
         }
     }

@@ -18,7 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 .transform(new PicassoRoundTransform())
                 .into(holder.groupProfile);*/
         final int currentPosition = position;
+        if(getItemCount() == 0)
+            return;
         holder.groupProfile.setImageBitmap(groups.get(position).getGroupProfile());
         holder.name.setText(groups.get(position).getName());
         String text = "<font color='green'>" + groups.get(position).getBalance().getCredit() + "</font> / <font color='red'>" + groups.get(position).getBalance().getDebit() + "</font>";
@@ -100,7 +103,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
                 // Define the view that the animation will start from
                 View groupImage = view.findViewById(R.id.iv_group_image);
-                FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
                 TextView tv = (TextView)((Activity)context).findViewById(R.id.tv_group_name);
                 Pair <View, String> p1 = Pair.create((View)groupImage, transitionImage);
                 Pair<View, String> p2 = Pair.create((View)tv, context.getString(R.string.transition_text));
@@ -111,14 +113,13 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 //ActivityCompat.startActivity(context, intent, options.toBundle());
                 if(isEnabled)
                     context.startActivity(intent, options.toBundle());
-                AnimUtils.toggleOff(fab, 250, context);
 
             }
         });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Intent intent = new Intent(context, Group_Activity.class);
                 intent.putExtra("Position", position);
                 Singleton.getInstance().setmCurrentGroup(groups.get(position));
@@ -126,8 +127,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 FloatingActionButton fab = (FloatingActionButton)((Activity)context).findViewById(R.id.fab);
                 Toolbar toolbar = (Toolbar)((Activity)context).findViewById(R.id.toolbar);
                 AppBarLayout appBar = (AppBarLayout)((Activity)context).findViewById(R.id.appbar);
-                CircularImageView cv = (CircularImageView)((Activity)context).findViewById(R.id.iv_group_image);
-                TextView tv = (TextView)((Activity)context).findViewById(R.id.tv_group_name);
+                View groupImage = view.findViewById(R.id.iv_group_image);
+                TextView tv = (TextView)view.findViewById(R.id.tv_group_name);
                 TextView title = null;
                 for (int i = 0; i < toolbar.getChildCount(); ++i) {
                     View child = toolbar.getChildAt(i);
@@ -140,14 +141,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                         break;
                     }
                 }
-                Pair <View, String> p0 = Pair.create((View)fab, transitionFab);
+
                 Pair<View, String> p1 = Pair.create((View)appBar,context.getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, context.getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)cv, context.getString(R.string.transition_group_image));
+                Pair<View, String> p3 = Pair.create(groupImage, context.getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, context.getString(R.string.transition_text));
                 Pair<View, String> p5 = Pair.create((View)title, context.getString(R.string.transition_text));
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p0, p1, p2, p3, p4, p5);
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4, p5);
                 context.startActivity(intent, options.toBundle());
             }
         });
@@ -160,7 +161,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        CircularImageView groupProfile;
+        CircleImageView groupProfile;
         TextView name;
         TextView balance;
         TextView badge;
@@ -170,7 +171,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            groupProfile = (CircularImageView)itemView.findViewById(R.id.iv_group_image);
+            groupProfile = (CircleImageView)itemView.findViewById(R.id.iv_group_image);
             balance = (TextView)itemView.findViewById(R.id.tv_group_balance);
             name = (TextView)itemView.findViewById(R.id.tv_group_name);
             badge = (TextView)itemView.findViewById(R.id.tv_badge_counter);

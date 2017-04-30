@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:transitionName="@string/transition_toolbar"
 
 
@@ -32,18 +32,14 @@
                 android:layout_height="72dp"
                 android:orientation="horizontal"
                 >
-
-                <com.pkmmte.view.CircularImageView
-                    android:id="@+id/iv_group_image"
+                <de.hdodenhof.circleimageview.CircleImageView                    android:id="@+id/iv_group_image"
                     android:layout_height="58dp"
                     android:layout_width="58dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
                     android:transitionName="@string/transition_group_image"
                     android:focusableInTouchMode="true"
-                    >
-
-                </com.pkmmte.view.CircularImageView>
+                    />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -59,6 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="GroupName05"
+                        android:textColor="@color/colorPrimaryText"
                         android:transitionName="@string/transition_text"
                         android:textStyle="bold"
                         android:textSize="16sp" />
@@ -67,6 +64,7 @@
                         android:id="@+id/tv_group_balance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/colorSecondaryText"
                         android:layout_marginTop="8dp"
                         android:text="Debit/credit   ___$"
                         android:textSize="16sp" />
@@ -107,6 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
+        android:onClick="onCardClick"
         app:cardCornerRadius="2dp"
 
         app:cardPreventCornerOverlap="true"
@@ -135,6 +134,7 @@
                 app:stackFromEnd="true"
                 android:paddingBottom="32dp"
                 android:dividerHeight="2dp"
+                android:onClick="onCardClick"
                 />
             <ImageView
                 android:id="@+id/expand_cardview"
@@ -157,7 +157,7 @@
         app:layout_anchor="@+id/card_view"
         app:layout_anchorGravity="bottom|right|end"
         android:clickable="true"
-        android:visibility="invisible"
+        android:transitionName="@string/transition_fab"
         />
 </android.support.design.widget.CoordinatorLayout>
 
@@ -193,16 +193,9 @@
                 android:textSize="16sp" />
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/group_chart"
+                android:layout_marginBottom="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"></com.github.mikephil.charting.charts.BarChart>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_under_barchart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="48dp"
-                android:orientation="horizontal"></android.support.v7.widget.RecyclerView>
         </LinearLayout>
     </android.support.v7.widget.CardView>
             </LinearLayout>

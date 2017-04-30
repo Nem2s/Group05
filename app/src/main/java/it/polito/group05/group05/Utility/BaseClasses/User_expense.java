@@ -31,6 +31,14 @@ public class User_expense extends User {
         List<User_expense> user_expenses = new ArrayList<>();
     }
 
+    public TYPE_EXPENSE getTypeExpense() {
+        return typeExpense;
+    }
+
+    public void setTypeExpense(TYPE_EXPENSE typeExpense) {
+        this.typeExpense = typeExpense;
+    }
+
     public User_expense(){
         super();
     }
