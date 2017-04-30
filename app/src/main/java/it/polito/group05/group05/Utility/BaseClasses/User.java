@@ -23,6 +23,7 @@ public class User {
     private boolean isCardEnabled;
     private boolean isSelected;
     private List<UserContact> contacts;
+    private List<UserContact> regcontacts;
 
 
     private double customValue;
@@ -38,6 +39,7 @@ public class User {
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
+        this.regcontacts = new ArrayList<>();
         isSelected = false;
         this.customValue = 0;
     }
@@ -51,6 +53,7 @@ public class User {
         this.isCardEnabled = isCardEnabled;
         this.user_color = generateRandomColor();
         this.contacts = new ArrayList<>();
+        this.regcontacts = new ArrayList<>();
         isSelected = false;
         this.customValue = 0;
     }
@@ -179,6 +182,18 @@ public class User {
         isSelected = selected;
     }
 
+    public List<UserContact> getRegcontacts() {
+        return regcontacts;
+    }
+
+    public void setRegcontacts(List<UserContact> regcontacts) {
+        this.regcontacts = regcontacts;
+    }
+
+    public void addRegcontacts(UserContact u) {
+        if(this.regcontacts == null ) this.regcontacts = new ArrayList<>();
+        this.regcontacts.add(u);
+    }
 }
 
 

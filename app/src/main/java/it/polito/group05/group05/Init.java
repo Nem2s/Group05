@@ -1,9 +1,13 @@
 package it.polito.group05.group05;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -18,12 +22,19 @@ import com.google.firebase.auth.FirebaseUser;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
+import it.polito.group05.group05.Utility.ImageUtils;
 
 public class Init extends AppCompatActivity {
 
@@ -46,7 +57,9 @@ public class Init extends AppCompatActivity {
 
     @Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
-        //HomeScreen.currentUser = (User)e.getUser();
+        Receiveinvite();
+    }
+       /* //HomeScreen.currentUser = (User)e.getUser();
         User U = (User)e.getUser();
         Singleton.getInstance().setCurrentUser(U);
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
@@ -61,7 +74,7 @@ public class Init extends AppCompatActivity {
             // deep-link URLs.
 
 
-    }
+    }*/
 
 
     @Subscribe
@@ -77,6 +90,7 @@ public class Init extends AppCompatActivity {
 
     private static Context context;
     private FirebaseAuth mAuth;
+    private Activity activity = Init.this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,6 +181,7 @@ public class Init extends AppCompatActivity {
     public static Context getAppContext() {
         return Init.context;
     }
+
 
 
 }

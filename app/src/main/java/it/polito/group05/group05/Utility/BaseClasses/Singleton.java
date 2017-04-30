@@ -1,10 +1,15 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.DB_Manager;
@@ -91,6 +96,11 @@ public class Singleton {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
-        if(currentUser != null) user = currentUser.getId();
+        if(currentUser != null) {
+            user = currentUser.getId();
+        }
     }
+
+
+
 }

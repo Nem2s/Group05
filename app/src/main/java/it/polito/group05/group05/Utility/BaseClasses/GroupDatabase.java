@@ -105,4 +105,21 @@ public class GroupDatabase {
         return memb;
     }
 
+    public Map<String, Object> setMembers(List<User> users)
+    {
+        Map<String, Object> memb = new HashMap<String, Object>();
+        for(User u : users){
+            memb.put(u.getId(), true);
+        }
+        this.setMembers(memb);
+        return memb;
+    }
+    /*
+            members.clear();
+        for(User u : users){
+            members.put(u.getId(), true);
+        }
+        //this.members=memb;
+        return members;
+     */
 }

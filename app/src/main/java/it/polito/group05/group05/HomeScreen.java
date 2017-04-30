@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -57,8 +59,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.AnimUtils;
@@ -74,6 +78,7 @@ import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
+import it.polito.group05.group05.Utility.ImageUtils;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -172,6 +177,9 @@ public class HomeScreen extends AppCompatActivity
 
         HomeScreenContext = this;
          currentUser = Singleton.getInstance().getCurrentUser();
+        Singleton.getInstance().getCurrentUser().setContacts(getLocalContacts());
+        //Singleton.getInstance().getCurrentUser().setRegcontacts(null);
+        DB_Manager.getInstance().checkContact();
 
         //--------------------------------------------------------------------
 
@@ -429,7 +437,56 @@ public class HomeScreen extends AppCompatActivity
         return ret;
     }
 
+    private List<UserContact> getLocalContacts() {
+        // Run query
+        List<UserContact> result = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
+        String[] projection =
+                new String[]{
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                };
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                " COLLATE LOCALIZED ASC";
+        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+
+
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+        query.moveToFirst();
+        do {
+            UserContact user = new UserContact();
+            String number = query.getString(indexNumber);
+            if(number.length() >= 10) {
+                number = number.replace(" ", "");
+                number = number.replace("-", "");
+                number = number.substring(number.length() - 10);
+                String name = query.getString(indexName);
+                user.setUser_name(name);
+                user.setPnumber(number);
+                user.setEmail("user@example.com");
+                result.add(user);
+            }
+        }while(query.moveToNext());
+
+        List<UserContact> result1 = new ArrayList<UserContact>();
+        Set<String> titles = new HashSet<String>();
+
+        for( UserContact item : result ) {
+            if( titles.add( item.getPnumber() )) {
+                result1.add( item );
+            }
+        }
+        result.clear();
+        result = result1;
+
+        return result;
+    }
 
 
 

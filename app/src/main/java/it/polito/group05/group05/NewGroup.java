@@ -46,7 +46,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
@@ -106,47 +109,6 @@ public class NewGroup extends AppCompatActivity{
         }
     }
 
-    private List<UserContact> getContacts() {
-        // Run query
-        List<UserContact> result = new ArrayList<>();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-
-        String[] projection =
-                new String[]{
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
-                };
-        String selection = null;
-        String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
-                " COLLATE LOCALIZED ASC";
-        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
-
-
-        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-        query.moveToFirst();
-        do {
-            UserContact user = new UserContact();
-            String number = query.getString(indexNumber);
-            String name = query.getString(indexName);
-            user.setUser_name(name);
-            user.setPnumber(number);
-            user.setEmail("user@example.com");
-            String photoUri = query.getString(indexPhoto);
-            if(photoUri != null)
-                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
-            else
-                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
-            result.add(user);
-
-        }while(query.moveToNext());
-
-        return result;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +122,8 @@ public class NewGroup extends AppCompatActivity{
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        invitedAdapter = new InvitedAdapter(getContacts(), this);
+        //invitedAdapter = new InvitedAdapter(getContacts(), this);
+        invitedAdapter = new InvitedAdapter(Singleton.getInstance().getCurrentUser().getRegcontacts(), this);
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
 
         rv_invited.setHasFixedSize(true);
@@ -307,7 +270,7 @@ public class NewGroup extends AppCompatActivity{
         if(id == R.id.m_confirm) {
             newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
             newgroup.addMember(currentUser);
-            for (UserContact u : currentUser.getContacts()) {
+            for (UserContact u : currentUser.getRegcontacts()) {
                 if(u.isSelected()) {
                     newgroup.addMember(u);
                     u.setSelected(false);
@@ -324,8 +287,7 @@ public class NewGroup extends AppCompatActivity{
                     }
                 }
                 //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
-                onBackPressed();
-                //finish();
+                finish();
 
 
             }
