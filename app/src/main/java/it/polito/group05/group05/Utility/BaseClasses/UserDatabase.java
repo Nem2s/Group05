@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserDatabase {
+import it.polito.group05.group05.Utility.Interfaces.Namable;
+
+public class UserDatabase implements Namable{
 
     public String id;
     public String name;
@@ -28,13 +30,22 @@ public class UserDatabase {
         this.iProfile = iProfile;
     }
 
+    public UserDatabase(String id, String name, String authKey, String telNumber, String email) {
+        this.id = id;
+        this.name = name;
+        this.authKey = authKey;
+        this.telNumber = telNumber;
+        this.email = email;
+    }
 
+    public UserDatabase() {}
 
-
-
-
-
-    public UserDatabase(String key, String name, String cID, String numb, String email) {
+    public UserDatabase(UserDatabase ud) {
+        this.id = ud.id;
+        this.name = ud.name;
+        this.authKey = ud.authKey;
+        this.telNumber = ud.telNumber;
+        this.email = ud.email;
     }
 
     public String getId() {
@@ -104,7 +115,16 @@ public class UserDatabase {
 
     }
 
+    public String getiProfile() {
+        return iProfile;
+    }
+
+    public void setiProfile(String iProfile) {
+        this.iProfile = iProfile;
+    }
+
     public void setUserGroups(Map<String, Object> userGroups) {
         this.userGroups = userGroups;
     }
+
 }

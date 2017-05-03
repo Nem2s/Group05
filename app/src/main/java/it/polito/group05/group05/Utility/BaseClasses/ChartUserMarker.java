@@ -63,15 +63,16 @@ public class ChartUserMarker extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         String balance;
         String color;
-        User user = (User)e.getData();
+        UserDatabase user = (UserDatabase) e.getData();
         if(e.getY() > 0)
             color = "#3EA055";
         else
             color = "#C11B17";
         balance = "<font color=" + color + ">Currently: " + e.getY() + " € </font>";
         tv_balance.setText(Html.fromHtml(balance), TextView.BufferType.SPANNABLE);
-        tv_name.setText(user.getUser_name());
-        cv.setImageBitmap(ImageUtils.getRoundedRectBitmap(user.getProfile_image(), 48));
+        tv_name.setText(user.getName());
+
+        //cv.setImageBitmap(ImageUtils.getRoundedRectBitmap(user.getProfile_image(), 48));
         super.refreshContent(e, highlight);
     }
 }

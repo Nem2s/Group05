@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "661335874124-8uav2t0j8i4ph00crl55smcoaj43ja38.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "it.polito.group05.group05",
-            "certificate_hash": "aa358bc81b5a5d379c693ff550c9125cb437b420"
-          }
-        },
-        {
           "client_id": "661335874124-nvlpptt6ej04mcaq3p3ht7ul0t1l7797.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -11,8 +11,9 @@ import java.util.Map;
 
 import cn.nekocode.badge.BadgeDrawable;
 import it.polito.group05.group05.HomeScreen;
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
-public class GroupDatabase {
+public class GroupDatabase implements Namable {
 
     public String id;
     public String name;
@@ -32,7 +33,18 @@ public class GroupDatabase {
         this.name = name;
         this.balance = balance;
         this.groupColor = groupColor;
+        members = new HashMap<>();
        // setBadge(badgeCount);
+    }
+
+    public GroupDatabase(GroupDatabase gd) {
+        this.name = gd.getName();
+        this.balance= gd.getBalance();
+        this.id = gd.getId();
+        this.lmTime= gd.getLmTime();
+        this.groupColor= gd.getGroupColor();
+        this.pictureUrl = gd.getPictureUrl();
+        members = new HashMap<>();
     }
 
 
@@ -92,14 +104,15 @@ public class GroupDatabase {
         this.members = members;
     }
 
-    public Map<String, Object> setMembers(List<User> users, String id)
+    public Map<String, Object> setMembers(List<UserDatabase> users, String id)
     {
         Map<String, Object> memb = new HashMap<String, Object>();
-        for(User u : users){
-            memb.put(u.getUser_name(), true);
+        for(UserDatabase u : users){
+            memb.put(u.getName(), true);
         }
         //memb.remove("User");
-        memb.remove(Singleton.getInstance().getCurrentUser());
+
+        memb.remove(memb.get(Singleton.getInstance().getCurrentUser().getId()));
         memb.put(id, true);
         this.setMembers(memb);
         return memb;

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -47,6 +49,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -56,10 +59,11 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
@@ -74,10 +78,10 @@ import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.GroupAdapter;
 
+import it.polito.group05.group05.Utility.ImageUtils;
 import it.polito.group05.group05.Utility.InvitedAdapter;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
 
     public static  Context HomeScreenContext;
 
@@ -100,7 +104,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    /*static public */User currentUser;
+    User currentUser;
     CircleImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -126,6 +130,7 @@ public class HomeScreen extends AppCompatActivity
         EventBus.getDefault().unregister(this);
         Log.d("Details", "Unregistered for " + this);
         super.onDestroy();
+        finish();
     }
 
    /* @Subscribe
@@ -171,16 +176,15 @@ public class HomeScreen extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         HomeScreenContext = this;
-        currentUser = Singleton.getInstance().getCurrentUser();
-
-        //--------------------------------------------------------------------
-
-       // final DB_Manager db1 = new DB_Manager();
-        DB_Manager.getInstance();
-    //---------------------------------------------------------------------
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        //--------------------------------------------------------------------
+        currentUser = Singleton.getInstance().getCurrentUser();
+        DB_Manager.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        //---------------------------------------------------------------------
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final List<Group> items = Singleton.getInstance().getmCurrentGroups();
@@ -192,7 +196,7 @@ public class HomeScreen extends AppCompatActivity
         no_groups = (RelativeLayout)findViewById(R.id.no_groups_layout);
         activity = this;
         rv_groups = (RecyclerView)findViewById(R.id.groups_rv);
-        mAuth = FirebaseAuth.getInstance();
+
         LinearLayoutManager groupsManager = new LinearLayoutManager(this);
         groupAdapter = new GroupAdapter(items, this);
         rv_groups.setHasFixedSize(true); //La dimensione non cambia nel tempo, maggiori performance.
@@ -201,10 +205,6 @@ public class HomeScreen extends AppCompatActivity
 
         //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
         //currentUser.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
-        Singleton.getInstance().setId(currentUser.getId());
-
-
-
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -392,9 +392,7 @@ public class HomeScreen extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
-            DB_Manager.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_logout) {
@@ -436,7 +434,56 @@ public class HomeScreen extends AppCompatActivity
         return ret;
     }
 
+    private List<UserContact> getLocalContacts() {
+        // Run query
+        List<UserContact> result = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
+        String[] projection =
+                new String[]{
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                };
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                " COLLATE LOCALIZED ASC";
+        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+
+
+        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+        query.moveToFirst();
+        do {
+            UserContact user = new UserContact();
+            String number = query.getString(indexNumber);
+            if(number.length() >= 10) {
+                number = number.replace(" ", "");
+                number = number.replace("-", "");
+                number = number.substring(number.length() - 10);
+                String name = query.getString(indexName);
+                user.setUser_name(name);
+                user.setPnumber(number);
+                user.setEmail("user@example.com");
+                result.add(user);
+            }
+        }while(query.moveToNext());
+
+        List<UserContact> result1 = new ArrayList<UserContact>();
+        Set<String> titles = new HashSet<String>();
+
+        for( UserContact item : result ) {
+            if( titles.add( item.getPnumber() )) {
+                result1.add( item );
+            }
+        }
+        result.clear();
+        result = result1;
+
+        return result;
+    }
 
 
 

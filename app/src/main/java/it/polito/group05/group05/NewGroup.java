@@ -28,17 +28,17 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.TextView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import com.google.android.gms.appinvite.AppInviteApi;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.mvc.imagepicker.ImagePicker;
-
+import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,13 +76,15 @@ public class NewGroup extends AppCompatActivity{
     private Toolbar mToolbar;
     private SearchView searchView;
     private TextView no_people;
+    private TextView tv_partecipants;
     private final User currentUser = Singleton.getInstance().getCurrentUser();
     private InvitedAdapter invitedAdapter;
     private Context context;
     private boolean textIsValid;
     private boolean selectionIsValid;
-    private String[] ids;
     private String groupID;
+    private String[] ids;
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -93,59 +95,22 @@ public class NewGroup extends AppCompatActivity{
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
                 ids= AppInviteInvitation.getInvitationIds(resultCode, data);
-
+                if( ids != null && ids.length > 0) {
+                    no_people.setText("You've invited " + ids.length + " people. Let's create your group!");
+                    et_group_name.setEnabled(true);
+                    iv_new_group.setEnabled(true);
+                    tv_partecipants.setVisibility(View.INVISIBLE);
+                    if(mSearchItem != null)
+                        mSearchItem.setEnabled(true);
+                }
 
 
             }
-
-
-
         }
         if (bitmap != null && REQUEST_FROM_NEW_GROUP == requestCode) {
             iv_new_group.setImageBitmap(bitmap);
             REQUEST_FROM_NEW_GROUP = -1;
         }
-    }
-
-    private List<UserContact> getContacts() {
-        // Run query
-        List<UserContact> result = new ArrayList<>();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-
-        String[] projection =
-                new String[]{
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
-                };
-        String selection = null;
-        String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
-                " COLLATE LOCALIZED ASC";
-        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
-
-
-        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-        query.moveToFirst();
-        do {
-            UserContact user = new UserContact();
-            String number = query.getString(indexNumber);
-            String name = query.getString(indexName);
-            user.setUser_name(name);
-            user.setPnumber(number);
-            user.setEmail("user@example.com");
-            String photoUri = query.getString(indexPhoto);
-            if(photoUri != null)
-                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
-            else
-                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
-            result.add(user);
-
-        }while(query.moveToNext());
-
-        return result;
     }
 
     @Override
@@ -159,23 +124,35 @@ public class NewGroup extends AppCompatActivity{
         no_people = (TextView)findViewById(R.id.no_people);
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        invitedAdapter = new InvitedAdapter(getContacts(), this);
-        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
+        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getRegContacts();
 
         if(contacts != null && contacts.size() > 0)
             invitedAdapter = new InvitedAdapter(contacts, this);
         else {
-            Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            finish();
                         }
-                    }).show();
+                    });
+            snackbar.show();
+            final View snackbarView = snackbar.getView();
+            snackbarView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    snackbarView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    ((CoordinatorLayout.LayoutParams) snackbarView.getLayoutParams()).setBehavior(null);
+                    return true;
+                }
+            });
+
             et_group_name.setEnabled(false);
             iv_new_group.setEnabled(false);
+
+            no_people.setVisibility(View.VISIBLE);
         }
 
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
@@ -273,6 +250,10 @@ public class NewGroup extends AppCompatActivity{
         mConfirmItem.setVisible(false);
         searchView = (SearchView)mSearchItem.getActionView();
 
+        if(!et_group_name.isEnabled())
+            mSearchItem.setEnabled(false);
+        else
+            mSearchItem.setEnabled(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -324,7 +305,7 @@ public class NewGroup extends AppCompatActivity{
         if(id == R.id.m_confirm) {
             newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
             newgroup.addMember(currentUser);
-            for (UserContact u : currentUser.getContacts()) {
+            for (UserContact u : currentUser.getRegcontacts()) {
                 if(u.isSelected()) {
                     newgroup.addMember(u);
                     u.setSelected(false);
@@ -335,10 +316,10 @@ public class NewGroup extends AppCompatActivity{
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
 
                 groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
-                for(String invite : ids){
-                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
-
-
+                if(ids!= null) {
+                    for (String invite : ids) {
+                        DB_Manager.getInstance().pushInviteUser(invite, groupID);
+                    }
                 }
                 //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
 

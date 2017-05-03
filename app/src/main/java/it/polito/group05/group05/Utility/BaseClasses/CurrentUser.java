@@ -10,58 +10,43 @@ import java.util.Random;
  * Created by Marco on 28/03/2017.
  */
 
-public class User {
-    private String id;
-    private String user_name;
-    private String email;
-    private Balance balance;
-    private Bitmap profile_image;
-    private Group user_group;
-    private int user_color;
-    private float tot_expenses;
-    private boolean isAdministrator;
-    private boolean isCardEnabled;
-    private boolean isSelected;
-    private List<UserContact> contacts;
+public class CurrentUser extends UserDatabase{ //This will be the CurrentUser class
+    private List<String> groups;
+    private List<UserContact> userContactList;
 
-
-    private double customValue;
-
-    public User(){}
-    public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
-        this.id = id;
-        this.user_name = user_name;
-        this.balance = balance;
-        this.profile_image = profile_image;
-        this.user_group = user_group;
-        this.isAdministrator = isAdministrator;
-        this.isCardEnabled = isCardEnabled;
-        this.user_color = generateRandomColor();
-        this.contacts = new ArrayList<>();
-        isSelected = false;
-        this.customValue = 0;
+    public List<UserContact> getUserContactList() {
+        return userContactList;
+    }
+    public void setUserContactList(List<UserContact> userContactList) {
+        this.userContactList = userContactList;
     }
 
-    public User(String id, String user_name, Balance balance, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
-        this.id = id;
-        this.user_name = user_name;
-        this.balance = balance;
-        this.user_group = user_group;
-        this.isAdministrator = isAdministrator;
-        this.isCardEnabled = isCardEnabled;
-        this.user_color = generateRandomColor();
-        this.contacts = new ArrayList<>();
-        isSelected = false;
-        this.customValue = 0;
+    public CurrentUser(){}
+
+
+    public List<String> getGroups() {
+        return groups;
     }
 
-    public User(String id, String user_name )
-    {
-        this.id = id;
-        this.user_name = user_name;
-        this.profile_image = profile_image;
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 
+    public void addGroup(String gId) {
+        if(this.groups.contains(gId)) return;
+        this.groups.add(gId);
+    }
+
+    public String removeGroup(String gId) {
+        if(this.groups.contains(gId)) {
+            this.groups.remove(gId);
+            return gId;
+        }
+        return null;
+    }
+
+
+    /*
     public boolean hasCustomValue() {
         return customValue > 0;
     }
@@ -179,6 +164,19 @@ public class User {
         isSelected = selected;
     }
 
+    public List<UserContact> getRegcontacts() {
+        return regcontacts;
+    }
+
+    public void setRegcontacts(List<UserContact> regcontacts) {
+        this.regcontacts = regcontacts;
+    }
+
+    public void addRegcontacts(UserContact u) {
+        if(this.regcontacts == null ) this.regcontacts = new ArrayList<>();
+        if(this.regcontacts.contains(u)) return;
+        this.regcontacts.add(u);
+    } */
 }
 
 

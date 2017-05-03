@@ -24,8 +24,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.User;
+
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.EventClasses.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.EventClasses.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.PriceChangedEvent;
@@ -38,17 +40,17 @@ import it.polito.group05.group05.Utility.EventClasses.PriceErrorEvent;
 public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdapter.ViewHolder> {
 
     public interface OnItemClickListener{
-        void OnItemClicked(User position);
+        void OnItemClicked(UserDatabase position);
     }
 
-    private List<User> member;
+    private List<User_expense> member;
     private Double cost_procapite;
     LayoutInflater lin;
     private double costPerUser;
     private Context context;
     Context c;
 
-    public MemberExpenseAdapter(Context c, List<User> member, Context context) {
+    public MemberExpenseAdapter(Context c, List<User_expense> member, Context context) {
         lin = LayoutInflater.from(c);
         this.member = member;
         this.c = c;
@@ -68,9 +70,9 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
 
     @Subscribe
     public void onPriceError(PriceErrorEvent event) {
-        for (User u :
+        for (User_expense u :
                 member) {
-            u.setCustomValue(0);
+            u.setDebt(0);
         }
     }
 
@@ -84,9 +86,9 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final User  currentUser = member.get(position);
-        holder.image_person.setImageBitmap(currentUser.getProfile_image());
-        holder.name_person.setText(currentUser.getUser_name());
+        final User_expense currentUser = new User_expense(member.get(position));
+        //holder.image_person.setImageBitmap(currentUser.getProfile_image());
+        holder.name_person.setText(currentUser.getName());
         holder.include_person.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,8 +169,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseAdap
     private Pair<Integer, Double> getCustoms() {
         int i = 0;
         double v = 0;
-        for (User u :
-                member) {
+        for (UserDatabase u : member) {
             if (u.hasCustomValue()) {
                 i++; v += u.getCustomValue();
             }

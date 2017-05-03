@@ -80,6 +80,7 @@ public class SignupActivity extends AppCompatActivity {
                     // User is signed in
                     String UserId = user.getUid();
                     mCurrentUser = user;
+
                     Toast.makeText(SignupActivity.this, "USER ID\n"+UserId,Toast.LENGTH_SHORT).show();
                 } else {
                     // User is signed out

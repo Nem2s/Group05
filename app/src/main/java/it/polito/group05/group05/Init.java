@@ -6,7 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
+import android.widget.Toast;
+import android.*;
+import android.Manifest;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -21,9 +23,11 @@ import org.greenrobot.eventbus.Subscribe;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
+import it.polito.group05.group05.Utility.ImageUtils;
 
 public class Init extends AppCompatActivity {
 
@@ -43,16 +47,29 @@ public class Init extends AppCompatActivity {
         Log.d("Details", "Unregistered for " + this);
         super.onDestroy();
     }
-/*
+
     @Subscribe
     public void onCurrentUserChanged(CurrentUserChangedEvent e) {
-        HomeScreen.currentUser = (User)e.getUser();
-        Singleton.getInstance().setCurrentUser(Singleton.getInstance().getCurrentUser());
         Receiveinvite();
-*/            // Check for App Invite invitations and launch deep-link activity if possible.
+    }
+       /* //HomeScreen.currentUser = (User)e.getUser();
+        User U = (User)e.getUser();
+        Singleton.getInstance().setCurrentUser(U);
+        //currentUser = new User("q" + 1, "User", new Balance(3, 1), ((BitmapDrawable)getResources().getDrawable(R.drawable.man_1)).getBitmap(), null, true, true);
+        U.setContacts(Singleton.getInstance().createRandomListUsers(61, getApplicationContext(), null));
+        Singleton.getInstance().setId(U.getId());
+        Singleton.getInstance().setCurrentUser(U);
+       // Singleton.getInstance().setCurrentUser(HomeScreen.currentUser);
+        Receiveinvite();
+
+            // Check for App Invite invitations and launch deep-link activity if possible.
             // Requires that an Activity is registered in AndroidManifest.xml to handle
             // deep-link URLs.
-  //  }
+
+
+    }*/
+
+
     @Subscribe
     public void onObjectAdded(ObjectChangedEvent event) {
         EventBus.clearCaches();
@@ -64,8 +81,9 @@ public class Init extends AppCompatActivity {
         //Singleton.getInstance().addGroup(g);
     }
 
-    private static Context context;
+    public static Context context;
     private FirebaseAuth mAuth;
+    private Activity activity = Init.this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,12 +101,12 @@ public class Init extends AppCompatActivity {
 /*FARE PARTE DEL LOGOUT SE PASSWORD CAMBIATA*/
         if(user == null)
         {
-            EventBus.getDefault().unregister(this);
-            startActivity(new Intent(this, LoginActivity.class));
+
             Singleton.getInstance().clearGroups();
             if(Singleton.getInstance().getCurrentUser()!=null) {
                 Singleton.getInstance().setCurrentUser(null);
             }
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
         else {
@@ -102,14 +120,13 @@ public class Init extends AppCompatActivity {
             else {
                 Receiveinvite();
                 startActivity(new Intent(this, HomeScreen.class));
-                EventBus.getDefault().unregister(this);
             }
         }
         //finish();
     }
 
     public void Receiveinvite() {
-        boolean autoLaunchDeepLink = false;
+        boolean autoLaunchDeepLink = true;
         AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
                 .setResultCallback(
                         new ResultCallback<AppInviteInvitationResult>() {
