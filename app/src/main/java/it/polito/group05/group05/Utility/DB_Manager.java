@@ -1,7 +1,9 @@
 package it.polito.group05.group05.Utility;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -9,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.os.SystemClock;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
@@ -48,9 +51,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import it.polito.group05.group05.HomeScreen;
 import it.polito.group05.group05.Init;
@@ -63,10 +68,11 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
-
+import it.polito.group05.group05.Utility.EventClasses.HomeScreenEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -175,8 +181,9 @@ public class DB_Manager {
     public static String PushGroupToDB(Group G){
         DatabaseReference ref = groupRef.push();
         GroupDatabase grouptopush = new GroupDatabase(ref.getKey(), G.getName(), G.getBalance(), G.getLmTime(), new GroupColor(1,2,3));
-        grouptopush.setMembers(G.getMembers(), currentUserID);
+        grouptopush.setMembers(G.getMembers());
         for(String s : grouptopush.getMembers().keySet()){
+            if(s==null) continue;
             Map<String, Object> temp = new HashMap<String, Object>();
             temp.put(grouptopush.getId(), true);
             userRef.child(s).child("userGroups").updateChildren(temp);
@@ -380,7 +387,8 @@ public class DB_Manager {
                             // Singleton.getInstance().clearGroups();
                             //DB_Manager.getInstance().PullGroupFromDBWithUserId();
                             Singleton.getInstance().setCurrentUser(U);
-                             DB_Manager.getInstance().CurrentUserGroupMonitor();
+                            //checkContact();
+                            DB_Manager.getInstance().CurrentUserGroupMonitor();
                             //EventBus.getDefault().post(new CurrentUserChangedEvent(U));
 
                         }
@@ -703,5 +711,45 @@ public class DB_Manager {
         });
 
     }
+
+    public static void checkContact(){
+
+        List<UserContact> localContacts = new ArrayList<>(Singleton.getInstance().getCurrentUser().getContacts());
+        for(UserContact UC : localContacts){
+            usernumberRef.child(UC.getPnumber()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String s = dataSnapshot.getValue(String.class);
+                    if (s == null) return;
+                    userRef.child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
+                            UserContact U = new UserContact(ud.getId(),ud.getName(), ud.getEmail(), ud.getTelNumber());
+                            try {
+                                photoUserDownload(U);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Singleton.getInstance().getCurrentUser().addRegcontacts(U);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
+
+
 
 }
