@@ -5,7 +5,10 @@ import android.view.View;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 
@@ -19,25 +22,27 @@ public class GroupHolder extends GeneralHolder {
     TextView balance;
     TextView badge;
     TextClock time;
-    private GroupHolder(View view, CircleImageView groupProfile, TextView name, TextView balance, TextView badge, TextClock time){
-        super(view);
-        this.groupProfile=groupProfile;
-        this.name=name;
-        this.balance=balance;
-        this.badge=badge;
-        this.time=time;
-    }
 
-    public static it.polito.group05.group05.Utility.Holder.GroupHolder newInstance(View itemView) {
+    public  GroupHolder(View itemView) {
+        super(itemView);
+        this.groupProfile=(CircleImageView)itemView.findViewById(R.id.iv_group_image);
+        this.balance=(TextView)itemView.findViewById(R.id.tv_group_balance);
+        this.name=(TextView)itemView.findViewById(R.id.tv_group_name);
+        this.badge=(TextView)itemView.findViewById(R.id.tv_badge_counter);
+        this.time=(TextClock)itemView.findViewById(R.id.tc_last_message);
 
-        CircleImageView groupProfile = (CircleImageView)itemView.findViewById(R.id.iv_group_image);
-        TextView balance = (TextView)itemView.findViewById(R.id.tv_group_balance);
-        TextView name = (TextView)itemView.findViewById(R.id.tv_group_name);
-        TextView badge = (TextView)itemView.findViewById(R.id.tv_badge_counter);
-        TextClock time = (TextClock)itemView.findViewById(R.id.tc_last_message);
-        return new it.polito.group05.group05.Utility.Holder.GroupHolder(itemView,groupProfile,name,balance,badge,time);
     }
     public void setData(Object c, Context context){
         if(!(c instanceof GroupDatabase)) return;
+        GroupDatabase g = (GroupDatabase) c;
+        //groupProfile.setImageResource(R.drawable.boy);
+        Glide.with(MainActivity.context)
+             .load(g.pictureUrl)
+             .centerCrop()
+             //.placeholder(R.drawable.loading_spinner)
+             .crossFade()
+             .into(groupProfile);
+        name.setText(g.getName());
+        time.setText(g.getLmTime());
     }
 }

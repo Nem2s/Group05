@@ -112,7 +112,7 @@ public class GroupDatabase implements Namable {
         }
         //memb.remove("User");
 
-        memb.remove(memb.get(Singleton.getInstance().getCurrentUser().getId()));
+        //memb.remove(memb.get(Singleton.getInstance().getCurrentUser().getId()));
         memb.put(id, true);
         this.setMembers(memb);
         return memb;

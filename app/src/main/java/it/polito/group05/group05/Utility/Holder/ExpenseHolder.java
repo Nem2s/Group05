@@ -3,7 +3,6 @@ package it.polito.group05.group05.Utility.Holder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +18,7 @@ import java.util.ArrayList;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.Adapter.FirebaseAdapterExtension;
-import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
-import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 
 
@@ -38,24 +34,15 @@ public class ExpenseHolder extends GeneralHolder{
     TextView description;
     CardView cv;
     Query ref;
-    private ExpenseHolder(View itemView, ImageView expense_image, TextView name, TextView price, TextView description, CardView cv, RecyclerView rv) {
-        super(itemView);
-        this.expense_image = expense_image;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.cv = cv;
-        this.rv = rv;
-    }
-    public static it.polito.group05.group05.Utility.Holder.ExpenseHolder newInstance(View itemView) {
-        ImageView expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
-        TextView name= (TextView) itemView.findViewById(R.id.expense_name);
-        TextView price= (TextView) itemView.findViewById(R.id.expense_price);
-        TextView description=(TextView) itemView.findViewById(R.id.expense_owner);
-        CardView cv = (CardView) itemView.findViewById(R.id.card_expense);
-        RecyclerView rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
-        return new it.polito.group05.group05.Utility.Holder.ExpenseHolder(itemView, expense_image, name, price, description, cv, rv);
 
+    public ExpenseHolder(View itemView) {
+        super(itemView);
+        this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
+        this.name= (TextView) itemView.findViewById(R.id.expense_name);
+        this.price= (TextView) itemView.findViewById(R.id.expense_price);
+        this.description=(TextView) itemView.findViewById(R.id.expense_owner);
+        this.cv = (CardView) itemView.findViewById(R.id.card_expense);
+        this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
     }
 
     public void setData(Object c, Context context){
@@ -71,7 +58,7 @@ public class ExpenseHolder extends GeneralHolder{
         setupRecyclerViewExpense(rv,expenseDatabase,context);
         if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
             price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-            AnimUtils.bounce((View) price, 15000, context, true);
+            //AnimUtils.bounce((View) price, 15000, context, true);
         }
         setupListener(cv,price,context,expenseDatabase);
 
@@ -103,7 +90,7 @@ private void setupListener(CardView cv,TextView price,final Context context,fina
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
                     d = d * (-1.00);
-                    expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
+                  //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
                 }
             });
             dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
