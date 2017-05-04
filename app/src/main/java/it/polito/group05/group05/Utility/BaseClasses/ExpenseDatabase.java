@@ -26,10 +26,8 @@ public class ExpenseDatabase implements Namable{
     private Map<String,Double> members;
 
 
-
     public ExpenseDatabase() {
         members= new HashMap<>();
-
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {

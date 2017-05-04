@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.nekocode.badge.BadgeDrawable;
-import it.polito.group05.group05.HomeScreen;
+
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 public class GroupDatabase implements Namable {

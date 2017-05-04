@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.Adapter.FirebaseAdapterExtension;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 
 
@@ -44,35 +48,36 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
     }
-
     public void setData(Object c, Context context){
-        if(!(c instanceof Expense)) return;
-
-        Expense expenseDatabase = ((Expense) c);
-
+        if(!(c instanceof ExpenseDatabase)) return;
+        ExpenseDatabase expenseDatabase = ((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
-        name.setText(expenseDatabase.getName());
-        price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+expenseDatabase.getTimestamp().toString());
+        name.setText("ciao");
+  //      price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
+    //    description.setText("Posted by "+expenseDatabase.getOwner()+" on "+expenseDatabase.getTimestamp().toString());
         //description.setText(expenseDatabase.getDescription());
-        setupRecyclerViewExpense(rv,expenseDatabase,context);
-        if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
-            price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-            //AnimUtils.bounce((View) price, 15000, context, true);
-        }
-        setupListener(cv,price,context,expenseDatabase);
+       // setupRecyclerViewExpense(rv,expenseDatabase,context);
+      //  if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
+        //    price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+       // }
+        //setupListener(cv,price,context,expenseDatabase);
+       // FirebaseDatabase.getInstance().getReference("expense").child(Singleton.getInstance().getCurrentGroup());
 
 
 
     }
-private void setupRecyclerViewExpense(RecyclerView rv, Expense expenseDatabase,Context context){
-
-    RecyclerView.Adapter adapter = new FirebaseAdapterExtension(context,Expense.class,
+private void setupRecyclerViewExpense(RecyclerView rv, Expense expenseDatabase, final Context context){
+    RecyclerView.Adapter adapter = new FirebaseRecyclerAdapter<Expense,ExpenseCardHolder>(Expense.class,
             R.layout.expense_card_expansion,
-            ExpenseCardHolder.class, ref,
-            new ArrayList<Object>(expenseDatabase.getUsersExpense().values())
-    );
+            ExpenseCardHolder.class, ref) {
+        @Override
+        protected void populateViewHolder(ExpenseCardHolder viewHolder, Expense model, int position) {
+            viewHolder.setData(model,context);
+        }
+    };
+
     rv.setAdapter(adapter);
+    rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
     rv.setVisibility(View.GONE);
 }
 private void setupListener(CardView cv,TextView price,final Context context,final Expense expense){
