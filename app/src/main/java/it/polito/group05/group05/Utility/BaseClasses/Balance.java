@@ -13,6 +13,9 @@ public class Balance {
         this.debit = debit;
     }
 
+    public Balance() {
+    }
+
     public double getCredit() {
         return credit;
     }

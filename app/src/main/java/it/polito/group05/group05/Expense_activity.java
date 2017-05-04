@@ -22,7 +22,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pkmmte.view.CircularImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,7 +60,7 @@ public class Expense_activity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
-    private CircularImageView iv_group_image;
+    private CircleImageView iv_group_image;
     private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
@@ -157,7 +158,7 @@ public class Expense_activity extends AppCompatActivity {
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
-        iv_group_image= (CircularImageView) findViewById(R.id.iv_group_image);
+        iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
         image_network = (ImageView) findViewById(R.id.image_network);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);

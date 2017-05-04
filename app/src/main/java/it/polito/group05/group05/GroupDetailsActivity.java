@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -39,7 +40,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.pkmmte.view.CircularImageView;
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,12 +54,14 @@ import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.ChartUserMarker;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
+import it.polito.group05.group05.Utility.DB_Manager;
+import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
+import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
-import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
-import it.polito.group05.group05.Utility.ColorUtils;
-import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.UserAdapter;
+
+import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 public class GroupDetailsActivity extends AppCompatActivity {
 
@@ -71,11 +75,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private TextView tv_group_name;
     private ImageView expand_cardview;
     private CardView cardView;
-    private List<UserGroup> users;
+    private ArrayList<User> users;
     private boolean isExpanded;
     private UserAdapter adapter;
     private Context context;
-    CircularImageView cv_group;
+    CircleImageView cv_group;
     RecyclerView rv;
     Entry entry;
     Highlight highlighted;
@@ -92,7 +96,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         tv_group_name = (TextView)findViewById(R.id.tv_group_name) ;
         expand_cardview = (ImageView)findViewById(R.id.expand_cardview);
         cardView = (CardView) findViewById(R.id.card_view);
-        cv_group = (CircularImageView)findViewById(R.id.iv_group_image);
+        cv_group = (CircleImageView)findViewById(R.id.iv_group_image);
         isExpanded = false;
 
         rv = (RecyclerView)findViewById(R.id.rv_group_members);
@@ -104,8 +108,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         AnimUtils.toggleOn(fab, 350, this);
         tv_group_name.setText(currentGroup.getName());
         cv_group.setImageBitmap(currentGroup.getGroupProfile());
-
-        users = UserGroup.listUserGroup(currentGroup.getMembers());
+        users = new ArrayList<>();
+        //users.addAll(currentGroup.getMembers());
+        DB_Manager.getInstance().retriveUsersInfo(currentGroup, users);
         adapter = new UserAdapter(users, this);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -161,8 +166,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public void onObjectAdded(ObjectChangedEvent event) {
        Log.d("Details", "New member in the group!");
         User u = (User)event.retriveObject();
-
-        users.add(new UserGroup(u));
+        users.add(u);
         adapter.notifyDataSetChanged();
         Singleton.getInstance().getmCurrentGroup().addMember(u);
         cardView.callOnClick();
@@ -222,15 +226,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
         v.startAnimation(a);
     }
 
-    private void addEntry(User user) {
-        UserGroup u;
+    private void addEntry(User u) {
         int position = chart.getData().getEntryCount();
         final BarData data = chart.getData();
         XAxis xaxis = chart.getXAxis();
         xaxis.setTextSize(11f);
         List<BarEntry> barEntries = new ArrayList<>();
-        if(user instanceof UserGroup) u = (UserGroup) user;
-        else u= new UserGroup(user);
         BarEntry b = new BarEntry(position, (float)( u.getBalance().getCredit() - u.getBalance().getDebit()));
         barEntries.add(b);
         b.setData(u);
@@ -258,7 +259,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void populateChart(Context context, List<UserGroup> users) {
+    private void populateChart(Context context, ArrayList<User> users) {
         YAxis yAxisL = chart.getAxisLeft();
         chart.getDescription().setEnabled(false);
         chart.setDoubleTapToZoomEnabled(false);
@@ -302,7 +303,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         final ArrayList<String> xvalues = new ArrayList<>();
         chart.setData(new BarData());
-        for (UserGroup u : users) {
+        for (User u : users) {
             xvalues.add(u.getUser_name());
             LegendEntry l = new LegendEntry();
             l.form = Legend.LegendForm.LINE;
@@ -361,7 +362,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void customizeToolbar(final Toolbar toolbar) {
-        final CircularImageView c = (CircularImageView)findViewById(R.id.iv_group_image);
+        final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         final GroupColor gc = new GroupColor();
             ColorUtils.PaletteBuilder builder = new ColorUtils.PaletteBuilder();
             builder

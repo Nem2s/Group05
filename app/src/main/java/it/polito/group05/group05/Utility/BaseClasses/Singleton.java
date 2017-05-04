@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.DB_Manager;
 import it.polito.group05.group05.Utility.ImageUtils;
 
 /**
@@ -18,7 +19,7 @@ public class Singleton {
     private List<Group> mCurrentGroups;
     private List<User> mCurrenUsersList;
     private Group mCurrentGroup;
-    private String user;
+    private String userId;
     private User currentUser;
 
     private Singleton(){
@@ -46,12 +47,21 @@ public class Singleton {
     public void addGroup(Group g) {
         this.mCurrentGroups.add(g);
   }
+
+  public void deleteGroup (Group g) {
+      this.mCurrentGroups.remove(g);
+  }
+
     public List<Group> getmCurrentGroups() {
         return this.mCurrentGroups;
     }
-    public void setId(String s){this.user=new String(s);}
+    public void setId(String s){this.userId=s;}
     public String getId() {
-        return user;
+        return userId;
+    }
+
+    public void clearGroups(){
+        this.mCurrentGroups.clear();
     }
 
     public List<UserContact> createRandomListUsers(int n, Context context, Group g) {
@@ -65,11 +75,25 @@ public class Singleton {
         return users;
     }
 
+    public int getPositionGroup(String id) {
+        int i = 0;
+        for (Group g : this.mCurrentGroups) {
+            if (g.getGroupID().equals(id))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        if(currentUser != null)
+            userId=currentUser.getId();
     }
+
+
 }

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import static it.polito.group05.group05.Utility.ColorUtils.context;
 
@@ -30,6 +31,16 @@ public class ImageUtils {
 
     public static Bitmap getBitmpapFromDrawable(Drawable d) {
         return ((BitmapDrawable)d).getBitmap();
+    }
+
+    public static Bitmap getBitmapFromUri(Uri uri, Context context) {
+        try {
+            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
