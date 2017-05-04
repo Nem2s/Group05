@@ -16,16 +16,19 @@ import it.polito.group05.group05.Utility.ImageUtils;
 
 public class Singleton {
     private static Singleton mInstance = null;
-    private List<Group> mCurrentGroups;
-    private List<User> mCurrenUsersList;
-    private Group mCurrentGroup;
+    private List<GroupDatabase> mCurrentGroups;
+    private List<UserDatabase> mCurrenUsersList;
+    private GroupDatabase mCurrentGroup;
     private String userId;
-    private User currentUser;
+    private Double price_expense;
+    private UserDatabase currentUser;
 
     private Singleton(){
         mCurrentGroups = new ArrayList<>();
-        mCurrentGroup = new Group();
+        mCurrentGroup = new GroupDatabase();
         mCurrenUsersList = new ArrayList<>();
+        currentUser = new UserDatabase();
+        price_expense= 0.0;
     }
 
     public static Singleton getInstance(){
@@ -36,23 +39,23 @@ public class Singleton {
         return mInstance;
     }
 
-    public void setmCurrentGroup(Group g) {
+    public void setmCurrentGroup(GroupDatabase g) {
     this.mCurrentGroup = g;}
 
-    public Group getmCurrentGroup() {
+    public GroupDatabase getmCurrentGroup() {
         return this.mCurrentGroup;
     }
-    public void setmCurrentGroups(List<Group> g) {
+    public void setmCurrentGroups(List<GroupDatabase> g) {
         this.mCurrentGroups = g;}
-    public void addGroup(Group g) {
+    public void addGroup(GroupDatabase g) {
         this.mCurrentGroups.add(g);
   }
 
-  public void deleteGroup (Group g) {
+  public void deleteGroup (GroupDatabase g) {
       this.mCurrentGroups.remove(g);
   }
 
-    public List<Group> getmCurrentGroups() {
+    public List<GroupDatabase> getmCurrentGroups() {
         return this.mCurrentGroups;
     }
     public void setId(String s){this.userId=s;}
@@ -60,11 +63,12 @@ public class Singleton {
         return userId;
     }
 
+
     public void clearGroups(){
         this.mCurrentGroups.clear();
     }
 
-    public List<UserContact> createRandomListUsers(int n, Context context, Group g) {
+    public List<UserContact> createRandomListUsers(int n, Context context, GroupDatabase g) {
         Random r = new Random();
         List<UserContact> users = new ArrayList<>();
         for(int i = 0; i < n; i++) {
@@ -77,23 +81,29 @@ public class Singleton {
 
     public int getPositionGroup(String id) {
         int i = 0;
-        for (Group g : this.mCurrentGroups) {
-            if (g.getGroupID().equals(id))
+        for (GroupDatabase g : this.mCurrentGroups) {
+            if (g.getId().equals(id))
                 return i;
             i++;
         }
         return -1;
     }
 
-    public User getCurrentUser() {
+    public UserDatabase getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(UserDatabase currentUser) {
         this.currentUser = currentUser;
         if(currentUser != null)
             userId=currentUser.getId();
     }
 
+    public void setCurrentPrice( Double price ){
+        this.price_expense= price;
+    }
+    public Double getCurrentPrice(){
+        return price_expense;
+    }
 
 }

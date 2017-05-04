@@ -14,12 +14,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -30,21 +28,17 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 
-import android.view.ViewConfiguration;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.TextView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import com.google.android.gms.appinvite.AppInviteApi;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.mvc.imagepicker.ImagePicker;
-
+import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -119,47 +113,6 @@ public class NewGroup extends AppCompatActivity{
         }
     }
 
-    private List<UserContact> getContacts() {
-        // Run query
-        List<UserContact> result = new ArrayList<>();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-
-        String[] projection =
-                new String[]{
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI
-                };
-        String selection = null;
-        String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
-                " COLLATE LOCALIZED ASC";
-        Cursor query = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
-
-
-        int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-        query.moveToFirst();
-        do {
-            UserContact user = new UserContact();
-            String number = query.getString(indexNumber);
-            String name = query.getString(indexName);
-            user.setUser_name(name);
-            user.setPnumber(number);
-            user.setEmail("user@example.com");
-            String photoUri = query.getString(indexPhoto);
-            if(photoUri != null)
-                user.setProfile_image(ImageUtils.getBitmapFromUri(Uri.parse(photoUri), context));
-            else
-                user.setProfile_image(ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable(R.drawable.boy)));
-            result.add(user);
-
-        }while(query.moveToNext());
-
-        return result;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,7 +127,7 @@ public class NewGroup extends AppCompatActivity{
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getContacts();
+        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getRegContacts();
 
         if(contacts != null && contacts.size() > 0)
             invitedAdapter = new InvitedAdapter(contacts, this);
@@ -352,7 +305,7 @@ public class NewGroup extends AppCompatActivity{
         if(id == R.id.m_confirm) {
             newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
             newgroup.addMember(currentUser);
-            for (UserContact u : currentUser.getContacts()) {
+            for (UserContact u : currentUser.getRegcontacts()) {
                 if(u.isSelected()) {
                     newgroup.addMember(u);
                     u.setSelected(false);
@@ -363,10 +316,10 @@ public class NewGroup extends AppCompatActivity{
             if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
 
                 groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
-                for(String invite : ids){
-                    DB_Manager.getInstance().pushInviteUser(invite,groupID);
-
-
+                if(ids!= null) {
+                    for (String invite : ids) {
+                        DB_Manager.getInstance().pushInviteUser(invite, groupID);
+                    }
                 }
                 //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
 

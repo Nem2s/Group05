@@ -216,6 +216,7 @@ public class Expense_activity extends AppCompatActivity {
                         double finalValue = Double.parseDouble(formate.replace(',', '.'));
                         //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+                        Singleton.getInstance().setCurrentPrice(finalValue);
 
                     } catch (NumberFormatException e) {
                         expense_price=0.0;

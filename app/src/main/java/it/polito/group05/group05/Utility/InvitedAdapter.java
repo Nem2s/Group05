@@ -29,8 +29,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.HomeScreen;
 import it.polito.group05.group05.NewGroup;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.User;
+
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
 
 /**
@@ -42,7 +43,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
     Context context;
     List<UserContact> invited;
     ViewGroup parent;
-    public List<User> selected;
+    public List<UserDatabase> selected;
     private List<UserContact> orig;
     private int validGroup;
 
@@ -75,7 +76,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
                 .error(R.drawable.ic_visibility_off)
                 .transform(new PicassoRoundTransform())
                 .into(holder.img_profile);*/
-        holder.img_profile.setImageBitmap(currentUser.getProfile_image());
+       // holder.img_profile.setImageBitmap(currentUser.getProfile_image());
         if(currentUser.isSelected())
             holder.button.setVisibility(View.VISIBLE);
         else
@@ -99,8 +100,8 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
                 EventBus.getDefault().post(new SelectionChangedEvent(isValid()));
             }
         });
-        holder.name.setText(currentUser.getUser_name());
-        holder.number.setText(currentUser.getPnumber());
+        holder.name.setText(currentUser.getName());
+        holder.number.setText(currentUser.getTelNumber());
         holder.email.setText(currentUser.getEmail());
     }
 
@@ -126,7 +127,7 @@ public class InvitedAdapter extends RecyclerView.Adapter<InvitedAdapter.ViewHold
                 if (constraint != null) {
                     if (orig != null & orig.size() > 0) {
                         for (final UserContact u : orig) {
-                            if (u.getUser_name().toLowerCase().contains(constraint.toString().toLowerCase()))
+                            if (u.getName().toLowerCase().contains(constraint.toString().toLowerCase()))
                                 results.add(u);
                         }
                     }

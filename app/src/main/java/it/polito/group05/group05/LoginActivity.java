@@ -3,16 +3,11 @@ package it.polito.group05.group05;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +32,6 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
-    public  static final int PERMISSIONS_MULTIPLE_REQUEST = 123;
 
 
     EditText _emailText;
@@ -54,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+checkAndRequestPermissions();
         mAuth = FirebaseAuth.getInstance();
         _emailText = (EditText)findViewById(R.id.input_email);
         _passwordText = (EditText)findViewById(R.id.input_password);
@@ -68,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
-        checkAndRequestPermissions();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -165,7 +159,6 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         // disable going back to the MainActivity
         moveTaskToBack(true);
-        _loginButton.setEnabled(true);
     }
 
     public void onLoginSuccess() {
@@ -292,5 +285,4 @@ public class LoginActivity extends AppCompatActivity {
                 .create()
                 .show();
     }
-
 }
