@@ -53,6 +53,7 @@ public class GroupHolder extends GeneralHolder {
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Singleton.getInstance().setmCurrentGroup(g);
                    Singleton.getInstance().setIdCurrentGroup(g.getId());
                    Intent i = new Intent(context,Group_Activity.class);
                    context.startActivity(i);

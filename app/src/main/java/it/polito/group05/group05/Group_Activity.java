@@ -119,21 +119,22 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
 
 
-     /*   fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
-               // Intent i = new Intent(getBaseContext(), Expense_activity.class);
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
+                Intent i = new Intent(getBaseContext(), Expense_activity.class);
+
+                startActivity(i);
                 //startActivity(i, options.toBundle());
-                
             }
-        });*/
+        });
 
     }
 

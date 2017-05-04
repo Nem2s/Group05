@@ -5,8 +5,11 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
@@ -32,9 +35,15 @@ public class ExpenseCardHolder extends GeneralHolder {
 
         if(!(u1 instanceof User_expense)) return;
         User_expense u = (User_expense) u1;
-        //civ.setImageBitmap(u.getiProfile());
 
-        //tv.setText(u.getId().compareTo(Singleton.getInstance().getId())!=0 ? u.getName():"You");
+        Glide.with(c)
+                .load(u.getiProfile())
+                .centerCrop()
+                .placeholder(R.drawable.user_placeholder)
+                .crossFade()
+                .into(civ);
+
+        tv.setText(u.getId());
         if(u instanceof User_expense) {
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c));

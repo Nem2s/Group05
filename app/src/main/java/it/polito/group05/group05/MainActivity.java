@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void populateViewHolder(GroupHolder viewHolder, GroupDatabase model, int position) {
-                viewHolder.setData(model,getApplicationContext());
+                viewHolder.setData(model,context);
             }
         };
         //FirebaseAdapterExtension adapter = new FirebaseAdapterExtension(this, GroupDatabase.class,

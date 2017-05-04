@@ -2,40 +2,25 @@ package it.polito.group05.group05;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-
-import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.*;
-
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
-
-import static it.polito.group05.group05.Group_Activity.appBar;
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
-
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -53,16 +38,7 @@ public class ExpenseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
 
     public ExpenseFragment() {
         // Required empty public constructor
@@ -104,7 +80,7 @@ public class ExpenseFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
+        Query ref = FirebaseDatabase.getInstance().getReference("expenses/"+Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref) {
             @Override
@@ -125,7 +101,7 @@ public class ExpenseFragment extends Fragment {
 
         //ExpenseDatabase c =(ExpenseDatabase)ea.getItem(0);
         rv.setLayoutManager(llm);
-       rv.setAdapter(ea);
+        rv.setAdapter(ea);
         return rootView;
     }
 
@@ -152,7 +128,12 @@ public class ExpenseFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+    @Override
+    public void onStart() {super.onStart();}
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

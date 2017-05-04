@@ -18,6 +18,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 
 /**
@@ -48,6 +49,8 @@ public class MemberIncludedHolder extends GeneralHolder {
         costo_person = (EditText) itemView.findViewById(R.id.et_ins);
 
     }
+
+
 
     @Override
     public void setData(Object c, Context context) {
@@ -98,28 +101,34 @@ public class MemberIncludedHolder extends GeneralHolder {
 
     private void setAllPrices(Map<String, Double> customPrices, String id) {
 
-        if(actualPrice != 0){
+        if (actualPrice != 0) {
             Double fixedValue = customPrices.get(id);
-            if(fixedValue < actualPrice) {
+            if (fixedValue < actualPrice) {
                 Double toDivide = actualPrice - fixedValue;
                 modified_prices.add(id);
                 for (String s : customPrices.keySet()) {
                     if (s != id) {
-                            if(!modified_prices.contains(s)) {
+                        if (!modified_prices.contains(s)) {
+                            int dividend = Singleton.getInstance().getmCurrentGroup().getMembers().size() - modified_prices.size();
+                            if (dividend != 0) {
+                                Double newPriceUser = toDivide / (double) dividend;
+                                customPrices.remove(s);
+                                customPrices.put(s, newPriceUser);
+                                modified_prices.add(s);
+                                actualPrice = upDateActualPrice(modified_prices, customPrices);
 
                             }
-                        }
-                        else
-                        {
+                        } else {
                             //ci sei solo tu nel gruppo
                         }
                     }
                 }
             }
 
-           //     Toast.makeText(MainActivity.this, "Insert a smaller value", Toast.LENGTH_SHORT).show();
+            //     Toast.makeText(MainActivity.this, "Insert a smaller value", Toast.LENGTH_SHORT).show();
 
         }
+    }
     private Double upDateActualPrice(List<String> listID , Map<String, Double> mapIDPRICE ) {
         Double price = 0.0;
         Double tosubtract = 0.0;

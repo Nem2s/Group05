@@ -22,12 +22,21 @@ public class ExpenseDatabase implements Namable{
     private TYPE_EXPENSE type;
     private String file;
     private int deadline;           //days
-    private Timestamp timestamp;
+    private String timestamp;
     private Map<String,Double> members;
+    protected int type_int;
 
 
     public ExpenseDatabase() {
         members= new HashMap<>();
+        id="";
+        owner="";
+        name="";
+        description="";
+         price=0.0;
+        type_int=0;
+        file="";
+        deadline=0;
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {
@@ -38,8 +47,8 @@ public class ExpenseDatabase implements Namable{
         this.setFile(edb.getFile());
         this.setDescription(edb.getDescription());
         this.setPrice(edb.getPrice());
-        this.setTimestamp(edb.getTimestamp());
-        this.setType(edb.getType());
+        this.setTimestamp(edb.getTimestamp().toString());
+        this.setType(edb.type_int);
         members = new HashMap<>();
     }
 
@@ -75,8 +84,9 @@ public class ExpenseDatabase implements Namable{
     public TYPE_EXPENSE getType() {
         return type;
     }
-    public void setType(TYPE_EXPENSE type) {
-        this.type = type;
+    public void setType(int type) {
+        this.type = (type==0)?TYPE_EXPENSE.MANDATORY:TYPE_EXPENSE.NOTMANDATORY;
+        type_int=type;
     }
     public void setFile(String file) {
         this.file = file;
@@ -88,11 +98,11 @@ public class ExpenseDatabase implements Namable{
     public void setDeadline(int deadline) {
         this.deadline = deadline;
     }
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = (timestamp);
     }
     public Map<String, Double> getMembers() {
         return members;

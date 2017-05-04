@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.Adapter.FirebaseAdapterExtension;
@@ -50,31 +54,44 @@ public class ExpenseHolder extends GeneralHolder{
     }
     public void setData(Object c, Context context){
         if(!(c instanceof ExpenseDatabase)) return;
-        ExpenseDatabase expenseDatabase = ((ExpenseDatabase) c);
+        Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
-        name.setText("ciao");
-  //      price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-    //    description.setText("Posted by "+expenseDatabase.getOwner()+" on "+expenseDatabase.getTimestamp().toString());
-        //description.setText(expenseDatabase.getDescription());
-       // setupRecyclerViewExpense(rv,expenseDatabase,context);
-      //  if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
-        //    price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-       // }
-        //setupListener(cv,price,context,expenseDatabase);
+        name.setText(expenseDatabase.getName());
+        price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
+        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+expenseDatabase.getTimestamp().toString());
+        description.setText(expenseDatabase.getDescription());
+        setupRecyclerViewExpense(rv, new ArrayList<Object>(expenseDatabase.getUsersExpense().values()),context);
+      if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
+            price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        }
+          setupListener(cv,price,context,expenseDatabase);
        // FirebaseDatabase.getInstance().getReference("expense").child(Singleton.getInstance().getCurrentGroup());
 
 
 
     }
-private void setupRecyclerViewExpense(RecyclerView rv, Expense expenseDatabase, final Context context){
-    RecyclerView.Adapter adapter = new FirebaseRecyclerAdapter<Expense,ExpenseCardHolder>(Expense.class,
-            R.layout.expense_card_expansion,
-            ExpenseCardHolder.class, ref) {
+private void setupRecyclerViewExpense(RecyclerView rv, final List expenseDatabase, final Context context){
+    RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
+
         @Override
-        protected void populateViewHolder(ExpenseCardHolder viewHolder, Expense model, int position) {
-            viewHolder.setData(model,context);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
+             GeneralHolder holder = new ExpenseCardHolder(rootView);
+            return holder;
+
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            ((GeneralHolder)holder).setData(expenseDatabase.get(position),context);
+        }
+
+        @Override
+        public int getItemCount() {
+            return expenseDatabase.size();
         }
     };
+
 
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
