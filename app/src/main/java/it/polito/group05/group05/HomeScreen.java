@@ -1,30 +1,21 @@
 package it.polito.group05.group05;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,27 +23,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
-
-import com.rengwuxian.materialedittext.MaterialEditText;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -64,22 +41,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import io.codetail.animation.ViewAnimationUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.AnimUtils;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.ColorUtils;
 import it.polito.group05.group05.Utility.DB_Manager;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
 import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
-import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
 import it.polito.group05.group05.Utility.GroupAdapter;
-
-import it.polito.group05.group05.Utility.ImageUtils;
-import it.polito.group05.group05.Utility.InvitedAdapter;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -104,7 +78,7 @@ public class HomeScreen extends AppCompatActivity
 
     FloatingActionButton fab;
     DrawerLayout drawer;
-    User currentUser;
+    UserDatabase currentUser;
     CircleImageView cv_user_drawer;
     NavigationView navigationView;
     LinearLayout ll_header;
@@ -113,10 +87,10 @@ public class HomeScreen extends AppCompatActivity
 
     RelativeLayout no_groups;
     public static Context context;
-    private List<Group> groups = new ArrayList<>();
+    private List<GroupDatabase> groups = new ArrayList<>();
     //MAGARI SI POSSONO INSERIRE NEL SINGLETON
 
-    Group newgroup = new Group();
+    GroupDatabase newgroup = new GroupDatabase();
     @Override
     protected void onStart() {
         super.onStart();
@@ -161,7 +135,7 @@ public class HomeScreen extends AppCompatActivity
 
         if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
             cv_user_drawer.setImageBitmap(bitmap);
-            currentUser.setProfile_image(bitmap);
+            currentUser.setProfileImage(bitmap.toString());
             DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
 
             drawer.closeDrawers();
@@ -187,7 +161,7 @@ public class HomeScreen extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final List<Group> items = Singleton.getInstance().getmCurrentGroups();
+        final List<GroupDatabase> items = Singleton.getInstance().getmCurrentGroups();
 
 
 

@@ -1,80 +1,46 @@
 package it.polito.group05.group05.Utility;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.net.sip.SipAudioCall;
-import android.os.SystemClock;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
-import com.bumptech.glide.load.resource.bitmap.StreamBitmapDataLoadProvider;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
-import junit.framework.TestResult;
-
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
-import it.polito.group05.group05.HomeScreen;
 import it.polito.group05.group05.Init;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
-import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.Group1;
 import it.polito.group05.group05.Utility.BaseClasses.GroupColor;
+import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserChangedEvent;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.GroupAddedEvent;
 import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
-import static it.polito.group05.group05.Utility.ColorUtils.context;
 
 /**
  * Created by andre on 08-Apr-17.
@@ -210,7 +176,7 @@ public class DB_Manager {
                             g1.setBalance(g.getBalance());
                             g1.setLmTime(g.getLmTime());
                             g1.setGroupColor(g.getGroupColor());
-                         //   g1.setBadge(1);
+                         //g1.setBadge(1);
                             try {
                                 photoGroupDownload(g1);
                             } catch (IOException e) {
@@ -245,7 +211,6 @@ public class DB_Manager {
      */
 
     public static void retriveUsersInfo(GroupDatabase G, final ArrayList<UserDatabase> users) {
-
         for (Object s1 : G.getMembers().values()) {
             if(!(s1 instanceof UserDatabase)) return;
             String s = ((UserDatabase)s1).getId();
@@ -267,7 +232,6 @@ public class DB_Manager {
                     }
                     users.add(u);
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -354,7 +318,6 @@ public class DB_Manager {
 
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 

@@ -11,9 +11,10 @@ import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.List;
+import java.util.Objects;
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
+import it.polito.group05.group05.Utility.BaseClasses.User;
 
 /**
  * Created by Marco on 08/04/2017.
@@ -22,13 +23,12 @@ import it.polito.group05.group05.Utility.BaseClasses.UserGroup;
 public class ChartUserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     Context context;
-    List<UserGroup> users;
+    List<User> users;
     public boolean isSelected;
     View v;
 
-    public ChartUserListAdapter(List<UserGroup> list, Context context) {
+    public ChartUserListAdapter(List<User> list, Context context) {
         this.context = context;
-
         this.users = list;
     }
 

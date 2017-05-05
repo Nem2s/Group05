@@ -2,7 +2,9 @@ package it.polito.group05.group05;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,9 @@ import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.ExpenseAdapter;
+import it.polito.group05.group05.Utility.HideScrollListener;
 
+import static it.polito.group05.group05.Group_Activity.appBar;
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
 
@@ -42,30 +47,6 @@ public class ExpenseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-/*@Override
-public void onCreateContextMenu(ContextMenu menu, View v,
-                                ContextMenu.ContextMenuInfo menuInfo) {
-
-    super.onCreateContextMenu(menu, v, menuInfo);
-
-    getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
-
-
-}
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        switch(item.getItemId()) {
-            case R.id.context_menu_delete:
-                // Do some stuff
-                return true;
-            case R.id.context_menu_edit:
-                // Do some stuff
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }*/
     @Override
     public void onResume() {
         super.onResume();
@@ -111,7 +92,9 @@ public void onCreateContextMenu(ContextMenu menu, View v,
     private static void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
-
+        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        //int fabBottomMargin = lp.bottomMargin;
+        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
     private static void showViews() {
@@ -127,13 +110,21 @@ public void onCreateContextMenu(ContextMenu menu, View v,
         final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
+        rv.setOnScrollListener(new HideScrollListener() {
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+            @Override
+            public void onShow() {
+                showViews();
+            }
+
+        });
 
         expenses =new ArrayList<>(currentGroup.getExpenses());
-
         ea = new ExpenseAdapter(getContext(),expenses);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
-
-
         rv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
@@ -143,12 +134,9 @@ public void onCreateContextMenu(ContextMenu menu, View v,
                 return false;
             }
         });
-
         rv.setLayoutManager(llm);
         rv.setAdapter(ea);
-
         return rootView;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -192,4 +180,3 @@ public void onCreateContextMenu(ContextMenu menu, View v,
 
 
 }
-
