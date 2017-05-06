@@ -1,13 +1,11 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -15,8 +13,6 @@ import com.github.mikephil.charting.utils.MPPointF;
 
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.ColorUtils;
-import it.polito.group05.group05.Utility.ImageUtils;
 
 /**
  * Created by Marco on 09/04/2017.

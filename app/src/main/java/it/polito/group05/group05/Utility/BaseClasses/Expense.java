@@ -24,17 +24,13 @@ public class Expense extends ExpenseDatabase {
         map=new HashMap<>();
     }
     public Expense(ExpenseDatabase edb){
-        super();
-        this.setId(edb.getId());
-        this.setName(edb.getName());
-        this.setDeadline(edb.getDeadline());
-        this.setOwner(edb.getOwner());
-        this.setFile(edb.getFile());
-        this.setDescription(edb.getDescription());
-        this.setPrice(edb.getPrice());
-        this.setTimestamp(edb.getTimestamp());
-        this.setType(edb.getType());
+        super(edb);
         map=new HashMap<>();
+        for(String i : edb.getMembers().keySet()){
+            User_expense ue = new User_expense();
+            ue.setDebt(edb.getMembers().get(i));
+            ue.setId(i);
+        }
     }
 }
 

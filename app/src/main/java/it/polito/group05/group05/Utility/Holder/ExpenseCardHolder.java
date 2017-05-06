@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -20,27 +22,28 @@ public class ExpenseCardHolder extends GeneralHolder {
 
     CircleImageView civ;
     TextView tv,tv_debt;
-    private ExpenseCardHolder(View itemView, CircleImageView civ, TextView tv, TextView tv_debt) {
+
+
+    public ExpenseCardHolder(View itemView) {
         super(itemView);
-        this.civ = civ;
-        this.tv = tv;
-        this.tv_debt =tv_debt;
-    }
+        civ = (CircleImageView) itemView.findViewById(R.id.expense_member_image);
+        tv = (TextView) itemView.findViewById(R.id.expense_member_name);
+        tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
 
-    public static it.polito.group05.group05.Utility.Holder.ExpenseCardHolder newInstance(View itemView) {
-
-        CircleImageView civ = (CircleImageView) itemView.findViewById(R.id.expense_member_image);
-        TextView tv = (TextView) itemView.findViewById(R.id.expense_member_name);
-        TextView tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
-        return new it.polito.group05.group05.Utility.Holder.ExpenseCardHolder(itemView,civ,tv,tv_debt);
     }
     public void setData(Object u1,Context c){
 
         if(!(u1 instanceof User_expense)) return;
         User_expense u = (User_expense) u1;
-        //civ.setImageBitmap(u.getiProfile());
 
-        tv.setText(u.getId().compareTo(Singleton.getInstance().getId())!=0 ? u.getName():"You");
+        Glide.with(c)
+                .load(u.getiProfile())
+                .centerCrop()
+                .placeholder(R.drawable.user_placeholder)
+                .crossFade()
+                .into(civ);
+
+        tv.setText(u.getId());
         if(u instanceof User_expense) {
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c));

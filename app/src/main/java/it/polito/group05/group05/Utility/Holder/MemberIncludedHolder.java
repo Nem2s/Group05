@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.MemberExpenseAdapter;
 
 /**
  * Created by user on 03/05/2017.
@@ -42,30 +40,17 @@ public class MemberIncludedHolder extends GeneralHolder {
     List<String> modified_prices;
     Double actualPrice;
 
+    public MemberIncludedHolder(View itemView) {
+        super(itemView);
+        image_person = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
+        name_person= (TextView) itemView.findViewById(R.id.tv_name_member);
+        include_person= (CheckBox) itemView.findViewById(R.id.cb_include);
+        euro_person = (ImageView) itemView.findViewById(R.id.euro_member);
+        costo_person = (EditText) itemView.findViewById(R.id.et_ins);
 
-    public MemberIncludedHolder(View v, CircleImageView image_person, TextView name_person, CheckBox include_person,
-                                ImageView euro_person, EditText costo_person) {
-        super(v);
-        this.image_person = image_person;
-        this.name_person = name_person;
-        this.include_person = include_person;
-        this.euro_person = euro_person;
-        this.costo_person = costo_person;
-        customValue = false;
-        customPrices = new HashMap<>();
-        cost_procapite = 0.0;
-        modified_prices = null;
-        actualPrice = Singleton.getInstance().getCurrentPrice();
     }
 
-    public static it.polito.group05.group05.Utility.Holder.MemberIncludedHolder newInstance(View itemView) {
-        CircleImageView cir = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
-        TextView tvName = (TextView) itemView.findViewById(R.id.tv_name_member);
-        CheckBox cb = (CheckBox) itemView.findViewById(R.id.cb_include);
-        ImageView im = (ImageView) itemView.findViewById(R.id.euro_member);
-        EditText et = (EditText) itemView.findViewById(R.id.et_ins);
-        return new it.polito.group05.group05.Utility.Holder.MemberIncludedHolder(itemView, cir, tvName, cb, im, et);
-    }
+
 
     @Override
     public void setData(Object c, Context context) {
@@ -116,35 +101,34 @@ public class MemberIncludedHolder extends GeneralHolder {
 
     private void setAllPrices(Map<String, Double> customPrices, String id) {
 
-        if(actualPrice != 0){
+        if (actualPrice != 0) {
             Double fixedValue = customPrices.get(id);
-            if(fixedValue < actualPrice) {
+            if (fixedValue < actualPrice) {
                 Double toDivide = actualPrice - fixedValue;
                 modified_prices.add(id);
                 for (String s : customPrices.keySet()) {
                     if (s != id) {
-                            if(!modified_prices.contains(s)) {
-                                int dividend = Singleton.getInstance().getmCurrentGroup().getMembers().size() - modified_prices.size();
-                                if (dividend != 0) {
-                                    Double newPriceUser = toDivide / (double) dividend;
-                                    customPrices.remove(s);
-                                    customPrices.put(s, newPriceUser);
-                                    modified_prices.add(s);
-                                    actualPrice = upDateActualPrice(modified_prices, customPrices);
-                                }
+                        if (!modified_prices.contains(s)) {
+                            int dividend = Singleton.getInstance().getmCurrentGroup().getMembers().size() - modified_prices.size();
+                            if (dividend != 0) {
+                                Double newPriceUser = toDivide / (double) dividend;
+                                customPrices.remove(s);
+                                customPrices.put(s, newPriceUser);
+                                modified_prices.add(s);
+                                actualPrice = upDateActualPrice(modified_prices, customPrices);
+
                             }
-                        }
-                        else
-                        {
+                        } else {
                             //ci sei solo tu nel gruppo
                         }
                     }
                 }
             }
 
-           //     Toast.makeText(MainActivity.this, "Insert a smaller value", Toast.LENGTH_SHORT).show();
+            //     Toast.makeText(MainActivity.this, "Insert a smaller value", Toast.LENGTH_SHORT).show();
 
         }
+    }
     private Double upDateActualPrice(List<String> listID , Map<String, Double> mapIDPRICE ) {
         Double price = 0.0;
         Double tosubtract = 0.0;

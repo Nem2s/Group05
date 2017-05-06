@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.nekocode.badge.BadgeDrawable;
-import it.polito.group05.group05.HomeScreen;
+
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 public class GroupDatabase implements Namable {
@@ -100,6 +100,13 @@ public class GroupDatabase implements Namable {
         return members;
     }
 
+    public UserDatabase getUserOwner (String id){
+        if(!members.containsKey(id) ) return null;
+        if(!(members.get(id) instanceof UserDatabase)) return null;
+            return (UserDatabase) members.get(id);
+
+    }
+
     public void setMembers(Map<String, Object> members) {
         this.members = members;
     }
@@ -110,9 +117,7 @@ public class GroupDatabase implements Namable {
         for(UserDatabase u : users){
             memb.put(u.getName(), true);
         }
-        //memb.remove("User");
 
-        memb.remove(memb.get(Singleton.getInstance().getCurrentUser().getId()));
         memb.put(id, true);
         this.setMembers(memb);
         return memb;

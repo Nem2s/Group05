@@ -1,92 +1,26 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.content.Context;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.DB_Manager;
-import it.polito.group05.group05.Utility.ImageUtils;
-
 /**
- * Created by Marco on 28/03/2017.
+ * Created by user on 04/05/2017.
  */
 
-public class Singleton {
-    private static Singleton mInstance = null;
-    private List<GroupDatabase> mCurrentGroups;
-    private List<UserDatabase> mCurrenUsersList;
+ public class Singleton {
+    private static final Singleton ourInstance = new Singleton();
     private GroupDatabase mCurrentGroup;
-    private String userId;
-    private Double price_expense;
     private UserDatabase currentUser;
+    String currentGroupId;
+    private String userId;
 
-    private Singleton(){
-        mCurrentGroups = new ArrayList<>();
-        mCurrentGroup = new GroupDatabase();
-        mCurrenUsersList = new ArrayList<>();
-        currentUser = new UserDatabase();
-        price_expense= 0.0;
+
+    private Singleton() {
     }
-
-    public static Singleton getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new Singleton();
-        }
-        return mInstance;
-    }
-
-    public void setmCurrentGroup(GroupDatabase g) {
-    this.mCurrentGroup = g;}
 
     public GroupDatabase getmCurrentGroup() {
-        return this.mCurrentGroup;
-    }
-    public void setmCurrentGroups(List<GroupDatabase> g) {
-        this.mCurrentGroups = g;}
-    public void addGroup(GroupDatabase g) {
-        this.mCurrentGroups.add(g);
-  }
-
-  public void deleteGroup (GroupDatabase g) {
-      this.mCurrentGroups.remove(g);
-  }
-
-    public List<GroupDatabase> getmCurrentGroups() {
-        return this.mCurrentGroups;
-    }
-    public void setId(String s){this.userId=s;}
-    public String getId() {
-        return userId;
+        return mCurrentGroup;
     }
 
-
-    public void clearGroups(){
-        this.mCurrentGroups.clear();
-    }
-
-    public List<UserContact> createRandomListUsers(int n, Context context, GroupDatabase g) {
-        Random r = new Random();
-        List<UserContact> users = new ArrayList<>();
-        for(int i = 0; i < n; i++) {
-            UserContact u = new UserContact(""+i, "User " + i, new Balance(r.nextInt(n),r.nextInt(n)),
-                    ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable( i%2 == 0 ? R.drawable.boy : R.drawable.girl)), g, true, false);
-            users.add(u);
-        }
-        return users;
-    }
-
-    public int getPositionGroup(String id) {
-        int i = 0;
-        for (GroupDatabase g : this.mCurrentGroups) {
-            if (g.getId().equals(id))
-                return i;
-            i++;
-        }
-        return -1;
+    public void setmCurrentGroup(GroupDatabase mCurrentGroup) {
+        this.mCurrentGroup = mCurrentGroup;
     }
 
     public UserDatabase getCurrentUser() {
@@ -95,15 +29,37 @@ public class Singleton {
 
     public void setCurrentUser(UserDatabase currentUser) {
         this.currentUser = currentUser;
-        if(currentUser != null)
-            userId=currentUser.getId();
     }
 
-    public void setCurrentPrice( Double price ){
-        this.price_expense= price;
-    }
-    public Double getCurrentPrice(){
+    private Double price_expense;
+
+
+
+    public Double getPrice_expense() {
         return price_expense;
     }
 
+    public void setPrice_expense(Double price_expense) {
+        this.price_expense = price_expense;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    static public Singleton getInstance() {
+        return ourInstance;
+    }
+
+
+    public String getIdCurrentGroup(){
+        return currentGroupId;
+    }
+    public void setIdCurrentGroup(String currentGroupId){
+        this.currentGroupId=currentGroupId;
+    }
 }

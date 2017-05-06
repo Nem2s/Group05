@@ -24,29 +24,20 @@ public class MemberHolder extends GeneralHolder {
     ImageView payByCard;
     FloatingActionButton color;
 
-
-
-    public static it.polito.group05.group05.Utility.Holder.MemberHolder newInstance(View itemView) {
-        CircleImageView img_profile = (CircleImageView) itemView.findViewById(R.id.iv_user_image);
-        TextView balance = (TextView)itemView.findViewById(R.id.tv_user_balance);
-        TextView user_name = (TextView)itemView.findViewById(R.id.tv_user_name);
-        ImageView payByCard = (ImageView)itemView.findViewById(R.id.iv_paycard);
-        TextView administrator = (TextView)itemView.findViewById(R.id.tv_admin);
-        return new it.polito.group05.group05.Utility.Holder.MemberHolder(itemView,img_profile,user_name,balance,administrator,payByCard);
-    }
-
-    private  MemberHolder( View v,CircleImageView img_profile,TextView user_name,TextView balance,TextView administrator,ImageView payByCard) {
+    private  MemberHolder(View v){
         super(v);
-        this.img_profile = img_profile;
-        this.user_name=user_name;
-        this.balance=balance;
-        this.administrator= administrator;
-        this.payByCard=payByCard;
-        //this.color=color;
+        this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_user_image);;
+        this.user_name=(TextView)itemView.findViewById(R.id.tv_user_name);
+        this.balance= (TextView)itemView.findViewById(R.id.tv_user_balance);
+        this.administrator= (TextView)itemView.findViewById(R.id.tv_admin);
+        this.payByCard=(ImageView)itemView.findViewById(R.id.iv_paycard);
+
     }
 
     public void setData(Object c, Context context){
+
         if(!(c instanceof UserDatabase)) return;
+
     }
 
 
