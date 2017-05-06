@@ -14,20 +14,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.Adapter.FirebaseAdapterExtension;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 
 
 /**
@@ -58,10 +53,10 @@ public class ExpenseHolder extends GeneralHolder{
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+expenseDatabase.getTimestamp().toString());
-        description.setText(expenseDatabase.getDescription());
+        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): new Timestamp(System.currentTimeMillis())).toString());
+        //description.setText(expenseDatabase.getDescription());
         setupRecyclerViewExpense(rv, new ArrayList<Object>(expenseDatabase.getUsersExpense().values()),context);
-      if(expenseDatabase.getType()== TYPE_EXPENSE.NOTMANDATORY) {
+      if(!(expenseDatabase.isMandatory())) {
             price.setTextColor(context.getResources().getColor(R.color.colorAccent));
         }
           setupListener(cv,price,context,expenseDatabase);

@@ -61,7 +61,7 @@ public class User_expense extends UserDatabase {
         for(Object i1 : u.values()){
             if(!(i1 instanceof UserDatabase)) continue;
             UserDatabase i = (UserDatabase)i1;
-            User_expense x = new User_expense(g,e,e.getType(),i.getId());
+            User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
             x.setProfileImage(i.getProfileImage());
             //   User_expense x = new User_expense();
             x.setId(i.getId());
@@ -84,17 +84,17 @@ public class User_expense extends UserDatabase {
 
 
 
-    public User_expense(GroupDatabase p,Expense s,TYPE_EXPENSE t, String user){
+    public User_expense(GroupDatabase p,Expense s,boolean isMandatory, String user){
         this.group=p;
         this.expense=s;
-        this.typeExpense=t;
+        this.typeExpense=(isMandatory)?TYPE_EXPENSE.MANDATORY:TYPE_EXPENSE.NOTMANDATORY;
         int i = user.compareTo(s.getOwner());
-        if(t==TYPE_EXPENSE.MANDATORY && i!=0) {
+        if(isMandatory && i!=0) {
             debt -= s.getPrice();
             debt/=(float)p.getMembers().size();
         }
-        else if(t==TYPE_EXPENSE.MANDATORY && i==0) debt = s.getPrice()-(s.getPrice()/(float)p.getMembers().size());
-        else if (t==TYPE_EXPENSE.NOTMANDATORY) debt = 0.0;
+        else if(isMandatory&& i==0) debt = s.getPrice()-(s.getPrice()/(float)p.getMembers().size());
+        else if (!isMandatory) debt = 0.0;
     }
 
     public GroupDatabase getGroup() {

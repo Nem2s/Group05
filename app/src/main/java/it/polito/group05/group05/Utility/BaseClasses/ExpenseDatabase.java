@@ -1,14 +1,7 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.Manifest;
-
-import java.io.File;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
@@ -19,12 +12,11 @@ public class ExpenseDatabase implements Namable{
     private String name;
     private String description;
     private Double price;
-    private TYPE_EXPENSE type;
     private String file;
     private int deadline;           //days
     private String timestamp;
     private Map<String,Double> members;
-    protected int type_int;
+    protected int type;
 
 
     public ExpenseDatabase() {
@@ -34,21 +26,21 @@ public class ExpenseDatabase implements Namable{
         name="";
         description="";
          price=0.0;
-        type_int=0;
+        type=0;
         file="";
         deadline=0;
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {
-        this.setId(edb.getId());
-        this.setName(edb.getName());
-        this.setDeadline(edb.getDeadline());
-        this.setOwner(edb.getOwner());
-        this.setFile(edb.getFile());
-        this.setDescription(edb.getDescription());
-        this.setPrice(edb.getPrice());
-        this.setTimestamp(edb.getTimestamp().toString());
-        this.setType(edb.type_int);
+        this.id=edb.id;
+        this.name=edb.name;
+        this.deadline=edb.deadline;
+        this.owner=edb.owner;
+        this.file=edb.file;
+        this.description=edb.getDescription();
+        this.price = edb.price;
+        this.timestamp=edb.timestamp;
+        this.type=edb.type;
         members = new HashMap<>();
     }
 
@@ -81,12 +73,14 @@ public class ExpenseDatabase implements Namable{
     public void setPrice(Double price){
         this.price=price;
     }
-    public TYPE_EXPENSE getType() {
+    public boolean isMandatory() {
+        return type==0;
+    }
+    public int getType() {
         return type;
     }
     public void setType(int type) {
-        this.type = (type==0)?TYPE_EXPENSE.MANDATORY:TYPE_EXPENSE.NOTMANDATORY;
-        type_int=type;
+        type=type;
     }
     public void setFile(String file) {
         this.file = file;

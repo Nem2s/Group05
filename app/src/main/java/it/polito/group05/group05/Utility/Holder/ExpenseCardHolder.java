@@ -9,8 +9,6 @@ import com.bumptech.glide.Glide;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 
@@ -47,7 +45,7 @@ public class ExpenseCardHolder extends GeneralHolder {
         if(u instanceof User_expense) {
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c));
-            if(u.getExpense().getType()== TYPE_EXPENSE.MANDATORY)
+            if(u.getExpense().isMandatory())
                 if(c1<0)
                     tv_debt.setTextColor(Color.RED);
                 else if(c1>0)

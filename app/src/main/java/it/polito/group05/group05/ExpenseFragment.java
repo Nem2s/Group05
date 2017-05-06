@@ -7,18 +7,23 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+
 import java.util.List;
+
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.*;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
+
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
 /**
@@ -79,8 +84,11 @@ public class ExpenseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
+
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        Query ref = FirebaseDatabase.getInstance().getReference("expenses/"+Singleton.getInstance().getIdCurrentGroup());
+        rv.setHasFixedSize(false);
+        rv.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false));
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref) {
             @Override
@@ -88,8 +96,7 @@ public class ExpenseFragment extends Fragment {
                 viewHolder.setData(model,getContext());
             }
         };
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
-/*        rv.setOnTouchListener(new View.OnTouchListener() {
+        rv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -97,10 +104,8 @@ public class ExpenseFragment extends Fragment {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
-        });*/
+        });
 
-        //ExpenseDatabase c =(ExpenseDatabase)ea.getItem(0);
-        rv.setLayoutManager(llm);
         rv.setAdapter(ea);
         return rootView;
     }
