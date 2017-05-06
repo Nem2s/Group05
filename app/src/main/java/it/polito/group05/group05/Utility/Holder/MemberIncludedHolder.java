@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
