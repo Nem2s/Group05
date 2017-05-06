@@ -26,11 +26,11 @@ public class Expense extends ExpenseDatabase {
     public Expense(ExpenseDatabase edb){
         super(edb);
         map=new HashMap<>();
-        for(String i : edb.getMembers().keySet()){
+     /*   for(String i : edb.getMembers().keySet()){
             User_expense ue = new User_expense();
             ue.setDebt(edb.getMembers().get(i));
             ue.setId(i);
-        }
+        }*/
     }
 }
 

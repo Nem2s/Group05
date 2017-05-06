@@ -64,8 +64,8 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         main_content = (CoordinatorLayout)findViewById(R.id.main_content);
-    //    tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
-        tv.setText("CIAO");
+        tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
+      //  tv.setText("CIAO");
         /*toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
