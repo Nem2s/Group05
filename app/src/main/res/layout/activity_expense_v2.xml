@@ -40,7 +40,8 @@
                     android:transitionName="@string/transition_group_image"
                     >
 
-                    <de.hdodenhof.circleimageview.CircleImageView                        android:id="@+id/iv_group_image"
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_group_image"
                         android:layout_height="48dp"
                         android:layout_width="48dp"
                         android:layout_marginTop="8dp"
@@ -320,15 +321,13 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_new_expense"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_action_add_black"
         android:layout_gravity="bottom|end"
-        android:transitionName="@string/transition_fab"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_anchor="@id/scrollView"
-        app:layout_behavior="it.polito.group05.group05.Utility.ScrollAwareFABBehavior"
         />
 </android.support.design.widget.CoordinatorLayout>

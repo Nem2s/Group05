@@ -13,8 +13,45 @@ public class User_expense extends UserDatabase {
     Expense expense;
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
+    boolean isSelected;
+    private double customValue;
+
+    public User_expense(UserDatabase userDatabase){
+        super();
+        this.name = userDatabase.getName();
+        this.id = userDatabase.getId();
+        this.authKey = userDatabase.getAuthKey();
+        this.telNumber = userDatabase.getTelNumber();
+        this.email = userDatabase.getEmail();
+        this.iProfile = userDatabase.getiProfile();
+        this.balance = userDatabase.getBalance();
+        this.customValue = 0.0;
+        isSelected = false;
+    }
 
 
+    public boolean hasCustomValue() {
+             return customValue > 0;
+    }
+    public double getCustomValue() {
+               return customValue;
+    }
+    public void setCustomValue(double customValue) {
+                this.customValue = customValue;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+
+    public void setCustomValue(Double customValue) {
+        this.customValue = customValue;
+    }
 
     public static List<UserDatabase> createListUserExpense(GroupDatabase g,Expense e){
         List<UserDatabase> user_expenses = new ArrayList<>();
@@ -43,9 +80,7 @@ public class User_expense extends UserDatabase {
         this.typeExpense = typeExpense;
     }
 
-    public User_expense(){
-        super();
-    }
+
 
     public User_expense(GroupDatabase p,Expense s,TYPE_EXPENSE t, String user){
         this.group=p;
