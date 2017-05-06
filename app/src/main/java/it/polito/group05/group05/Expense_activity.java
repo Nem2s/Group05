@@ -80,7 +80,7 @@ public class Expense_activity extends AppCompatActivity {
     private GroupDatabase actual_group;
     private RelativeLayout rel_info;
     private Double costPerUser = 0.0;
-    DatabaseReference fdb;
+    private DatabaseReference fdb;
     private List<UserDatabase> partecipants = new ArrayList<>();
     private List<UserDatabase> list = new ArrayList<>();
 
@@ -252,6 +252,7 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
+                    expense.setOwner(Singleton.getInstance().getUserId());
                     if(memberAdapter.getList() != null){
                         for(User_expense u : memberAdapter.getList()){
                         expense.getMembers().put(u.getId(),u.getDebt());
