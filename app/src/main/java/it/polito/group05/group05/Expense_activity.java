@@ -36,6 +36,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -110,7 +111,7 @@ public class Expense_activity extends AppCompatActivity {
     }
 
     public void addPartecipant(User_expense e){
-        for(UserDatabase u : list){
+        for(UserDatabase u : partecipants){
             if(u.getId()== e.getId())
             {
                 list.add(u);
@@ -227,7 +228,7 @@ public class Expense_activity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-
+        expense.setTimestamp(expense_timestamp.toString());
         cb_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,13 +249,15 @@ public class Expense_activity extends AppCompatActivity {
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
-                    fdb = FirebaseDatabase.getInstance().getReference("expenses/"+
-                            Singleton.getInstance().getIdCurrentGroup()).push();
+                    fdb =   FirebaseDatabase.getInstance()
+                                            .getReference("expenses")
+                                            .child(Singleton.getInstance().getIdCurrentGroup())
+                                            .push();
                     expense.setId(fdb.getKey());
+                    if(memberAdapter.getList() != null){
                         for(User_expense u : memberAdapter.getList()){
-
                         expense.getMembers().put(u.getId(),u.getDebt());
-
+                        }
                     }
                         fdb.setValue(expense);
                     finish();
@@ -294,12 +297,13 @@ public class Expense_activity extends AppCompatActivity {
                         expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                         expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
                         costPerUser = (expense_price/list.size());
+                        for(UserDatabase u : partecipants)
+                            expense.getMembers().put(u.getId(),costPerUser);
                         DecimalFormat df = new DecimalFormat("0.00");
                         String formate = df.format(costPerUser);
                         double finalValue = Double.parseDouble(formate.replace(',', '.'));
                         //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
-
                     } catch (NumberFormatException e) {
                         expense_price=0.0;
                     }
@@ -351,6 +355,7 @@ public class Expense_activity extends AppCompatActivity {
                                        int position, long id) {
                 switch (position){
                     case 0: recyclerView.setVisibility(View.GONE);
+
                         break;
                     case 1: recyclerView.setVisibility(View.VISIBLE);
                 }

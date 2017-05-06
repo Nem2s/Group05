@@ -70,7 +70,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
         public void setData(Object c, Context context, final int position) {
             if (!(c instanceof UserDatabase)) return;
             final UserDatabase userDatabase = (UserDatabase) c;
-            final User_expense us= new User_expense(userDatabase);
+            final User_expense us= users.get(position);
             name_person.setText(userDatabase.getName());
             image_person.setImageResource(R.drawable.group_profile);
             euro_person.setImageResource(R.drawable.euro);
@@ -80,9 +80,11 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                     if(!include_person.isChecked()) {
                         parent.setVisibility(View.INVISIBLE);
                         us.setSelected(false);
+                        users.get(position).setCustomValue(0.0).setSelected(false);
                         us.setCustomValue(0.0);
                         }
                     else {
+                        users.get(position).setCustomValue(0.0).setSelected(true);
                         parent.setVisibility(View.VISIBLE);
                         us.setSelected(true);
                     }
@@ -93,7 +95,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
             if(!us.hasCustomValue())
                 costo_person.setText(String.valueOf(costPerUser));
 
-            costo_person.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+           costo_person.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
 
@@ -101,15 +103,21 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                         if(cost_procapite == 0.0) {
                             costo_person.setText(String.valueOf(0.0));
                             us.setCustomValue(0.0);
+                            users.get(position).setCustomValue(0.0);
                             EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
                         }
-                        else if(cost_procapite == costPerUser)
+                        else if(cost_procapite == costPerUser) {
+                            costo_person.setText(String.valueOf(cost_procapite));
                             return;
+                        }
                         else {
                             us.setCustomValue(cost_procapite);
+                            //costo_person.setText(String.valueOf(cost_procapite));
+                            users.get(position).setCustomValue(cost_procapite);
                             EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
                         }
                     }
+
                 }
             });
             costo_person.addTextChangedListener(new TextWatcher(){
@@ -132,7 +140,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                             cost_procapite = 0.0;
                         }
 
-                        //
                     } else {
                         cost_procapite = 0.0;
                         costo_person.setText(String.valueOf(0.0));
@@ -140,8 +147,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                 }
             });
         }
-
-
         public boolean isCustomValue() {
             return customValue;
         }
@@ -154,9 +159,11 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
     public List<User_expense> getList(){return users;}
 
     public MemberExpandedAdapter(List<UserDatabase> users, Context context){
-        users= new ArrayList<>();
-        for(UserDatabase u : users)
-            this.users.add(new User_expense(u));
+        this.users= new ArrayList<>();
+        for(UserDatabase u : users){
+            User_expense use = new User_expense(u);
+            this.users.add(use);
+        }
         this.context= context;
         cost_procapite= 0.0;
         setHasStableIds(true);
@@ -171,8 +178,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
 
     @Subscribe
     public void onPriceError(PriceErrorEvent event) {
-        for (UserDatabase u : users) {
-            User_expense us = new User_expense(u);
+        for (User_expense us : users) {
             us.setCustomValue(0.0);
         }
     }
@@ -180,8 +186,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
     private Pair<Integer, Double> getCustoms() {
         int i = 0;
         double v = 0;
-        for (UserDatabase u : users) {
-            User_expense us = new User_expense(u);
+        for (User_expense us : users) {
+            //User_expense us = new User_expense(u);
             if (us.hasCustomValue()) {
                 i++;
                 v += us.getCustomValue();

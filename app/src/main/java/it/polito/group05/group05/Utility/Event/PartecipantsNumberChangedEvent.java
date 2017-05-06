@@ -8,7 +8,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User_expense;
  */
 
 public class PartecipantsNumberChangedEvent {
-    int n;
+    int n=0;
     User_expense u;
     int position;
     ExpenseDividerEvent e;
