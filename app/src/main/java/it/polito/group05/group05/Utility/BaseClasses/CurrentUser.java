@@ -12,14 +12,23 @@ import java.util.Random;
 
 public class CurrentUser extends UserDatabase{ //This will be the CurrentUser class
     private List<String> groups;
+    private List<UserContact> userContactList;
+    private Bitmap img_profile;
 
+    public CurrentUser(UserDatabase u) {
+        super();
+        this.groups = u.UserGruopsList();
+    }
+
+    public List<UserContact> getUserContactList() {
+        return userContactList;
+    }
+    public void setUserContactList(List<UserContact> userContactList) {
+        this.userContactList = userContactList;
+    }
 
     public CurrentUser(){}
 
-    public CurrentUser(String id, String name, String authKey, String telNumber, String email, String img_profile, List<String> groups) {
-        super(id, name, authKey, telNumber, email, img_profile);
-        this.groups = groups;
-    }
 
     public List<String> getGroups() {
         return groups;
@@ -42,6 +51,13 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
         return null;
     }
 
+    public Bitmap getImg_profile() {
+        return img_profile;
+    }
+
+    public void setImg_profile(Bitmap img_profile) {
+        this.img_profile = img_profile;
+    }
 
     /*
     public boolean hasCustomValue() {

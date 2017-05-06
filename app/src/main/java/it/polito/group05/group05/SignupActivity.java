@@ -1,266 +1,233 @@
 package it.polito.group05.group05;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+
+import android.provider.Settings;
+import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-import com.mvc.imagepicker.ImagePicker;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import it.polito.group05.group05.Utility.DB_Manager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class SignupActivity extends AppCompatActivity {
+
+import it.polito.group05.group05.Utility.BaseClasses.Balance;
+import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+
+import static com.facebook.FacebookSdk.getApplicationSignature;
+
+public class SignUpActivity extends AppCompatActivity {
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
+    private static final int RC_SIGN_IN = 100;
     // [END declare_auth]
+    public  static final int PERMISSIONS_MULTIPLE_REQUEST = 123;
 
     private static final String TAG = "SignupActivity";
 
-    CircleImageView _cvUserImage;
-    EditText _nameText;
-    EditText _surnameText;
-    EditText _emailText;
-    EditText _pnumber;
-    EditText _passwordText;
-    Button _signupButton;
-    TextView _loginLink;
-    TextView _verificationLink;
-    private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
-        if (bitmap != null) {
-            _cvUserImage.setImageBitmap(bitmap);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
-
         mAuth = FirebaseAuth.getInstance();
-        _cvUserImage = (CircleImageView)findViewById(R.id.iv_user_image);
-        _nameText = (EditText) findViewById(R.id.input_name);
-        _surnameText = (EditText) findViewById(R.id.input_surname);
-        _emailText = (EditText) findViewById(R.id.input_email);
-        _pnumber = (EditText)findViewById(R.id.input_phone);
-        _passwordText = (EditText) findViewById(R.id.input_password);
-        _signupButton = (Button) findViewById(R.id.btn_signup);
-        _loginLink = (TextView) findViewById(R.id.link_login);
-        _verificationLink = (TextView) findViewById(R.id.link_verification);
+        mCurrentUser = mAuth.getCurrentUser();
+        Singleton.getInstance().setCurrContext(this);
+        String x = getApplicationSignature(getApplicationContext());
+        checkAndRequestPermissions();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    String UserId = user.getUid();
-                    mCurrentUser = user;
-
-                    Toast.makeText(SignupActivity.this, "USER ID\n"+UserId,Toast.LENGTH_SHORT).show();
-                } else {
-                    // User is signed out
-                    Toast.makeText(SignupActivity.this, "no id got", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        };
-
-        _cvUserImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImagePicker.pickImage(SignupActivity.this, "Select Image:");
-            }
-        });
-
-        _signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signup();
-            }
-        });
-
-        _loginLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
-                onBackPressed();
-            }
-        });
-
-        _verificationLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final FirebaseUser user = mAuth.getCurrentUser();
-                user.sendEmailVerification()
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(SignupActivity.this,
-                                            "Verification email sent to " + user.getEmail(),
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Log.e(TAG, "sendEmailVerification", task.getException());
-                                    Toast.makeText(SignupActivity.this,
-                                            "Failed to send verification email.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                                // [END_EXCLUDE]
-                            }
-                        });
-                // [END send_email_verification]
-            }
-        });
     }
 
 
-    // [START on_start_add_listener]
     @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-    // [END on_start_add_listener]
-
-    // [START on_stop_remove_listener]
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-
-    }
-    // [END on_stop_remove_listener]
-
-
-    public void signup() {
-        Log.d(TAG, "Signup");
-
-        if (!validate()) {
-            onSignupFailed();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            handleSignInResponse(resultCode, data);
+            finish();
             return;
         }
+    }
 
-        _signupButton.setEnabled(false);
+    @MainThread
+    private void handleSignInResponse(int resultCode, Intent data) {
+        IdpResponse response = IdpResponse.fromResultIntent(data);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
-
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
-        final String emailfordb = new String(email);
-        final String namefordb = new String(name);
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        task.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                onSignupFailed();
-                            }
-                        });
-                        if(task.isSuccessful())
-                            onSignupSuccess();
-
-                        // [START_EXCLUDE]
-                        progressDialog.dismiss();
-                        // [END_EXCLUDE]
-                    }
-
-
-                });
-        // [END create_user_with_email]
-
+        // Successfully signed in
+        if (resultCode == ResultCodes.OK) {
+            mCurrentUser = mAuth.getCurrentUser();
+            CurrentUser ud = setCurrentUser();
+            Singleton.getInstance().setCurrentUser(ud);
+            DB_Manager.getInstance().setContext(this).pushNewUser(ud);
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+            finish();
+            return;
+        }
     }
 
 
-    public void onSignupSuccess() {
-        final DB_Manager db1 = new DB_Manager();
-        FirebaseDatabase database1 = db1.getDatabase();
-        if(mCurrentUser != null)
-            db1.pushNewUser(_emailText.getText().toString(),
-                    _nameText.getText().toString()+
-                    _surnameText.getText().toString(),
-                    _pnumber.getText().toString(),
-                    mCurrentUser.getUid());
-        _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
-        Intent i = new Intent(this, Init.class);
-        startActivity(i);
-        finish();
-     }
+    private CurrentUser setCurrentUser() {
+        CurrentUser ud = new CurrentUser();
+        ud.setAuthKey(mCurrentUser.getUid());
+        ud.setName(mCurrentUser.getDisplayName());
+        ud.setEmail(mCurrentUser.getEmail());
+        ud.setBalance(new Balance(0,0));
+//        ud.setiProfile(mCurrentUser.getPhotoUrl().toString());
 
-    public void onSignupFailed() {
-        _signupButton.setEnabled(true);
+        return ud;
     }
 
-    public boolean validate() {
-        boolean valid = true;
 
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+    private  boolean checkAndRequestPermissions() {
+        int permissionContacts = ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_CONTACTS);
+        int permissionCamera = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA);
+        int permissionStorage = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
 
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
-            valid = false;
-        } else {
-            _nameText.setError(null);
+
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.CAMERA);
         }
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _emailText.setError(null);
+        if (permissionContacts != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.READ_CONTACTS);
         }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
-        } else {
-            _passwordText.setError(null);
+        if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-
-        return valid;
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),PERMISSIONS_MULTIPLE_REQUEST);
+            return false;
+        } else
+            startGoogleSignIn();
+        return true;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_MULTIPLE_REQUEST: {
+
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (!(perms.get(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
+                    //else any one or both the permissions are not granted
+                    {
+
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+//                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_CONTACTS)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            showDialogOK("Camera,Contacts and Storage permissions needed.",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkAndRequestPermissions();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    finish();
+                                                    break;
+                                            }
+                                        }
+                                    });
+
+                        }
+
+                        //permission is denied (and never ask again is  checked)
+                        //shouldShowRequestPermissionRationale will return false
+                        else {
+                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                                    .show();
+                            finish();
+                        }
+                    } else startGoogleSignIn();
+                }
+            }
+        }
+
+    }
+
+    private void startGoogleSignIn() {
+        if (mCurrentUser != null) {
+            CurrentUser ud = setCurrentUser();
+            Singleton.getInstance().setCurrentUser(ud);
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+            finish();
+        } else {
+            startActivityForResult(
+                    AuthUI.getInstance().createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(true)
+                            .setTheme(R.style.FirebaseLoginTheme)
+                            .setLogo(R.drawable.ic_splash_logo)
+                            .setProviders(Arrays.asList(
+                                    new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                    new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()))
+                            .build(),
+                    RC_SIGN_IN);
+
+        }
+    }
+
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
+    }
+
 }

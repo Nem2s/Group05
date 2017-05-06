@@ -7,19 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.provider.ContactsContract;
+import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,40 +26,44 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.google.android.gms.appinvite.AppInviteApi;
 import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mvc.imagepicker.ImagePicker;
-import com.pkmmte.view.CircularImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
+import it.polito.group05.group05.Utility.Adapter.MemberInvitedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
-import it.polito.group05.group05.Utility.BaseClasses.Group;
+import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.User;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.DB_Manager;
-import it.polito.group05.group05.Utility.EventClasses.ObjectChangedEvent;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
-import it.polito.group05.group05.Utility.EventClasses.TextChangedEvent;
-import it.polito.group05.group05.Utility.ImageUtils;
-import it.polito.group05.group05.Utility.InvitedAdapter;
+import it.polito.group05.group05.Utility.Holder.MemberHolder;
 
-public class NewGroup extends AppCompatActivity{
+/**
+ * Created by Marco on 05/05/2017.
+ */
+
+public class NewGroupActivity extends AppCompatActivity {
+    private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
 
     private static final String TAG = "Error";
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
@@ -69,7 +71,8 @@ public class NewGroup extends AppCompatActivity{
     CircleImageView iv_new_group;
     MaterialEditText et_group_name;
     RecyclerView rv_invited;
-    private Group newgroup;
+    List<UserContact> invitedPeople;
+    private GroupDatabase newgroup;
     private MenuItem mSearchItem;
     public static MenuItem mConfirmItem;
     public static boolean isNameEmpty;
@@ -77,13 +80,14 @@ public class NewGroup extends AppCompatActivity{
     private SearchView searchView;
     private TextView no_people;
     private TextView tv_partecipants;
-    private final User currentUser = Singleton.getInstance().getCurrentUser();
-    private InvitedAdapter invitedAdapter;
+    private final UserDatabase currentUser = Singleton.getInstance().getCurrentUser();
     private Context context;
     private boolean textIsValid;
     private boolean selectionIsValid;
     private String groupID;
     private String[] ids;
+    MemberInvitedAdapter invitedAdapter;
+    private boolean formIsValid = false;
 
 
     @Override
@@ -127,10 +131,14 @@ public class NewGroup extends AppCompatActivity{
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        List<UserContact> contacts = Singleton.getInstance().getCurrentUser().getRegContacts();
+        List<UserContact> contacts = Singleton.getInstance().getContactList(this);
 
-        if(contacts != null && contacts.size() > 0)
-            invitedAdapter = new InvitedAdapter(contacts, this);
+
+
+
+        if(contacts != null && contacts.size() > 0) {
+            invitedAdapter = new MemberInvitedAdapter(contacts, this);
+        }
         else {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
@@ -154,16 +162,16 @@ public class NewGroup extends AppCompatActivity{
 
             no_people.setVisibility(View.VISIBLE);
         }
-
         LinearLayoutManager invitedManager = new LinearLayoutManager(this);
-
         rv_invited.setHasFixedSize(true);
         rv_invited.setLayoutManager(invitedManager);
         rv_invited.setAdapter(invitedAdapter);
-        //all.addAll(retriveAllPeople());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
                 invitedManager.getOrientation());
         rv_invited.addItemDecoration(dividerItemDecoration);
+
+
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,11 +206,12 @@ public class NewGroup extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                EventBus.getDefault().post(new TextChangedEvent(charSequence.length() > 0));
+                EventBus.getDefault().post(SelectionChangedEvent.onTextChangedEvent(charSequence.length() > 0));
             }
 
             @Override
             public void afterTextChanged(Editable editable){
+
             }
         });
 
@@ -210,8 +219,9 @@ public class NewGroup extends AppCompatActivity{
 
 
     }
-
-    @Subscribe public void onTextChangedEvent(TextChangedEvent event) {
+/*
+    @Subscribe
+    public void onTextChangedEvent(TextChangedEvent event) {
         this.textIsValid = event.isValid();
         if(textIsValid && selectionIsValid)
             mConfirmItem.setVisible(true);
@@ -240,7 +250,7 @@ public class NewGroup extends AppCompatActivity{
         if(!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -265,12 +275,12 @@ public class NewGroup extends AppCompatActivity{
             @Override
             public boolean onQueryTextChange(String newText) {
                 if ( TextUtils.isEmpty ( newText ) ) {
-                    ((InvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
+                    ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
                     no_people.setVisibility(View.GONE);
 
                 } else {
-                    ((InvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
-                    if(((InvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0)
+                    ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
+                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0)
                         no_people.setVisibility(View.VISIBLE);
                 }
                 return true;
@@ -299,33 +309,49 @@ public class NewGroup extends AppCompatActivity{
         return true;
     }
 
+    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
+        SelectionChangedEvent.getValues(this);
+        this.formIsValid = event.isValid();
+        if(formIsValid) {
+            mConfirmItem.setVisible(true);
+        }
+        else
+            mConfirmItem.setVisible(false);
+    }
+
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        SelectionChangedEvent.resetValues();
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.m_confirm) {
-            newgroup = new Group(et_group_name.getText().toString(), new Balance(0, 0), ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap(), Calendar.getInstance().getTime().toString(), 1);
-            newgroup.addMember(currentUser);
-            for (UserContact u : currentUser.getRegcontacts()) {
+            DatabaseReference ref = groupRef.push();
+            GroupDatabase group = new GroupDatabase(ref.getKey(), et_group_name.getText().toString(), new Balance(0,0));
+            for (UserContact u : Singleton.getInstance().getContactList(this)) {
                 if(u.isSelected()) {
-                    newgroup.addMember(u);
+                    group.members.put(u.getId(), false);
                     u.setSelected(false);
                 }
 
             }
+            group.members.put(currentUser.getId(), true);
 
-            if(!newgroup.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-
-                groupID=DB_Manager.getInstance().PushGroupToDB(newgroup);
-                if(ids!= null) {
-                    for (String invite : ids) {
-                        DB_Manager.getInstance().pushInviteUser(invite, groupID);
-                    }
-                }
-                //EventBus.getDefault().post(new ObjectChangedEvent(newgroup));
-
+            if(!group.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
                 finish();
-
-
             }
             else {
                 Snackbar.make(findViewById(R.id.parent_layout), "Missing some Informations!", Snackbar.LENGTH_LONG).show();
@@ -349,35 +375,35 @@ public class NewGroup extends AppCompatActivity{
         }
 
         if (show) {
-                int width = mToolbar.getWidth() -
-                        (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
-                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
-                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
-                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getHeight() / 2, 0.0f, (float) width);
-                createCircularReveal.setDuration(250);
-                createCircularReveal.start();
+            int width = mToolbar.getWidth() -
+                    (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                    ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
+            Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                    isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getHeight() / 2, 0.0f, (float) width);
+            createCircularReveal.setDuration(250);
+            createCircularReveal.start();
 
         } else {
 
-                int width = mToolbar.getWidth() -
-                        (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
-                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
-                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
-                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getMeasuredHeight() / 2, (float) width, 0.0f);
-                createCircularReveal.setDuration(250);
-                createCircularReveal.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        mToolbar.setBackgroundColor(getThemeColor(NewGroup.this, R.attr.colorPrimary));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            getWindow().setStatusBarColor(getThemeColor(NewGroup.this, R.attr.colorPrimaryDark));
-                        }
+            int width = mToolbar.getWidth() -
+                    (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                    ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
+            Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                    isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getMeasuredHeight() / 2, (float) width, 0.0f);
+            createCircularReveal.setDuration(250);
+            createCircularReveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mToolbar.setBackgroundColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimary));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getWindow().setStatusBarColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimaryDark));
                     }
-                });
-                createCircularReveal.start();
+                }
+            });
+            createCircularReveal.start();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(getThemeColor(NewGroup.this, R.attr.colorPrimaryDark));
+                getWindow().setStatusBarColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimaryDark));
             }
         }
     }

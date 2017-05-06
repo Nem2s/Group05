@@ -7,9 +7,11 @@
     android:layout_height="72dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:baselineAligned="true">
+    android:baselineAligned="true"
+    android:id="@+id/group_item_sample_ll">
 
-    <de.hdodenhof.circleimageview.CircleImageView        android:id="@+id/iv_group_image"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_group_image"
         android:layout_height="58dp"
         android:layout_width="58dp"
         android:layout_marginTop="8dp"

@@ -2,34 +2,25 @@ package it.polito.group05.group05;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
-
-import java.util.ArrayList;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import java.util.List;
-
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
-import it.polito.group05.group05.Utility.BaseClasses.Group;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.ExpenseAdapter;
-import it.polito.group05.group05.Utility.HideScrollListener;
-
-import static it.polito.group05.group05.Group_Activity.appBar;
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.*;
+import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
-
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -39,7 +30,7 @@ import static it.polito.group05.group05.Group_Activity.toolbar;
  * create an instance of this fragment.
  */
 public class ExpenseFragment extends Fragment {
-    ExpenseAdapter ea;
+    FirebaseRecyclerAdapter ea;
     RecyclerView rv;
     List<Expense> expenses;
     // TODO: Rename parameter arguments, choose names that match
@@ -47,22 +38,7 @@ public class ExpenseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(ea != null) {
-            expenses.clear();
-            expenses.addAll(Singleton.getInstance().getmCurrentGroup().getExpenses());
-            ea.notifyDataSetChanged();
-        }
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ea.notifyDataSetChanged();
-    }
 
     public ExpenseFragment() {
         // Required empty public constructor
@@ -91,10 +67,6 @@ public class ExpenseFragment extends Fragment {
 
     private static void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-
-        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
-        //int fabBottomMargin = lp.bottomMargin;
-        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
     private static void showViews() {
@@ -106,27 +78,18 @@ public class ExpenseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        rv.setOnScrollListener(new HideScrollListener() {
+        Query ref = FirebaseDatabase.getInstance().getReference("expenses/"+Singleton.getInstance().getIdCurrentGroup());
+        ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
+                R.layout.item_expense,ExpenseHolder.class,ref) {
             @Override
-            public void onHide() {
-                hideViews();
+            protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
+                viewHolder.setData(model,getContext());
             }
-            @Override
-            public void onShow() {
-                showViews();
-            }
-
-        });
-
-        expenses =new ArrayList<>(currentGroup.getExpenses());
-
-        ea = new ExpenseAdapter(getContext(),expenses);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
-        rv.setOnTouchListener(new View.OnTouchListener() {
+        };
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
+/*        rv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -134,13 +97,12 @@ public class ExpenseFragment extends Fragment {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
-        });
+        });*/
 
+        //ExpenseDatabase c =(ExpenseDatabase)ea.getItem(0);
         rv.setLayoutManager(llm);
         rv.setAdapter(ea);
-
         return rootView;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -166,7 +128,12 @@ public class ExpenseFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+    @Override
+    public void onStart() {super.onStart();}
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

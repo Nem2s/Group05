@@ -1,74 +1,64 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.graphics.Bitmap;
+
 import android.graphics.Color;
 import android.text.SpannableString;
 
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import cn.nekocode.badge.BadgeDrawable;
 
-/**
- * Created by Marco on 24/03/2017.
- */
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
-public class Group {
+public class GroupDatabase implements Namable {
 
-    private String name;
-    private String groupID;
-    private Balance balance;
-    private BadgeDrawable badge;
-    private String lmTime;
-    private Bitmap groupProfile;
-    private GroupColor groupColor;
-    private HashMap<String, UserDatabase> members;
-    private HashMap<String, ExpenseDatabase> expenses;
+    public String id;
+    public String name;
+    public Balance balance;
+    public String lmTime;
+    public String pictureUrl;
+    public Map<String, Object> members;
+    //public Map<String, Object> expenses;
 
-    public Group(String groupName, Balance currentBalance, Bitmap groupProfile, String lmTime, int badgeCount) {
-        this.name = groupName;
-        this.balance = currentBalance;
-        this.groupProfile = groupProfile;
-        this.lmTime = lmTime;
-        setBadge(badgeCount);
-        this.members = new HashMap<>();
-        this.expenses = new HashMap<>();
+
+    public GroupDatabase() {
     }
 
-    public Group(String groupName, String Id,  Balance currentBalance, String lmTime, int badgeCount) {
-        this.name = groupName;
-        this.groupID = Id;
-        this.balance = currentBalance;
-        this.groupProfile = groupProfile;
-        this.lmTime = lmTime;
-        setBadge(badgeCount);
-        this.members = new HashMap<>();
-        this.expenses = new HashMap<>();
+    public GroupDatabase(String id, String name, Balance balance) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+        members = new HashMap<>();
+       // setBadge(badgeCount);
     }
 
-    public Group(){}
+    public GroupDatabase(GroupDatabase gd) {
+        this.name = gd.getName();
+        this.balance= gd.getBalance();
+        this.id = gd.getId();
+        this.lmTime= gd.getLmTime();
+        this.pictureUrl = gd.getPictureUrl();
+        members = new HashMap<>();
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGroupID() {
-        return groupID;
-    }
-
-    public void setGroupID(String groupID) {
-        this.groupID = groupID;
+    public void setName(String nome) {
+        this.name = nome;
     }
 
     public Balance getBalance() {
@@ -79,32 +69,6 @@ public class Group {
         this.balance = balance;
     }
 
-    public Bitmap getGroupProfile() {
-        return groupProfile;
-    }
-
-    public void setGroupProfile(Bitmap image) {
-        groupProfile = image;
-    }
-
-    public SpannableString getBadge() {
-        if(badge != null)
-            return badge.toSpannable();
-        return null;
-    }
-
-    public void setBadge(int count) {
-        if(count == 0)
-            return;
-             badge = new BadgeDrawable.Builder()
-                        .type(BadgeDrawable.TYPE_NUMBER)
-                        .badgeColor(Color.parseColor("#FFC107"))
-                        .textSize(30)
-                        .number(count)
-                        .build();
-
-    }
-
     public String getLmTime() {
         return lmTime;
     }
@@ -113,89 +77,39 @@ public class Group {
         this.lmTime = lmTime;
     }
 
-    public GroupColor getGroupColor() {
-        return groupColor;
+    public String getPictureUrl() {
+        return pictureUrl;
     }
 
-    public void setGroupColor(GroupColor groupColor) {
-        this.groupColor = groupColor;
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 
-    public ExpenseDatabase getExpense(String id) {
-        return expenses.get(id);
-    }
-    public Collection<ExpenseDatabase> getExpenses() {
-        List l = new ArrayList(expenses.values());
-         Collections.sort(l, new Comparator<ExpenseDatabase>() {
-            @Override
-            public int compare(ExpenseDatabase o1, ExpenseDatabase o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
-            }
-        });
-        return l;
+    public Map<String, Object> getMembers() {
+        return members;
     }
 
-    public void addExpense( ExpenseDatabase e){
-
-            expenses.put(e.getId(), e);
+    public UserDatabase getUserOwner (String id){
+        if(!members.containsKey(id) ) return null;
+        if(!(members.get(id) instanceof UserDatabase)) return null;
+            return (UserDatabase) members.get(id);
 
     }
 
-    public void setBadge(BadgeDrawable badge) {
-        this.badge = badge;
-    }
-
-    public void setMembers(HashMap<String, UserDatabase> members) {
+    public void setMembers(Map<String, Object> members) {
         this.members = members;
     }
 
-    public void setExpenses(HashMap<String, ExpenseDatabase> expenses) {
-        this.expenses = expenses;
-    }
+    public Map<String, Object> setMembers(List<UserDatabase> users, String id)
+    {
+        Map<String, Object> memb = new HashMap<String, Object>();
+        for(UserDatabase u : users){
+            memb.put(u.getName(), true);
+        }
 
-    public Map<String,Balance> debtUsers(){
-
-
-        Map<String, Balance> f = new TreeMap<String,Balance>();
-        for( ExpenseDatabase i : expenses.values())
-            if(i.getType()!=TYPE_EXPENSE.NOTMANDATORY)
-                for(UserDatabase u : i.getPartecipants())
-                    if(u instanceof User_expense) {
-                        if(((User_expense) u).getDebt()>0){
-                            Double d =(f.get(u.getId()).getCredit()+((User_expense) u).getDebt());
-                            f.get(u.getId()).setCredit(d);
-                        }
-                        else{
-                            Double d =(f.get(u.getId()).getDebit()-((User_expense) u).getDebt());
-                            f.get(u.getId()).setDebit(d);
-
-                        }
-
-                    }
-        return f;
-    }
-    public UserDatabase getMember(String id){
-        return members.get(id);
-    }
-
-
-    public List<UserDatabase> getMembers(){
-        ArrayList<UserDatabase> new_list= new ArrayList<>(members.values());
-        return new_list;
-
-    }
-
-    public List<String> getMembersId(){
-        ArrayList<String> new_list= new ArrayList<>(members.keySet());
-        return new_list;
-
-    }
-
-    public void addMember( UserDatabase u){
-        members.put(u.getId(), u);
-    }
-    public void addMember(String id){
-            members.put(id, null);
+        memb.put(id, true);
+        this.setMembers(memb);
+        return memb;
     }
 
 }

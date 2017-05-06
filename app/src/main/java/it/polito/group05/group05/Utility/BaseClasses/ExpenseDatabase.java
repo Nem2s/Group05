@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
-public class Expense{
+public class ExpenseDatabase implements Namable{
     private String id;
     private String owner;
     private String name;
@@ -21,14 +22,34 @@ public class Expense{
     private TYPE_EXPENSE type;
     private String file;
     private int deadline;           //days
-    private Timestamp timestamp;
+    private String timestamp;
     private Map<String,Double> members;
+    protected int type_int;
 
 
+    public ExpenseDatabase() {
+        members= new HashMap<>();
+        id="";
+        owner="";
+        name="";
+        description="";
+         price=0.0;
+        type_int=0;
+        file="";
+        deadline=0;
+    }
 
-
-    public Expense() {
-
+    public ExpenseDatabase(ExpenseDatabase edb) {
+        this.setId(edb.getId());
+        this.setName(edb.getName());
+        this.setDeadline(edb.getDeadline());
+        this.setOwner(edb.getOwner());
+        this.setFile(edb.getFile());
+        this.setDescription(edb.getDescription());
+        this.setPrice(edb.getPrice());
+        this.setTimestamp(edb.getTimestamp().toString());
+        this.setType(edb.type_int);
+        members = new HashMap<>();
     }
 
     //METHODS
@@ -63,8 +84,9 @@ public class Expense{
     public TYPE_EXPENSE getType() {
         return type;
     }
-    public void setType(TYPE_EXPENSE type) {
-        this.type = type;
+    public void setType(int type) {
+        this.type = (type==0)?TYPE_EXPENSE.MANDATORY:TYPE_EXPENSE.NOTMANDATORY;
+        type_int=type;
     }
     public void setFile(String file) {
         this.file = file;
@@ -76,11 +98,11 @@ public class Expense{
     public void setDeadline(int deadline) {
         this.deadline = deadline;
     }
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = (timestamp);
     }
     public Map<String, Double> getMembers() {
         return members;
