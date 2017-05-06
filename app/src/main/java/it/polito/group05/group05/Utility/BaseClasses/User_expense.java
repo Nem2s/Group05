@@ -36,16 +36,18 @@ public class User_expense extends UserDatabase {
     public double getCustomValue() {
                return customValue;
     }
-    public void setCustomValue(double customValue) {
+    public User_expense setCustomValue(double customValue) {
                 this.customValue = customValue;
+        return this;
     }
 
     public boolean isSelected() {
         return isSelected;
     }
 
-    public void setSelected(boolean selected) {
+    public User_expense setSelected(boolean selected) {
         isSelected = selected;
+        return this;
     }
 
 
@@ -112,7 +114,7 @@ public class User_expense extends UserDatabase {
     }
 
     public Double getDebt() {
-        return debt;
+        return customValue;
     }
 
     public void setDebt(Double debt) {
