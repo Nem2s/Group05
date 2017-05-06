@@ -24,8 +24,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -37,16 +35,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
-
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.*;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceChangedEvent;

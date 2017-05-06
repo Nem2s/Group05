@@ -24,6 +24,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
 
 public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener,GroupDetailsFragment.OnFragmentInteractionListener {
