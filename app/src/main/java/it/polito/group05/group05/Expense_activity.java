@@ -228,6 +228,7 @@ public class Expense_activity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
+
         expense.setTimestamp(expense_timestamp.toString());
         cb_details.setOnClickListener(new View.OnClickListener() {
             @Override
