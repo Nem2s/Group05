@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.polito.group05.group05.NewGroup">
+    tools:context="it.polito.group05.group05.NewGroupActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
