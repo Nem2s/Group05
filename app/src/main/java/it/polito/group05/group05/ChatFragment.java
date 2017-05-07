@@ -73,9 +73,9 @@ public class ChatFragment extends Fragment {
             FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
             final EditText input = (EditText) rootView.findViewById(R.id.input);
             listView = (ListView) rootView.findViewById(R.id.list);
-            showAllOldMessages();
+    //        showAllOldMessages();
 
-            input.addTextChangedListener(new TextWatcher() {
+      /*      input.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -112,6 +112,7 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
+        */
         return rootView;
 
 
