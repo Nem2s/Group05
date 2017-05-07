@@ -1,31 +1,30 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Marco on 02/05/2017.
  */
 
 public class Expense extends ExpenseDatabase {
-    private Map<String, User_expense> map;
+    private List<User_expense> list_userExpense;
 
-    public Map<String, User_expense> getUsersExpense() {
-        return map;
+    public List< User_expense> getUsersExpense() {
+        return list_userExpense;
     }
 
-    public void setUserExpense(Map<String, User_expense> map) {
-        this.map = map;
+    public void setUserExpense(List<User_expense> list_userExpense) {
+        this.list_userExpense = list_userExpense;
     }
 
     public Expense(){
         super();
-        map=new HashMap<>();
+        list_userExpense=new ArrayList<>();
     }
     public Expense(ExpenseDatabase edb){
         super(edb);
-        map=new HashMap<>();
+        list_userExpense=new ArrayList<>();
      /*   for(String i : edb.getMembers().keySet()){
             User_expense ue = new User_expense();
             ue.setDebt(edb.getMembers().get(i));

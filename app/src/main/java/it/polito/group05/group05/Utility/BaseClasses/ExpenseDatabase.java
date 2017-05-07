@@ -41,7 +41,10 @@ public class ExpenseDatabase implements Namable{
         this.price = edb.price;
         this.timestamp=edb.timestamp;
         this.type=edb.type;
-        members = new HashMap<>();
+        if(edb.members== null) members = new HashMap<>();
+        else  members = edb.members;
+
+
     }
 
     //METHODS

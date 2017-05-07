@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -83,6 +82,7 @@ public class Expense_activity extends AppCompatActivity {
     DatabaseReference fdb;
     private List<UserDatabase> partecipants = new ArrayList<>();
     private List<UserDatabase> list = new ArrayList<>();
+    private boolean isEqualPart=true;
 
     @Override
     protected void onStart() {
@@ -207,8 +207,9 @@ public class Expense_activity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
-            if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)instanceof UserDatabase)) return;
-           partecipants.add((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
+            if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)instanceof UserDatabase)) continue;
+            partecipants.add((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
+
        }
         list.addAll(partecipants);
         List<String> array= new ArrayList<>();
@@ -226,6 +227,7 @@ public class Expense_activity extends AppCompatActivity {
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
         expense.setTimestamp(expense_timestamp.toString());
+
         cb_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,11 +253,12 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
-                    if(memberAdapter.getList() != null){
+                    if( !isEqualPart){
                         for(User_expense u : memberAdapter.getList()){
-                        expense.getMembers().put(u.getId(),u.getDebt());
+                            expense.getMembers().put(u.getId(),u.getDebt());
                         }
                     }
+                        //expense.setOwner(expense.getMembers().keySet().iterator().next());
                         fdb.setValue(expense);
                     finish();
                 }
@@ -292,13 +295,14 @@ public class Expense_activity extends AppCompatActivity {
                 if (s != null) {
                     try {
                         expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
-                        expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
+                        expense_price =  expense.getPrice();
                         costPerUser = (expense_price/list.size());
-                        for(UserDatabase u : partecipants)
-                            expense.getMembers().put(u.getId(),costPerUser);
+
                         DecimalFormat df = new DecimalFormat("0.00");
                         String formate = df.format(costPerUser);
                         double finalValue = Double.parseDouble(formate.replace(',', '.'));
+                        for(UserDatabase u : partecipants)
+                            expense.getMembers().put(u.getId(),finalValue);
                         //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
                     } catch (NumberFormatException e) {
@@ -352,9 +356,11 @@ public class Expense_activity extends AppCompatActivity {
                                        int position, long id) {
                 switch (position){
                     case 0: recyclerView.setVisibility(View.GONE);
+                        isEqualPart=true;
 
                         break;
                     case 1: recyclerView.setVisibility(View.VISIBLE);
+                        isEqualPart=false;
                 }
             }
             @Override
