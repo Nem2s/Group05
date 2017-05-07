@@ -110,7 +110,8 @@ public class Expense_activity extends AppCompatActivity {
             p_custom = event.getEvent().getTotal();
         }
         if(event.getN() < 0) {
-            list.remove(list.get(event.getUser().getId()));
+            list.remove(event.getUser().getId());
+            event.getUser().getExpense().getMembers().remove(event.getUser().getId());
             Toast.makeText(getApplicationContext(), "Removed " + event.getUser().getName(), Toast.LENGTH_SHORT).show();
         }
         else {

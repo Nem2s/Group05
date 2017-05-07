@@ -26,7 +26,7 @@ public class User_expense extends UserDatabase {
         this.iProfile = userDatabase.getiProfile();
         this.balance = userDatabase.getBalance();
         this.customValue = 0.0;
-        isSelected = false;
+        isSelected = true;
     }
 
 

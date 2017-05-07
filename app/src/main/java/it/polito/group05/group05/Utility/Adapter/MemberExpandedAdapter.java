@@ -86,7 +86,9 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                         us.setSelected(false);
                         users.get(position).setCustomValue(0.0).setSelected(false);
                         us.setCustomValue(0.0);
-                        us.getExpense().getMembers().remove(us.getExpense().getMembers().get(us.getId()));
+                        //us.getExpense().getMembers().put(us.getId(),0.0);
+
+                        us.getExpense().getMembers().remove(us.getId());
                         }
                     else {
                         users.get(position).setCustomValue(0.0).setSelected(true);
@@ -99,45 +101,45 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
             });
             if(!us.hasCustomValue()) {
                 costo_person.setText(String.valueOf(costPerUser));
-                us.getExpense().getMembers().put(us.getId(), costPerUser);
+                if(!us.isSelected())
+                    us.getExpense().getMembers().remove(us.getId());
+                else
+                    us.getExpense().getMembers().put(us.getId(),costPerUser);
+
+
             }
             else {
                 costo_person.setText(String.valueOf(us.getCustomValue()));
-                us.getExpense().getMembers().put(us.getId(),us.getCustomValue());
+                if(us.isSelected())
+                    us.getExpense().getMembers().put(us.getId(),us.getCustomValue());
             }
            costo_person.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
 
-                    if(!hasFocus) {
-                        if(cost_procapite == 0.0) {
+                    if (!hasFocus) {
+                        if (cost_procapite == 0.0) {
                             costo_person.setText(String.valueOf(0.0));
-                            us.getExpense().getMembers().put(us.getId(),0.0);
+                            us.getExpense().getMembers().put(us.getId(), 0.0);
                             us.setCustomValue(0.0);
                             users.get(position).setCustomValue(0.0);
                             EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
-                        }
-                        else {
+                        } else {
                             if (cost_procapite == costPerUser) {
-                            //    costo_person.setText(String.valueOf(cost_procapite));
                                 return;
                             } else {
-                            //    if (prezzocambiato == true) {
-                                                us.setCustomValue(cost_procapite)
-                                                  .getExpense().getMembers()
-                                                        .put(us.getId(),us.getCustomValue());
-
-                             //   } else {
-                                 //   us.setCustomValue(costAnna);
-                                  //  users.get(position).setCustomValue(costAnna);
-                                }//costo_person.setText(String.valueOf(cost_procapite));
+                                us.setCustomValue(cost_procapite)
+                                        .getExpense().getMembers()
+                                        .put(us.getId(), us.getCustomValue());
 
                                 EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
                             }
-                    }
+                        }
 
-                }
-            });
+                    }
+                } });
+
+
             costo_person.addTextChangedListener(new TextWatcher(){
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -171,6 +173,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                     }
                 }
             });
+
+
         }
         public boolean isCustomValue() {
             return customValue;
