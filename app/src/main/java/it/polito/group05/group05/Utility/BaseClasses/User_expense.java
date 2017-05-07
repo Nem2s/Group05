@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class User_expense extends UserDatabase {
     GroupDatabase group;
-    Expense expense;
+    ExpenseDatabase expense;
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
     boolean isSelected;
@@ -26,7 +26,7 @@ public class User_expense extends UserDatabase {
         this.iProfile = userDatabase.getiProfile();
         this.balance = userDatabase.getBalance();
         this.customValue = 0.0;
-        isSelected = false;
+        isSelected = true;
     }
 
 
@@ -51,8 +51,8 @@ public class User_expense extends UserDatabase {
     }
 
 
-    public void setCustomValue(Double customValue) {
-        this.customValue = customValue;
+    public User_expense setCustomValue(Double customValue) {
+        this.customValue = customValue;return this;
     }
 
     public static List<UserDatabase> createListUserExpense(GroupDatabase g,Expense e){
@@ -105,11 +105,11 @@ public class User_expense extends UserDatabase {
         this.group = p;
     }
 
-    public Expense getExpense() {
+    public ExpenseDatabase getExpense() {
         return expense;
     }
 
-    public void setExpense(Expense s) {
+    public void setExpense(ExpenseDatabase s) {
         this.expense = s;
     }
 

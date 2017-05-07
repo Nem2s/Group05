@@ -35,6 +35,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -79,9 +81,9 @@ public class Expense_activity extends AppCompatActivity {
     private GroupDatabase actual_group;
     private RelativeLayout rel_info;
     private Double costPerUser = 0.0;
-    DatabaseReference fdb;
-    private List<UserDatabase> partecipants = new ArrayList<>();
-    private List<UserDatabase> list = new ArrayList<>();
+    private DatabaseReference fdb;
+    private List<User_expense> partecipants = new ArrayList<>();
+    private Map<String, User_expense> list = new TreeMap<>();
     private boolean isEqualPart=true;
 
     @Override
@@ -97,25 +99,7 @@ public class Expense_activity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void removePartecipant(User_expense e){
-        for(UserDatabase u : list){
-            if(u.getId()== e.getId())
-            {
-                list.remove(u);
-                break;
-            }
-        }
-    }
 
-    public void addPartecipant(User_expense e){
-        for(UserDatabase u : partecipants){
-            if(u.getId()== e.getId())
-            {
-                list.add(u);
-                break;
-            }
-        }
-    }
     @Subscribe
     public void onPartecipantsChanged(PartecipantsNumberChangedEvent event) {
         int n_custom = 0;
@@ -125,24 +109,26 @@ public class Expense_activity extends AppCompatActivity {
             p_custom = event.getEvent().getTotal();
         }
         if(event.getN() < 0) {
-            removePartecipant(event.getUser());
+            list.remove(event.getUser().getId());
+            event.getUser().getExpense().getMembers().remove(event.getUser().getId());
             Toast.makeText(getApplicationContext(), "Removed " + event.getUser().getName(), Toast.LENGTH_SHORT).show();
         }
         else {
-            addPartecipant(event.getUser());
+            list.put(event.getUser().getId(), event.getUser());
             Toast.makeText(getApplicationContext(), "Added " + event.getUser().getName(), Toast.LENGTH_SHORT).show();
         }
 
         costPerUser = ((expense.getPrice() - p_custom)/(list.size() - n_custom));
-        DecimalFormat df=new DecimalFormat("0.00");
+       DecimalFormat df=new DecimalFormat("0.00");
         String formate = df.format(costPerUser);
         double finalValue = Double.parseDouble(formate.replace(',', '.'));
         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+      // EventBus.getDefault().post(new PriceChangedEvent(costPerUser));
     }
 
     @Subscribe
     public void onCustomValueSetted(ExpenseDividerEvent event) {
-        if(event.getTotal() > expense_price) {
+        if(event.getTotal() > expense.getPrice()) {
             Snackbar.make(parent, "Defined cost is higher than the total expense cost!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
                         @Override
@@ -173,6 +159,8 @@ public class Expense_activity extends AppCompatActivity {
         costPerUser = 0.0;
         expense_price = 0.0;
         expense= new ExpenseDatabase();
+        expense.setPrice(0.0);
+        //expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
@@ -206,12 +194,14 @@ public class Expense_activity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
-            if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)instanceof UserDatabase)) continue;
-            partecipants.add((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
 
+        for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
+            if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)instanceof UserDatabase)) return;
+            User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
+            ue.setExpense(expense);
+            partecipants.add(ue);
+            list.put(ue.getId(),ue);
        }
-        list.addAll(partecipants);
         List<String> array= new ArrayList<>();
         array.add("Equal part");
         array.add("Unequal part");
@@ -226,8 +216,8 @@ public class Expense_activity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-        expense.setTimestamp(expense_timestamp.toString());
 
+        expense.setTimestamp(expense_timestamp.toString());
         cb_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,12 +243,12 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
-                    if( !isEqualPart){
+/*
+                    if(!isEqualPart){
                         for(User_expense u : memberAdapter.getList()){
-                            expense.getMembers().put(u.getId(),u.getDebt());
+                            expense.getMembers().put(u.getId(), u.getCustomValue());
                         }
-                    }
-                        //expense.setOwner(expense.getMembers().keySet().iterator().next());
+                    }*/
                         fdb.setValue(expense);
                     finish();
                 }
@@ -295,18 +285,22 @@ public class Expense_activity extends AppCompatActivity {
                 if (s != null) {
                     try {
                         expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
-                        expense_price =  expense.getPrice();
-                        costPerUser = (expense_price/list.size());
-
+                        expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
+                        costPerUser = (expense.getPrice()/(list.size()));
+                        for(UserDatabase u : partecipants) {
+                     /*       if(u.getId().compareTo(expense.getOwner())==0)
+                                expense.getMembers().put(u.getId(), expense.getPrice()-costPerUser);
+                            else*/
+                                expense.getMembers().put(u.getId(), costPerUser);
+                        }
                         DecimalFormat df = new DecimalFormat("0.00");
                         String formate = df.format(costPerUser);
                         double finalValue = Double.parseDouble(formate.replace(',', '.'));
-                        for(UserDatabase u : partecipants)
-                            expense.getMembers().put(u.getId(),finalValue);
                         //et_cost.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
                     } catch (NumberFormatException e) {
-                        expense_price=0.0;
+                        expense.setPrice(0.0);
+                        expense_price = 0.0;
                     }
                 }
             }
@@ -357,7 +351,6 @@ public class Expense_activity extends AppCompatActivity {
                 switch (position){
                     case 0: recyclerView.setVisibility(View.GONE);
                         isEqualPart=true;
-
                         break;
                     case 1: recyclerView.setVisibility(View.VISIBLE);
                         isEqualPart=false;
