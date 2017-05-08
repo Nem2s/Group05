@@ -13,6 +13,12 @@ import java.util.Random;
 public class CurrentUser extends UserDatabase{ //This will be the CurrentUser class
     private List<String> groups;
     private List<UserContact> userContactList;
+    private Bitmap img_profile;
+
+    public CurrentUser(UserDatabase u) {
+        super();
+        this.groups = u.UserGruopsList();
+    }
 
     public List<UserContact> getUserContactList() {
         return userContactList;
@@ -45,6 +51,13 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
         return null;
     }
 
+    public Bitmap getImg_profile() {
+        return img_profile;
+    }
+
+    public void setImg_profile(Bitmap img_profile) {
+        this.img_profile = img_profile;
+    }
 
     /*
     public boolean hasCustomValue() {

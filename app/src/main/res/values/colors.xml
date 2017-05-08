@@ -12,7 +12,7 @@
         <color name="white">@android:color/white</color>
         <color name="grey_100">#F5F5F5</color>
         <color name="grey_300">#E0E0E0</color>
-
+        <color name="material_red_a200">#FF5252</color>
         <color name="chat_user_reply_background_color">#c8f0ff</color>
 
         <color name="chat_company_reply_background_color">#F5F5F5</color>

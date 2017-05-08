@@ -31,6 +31,7 @@
     <string name="emailpassword_title_text">Email and Password</string>
 
 
+
     <string-array name="deadline_name">
         <item>12 ore</item>
         <item>24 ore</item>
@@ -52,7 +53,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_expense__vertical_stepper">Expense_activity_Vertical_stepper
     </string>
-    <string name="title_activity_main">MainActivity</string>
 
 
 </resources>

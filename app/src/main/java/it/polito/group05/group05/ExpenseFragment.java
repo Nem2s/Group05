@@ -2,7 +2,9 @@ package it.polito.group05.group05;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,28 +14,55 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
-import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Group;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
+import it.polito.group05.group05.Utility.ExpenseAdapter;
+import it.polito.group05.group05.Utility.HideScrollListener;
 
+import static it.polito.group05.group05.Group_Activity.appBar;
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
 
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link ExpenseFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link ExpenseFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class ExpenseFragment extends Fragment {
-    FirebaseRecyclerAdapter ea;
+    ExpenseAdapter ea;
     RecyclerView rv;
     List<Expense> expenses;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private OnFragmentInteractionListener mListener;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(ea != null) {
+            expenses.clear();
+            expenses.addAll(Singleton.getInstance().getmCurrentGroup().getExpenses());
+            ea.notifyDataSetChanged();
+        }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ea.notifyDataSetChanged();
+    }
 
     public ExpenseFragment() {
         // Required empty public constructor
@@ -62,6 +91,10 @@ public class ExpenseFragment extends Fragment {
 
     private static void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        //int fabBottomMargin = lp.bottomMargin;
+        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
     private static void showViews() {
@@ -73,19 +106,26 @@ public class ExpenseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
 
+        final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
+        View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        rv.setHasFixedSize(false);
-        rv.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true));
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
-        ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
-                R.layout.item_expense,ExpenseHolder.class,ref) {
+        rv.setOnScrollListener(new HideScrollListener() {
             @Override
-            protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
-                viewHolder.setData(model,getContext());
+            public void onHide() {
+                hideViews();
             }
-        };
+            @Override
+            public void onShow() {
+                showViews();
+            }
+
+        });
+
+        expenses =new ArrayList<>(currentGroup.getExpenses());
+
+        ea = new ExpenseAdapter(getContext(),expenses);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
         rv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
@@ -96,8 +136,11 @@ public class ExpenseFragment extends Fragment {
             }
         });
 
+        rv.setLayoutManager(llm);
         rv.setAdapter(ea);
+
         return rootView;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -123,12 +166,7 @@ public class ExpenseFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-    @Override
-    public void onStart() {super.onStart();}
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
