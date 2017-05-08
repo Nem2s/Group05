@@ -16,13 +16,15 @@ import android.widget.TextView;
 
 import com.google.firebase.database.Query;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 
 /**
@@ -53,21 +55,34 @@ public class ExpenseHolder extends GeneralHolder{
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): new Timestamp(System.currentTimeMillis())).toString());
+        Date date = new Date(System.currentTimeMillis());
+
+        String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
-        setupRecyclerViewExpense(rv, new ArrayList<Object>(expenseDatabase.getUsersExpense().values()),context);
+
+
+        for (String i : expenseDatabase.getMembers().keySet()){
+            if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
+            User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
+            if(expenseDatabase.getOwner().compareTo(i)==0) x.setCustomValue(expenseDatabase.getMembers().get(i));
+                else x.setCustomValue((-1)*expenseDatabase.getMembers().get(i));
+                x.setExpense(expenseDatabase);
+                expenseDatabase.getUsersExpense().add(x);
+
+        }
+
       if(!(expenseDatabase.isMandatory())) {
             price.setTextColor(context.getResources().getColor(R.color.colorAccent));
         }
           setupListener(cv,price,context,expenseDatabase);
        // FirebaseDatabase.getInstance().getReference("expense").child(Singleton.getInstance().getCurrentGroup());
-
+        setupRecyclerViewExpense(rv, expenseDatabase,context);
 
 
     }
-private void setupRecyclerViewExpense(RecyclerView rv, final List expenseDatabase, final Context context){
+private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
@@ -78,12 +93,13 @@ private void setupRecyclerViewExpense(RecyclerView rv, final List expenseDatabas
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            ((GeneralHolder)holder).setData(expenseDatabase.get(position),context);
+
+            ((GeneralHolder)holder).setData(expenseDatabase.getUsersExpense().get(position),context);
         }
 
         @Override
         public int getItemCount() {
-            return expenseDatabase.size();
+            return expenseDatabase.getUsersExpense().size();
         }
     };
 

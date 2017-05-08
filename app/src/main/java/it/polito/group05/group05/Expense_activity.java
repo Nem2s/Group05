@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -81,11 +82,15 @@ public class Expense_activity extends AppCompatActivity {
     private UserDatabase expense_owner;
     private GroupDatabase actual_group;
     private RelativeLayout rel_info;
+    private LinearLayout layout_policy;
     private Double costPerUser = 0.0;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
     private Map<String, User_expense> list = new TreeMap<>();
     private boolean isEqualPart=true;
+
+
+
 
     @Override
     protected void onStart() {
@@ -174,6 +179,7 @@ public class Expense_activity extends AppCompatActivity {
         cb_details= (CheckBox) findViewById(R.id.more_details);
         cardView = (CardView) findViewById(R.id.card_view2_toshow);
         cardView.setVisibility(View.GONE);
+
         cb_description = (CheckBox) findViewById(R.id.cb1_description);
         et_description = (MaterialEditText) findViewById(R.id.et_description_expense);
         et_description.setVisibility(View.GONE);
@@ -186,11 +192,17 @@ public class Expense_activity extends AppCompatActivity {
         //info = (ImageView) findViewById(R.id.InfoButton);
         tv_policy= (TextView) findViewById(R.id.tv_policy);
         spinner_policy = (Spinner) findViewById(R.id.spinner_policy);
+        layout_policy = (LinearLayout) findViewById(R.id.layout_policy);
+        spinner_policy.setVisibility(View.VISIBLE);
+        tv_policy.setVisibility(View.VISIBLE);
+        layout_policy.setVisibility(View.VISIBLE);
         //rel_info= (RelativeLayout) findViewById(R.id.relative_info);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
+
+
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -244,12 +256,19 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
-/*
-                    if(!isEqualPart){
-                        for(User_expense u : memberAdapter.getList()){
-                            expense.getMembers().put(u.getId(), u.getCustomValue());
+                    //PROPOSAL
+                    if(!expense.isMandatory()){
+                        for(String s : expense.getMembers().keySet()){
+                                 expense.getMembers().put(s ,0.0);
                         }
-                    }*/
+                    }
+     /*               for(String s : expense.getMembers().keySet()){
+                        if(s!=Singleton.getInstance().getUserId())
+                        expense.getMembers().put(s,(-1.00)*expense.getMembers().get(s));
+                        else
+                            expense.getMembers().put(s,expense.getPrice()-expense.getMembers().get(s));
+                    }
+                    */
                         fdb.setValue(expense);
                     finish();
                 }
@@ -333,9 +352,20 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v) {
                 if(cb_proposal.isChecked()){
                     expense.setType(1); //; = TYPE_EXPENSE.NOTMANDATORY;
+                    spinner_policy.setVisibility(View.INVISIBLE);
+                    tv_policy.setVisibility(View.GONE);
+                    layout_policy.setVisibility(View.GONE);
+                    layout_policy.invalidate();
+
+
                 }
-                else
+                else {
                     expense.setType(0); //expense_type = TYPE_EXPENSE.MANDATORY;
+                    spinner_policy.setVisibility(View.VISIBLE);
+                    tv_policy.setVisibility(View.VISIBLE);
+                    layout_policy.setVisibility(View.VISIBLE);
+                    layout_policy.invalidate();
+                }
             }
         });
 

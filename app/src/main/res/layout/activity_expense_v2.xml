@@ -215,9 +215,9 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_margin="8dp"
-                                android:layout_toRightOf="@id/cb2_addfile"
+                                android:layout_margin="16dp"
                                 android:src="@drawable/clip"
+                                android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:visibility="visible" />
 
@@ -275,7 +275,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/cb4_proposal"
                                 android:layout_margin="8dp"
-                                android:layout_marginBottom="10dp">
+                                android:layout_marginBottom="10dp"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/tv_policy"
@@ -283,8 +284,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
                                     android:text="Split"
-                                    android:textStyle="normal" />
+                                    android:textStyle="normal"
+                                    android:visibility="gone"/>
                                 <Spinner
+                                    android:visibility="gone"
                                     android:id="@+id/spinner_policy"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"

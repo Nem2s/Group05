@@ -105,8 +105,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                     us.getExpense().getMembers().remove(us.getId());
                 else
                     us.getExpense().getMembers().put(us.getId(),costPerUser);
-
-
             }
             else {
                 costo_person.setText(String.valueOf(us.getCustomValue()));
@@ -135,10 +133,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
                                 EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
                             }
                         }
-
                     }
                 } });
-
 
             costo_person.addTextChangedListener(new TextWatcher(){
                 @Override

@@ -41,7 +41,10 @@ public class ExpenseDatabase implements Namable{
         this.price = edb.price;
         this.timestamp=edb.timestamp;
         this.type=edb.type;
-        members = new HashMap<>();
+        if(edb.members== null) members = new HashMap<>();
+        else  members = edb.members;
+
+
     }
 
     //METHODS
@@ -80,7 +83,7 @@ public class ExpenseDatabase implements Namable{
         return type;
     }
     public void setType(int type) {
-        type=type;
+        this.type=type;
     }
     public void setFile(String file) {
         this.file = file;
