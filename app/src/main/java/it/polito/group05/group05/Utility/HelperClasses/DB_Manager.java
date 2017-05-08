@@ -43,6 +43,7 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
 
 
 /**
@@ -149,6 +150,7 @@ public class DB_Manager {
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
         imageProfileUpload(1, userDatabase.getId(), currentUser.getImg_profile());
+        Singleton.getInstance().setCurrentUser(currentUser);
     }
 
     public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
@@ -173,14 +175,15 @@ public class DB_Manager {
 
     public  void getCurrentUser() {
         userRef.orderByChild("authKey")
-                //.equalTo(mAuth.getCurrentUser().getUid())
-                .equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
+                .equalTo(mAuth.getCurrentUser().getUid())
+                //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         CurrentUser currentUser = new CurrentUser();
-                        if (!dataSnapshot.exists()) { Singleton.getInstance().setCurrentUser(currentUser);
-                        Singleton.getInstance().getCurrentUser().setId("-KioOGqwrdiD3fyAvBet");}
+                        if (!dataSnapshot.exists()) {
+                                EventBus.getDefault().post(new NewUserEvent());
+                            }
                         for(DataSnapshot child : dataSnapshot.getChildren()) {
                             for(DataSnapshot child2 : child.getChildren()) {
                                 if (child2.getKey().equals(userInfo)) {
