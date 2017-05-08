@@ -69,6 +69,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
+    compile 'com.dmitrymalkovich.android:progress-fab:1.6'
     testCompile 'junit:junit:4.12'
 }
 
