@@ -68,19 +68,18 @@ public class SignUpActivity extends AppCompatActivity {
     @Subscribe
     public void currentUserReady(CurrentUserReadyEvent event) {
         startActivity(new Intent(this, MainActivity.class));
-        //finish();
+        finish();
     }
 
     @Subscribe
     public void newUser(NewUserEvent event)
     {
-        CurrentUser ud = new CurrentUser();
-        ud.setAuthKey(mCurrentUser.getUid());
-        ud.setName(mCurrentUser.getDisplayName());
-        ud.setEmail(mCurrentUser.getEmail());
-        ud.setBalance(new Balance(0,0));
-        DB_Manager.getInstance().setContext(this).pushNewUser(ud);
+
+        dialogSignUp();
+
+
         //// TODO: 08-May-17 SECONDA ARTE REGISTRAZIONE NUOVO UTENTE
+
 
     }
 
@@ -124,6 +123,7 @@ public class SignUpActivity extends AppCompatActivity {
                 ud.setImg_profile(bitmap);
             }
 
+
         }
     }
 
@@ -138,67 +138,12 @@ public class SignUpActivity extends AppCompatActivity {
         if (resultCode == ResultCodes.OK) {
             mCurrentUser = mAuth.getCurrentUser();
             DB_Manager.getInstance().setContext(this).getCurrentUser();
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
-                    .backgroundColor(getResources().getColor(R.color.card_background))
-                    .positiveColor(getResources().getColor(R.color.colorPrimary))
-                    .contentColor(getResources().getColor(R.color.colorPrimary))
-                    .titleColor(getResources().getColor(R.color.colorPrimary))
-                    .title("Personal Informations")
-                    .customView(R.layout.dialog_view, true)
-                    .positiveText("Ok")
-                    .cancelable(false)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if(user_img != null && et_user_phone.getText().length() > 0) {
-                                ud.setTelNumber(et_user_phone.getText().toString());
-                                Singleton.getInstance().setCurrentUser(ud);
-                                DB_Manager.getInstance().setContext(activity).pushNewUser(ud);
-                                startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-                                dialog.dismiss();
-                                finish();
-                                return;
-                            }
-                        }
-                    });
-            final MaterialDialog dialog = builder.build();
-            dialog.show();
-            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-            user_info = dialog.getCustomView();
-            user_img = (CircleImageView)user_info.findViewById(R.id.iv_pick_user_image);
-            et_user_phone = (EditText)user_info.findViewById(R.id.et_phone_number);
-            et_user_phone.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if(charSequence.length() >10 && charSequence.length() < 17)
-                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
-                    else
-                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            user_img.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ImagePicker.pickImage(activity, "Select Profile Image:");
-                    IMAGE_PICKER_CODE = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-                }
-            });
-        } else {
+        }
+        else {
             mAuth.signOut();
             finish();
         }
+
     }
 
 
@@ -326,4 +271,80 @@ public class SignUpActivity extends AppCompatActivity {
                 .show();
     }
 
+
+    public void dialogSignUp(){
+
+       final  CurrentUser ud = new CurrentUser();
+        ud.setAuthKey(mCurrentUser.getUid());
+        ud.setName(mCurrentUser.getDisplayName());
+        ud.setEmail(mCurrentUser.getEmail());
+        ud.setBalance(new Balance(0,0));
+        DB_Manager.getInstance().setContext(this).pushNewUser(ud);
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .backgroundColor(getResources().getColor(R.color.card_background))
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .contentColor(getResources().getColor(R.color.colorPrimary))
+                .titleColor(getResources().getColor(R.color.colorPrimary))
+                .title("Personal Informations")
+                .customView(R.layout.dialog_view, true)
+                .positiveText("Ok")
+                .cancelable(false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if(user_img != null && et_user_phone.getText().length() > 0) {
+                            ud.setTelNumber(et_user_phone.getText().toString());
+                            Singleton.getInstance().setCurrentUser(ud);
+                            DB_Manager.getInstance().setContext(activity).pushNewUser(ud);
+                            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                            dialog.dismiss();
+                            finish();
+                            return;
+                        }
+                    }
+                });
+        final MaterialDialog dialog = builder.build();
+        dialog.show();
+        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+        user_info = dialog.getCustomView();
+        user_img = (CircleImageView)user_info.findViewById(R.id.iv_pick_user_image);
+        et_user_phone = (EditText)user_info.findViewById(R.id.et_phone_number);
+        et_user_phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.length() >10 && charSequence.length() < 17)
+                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                else
+                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        user_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePicker.pickImage(activity, "Select Profile Image:");
+                IMAGE_PICKER_CODE = ImagePicker.PICK_IMAGE_REQUEST_CODE;
+            }
+        });
+    }
+
+
+
+
+
+
 }
+
+
+
