@@ -142,6 +142,7 @@ public class SignUpActivity extends AppCompatActivity {
                     .backgroundColor(getResources().getColor(R.color.card_background))
                     .positiveColor(getResources().getColor(R.color.colorPrimary))
                     .contentColor(getResources().getColor(R.color.colorPrimary))
+                    .titleColor(getResources().getColor(R.color.colorPrimary))
                     .title("Personal Informations")
                     .customView(R.layout.dialog_view, true)
                     .positiveText("Ok")
