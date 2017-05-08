@@ -94,6 +94,7 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 viewHolder.setData(model,getContext());
+                ll.smoothScrollToPosition(rv,null,position);
             }
         };
    /*     rv.setOnTouchListener(new View.OnTouchListener() {
@@ -105,14 +106,7 @@ public class ExpenseFragment extends Fragment {
                 return false;
             }
         });*/
-   ea.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-       @Override
-       public void onItemRangeInserted(int positionStart, int itemCount) {
-           super.onItemRangeInserted(positionStart, itemCount);
-           ll.smoothScrollToPosition(rv,null,0);
 
-       }
-   });
 
         rv.setAdapter(ea);
         return rootView;
