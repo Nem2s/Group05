@@ -30,6 +30,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
@@ -49,11 +50,22 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
 
     @Subscribe
-    public void onObjectAdded(CurrentUserReadyEvent event) {
-        EventBus.clearCaches();
-        EventBus.getDefault().unregister(this);
+    public void currentUserReady(CurrentUserReadyEvent event) {
         startActivity(new Intent(this, MainActivity.class));
         //finish();
+    }
+
+    @Subscribe
+    public void newUser(NewUserEvent event)
+    {
+        CurrentUser ud = new CurrentUser();
+        ud.setAuthKey(mCurrentUser.getUid());
+        ud.setName(mCurrentUser.getDisplayName());
+        ud.setEmail(mCurrentUser.getEmail());
+        ud.setBalance(new Balance(0,0));
+        DB_Manager.getInstance().setContext(this).pushNewUser(ud);
+        //// TODO: 08-May-17 SECONDA ARTE REGISTRAZIONE NUOVO UTENTE
+
     }
 
 
@@ -86,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             handleSignInResponse(resultCode, data);
-            finish();
+            //finish();
             return;
         }
     }
@@ -98,29 +110,20 @@ public class SignUpActivity extends AppCompatActivity {
         // Successfully signed in
         if (resultCode == ResultCodes.OK) {
             mCurrentUser = mAuth.getCurrentUser();
-            CurrentUser ud = setCurrentUser();
-            Singleton.getInstance().setCurrentUser(ud);
-            DB_Manager.getInstance().setContext(this).pushNewUser(ud);
             DB_Manager.getInstance().setContext(this).getCurrentUser();
-
-            //startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-            //finish();
             return;
         }
     }
 
 
-    private CurrentUser setCurrentUser() {
+    /*private CurrentUser setCurrentUser() {
         CurrentUser ud = new CurrentUser();
         ud.setAuthKey(mCurrentUser.getUid());
         ud.setName(mCurrentUser.getDisplayName());
         ud.setEmail(mCurrentUser.getEmail());
         ud.setBalance(new Balance(0,0));
- //       DB_Manager.getInstance().setContext(this).getCurrentUser();
-//        ud.setiProfile(mCurrentUser.getPhotoUrl().toString());
-
         return ud;
-    }
+    }*/
 
 
     private  boolean checkAndRequestPermissions() {
@@ -209,11 +212,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void startGoogleSignIn() {
         if (mCurrentUser != null) {
-            //CurrentUser ud = setCurrentUser();
-            //Singleton.getInstance().setCurrentUser(ud);
             DB_Manager.getInstance().setContext(this).getCurrentUser();
-            //startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-            //finish();
         } else {
             startActivityForResult(
                     AuthUI.getInstance().createSignInIntentBuilder()
