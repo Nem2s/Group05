@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
@@ -42,21 +40,16 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.security.acl.Group;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.Adapter.MemberInvitedAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
-import it.polito.group05.group05.Utility.Holder.MemberHolder;
 
 /**
  * Created by Marco on 05/05/2017.
@@ -340,7 +333,9 @@ public class NewGroupActivity extends AppCompatActivity {
         int id = item.getItemId();
         if(id == R.id.m_confirm) {
             DatabaseReference ref = groupRef.push();
-            GroupDatabase group = new GroupDatabase(ref.getKey(), et_group_name.getText().toString(), new Balance(0,0));
+            GroupDatabase group = new GroupDatabase();
+            group.setId(ref.getKey());
+            group.setName(et_group_name.getText().toString());
             for (UserContact u : Singleton.getInstance().getContactList(this)) {
                 if(u.isSelected()) {
                     group.members.put(u.getId(), false);

@@ -2,34 +2,26 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -45,14 +37,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mvc.imagepicker.ImagePicker;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import it.polito.group05.group05.Utility.Adapter.FirebaseAdapterExtension;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AppCompatActivity
@@ -200,8 +187,8 @@ public class MainActivity extends AppCompatActivity
         //FirebaseAdapterExtension adapter = new FirebaseAdapterExtension(this, GroupDatabase.class,
                 //R.layout.member_item_sample, GroupHolder.class,ref, new ArrayList<Object>());
         rv.setAdapter(x);
-       if(rv.getAdapter().getItemCount() == 0)
-           findViewById(R.id.no_groups_layout).setVisibility(View.VISIBLE);
+/*       if(rv.getAdapter().getItemCount() == 0)
+           findViewById(R.id.no_groups_layout).setVisibility(View.VISIBLE);*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)

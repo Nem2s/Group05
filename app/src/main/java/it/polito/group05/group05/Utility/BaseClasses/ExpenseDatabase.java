@@ -83,7 +83,7 @@ public class ExpenseDatabase implements Namable{
         return type;
     }
     public void setType(int type) {
-        type=type;
+        this.type=type;
     }
     public void setFile(String file) {
         this.file = file;
