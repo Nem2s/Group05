@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -87,7 +86,8 @@ public class ExpenseFragment extends Fragment {
 
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
         rv.setHasFixedSize(false);
-        rv.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true));
+        final LinearLayoutManager ll=  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
+        rv.setLayoutManager(ll);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref) {
@@ -96,7 +96,7 @@ public class ExpenseFragment extends Fragment {
                 viewHolder.setData(model,getContext());
             }
         };
-        rv.setOnTouchListener(new View.OnTouchListener() {
+   /*     rv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -104,7 +104,15 @@ public class ExpenseFragment extends Fragment {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
-        });
+        });*/
+   ea.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+       @Override
+       public void onItemRangeInserted(int positionStart, int itemCount) {
+           super.onItemRangeInserted(positionStart, itemCount);
+           ll.smoothScrollToPosition(rv,null,0);
+
+       }
+   });
 
         rv.setAdapter(ea);
         return rootView;
