@@ -142,7 +142,7 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@drawable/sfondo_sfumato</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorButtonNormal">@color/colorPrimary</item>

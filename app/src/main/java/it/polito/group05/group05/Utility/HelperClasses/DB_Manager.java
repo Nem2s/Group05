@@ -71,30 +71,6 @@ public class DB_Manager {
 
 
     private DB_Manager() {
-    }
-
-   /* public  void signOut(){
-        currentUserID = null;
-        Singleton.getInstance().clearGroups();
-        mAuth.signOut();
-    }*/
-
-    public static DB_Manager getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new DB_Manager();
-            database = getInstance().getDatabase();
-        }
-        return mInstance;
-    }
-
-    public DB_Manager setContext(Context context) {
-        this.context = context;
-        return mInstance;
-    }
-
-    public FirebaseDatabase getDatabase() {
-
         if (database == null) {
 
             //Realtime Database Init
@@ -120,6 +96,28 @@ public class DB_Manager {
             //Authentication Init
             mAuth = FirebaseAuth.getInstance();
         }
+    }
+
+   /* public  void signOut(){
+        currentUserID = null;
+        Singleton.getInstance().clearGroups();
+        mAuth.signOut();
+    }*/
+
+    public static DB_Manager getInstance(){
+        if(mInstance == null)
+        {
+            mInstance = new DB_Manager();
+        }
+        return mInstance;
+    }
+
+    public DB_Manager setContext(Context context) {
+        this.context = context;
+        return mInstance;
+    }
+
+    public FirebaseDatabase getDatabase() {
         return database;
     }
 
@@ -136,7 +134,7 @@ public class DB_Manager {
 
         ref.child(userInfo).setValue(userDatabase);
         ref.child(userGroups).setValue(tmp);
-
+        if(currentUser.getImg_profile() == null) currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.user_placeholder));
         imageProfileUpload(1, userDatabase.getId(), currentUser.getImg_profile());
     }
 

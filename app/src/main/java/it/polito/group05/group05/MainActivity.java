@@ -1,11 +1,13 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,13 +29,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -64,6 +70,10 @@ public class MainActivity extends AppCompatActivity
     CircleImageView cv_user_drawer;
     Activity activity;
     Context context;
+    ImageView iv_no_groups;
+    TextView tv_no_groups;
+    FirebaseIndexRecyclerAdapter mAdapter;
+    RecyclerView rv;
 
 
     @Override
@@ -95,6 +105,10 @@ public class MainActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
+        tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
+        rv = (RecyclerView) findViewById(R.id.groups_rv);
+        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
         setSupportActionBar(toolbar);
         activity = this;
         /**DEBUGG**/
@@ -184,24 +198,39 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        RecyclerView rv = (RecyclerView) findViewById(R.id.groups_rv);
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
-        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("userGroups");
-        FirebaseRecyclerAdapter x = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child("-KioOGqwrdiD3fyAvBet").child("userGroups");
+        mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
-                                                            GroupHolder.class,ref, groupRef){
+                                                            GroupHolder.class, groupRef, ref){
+
 
             @Override
             protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, Object model, int position) {
                 ((GroupHolder)viewHolder).setData(model,context);
             }
+
+            @Override
+            protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+                super.onChildChanged(type, index, oldIndex);
+                tv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                pb.setVisibility(View.GONE);
+
+            }
+
         };
         //FirebaseAdapterExtension adapter = new FirebaseAdapterExtension(this, GroupDatabase.class,
                 //R.layout.member_item_sample, GroupHolder.class,ref, new ArrayList<Object>());
-        rv.setAdapter(x);
-       if(rv.getAdapter().getItemCount() == 0)
-           findViewById(R.id.no_groups_layout).setVisibility(View.VISIBLE);
+        rv.setAdapter(mAdapter);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
