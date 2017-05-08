@@ -1,17 +1,13 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -76,6 +71,29 @@ public class DB_Manager {
 
 
     private DB_Manager() {
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
+        userRef = database.getReference("users");
+        userRef.keepSynced(true);
+        usernumberRef = database.getReference("usersNumber");
+        usernumberRef.keepSynced(true);
+        groupRef = database.getReference("groups");
+        groupRef.keepSynced(true);
+        expenseRef = database.getReference("expense");
+        expenseRef.keepSynced(true);
+        inviteRef = database.getReference("invites");
+        inviteRef.keepSynced(true);
+
+        //Storege Init
+        storage = FirebaseStorage.getInstance();
+        storageGroupRef = storage.getReference("groups");
+        storageUserRef = storage.getReference("users");
+        storageExpenseRef = storage.getReference("expenses");
+
+        //Authentication Init
+        mAuth = FirebaseAuth.getInstance();
+
+
     }
 
    /* public  void signOut(){
@@ -88,7 +106,6 @@ public class DB_Manager {
         if(mInstance == null)
         {
             mInstance = new DB_Manager();
-            database = getInstance().getDatabase();
         }
         return mInstance;
     }
@@ -98,47 +115,16 @@ public class DB_Manager {
         return mInstance;
     }
 
-    public FirebaseDatabase getDatabase() {
 
-        if (database == null) {
-
-            //Realtime Database Init
-            database = FirebaseDatabase.getInstance();
-            database.setPersistenceEnabled(true);
-            userRef = database.getReference("users");
-            userRef.keepSynced(true);
-            usernumberRef = database.getReference("usersNumber");
-            usernumberRef.keepSynced(true);
-            groupRef = database.getReference("groups");
-            groupRef.keepSynced(true);
-            expenseRef = database.getReference("expense");
-            expenseRef.keepSynced(true);
-            inviteRef = database.getReference("invites");
-            inviteRef.keepSynced(true);
-
-            //Storege Init
-            storage = FirebaseStorage.getInstance();
-            storageGroupRef = storage.getReference("groups");
-            storageUserRef = storage.getReference("users");
-            storageExpenseRef = storage.getReference("expenses");
-
-            //Authentication Init
-            mAuth = FirebaseAuth.getInstance();
-        }
-        return database;
-    }
 
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = currentUser;
-
-        DatabaseReference ref = userRef.push();
+        DatabaseReference ref = userRef.child(currentUser.getEmail()).push();
         //currentUserID = ref.getKey();
-        userDatabase.setId(ref.getKey());
-
+        userDatabase.setId(currentUser.getEmail());
         Map<String, Object> tmp = new HashMap<String, Object>();
         tmp.put("00", true);
-
         ref.child(userInfo).setValue(userDatabase);
         ref.child(userGroups).setValue(tmp);
         tmp.clear();
@@ -173,14 +159,17 @@ public class DB_Manager {
 
     public  void getCurrentUser() {
         userRef.orderByChild("authKey")
-                //.equalTo(mAuth.getCurrentUser().getUid())
-                .equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
+                .equalTo(mAuth.getCurrentUser().getUid())
+                //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         CurrentUser currentUser = new CurrentUser();
-                        if (!dataSnapshot.exists()) { Singleton.getInstance().setCurrentUser(currentUser);
-                        Singleton.getInstance().getCurrentUser().setId("-KioOGqwrdiD3fyAvBet");}
+                        if (!dataSnapshot.exists()) {
+                            Singleton.getInstance().setCurrentUser(currentUser);
+
+                            Singleton.getInstance().getCurrentUser().setId("-KioOGqwrdiD3fyAvBet");
+                        }
                         for(DataSnapshot child : dataSnapshot.getChildren()) {
                             for(DataSnapshot child2 : child.getChildren()) {
                                 if (child2.getKey().equals(userInfo)) {

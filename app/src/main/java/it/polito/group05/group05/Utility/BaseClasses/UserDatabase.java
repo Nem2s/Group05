@@ -1,10 +1,7 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,8 +108,9 @@ public class UserDatabase implements Namable{
     public List<String> UserGruopsList() {
 
 
+       if(userGroups!=null)
         return new ArrayList<>(userGroups.keySet());
-
+        else return new ArrayList<>();
     }
 
     public String getiProfile() {

@@ -1,10 +1,8 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Marco on 28/03/2017.
@@ -16,7 +14,7 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
     private Bitmap img_profile;
 
     public CurrentUser(UserDatabase u) {
-        super();
+        super(u);
         this.groups = u.UserGruopsList();
     }
 

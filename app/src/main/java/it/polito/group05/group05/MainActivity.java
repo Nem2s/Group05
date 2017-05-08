@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getParent().finish();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
-        DB_Manager.getInstance().getDatabase();
+        DB_Manager.getInstance();
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.groups_rv);
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
