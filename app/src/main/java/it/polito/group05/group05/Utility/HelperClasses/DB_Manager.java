@@ -122,15 +122,16 @@ public class DB_Manager {
 
 
     public void pushNewUser(CurrentUser currentUser) {
-        UserDatabase userDatabase = currentUser;
+        UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
 
         DatabaseReference ref = userRef.push();
         //currentUserID = ref.getKey();
         userDatabase.setId(ref.getKey());
+        currentUser.setId(ref.getKey());
 
         Map<String, Object> tmp = new HashMap<String, Object>();
         tmp.put("00", true);
-
+        currentUser.setGroups(new ArrayList<String>());
         ref.child(userInfo).setValue(userDatabase);
         ref.child(userGroups).setValue(tmp);
         tmp.clear();
@@ -146,6 +147,7 @@ public class DB_Manager {
 
     public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
         DatabaseReference ref = groupRef.push();
+        groupDatabase.setId(ref.getKey());
         for(String s : groupDatabase.getMembers().keySet()){
             if(s==null) continue;
             Map<String, Object> temp = new HashMap<String, Object>();
@@ -153,7 +155,6 @@ public class DB_Manager {
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
         imageProfileUpload(2, groupDatabase.getId(), bitmap);
-        groupDatabase.setId(ref.getKey());
         ref.setValue(groupDatabase);
         return groupDatabase.getId();
     }
@@ -171,19 +172,23 @@ public class DB_Manager {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        CurrentUser currentUser = new CurrentUser();
+
                         if (!dataSnapshot.exists()) {
                                 EventBus.getDefault().post(new NewUserEvent());
+                            return;
                             }
+                        CurrentUser currentUser = new CurrentUser();
                         for(DataSnapshot child : dataSnapshot.getChildren()) {
                             for(DataSnapshot child2 : child.getChildren()) {
                                 if (child2.getKey().equals(userInfo)) {
-                                    UserDatabase u = child2.getValue(UserDatabase.class);
-                                    currentUser = new CurrentUser(u);
-                                } /*else if (child2.getKey().equals(userGroups)) {
-                                    Map<String, Object> tmp = child2.getValue(Map.class);
+                                    UserDatabase ud = child2.getValue(UserDatabase.class);
+                                    currentUser.settingInfoUser(ud);
+
+                                } else if (child2.getKey().equals(userGroups)) {
+                                    Map<String, Object> tmp = (Map<String,Object>)child2.getValue();
+                                    tmp.remove("00");
                                     currentUser.setGroups(new ArrayList<String>(tmp.keySet()));
-                                }*/
+                                }
                             }
                         }
                         Singleton.getInstance().setCurrentUser(currentUser);

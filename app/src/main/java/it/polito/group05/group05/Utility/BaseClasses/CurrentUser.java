@@ -14,8 +14,9 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
     private Bitmap img_profile;
 
     public CurrentUser(UserDatabase u) {
+
         super(u);
-        this.groups = u.UserGruopsList();
+        this.id = u.id;
     }
 
     public List<UserContact> getUserContactList() {
@@ -56,7 +57,13 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
     public void setImg_profile(Bitmap img_profile) {
         this.img_profile = img_profile;
     }
-
+    public void settingInfoUser(UserDatabase ud){
+        this.id = ud.id;
+        this.name = ud.name;
+        this.authKey = ud.authKey;
+        this.telNumber = ud.telNumber;
+        this.email = ud.email;
+    }
     /*
     public boolean hasCustomValue() {
         return customValue > 0;

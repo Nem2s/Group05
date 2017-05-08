@@ -9,14 +9,14 @@ import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 public class UserDatabase implements Namable{
 
-    public String id;
-    public String name;
-    public String authKey;
-    public String telNumber;
-    public String email;
-    public String iProfile;
-    public Balance balance;
-    public Map<String, Object> userGroups;
+    protected String id;
+    protected String name;
+    protected String authKey;
+    protected String telNumber;
+    protected String email;
+    protected String iProfile;
+    protected Balance balance;
+    protected Map<String, Object> userGroups;
 
     public UserDatabase(String id, String name, String authKey, String telNumber, String email, String iProfile) {
         this.id = id;

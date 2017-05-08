@@ -78,7 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
         dialogSignUp();
 
 
-        //// TODO: 08-May-17 SECONDA ARTE REGISTRAZIONE NUOVO UTENTE
+        //// TODO: 08-May-17 SECONDA pARTE REGISTRAZIONE NUOVO UTENTE
 
 
     }
@@ -279,7 +279,7 @@ public class SignUpActivity extends AppCompatActivity {
         ud.setName(mCurrentUser.getDisplayName());
         ud.setEmail(mCurrentUser.getEmail());
         ud.setBalance(new Balance(0,0));
-        DB_Manager.getInstance().setContext(this).pushNewUser(ud);
+
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .backgroundColor(getResources().getColor(R.color.card_background))
                 .positiveColor(getResources().getColor(R.color.colorPrimary))
@@ -318,7 +318,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(charSequence.length() >10 && charSequence.length() < 17)
+                if(charSequence.length() >8 && charSequence.length() < 17)
                     dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
                 else
                     dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
@@ -337,6 +337,7 @@ public class SignUpActivity extends AppCompatActivity {
                 IMAGE_PICKER_CODE = ImagePicker.PICK_IMAGE_REQUEST_CODE;
             }
         });
+
     }
 
 

@@ -58,7 +58,7 @@ public class ExpenseHolder extends GeneralHolder{
         Date date = new Date(System.currentTimeMillis());
 
         String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
-        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+        description.setText("Posted by "+Singleton.getInstance().getmCurrentGroup().getMembers().get(expenseDatabase.getOwner())+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
 
 
@@ -69,7 +69,6 @@ public class ExpenseHolder extends GeneralHolder{
                 else x.setCustomValue((-1)*expenseDatabase.getMembers().get(i));
                 x.setExpense(expenseDatabase);
                 expenseDatabase.getUsersExpense().add(x);
-
         }
 
       if(!(expenseDatabase.isMandatory())) {
@@ -123,6 +122,12 @@ private void setupListener(CardView cv,TextView price,final Context context,fina
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
                     d = d * (-1.00);
+                   /* FirebaseDatabase.getInstance().getReference("expense")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child(expense.getId())
+                            .child("members")
+                            .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);*/
+
                   //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
                 }
             });

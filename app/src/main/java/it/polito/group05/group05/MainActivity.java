@@ -24,9 +24,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,9 +36,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
@@ -89,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+    if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
+        pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
         activity = this;
         /**DEBUGG**/
@@ -109,7 +115,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
-                //cv_user_drawer.setImageBitmap(currentUser.getProfile_image());
+                Glide.with(context).using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userprofile.jpg"))
+                        .centerCrop()
+                        .crossFade()
+                        .into(cv_user_drawer);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
                 tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
@@ -117,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                 cv_user_drawer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ImagePicker.pickImage(activity, "Select Imageqweqeqwe:");
+                        ImagePicker.pickImage(activity, "Select Image:");
                         REQUEST_FROM_NEW_USER = ImagePicker.PICK_IMAGE_REQUEST_CODE;
                     }
                 });
@@ -168,8 +178,7 @@ public class MainActivity extends AppCompatActivity
             }
 
         };
-        //FirebaseAdapterExtension adapter = new FirebaseAdapterExtension(this, GroupDatabase.class,
-                //R.layout.member_item_sample, GroupHolder.class,ref, new ArrayList<Object>());
+
         rv.setAdapter(mAdapter);
 
     }
