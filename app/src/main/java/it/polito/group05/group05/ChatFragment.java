@@ -15,8 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -32,6 +35,8 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 
 import static android.app.Activity.RESULT_OK;
+import static it.polito.group05.group05.Group_Activity.fab;
+import static it.polito.group05.group05.Group_Activity.toolbar;
 import static it.polito.group05.group05.R.drawable.info;
 
 
@@ -45,11 +50,14 @@ import static it.polito.group05.group05.R.drawable.info;
  */
 public class ChatFragment extends Fragment {
     private static final int SIGN_IN_REQUEST_CODE = 111;
-    private FirebaseListAdapter<ChatDatabase> adapter;
-    private ListView listView;
-    private String textInput;
-    private OnFragmentInteractionListener mListener;
+    FirebaseListAdapter<ChatDatabase> adapter;
+    ListView listView;
+    String textInput;
     DatabaseReference fdb;
+    EditText input;
+    TextView tv;
+    private OnFragmentInteractionListener mListener;
+
 
     public ChatFragment() {
         // Required empty public constructor
@@ -66,14 +74,30 @@ public class ChatFragment extends Fragment {
         if (getArguments() != null) {}
     }
 
+    private static void hideViews() {
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    private static void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.chat_main, container, false);
-            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-            final EditText input = (EditText) rootView.findViewById(R.id.input);
+            tv = (TextView) rootView.findViewById(R.id.tv_prova);
+            input = (EditText) rootView.findViewById(R.id.input);
             listView = (ListView) rootView.findViewById(R.id.list);
-    //        showAllOldMessages();
+        //  fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup())
+                        .push().setValue(new ChatDatabase("CLA cla", "ANNA", "ORA"));
+            }
+        });
+            showAllOldMessages();
 
       /*      input.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -114,27 +138,21 @@ public class ChatFragment extends Fragment {
             });
         */
         return rootView;
-
-
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
-
     private void showAllOldMessages() {
-      /*  loggedInUserName = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("Main", "user id: " + loggedInUserName);
-*/
-    //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
-     // if(fdb.getKey().)
+
+        fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
         adapter = new info.devexchanges.firebasechatapplication.MessageAdapter(this,
-                info.devexchanges.firebasechatapplication.ChatDatabase.class, R.layout.item_in_message,
-                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
+                info.devexchanges.firebasechatapplication.ChatDatabase.class,
+                R.layout.item_in_message,
+                fdb);
         listView.setAdapter(adapter);
     }
 

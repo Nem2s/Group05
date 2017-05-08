@@ -123,6 +123,7 @@ private void setupListener(CardView cv,TextView price,final Context context,fina
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
                     d = d * (-1.00);
+
                   //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
                 }
             });

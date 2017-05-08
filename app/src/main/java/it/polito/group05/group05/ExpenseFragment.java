@@ -26,21 +26,11 @@ import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
 import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ExpenseFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ExpenseFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ExpenseFragment extends Fragment {
     FirebaseRecyclerAdapter ea;
     RecyclerView rv;
     List<Expense> expenses;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
     private OnFragmentInteractionListener mListener;
 
 

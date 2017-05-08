@@ -37,9 +37,6 @@ dependencies {
         transitive = true;
     }
 
-
-
-
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'

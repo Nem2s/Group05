@@ -199,6 +199,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     break;
                 case 1:
                     fragment =ChatFragment.newInstance();
+                    break;
                 case 2:
                     fragment =GroupDetailsFragment.newInstance();
                 break;
