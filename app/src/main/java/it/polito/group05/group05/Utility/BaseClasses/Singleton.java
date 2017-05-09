@@ -144,13 +144,16 @@ import java.util.Set;
                 String number = query.getString(indexNumber);
                 if(number.startsWith("+"))
                     number=number.substring(3);
-                    number = number.replace(" ", "");
-                    number = number.replace("-", "");
-                    //number = number.substring(number.length() - 10);
+                number = number.replace(" ", "");
+
+                number = number.replace("-", "");
+                if (number.length() >8 && number.length()<=10) {
+
                     String name = query.getString(indexName);
                     user.setName(name);
                     user.setTelNumber(number);
                     result.add(user);
+            }
             } while (query.moveToNext());
 
             List<UserContact> result1 = new ArrayList<UserContact>();
@@ -177,7 +180,6 @@ import java.util.Set;
             usernumberRef = database.getReference("usersNumber");
             userRef = database.getReference("users");
             for(UserContact UC : localList){
-
                 usernumberRef.child(UC.getTelNumber()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
