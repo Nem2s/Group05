@@ -43,6 +43,7 @@ public class UserDatabase implements Namable{
         this.authKey = ud.authKey;
         this.telNumber = ud.telNumber;
         this.email = ud.email;
+        this.iProfile = ud.iProfile;
     }
 
     public String getId() {
