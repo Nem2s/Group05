@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import cn.nekocode.badge.BadgeDrawable;
-import it.polito.group05.group05.HomeScreen;
 
-public class GroupDatabase {
+import it.polito.group05.group05.Utility.Interfaces.Namable;
+
+public class GroupDatabase implements Namable {
 
     public String id;
     public String name;
@@ -32,7 +33,18 @@ public class GroupDatabase {
         this.name = name;
         this.balance = balance;
         this.groupColor = groupColor;
+        members = new HashMap<>();
        // setBadge(badgeCount);
+    }
+
+    public GroupDatabase(GroupDatabase gd) {
+        this.name = gd.getName();
+        this.balance= gd.getBalance();
+        this.id = gd.getId();
+        this.lmTime= gd.getLmTime();
+        this.groupColor= gd.getGroupColor();
+        this.pictureUrl = gd.getPictureUrl();
+        members = new HashMap<>();
     }
 
 
@@ -88,38 +100,27 @@ public class GroupDatabase {
         return members;
     }
 
+    public UserDatabase getUserOwner (String id){
+        if(!members.containsKey(id) ) return null;
+        if(!(members.get(id) instanceof UserDatabase)) return null;
+            return (UserDatabase) members.get(id);
+
+    }
+
     public void setMembers(Map<String, Object> members) {
         this.members = members;
     }
 
-    public Map<String, Object> setMembers(List<User> users, String id)
+    public Map<String, Object> setMembers(List<UserDatabase> users, String id)
     {
         Map<String, Object> memb = new HashMap<String, Object>();
-        for(User u : users){
-            memb.put(u.getUser_name(), true);
+        for(UserDatabase u : users){
+            memb.put(u.getName(), true);
         }
-        //memb.remove("User");
-        memb.remove(Singleton.getInstance().getCurrentUser().getUser_name());
+
         memb.put(id, true);
         this.setMembers(memb);
         return memb;
     }
 
-    public Map<String, Object> setMembers(List<User> users)
-    {
-        Map<String, Object> memb = new HashMap<String, Object>();
-        for(User u : users){
-            memb.put(u.getId(), true);
-        }
-        this.setMembers(memb);
-        return memb;
-    }
-    /*
-            members.clear();
-        for(User u : users){
-            members.put(u.getId(), true);
-        }
-        //this.members=memb;
-        return members;
-     */
 }

@@ -1,70 +1,71 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Marco on 28/03/2017.
  */
 
-public class User {
-    private String id;
-    private String user_name;
-    private String email;
-    private Balance balance;
-    private Bitmap profile_image;
-    private Group user_group;
-    private int user_color;
-    private float tot_expenses;
-    private boolean isAdministrator;
-    private boolean isCardEnabled;
-    private boolean isSelected;
-    private List<UserContact> contacts;
-    private List<UserContact> regcontacts;
+public class CurrentUser extends UserDatabase{ //This will be the CurrentUser class
+    private List<String> groups;
+    private List<UserContact> userContactList;
+    private Bitmap img_profile;
 
+    public CurrentUser(UserDatabase u) {
 
-    private double customValue;
-
-    public User(){}
-    public User(String id, String user_name, Balance balance, Bitmap profile_image, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
-        this.id = id;
-        this.user_name = user_name;
-        this.balance = balance;
-        this.profile_image = profile_image;
-        this.user_group = user_group;
-        this.isAdministrator = isAdministrator;
-        this.isCardEnabled = isCardEnabled;
-        this.user_color = generateRandomColor();
-        this.contacts = new ArrayList<>();
-        this.regcontacts = new ArrayList<>();
-        isSelected = false;
-        this.customValue = 0;
+        super(u);
+        this.id = u.id;
     }
 
-    public User(String id, String user_name, Balance balance, Group user_group, boolean isAdministrator, boolean isCardEnabled) {
-        this.id = id;
-        this.user_name = user_name;
-        this.balance = balance;
-        this.user_group = user_group;
-        this.isAdministrator = isAdministrator;
-        this.isCardEnabled = isCardEnabled;
-        this.user_color = generateRandomColor();
-        this.contacts = new ArrayList<>();
-        this.regcontacts = new ArrayList<>();
-        isSelected = false;
-        this.customValue = 0;
+    public List<UserContact> getUserContactList() {
+        return userContactList;
+    }
+    public void setUserContactList(List<UserContact> userContactList) {
+        this.userContactList = userContactList;
     }
 
-    public User(String id, String user_name )
-    {
-        this.id = id;
-        this.user_name = user_name;
-        this.profile_image = profile_image;
+    public CurrentUser(){}
+
+
+    public List<String> getGroups() {
+        return groups;
     }
 
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
+
+    public void addGroup(String gId) {
+        if(this.groups.contains(gId)) return;
+        this.groups.add(gId);
+    }
+
+    public String removeGroup(String gId) {
+        if(this.groups.contains(gId)) {
+            this.groups.remove(gId);
+            return gId;
+        }
+        return null;
+    }
+
+    public Bitmap getImg_profile() {
+        return img_profile;
+    }
+
+    public void setImg_profile(Bitmap img_profile) {
+        this.img_profile = img_profile;
+    }
+    public void settingInfoUser(UserDatabase ud){
+        this.id = ud.id;
+        this.name = ud.name;
+        this.authKey = ud.authKey;
+        this.telNumber = ud.telNumber;
+        this.email = ud.email;
+        this.iProfile = ud.iProfile;
+    }
+    /*
     public boolean hasCustomValue() {
         return customValue > 0;
     }
@@ -192,8 +193,9 @@ public class User {
 
     public void addRegcontacts(UserContact u) {
         if(this.regcontacts == null ) this.regcontacts = new ArrayList<>();
+        if(this.regcontacts.contains(u)) return;
         this.regcontacts.add(u);
-    }
+    } */
 }
 
 
