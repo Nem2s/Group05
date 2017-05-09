@@ -137,6 +137,9 @@ public class DB_Manager {
         tmp.clear();
         tmp.put("authKey", userDatabase.getAuthKey());
         ref.updateChildren(tmp);
+        if(currentUser.getTelNumber().startsWith("+"))
+            currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
+        usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
 
         if(currentUser.getImg_profile() == null )
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
