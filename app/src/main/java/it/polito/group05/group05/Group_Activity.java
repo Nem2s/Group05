@@ -20,14 +20,17 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
-
-public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener,GroupDetailsFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -60,6 +63,13 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         context = this;
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .centerCrop()
+                //.placeholder(R.drawable.group_profile)
+                .crossFade()
+                .into(c);
         appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -177,7 +187,90 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
     }
 
+/*
 
+    public static class PlaceholderFragment extends Fragment {
+
+
+        ExpenseAdapter ea;
+
+
+
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public PlaceholderFragment() {
+        }
+
+
+        public static PlaceholderFragment newInstance(int s) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+
+            args.putInt(ARG_SECTION_NUMBER, s);
+            //args.putString(ARG_SECTION_NUMBER,s);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            if (getArguments().getInt(ARG_SECTION_NUMBER)==0) {
+                final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
+                View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
+                RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
+
+                rv.setOnScrollListener(new HideScrollListener() {
+                    @Override
+                    public void onHide() {
+                        hideViews();
+                    }
+                    @Override
+                    public void onShow() {
+                        showViews();
+                    }
+                });
+                //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+
+                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+                //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
+                expenses =new ArrayList<>(currentGroup.getExpenses());
+                ea = new ExpenseAdapter(getContext(),expenses);
+                LinearLayoutManager llm = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
+                rv.setOnTouchListener(new View.OnTouchListener() {
+                    // Setting on Touch Listener for handling the touch inside ScrollView
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // Disallow the touch request for parent scroll on touch of child view
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }
+                });
+
+                rv.setLayoutManager(llm);
+                rv.setAdapter(ea);
+
+                return rootView;
+
+
+        }
+        @Override
+        public void onResume() {
+            myOnResume();
+        }
+
+        public void myOnResume() {
+            super.onResume();
+            if(ea!=null) {
+                expenses = new ArrayList<>(Singleton.getInstance().getmCurrentGroup().getExpenses());
+                ea.notifyDataSetChanged();
+            }
+
+
+        }
+    }
+*/
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.

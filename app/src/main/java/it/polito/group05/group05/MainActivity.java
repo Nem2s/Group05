@@ -39,10 +39,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
+import java.util.UUID;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AppCompatActivity
@@ -69,7 +72,11 @@ public class MainActivity extends AppCompatActivity
             cv_user_drawer.setImageBitmap(bitmap);
             //currentUser.setProfile_image(bitmap);
             //DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
-
+            String uuid = UUID.randomUUID().toString();
+            Singleton.getInstance().getCurrentUser().setiProfile(uuid);
+            DB_Manager.getInstance().setContext(context)
+                    .imageProfileUpload(1, Singleton.getInstance().getCurrentUser().getId(), uuid,  bitmap);
+            FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userInfo").child("iProfile").setValue(uuid);
             drawer.closeDrawers();
             REQUEST_FROM_NEW_USER = -1;
         }
@@ -157,6 +164,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+
+        DatabaseReference groupkey = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
@@ -259,5 +268,4 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 }

@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,13 +87,6 @@ public class UserDatabase implements Namable{
         this.email = email;
     }
 
-    public String getProfileImage() {
-        return iProfile;
-    }
-
-    public void setProfileImage(String profileImmage) {
-        this.iProfile = profileImmage;
-    }
 
     public Balance getBalance() {
         return balance;
@@ -125,5 +119,4 @@ public class UserDatabase implements Namable{
     public void setUserGroups(Map<String, Object> userGroups) {
         this.userGroups = userGroups;
     }
-
 }

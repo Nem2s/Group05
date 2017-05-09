@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
@@ -120,6 +121,15 @@ public class DB_Manager {
 
 
 
+   /* public  void signOut(){
+        currentUserID = null;
+        Singleton.getInstance().clearGroups();
+        mAuth.signOut();
+    }*/
+
+
+
+
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
@@ -128,6 +138,9 @@ public class DB_Manager {
         //currentUserID = ref.getKey();
         userDatabase.setId(ref.getKey());
         currentUser.setId(ref.getKey());
+        String uuid = UUID.randomUUID().toString();
+        userDatabase.setiProfile(uuid);
+        currentUser.setiProfile(uuid);
 
         Map<String, Object> tmp = new HashMap<String, Object>();
         tmp.put("00", true);
@@ -144,7 +157,7 @@ public class DB_Manager {
         if(currentUser.getImg_profile() == null )
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
-        imageProfileUpload(1, userDatabase.getId(), currentUser.getImg_profile());
+        imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
@@ -157,7 +170,10 @@ public class DB_Manager {
             temp.put(groupDatabase.getId(), true);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        imageProfileUpload(2, groupDatabase.getId(), bitmap);
+
+        String uuid = UUID.randomUUID().toString();
+        groupDatabase.setPictureUrl(uuid);
+        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
         return groupDatabase.getId();
     }
@@ -207,22 +223,22 @@ public class DB_Manager {
                 });
     }
 
-    public  void imageProfileUpload(int type, String Id, Bitmap bitmap){
+    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
-        String name;
+        //String name;
         switch(type) {
             case (1):
                 ref = storageUserRef;
-                name = new String("userprofile.jpg");
+                //name = new String("userprofile.jpg");
                 break;
             case (2):
                 ref = storageGroupRef;
-                name = new String("grouprofile.jpg");
+                //name = new String("grouprofile.jpg");
                 break;
             case (3):
                 ref = storageExpenseRef;
-                name = new String("expenseprofile.jpg");
+                //name = new String("expenseprofile.jpg");
                 break;
             default:
                 return;

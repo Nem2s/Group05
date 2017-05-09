@@ -53,7 +53,7 @@ public class GroupHolder extends GeneralHolder {
         //groupProfile.setImageResource(R.drawable.boy);
             Glide.with(context)
                     .using(new FirebaseImageLoader())
-                    .load(FirebaseStorage.getInstance().getReference("groups").child(g.getId()).child("grouprofile.jpg"))
+                    .load(FirebaseStorage.getInstance().getReference("groups").child(g.getId()).child(g.getPictureUrl()))
                 .centerCrop()
                 .placeholder(R.drawable.group_profile)
                 .crossFade()

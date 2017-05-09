@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
+
 import org.greenrobot.eventbus.EventBus;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -42,8 +45,11 @@ public class MemberInvitedHolder extends GeneralHolder{
     public void setData(Object c, Context context) {
         final UserContact user = ((UserContact) c);
         Glide.with(context)
+                .using(new FirebaseImageLoader())
 
-                .load(user.getiProfile())
+                .load(FirebaseStorage.getInstance().getReference("users")
+                        .child(user.getId())
+                        .child(user.getiProfile()))
                 .asBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(img_profile);
