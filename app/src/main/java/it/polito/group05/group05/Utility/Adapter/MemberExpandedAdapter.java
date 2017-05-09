@@ -9,20 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -76,7 +77,21 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAd
             final UserDatabase userDatabase = (UserDatabase) c;
             final User_expense us= users.get(position);
             name_person.setText(userDatabase.getName());
-            image_person.setImageResource(R.drawable.group_profile);
+            //image_person.setImageResource(R.drawable.group_profile);
+            Glide.with(context)
+                    .using(new FirebaseImageLoader())
+                    .load(FirebaseStorage.getInstance().getReference("users")
+                            .child(us.getId())
+                            .child(us.getiProfile()))
+                    .asBitmap()
+                    .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
+                    .into(image_person);
+
+
+
+
+
+
             euro_person.setImageResource(R.drawable.euro);
             include_person.setOnClickListener(new View.OnClickListener() {
                 @Override

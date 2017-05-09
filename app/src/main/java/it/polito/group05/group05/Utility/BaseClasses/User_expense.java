@@ -63,7 +63,6 @@ public class User_expense extends UserDatabase {
             UserDatabase i = (UserDatabase)i1;
             User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
             x.setiProfile(i.getiProfile());
-            //   User_expense x = new User_expense();
             x.setId(i.getId());
             x.setName(i.getName());
             user_expenses.add(x);

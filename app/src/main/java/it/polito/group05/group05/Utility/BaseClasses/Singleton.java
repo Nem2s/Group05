@@ -144,7 +144,7 @@ import java.util.Set;
                 String number = query.getString(indexNumber);
                 if(number.startsWith("+"))
                     number=number.substring(3);
-                if (number.length() >= 10) {
+                if (number.length() > 8) {
                     number = number.replace(" ", "");
                     number = number.replace("-", "");
                     number = number.substring(number.length() - 10);

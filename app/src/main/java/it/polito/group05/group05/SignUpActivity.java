@@ -120,7 +120,7 @@ public class SignUpActivity extends AppCompatActivity {
             Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
             if(user_img != null && bitmap != null) {
                 user_img.setImageBitmap(bitmap);
-                ud.setImg_profile(bitmap);
+                        ud.setImg_profile(bitmap);
             }
 
 

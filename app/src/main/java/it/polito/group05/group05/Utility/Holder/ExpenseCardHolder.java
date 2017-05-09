@@ -41,6 +41,7 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
                 .centerCrop()
+                .crossFade()
                 .placeholder(R.drawable.user_placeholder)
                 .crossFade()
                 .into(civ);
