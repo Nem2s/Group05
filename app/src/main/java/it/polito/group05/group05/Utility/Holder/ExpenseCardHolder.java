@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -36,11 +38,15 @@ public class ExpenseCardHolder extends GeneralHolder {
         User_expense u = (User_expense) u1;
         String s = (u.getName().compareTo(Singleton.getInstance().getCurrentUser().getName())==0)?"You":u.getName();
         Glide.with(c)
-                .load(u.getProfileImage())
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
                 .centerCrop()
                 .placeholder(R.drawable.user_placeholder)
                 .crossFade()
                 .into(civ);
+
+
+
         tv.setText(s);
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c1));
