@@ -58,18 +58,20 @@ public class ExpenseHolder extends GeneralHolder{
         Date date = new Date(System.currentTimeMillis());
 
         String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
-        description.setText("Posted by "+expenseDatabase.getOwner()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+     //   String s =expenseDatabase.getOwner();
+    //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
+    //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
 
 
         for (String i : expenseDatabase.getMembers().keySet()){
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
-            if(expenseDatabase.getOwner().compareTo(i)==0) x.setCustomValue(expenseDatabase.getMembers().get(i));
-                else x.setCustomValue((-1)*expenseDatabase.getMembers().get(i));
+                x.setCustomValue(expenseDatabase.getMembers().get(i));
                 x.setExpense(expenseDatabase);
-                expenseDatabase.getUsersExpense().add(x);
-
+            if(x.getId().compareTo(expenseDatabase.getOwner())==0)
+                description.setText("Posted by "+x.getName()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+            expenseDatabase.getUsersExpense().add(x);
         }
 
       if(!(expenseDatabase.isMandatory())) {
@@ -109,37 +111,41 @@ private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseData
     rv.setVisibility(View.GONE);
 }
 private void setupListener(CardView cv,TextView price,final Context context,final Expense expense){
+    if(!expense.isMandatory()) {
+        price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                View s = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
+                dialog.setView(s);
+                dialog.setTitle("Choose your amount");
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
+                        d = d * (-1.00);
+                   /* FirebaseDatabase.getInstance().getReference("expense")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child(expense.getId())
+                            .child("members")
+                            .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);*/
 
-    price.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final AlertDialog dialog = new AlertDialog.Builder(context).create();
-            View s = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
-            dialog.setView(s);
-            dialog.setTitle("Choose your amount");
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
-                    d = d * (-1.00);
-
-                  //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
-                }
-            });
-            dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialog.cancel();
-                }
-            });
-            dialog.show();
-        }
+                        //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
+                    }
+                });
+                dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.show();
+            }
 
 
-
-
-    });
+        });
+    }
 
 
         cv.setOnClickListener(new View.OnClickListener() {

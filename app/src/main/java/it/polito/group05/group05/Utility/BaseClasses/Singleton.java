@@ -6,15 +6,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -145,15 +142,15 @@ public class Singleton {
             do {
                 UserContact user = new UserContact();
                 String number = query.getString(indexNumber);
-                if (number.length() >= 10) {
-                    number = number.replace(" ", "");
-                    number = number.replace("-", "");
-                    number = number.substring(number.length() - 10);
-                    String name = query.getString(indexName);
-                    user.setName(name);
-                    user.setTelNumber(number);
-                    result.add(user);
-                }
+                if(number.startsWith("+"))
+                    number=number.substring(3);
+                number = number.replace(" ", "");
+                number = number.replace("-", "");
+                //number = number.substring(number.length() - 10);
+                String name = query.getString(indexName);
+                user.setName(name);
+                user.setTelNumber(number);
+                result.add(user);
             } while (query.moveToNext());
 
             List<UserContact> result1 = new ArrayList<UserContact>();
@@ -180,14 +177,16 @@ public class Singleton {
             usernumberRef = database.getReference("usersNumber");
             userRef = database.getReference("users");
             for(UserContact UC : localList){
+
                 usernumberRef.child(UC.getTelNumber()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(!dataSnapshot.exists()) return;
                         String s = dataSnapshot.getValue(String.class);
-                        if (s == null) return;
-                        userRef.child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                        userRef.child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(!dataSnapshot.exists()) return;
                                 UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
                                 UserContact U = new UserContact(ud);
                                 if(contactList.contains(U)) return;

@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,7 +34,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -60,14 +57,15 @@ public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
     private MaterialEditText et_name, et_description, et_cost;
-    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details, cb_policy;
-    private Spinner  spinner_deadline;
+    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
+    private TextView tv_policy, tv_members;
+    private Spinner  spinner_deadline, spinner_policy;
     private Button addExpense;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
     private CircleImageView iv_group_image;
-    private CardView cardView, card_recycler;
+    private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network, info;
@@ -82,15 +80,11 @@ public class Expense_activity extends AppCompatActivity {
     private UserDatabase expense_owner;
     private GroupDatabase actual_group;
     private RelativeLayout rel_info;
-    private LinearLayout layout_policy;
     private Double costPerUser = 0.0;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
     private Map<String, User_expense> list = new TreeMap<>();
     private boolean isEqualPart=true;
-
-
-
 
     @Override
     protected void onStart() {
@@ -166,7 +160,7 @@ public class Expense_activity extends AppCompatActivity {
         expense_price = 0.0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
-        //expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
@@ -179,7 +173,6 @@ public class Expense_activity extends AppCompatActivity {
         cb_details= (CheckBox) findViewById(R.id.more_details);
         cardView = (CardView) findViewById(R.id.card_view2_toshow);
         cardView.setVisibility(View.GONE);
-
         cb_description = (CheckBox) findViewById(R.id.cb1_description);
         et_description = (MaterialEditText) findViewById(R.id.et_description_expense);
         et_description.setVisibility(View.GONE);
@@ -190,22 +183,13 @@ public class Expense_activity extends AppCompatActivity {
         cb_proposal = (CheckBox) findViewById(R.id.cb4_proposal);
         expense_type=TYPE_EXPENSE.MANDATORY;
         //info = (ImageView) findViewById(R.id.InfoButton);
-       // tv_policy= (TextView) findViewById(R.id.tv_policy);
-        cb_policy = (CheckBox) findViewById(R.id.cb_policy);
-        layout_policy = (LinearLayout) findViewById(R.id.layout_policy);
-        cb_policy.setVisibility(View.VISIBLE);
-        //spinner_policy.setVisibility(View.VISIBLE);
-       // tv_policy.setVisibility(View.VISIBLE);
-        layout_policy.setVisibility(View.VISIBLE);
+        tv_policy= (TextView) findViewById(R.id.tv_policy);
+        spinner_policy = (Spinner) findViewById(R.id.spinner_policy);
         //rel_info= (RelativeLayout) findViewById(R.id.relative_info);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
-        card_recycler = (CardView) findViewById(R.id.card_recycler);
-        card_recycler.setVisibility(View.GONE);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
-
-
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -218,15 +202,17 @@ public class Expense_activity extends AppCompatActivity {
             partecipants.add(ue);
             list.put(ue.getId(),ue);
        }
-        final MemberExpandedAdapter memberAdapter = new MemberExpandedAdapter(partecipants, this);
-        LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(lin_members);
-        recyclerView.setAdapter(memberAdapter);
-     //   recyclerView.setVisibility(View.GONE);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());
+        List<String> array= new ArrayList<>();
+        array.add("Equal part");
+        array.add("Unequal part");
+        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_policy.setAdapter(dataAdapter);
 
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        final MemberExpandedAdapter memberAdapter = new MemberExpandedAdapter(partecipants, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(memberAdapter);
+        recyclerView.setVisibility(View.GONE);
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
@@ -237,13 +223,9 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v) {
                 if(cb_details.isChecked()){
                     cardView.setVisibility(View.VISIBLE);
-
                 }
                 else {
                     cardView.setVisibility(View.GONE);
-                    if(cb_policy.isChecked()){
-                        card_recycler.setVisibility(View.GONE);
-                    }
                 }
             }
         });
@@ -261,19 +243,22 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
-                    //PROPOSAL
-                    if(!expense.isMandatory()){
-                        for(String s : expense.getMembers().keySet()){
-                                 expense.getMembers().put(s ,0.0);
+                    expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+                    Double x = expense.getMembers().get(expense.getOwner());
+                    boolean isOwner = false;
+                    for(String s :expense.getMembers().keySet()) {
+                         x = expense.getMembers().get(s);
+                        if(s==expense.getOwner()) {
+                            expense.getMembers().put(s, expense_price - x);
+                            isOwner = true;
                         }
-                    }
-     /*               for(String s : expense.getMembers().keySet()){
-                        if(s!=Singleton.getInstance().getUserId())
-                        expense.getMembers().put(s,(-1.00)*expense.getMembers().get(s));
                         else
-                            expense.getMembers().put(s,expense.getPrice()-expense.getMembers().get(s));
+                        expense.getMembers().put(s,(-1.00)*x);
+
                     }
-                    */
+                    if(!isOwner)
+                        expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
+
                         fdb.setValue(expense);
                     finish();
                 }
@@ -357,17 +342,9 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v) {
                 if(cb_proposal.isChecked()){
                     expense.setType(1); //; = TYPE_EXPENSE.NOTMANDATORY;
-                    cb_policy.setVisibility(View.INVISIBLE);
-                    layout_policy.setVisibility(View.GONE);
-                    layout_policy.invalidate();
-                    card_recycler.setVisibility(View.INVISIBLE);
                 }
-                else {
+                else
                     expense.setType(0); //expense_type = TYPE_EXPENSE.MANDATORY;
-                    cb_policy.setVisibility(View.VISIBLE);
-                    layout_policy.setVisibility(View.VISIBLE);
-                    layout_policy.invalidate();
-                }
             }
         });
 
@@ -377,19 +354,25 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-        cb_policy.setOnClickListener(new View.OnClickListener() {
+        spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onClick(View v) {
-               if(cb_policy.isChecked()){
-                   card_recycler.setVisibility(View.VISIBLE);
-                   isEqualPart = false;
-               }
-               else{
-                   card_recycler.setVisibility(View.GONE);
-                   isEqualPart = true;
-               }
+            public void onItemSelected(AdapterView<?> adapterView, View view,
+                                       int position, long id) {
+                switch (position){
+                    case 0: recyclerView.setVisibility(View.GONE);
+                        isEqualPart=true;
+                        break;
+                    case 1: recyclerView.setVisibility(View.VISIBLE);
+                        isEqualPart=false;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // TODO Auto-generated method stub
             }
         });
+
+
     }
 
 

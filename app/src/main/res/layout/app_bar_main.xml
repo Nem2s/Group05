@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -22,12 +23,54 @@
 
     <include layout="@layout/content_main" />
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/iv_no_groups"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:src="@drawable/smartphone"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            />
+        <ProgressBar
+            android:id="@+id/pb_loading_groups"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:indeterminate="true"
+            android:layout_below="@+id/tv_no_groups"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start sharing Something Cool!"
+            android:layout_below="@id/iv_no_groups"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="16dp"
+            android:textSize="25sp"
+            android:textStyle="italic"
+            android:alpha="0.5"
+            android:id="@+id/tv_no_groups" />
+    </RelativeLayout>
+
+
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    app:srcCompat="@drawable/ic_action_add_black" />
+
 
 </android.support.design.widget.CoordinatorLayout>

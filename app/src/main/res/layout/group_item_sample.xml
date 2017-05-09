@@ -31,7 +31,6 @@
             android:id="@+id/tv_group_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:text="GroupName05"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -44,6 +43,7 @@
             android:text="Debit/credit   ___$"
             android:textSize="16sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

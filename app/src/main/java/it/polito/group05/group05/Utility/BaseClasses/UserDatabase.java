@@ -1,10 +1,7 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +9,14 @@ import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 public class UserDatabase implements Namable{
 
-    public String id;
-    public String name;
-    public String authKey;
-    public String telNumber;
-    public String email;
-    public String iProfile;
-    public Balance balance;
-    public Map<String, Object> userGroups;
+    protected String id;
+    protected String name;
+    protected String authKey;
+    protected String telNumber;
+    protected String email;
+    protected String iProfile;
+    protected Balance balance;
+    protected Map<String, Object> userGroups;
 
     public UserDatabase(String id, String name, String authKey, String telNumber, String email, String iProfile) {
         this.id = id;
@@ -36,6 +33,7 @@ public class UserDatabase implements Namable{
         this.authKey = authKey;
         this.telNumber = telNumber;
         this.email = email;
+
     }
 
     public UserDatabase() {}
@@ -46,6 +44,7 @@ public class UserDatabase implements Namable{
         this.authKey = ud.authKey;
         this.telNumber = ud.telNumber;
         this.email = ud.email;
+        this.iProfile = ud.iProfile;
     }
 
     public String getId() {
@@ -111,8 +110,9 @@ public class UserDatabase implements Namable{
     public List<String> UserGruopsList() {
 
 
+       if(userGroups!=null)
         return new ArrayList<>(userGroups.keySet());
-
+        else return new ArrayList<>();
     }
 
     public String getiProfile() {

@@ -1,48 +1,36 @@
 package it.polito.group05.group05;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
-public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener, GroupDetailsFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -75,31 +63,35 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         context = this;
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .centerCrop()
+                //.placeholder(R.drawable.group_profile)
+                .crossFade()
+                .into(c);
         appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         main_content = (CoordinatorLayout)findViewById(R.id.main_content);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
-
-        toolbar.setOnClickListener(new View.OnClickListener() {
+        //  tv.setText("CIAO");
+        /*toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
                 Intent intent = new Intent(getBaseContext(), GroupDetailsActivity.class);
                 startActivity(intent, options.toBundle());
-
             }
-        });
+        });*/
         setSupportActionBar(toolbar);
-        c.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+        // c.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -120,16 +112,17 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
                 Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
                 Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
+
                 Intent i = new Intent(getBaseContext(), Expense_activity.class);
 
-                startActivity(i, options.toBundle());
-                
+                startActivity(i);
+                //startActivity(i, options.toBundle());
             }
         });
 
@@ -192,39 +185,26 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     }
 
 /*
-
     public static class PlaceholderFragment extends Fragment {
-
-
         ExpenseAdapter ea;
-
-
-
         private static final String ARG_SECTION_NUMBER = "section_number";
-
         public PlaceholderFragment() {
         }
-
-
         public static PlaceholderFragment newInstance(int s) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-
             args.putInt(ARG_SECTION_NUMBER, s);
             //args.putString(ARG_SECTION_NUMBER,s);
             fragment.setArguments(args);
             return fragment;
         }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
             if (getArguments().getInt(ARG_SECTION_NUMBER)==0) {
                 final Group currentGroup = Singleton.getInstance().getmCurrentGroup();
                 View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
                 RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-
                 rv.setOnScrollListener(new HideScrollListener() {
                     @Override
                     public void onHide() {
@@ -236,7 +216,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     }
                 });
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
                 //textView.setText(getArguments().getString(ARG_SECTION_NUMBER));
                 expenses =new ArrayList<>(currentGroup.getExpenses());
@@ -251,27 +230,20 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                         return false;
                     }
                 });
-
                 rv.setLayoutManager(llm);
                 rv.setAdapter(ea);
-
                 return rootView;
-
-
         }
         @Override
         public void onResume() {
             myOnResume();
         }
-
         public void myOnResume() {
             super.onResume();
             if(ea!=null) {
                 expenses = new ArrayList<>(Singleton.getInstance().getmCurrentGroup().getExpenses());
                 ea.notifyDataSetChanged();
             }
-
-
         }
     }
 */
@@ -295,8 +267,10 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     fragment=ExpenseFragment.newInstance();
                     break;
                 case 1:
-                    fragment = ChatFragment.newInstance();
-                break;
+                    fragment =ChatFragment.newInstance();
+                case 2:
+                    fragment =GroupDetailsFragment.newInstance();
+                    break;
             }
             return fragment;
         }
@@ -304,7 +278,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 3;
         }
 
         @Override
@@ -314,7 +288,8 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     return "Expenses";
                 case 1:
                     return "Chat";
-
+                case 2:
+                    return "Details";
             }
             return null;
         }

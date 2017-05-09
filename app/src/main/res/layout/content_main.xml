@@ -11,9 +11,10 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/groups_rv"
         android:dividerHeight="3dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="395dp"
+        android:layout_height="587dp"
         android:clipToPadding="false"
-        ></android.support.v7.widget.RecyclerView>
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp"></android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

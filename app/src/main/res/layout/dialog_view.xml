@@ -25,6 +25,9 @@
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:hint="Phone Number"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
+            android:textColorHighlight="@color/colorPrimary"
             />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>
