@@ -88,13 +88,14 @@ public class ExpenseFragment extends Fragment {
         rv.setHasFixedSize(false);
         final LinearLayoutManager ll=  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
         rv.setLayoutManager(ll);
+        ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref) {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 viewHolder.setData(model,getContext());
-                ll.smoothScrollToPosition(rv,null,position);
+                ll.smoothScrollToPosition(rv,null,this.getItemCount());
             }
         };
    /*     rv.setOnTouchListener(new View.OnTouchListener() {

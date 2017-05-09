@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,6 +53,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 /**
  * Created by Marco on 05/05/2017.
@@ -108,6 +112,10 @@ public class NewGroupActivity extends AppCompatActivity {
             iv_new_group.setImageBitmap(bitmap);
             REQUEST_FROM_NEW_GROUP = -1;
         }
+        else {
+            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.network));
+        }
+
     }
 
     @Override
@@ -334,18 +342,23 @@ public class NewGroupActivity extends AppCompatActivity {
         if(id == R.id.m_confirm) {
             DatabaseReference ref = groupRef.push();
             GroupDatabase group = new GroupDatabase();
+
+            group.setMembers(new HashMap<String,Object>());
             group.setId(ref.getKey());
             group.setName(et_group_name.getText().toString());
             for (UserContact u : Singleton.getInstance().getContactList(this)) {
                 if(u.isSelected()) {
-                    group.members.put(u.getId(), false);
+                    group.getMembers().put(u.getId(), false);
                     u.setSelected(false);
                 }
 
             }
-            group.members.put(currentUser.getId(), true);
+
+            group.getMembers().put(currentUser.getId(), true);
 
             if(!group.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
+
+                DB_Manager.getInstance().setContext(this).pushNewGroup(group, ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap());
                 finish();
             }
             else {

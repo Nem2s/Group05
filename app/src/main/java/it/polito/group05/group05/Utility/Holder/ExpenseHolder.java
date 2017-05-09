@@ -58,17 +58,20 @@ public class ExpenseHolder extends GeneralHolder{
         Date date = new Date(System.currentTimeMillis());
 
         String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
-        description.setText("Posted by "+Singleton.getInstance().getmCurrentGroup().getMembers().get(expenseDatabase.getOwner())+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+     //   String s =expenseDatabase.getOwner();
+    //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
+    //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
 
 
         for (String i : expenseDatabase.getMembers().keySet()){
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
-            if(expenseDatabase.getOwner().compareTo(i)==0) x.setCustomValue(expenseDatabase.getMembers().get(i));
-                else x.setCustomValue((-1)*expenseDatabase.getMembers().get(i));
+                x.setCustomValue(expenseDatabase.getMembers().get(i));
                 x.setExpense(expenseDatabase);
-                expenseDatabase.getUsersExpense().add(x);
+            if(x.getId().compareTo(expenseDatabase.getOwner())==0)
+                description.setText("Posted by "+x.getName()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+            expenseDatabase.getUsersExpense().add(x);
         }
 
       if(!(expenseDatabase.isMandatory())) {

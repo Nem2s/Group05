@@ -185,7 +185,7 @@ import java.util.Set;
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(!dataSnapshot.exists()) return;
                         String s = dataSnapshot.getValue(String.class);
-                        userRef.child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                        userRef.child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if(!dataSnapshot.exists()) return;

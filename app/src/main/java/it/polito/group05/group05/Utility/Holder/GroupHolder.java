@@ -67,6 +67,7 @@ public class GroupHolder extends GeneralHolder {
             FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(userID)
+                    .child("userInfo")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

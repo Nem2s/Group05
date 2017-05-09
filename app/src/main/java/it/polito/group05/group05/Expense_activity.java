@@ -160,7 +160,7 @@ public class Expense_activity extends AppCompatActivity {
         expense_price = 0.0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
-        //expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
@@ -243,12 +243,16 @@ public class Expense_activity extends AppCompatActivity {
                                             .child(Singleton.getInstance().getIdCurrentGroup())
                                             .push();
                     expense.setId(fdb.getKey());
-/*
-                    if(!isEqualPart){
-                        for(User_expense u : memberAdapter.getList()){
-                            expense.getMembers().put(u.getId(), u.getCustomValue());
-                        }
-                    }*/
+                    expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+                    Double x = expense.getMembers().get(expense.getOwner());
+
+                    for(String s :expense.getMembers().keySet()) {
+                         x = expense.getMembers().get(s);
+                        if(s==expense.getOwner()) expense.getMembers().put(s,expense_price-x);
+                        else
+                        expense.getMembers().put(s,(-1.00)*x);
+
+                    }
                         fdb.setValue(expense);
                     finish();
                 }
