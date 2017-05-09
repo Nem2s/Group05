@@ -42,8 +42,10 @@ public class MemberInvitedHolder extends GeneralHolder{
     public void setData(Object c, Context context) {
         final UserContact user = ((UserContact) c);
         Glide.with(context)
+
                 .load(user.getiProfile())
                 .asBitmap()
+                .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(img_profile);
 
         this.name.setText(user.getName());

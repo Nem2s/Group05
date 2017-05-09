@@ -244,15 +244,27 @@ public class Expense_activity extends AppCompatActivity {
                                             .push();
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-                    Double x = expense.getMembers().get(expense.getOwner());
-
-                    for(String s :expense.getMembers().keySet()) {
-                         x = expense.getMembers().get(s);
-                        if(s==expense.getOwner()) expense.getMembers().put(s,expense_price-x);
-                        else
-                        expense.getMembers().put(s,(-1.00)*x);
-
+                    Double x;// = expense.getMembers().get(expense.getOwner());
+                    boolean isOwner = false;
+                    if(!expense.isMandatory()){
+                        for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
+                            expense.getMembers().put(s, 0.0);
+                        }
                     }
+                    else {
+                        for (String s : expense.getMembers().keySet()) {
+                            x = expense.getMembers().get(s);
+                            if (s == expense.getOwner()) {
+                                expense.getMembers().put(s, expense_price - x);
+                                isOwner = true;
+                            } else
+                                expense.getMembers().put(s, (-1.00) * x);
+
+                        }
+                    }
+                    if(!isOwner && expense.isMandatory())
+                        expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
+
                         fdb.setValue(expense);
                     finish();
                 }

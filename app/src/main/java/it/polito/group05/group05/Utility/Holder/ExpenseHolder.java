@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class ExpenseHolder extends GeneralHolder{
     TextView description;
     CardView cv;
     Query ref;
-
+    //Toolbar toolbar;
     public ExpenseHolder(View itemView) {
         super(itemView);
         this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
@@ -48,10 +49,18 @@ public class ExpenseHolder extends GeneralHolder{
         this.description=(TextView) itemView.findViewById(R.id.expense_owner);
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
+        //toolbar = (Toolbar) itemView.findViewById(R.id.card_toolbar);
     }
     public void setData(Object c, Context context){
         if(!(c instanceof ExpenseDatabase)) return;
         Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        /*toolbar.inflateMenu(R.menu.card_toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return ;
+            }
+        });*/
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
@@ -110,44 +119,94 @@ private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseData
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
     rv.setVisibility(View.GONE);
 }
-private void setupListener(CardView cv,TextView price,final Context context,final Expense expense){
+private void setupListener(CardView cv, final TextView price, final Context context, final Expense expense){
+    if(!expense.isMandatory()) {
+        price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                View s = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
+                dialog.setView(s);
+                dialog.setTitle("Choose your amount");
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
+                        if(d > expense.getPrice())
+                            d=expense.getPrice();
+                        d = d * (-1.00);
+                     FirebaseDatabase.getInstance().getReference("expenses")
+                                                .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                                .child(expense.getId())
+                                                .child("members")
+                                                .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);
+                    }
+                });
+                dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.show();
+            }
 
-    price.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final AlertDialog dialog = new AlertDialog.Builder(context).create();
-            View s = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
-            dialog.setView(s);
-            dialog.setTitle("Choose your amount");
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
-                    d = d * (-1.00);
-                   /* FirebaseDatabase.getInstance().getReference("expense")
-                            .child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .child(expense.getId())
-                            .child("members")
-                            .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);*/
 
-                  //  expense.getUsersExpense().get(Singleton.getInstance().getId()).setDebt(d);
+        });
+    }
+if((expense.isMandatory() || expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) && expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId())!=null)
+        cv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                View s = LayoutInflater.from(context).inflate(R.layout.menu_expense, null, false);
+                TextView x;
+                if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
+                    x = ((TextView) s.findViewById(R.id.action_delete));
+                    x.setVisibility(View.VISIBLE);
+                    x.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseDatabase.getInstance().getReference("expenses")
+                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                    .child(expense.getId()).removeValue();
+                            dialog.cancel();
+                        }
+                    });
                 }
-            });
-            dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialog.cancel();
+                if(expense.isMandatory() && Double.compare(expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId()),0.0)!=0) {
+                    x = ((TextView) s.findViewById(R.id.action_pay));
+                    x.setVisibility(View.VISIBLE);
+                    x.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
+                                FirebaseDatabase.getInstance().getReference("expenses")
+                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                        .child(expense.getId())
+                                        .child("members")
+                                        .child(Singleton.getInstance().getCurrentUser().getId()).setValue(0.0);
+                                FirebaseDatabase.getInstance().getReference("expenses")
+                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                        .child(expense.getId())
+                                        .child("members")
+                                        .child(expense.getOwner())
+                                        .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+                                dialog.cancel();
+                            }
+                        }
+                    });
                 }
-            });
-            dialog.show();
-        }
 
+                dialog.setView(s);
+                dialog.setCanceledOnTouchOutside(true);
 
+                dialog.show();
 
-
-    });
-
+                return true;
+            }
+        });
 
         cv.setOnClickListener(new View.OnClickListener() {
         @Override

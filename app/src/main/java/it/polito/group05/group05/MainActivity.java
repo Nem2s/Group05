@@ -93,8 +93,9 @@ public class MainActivity extends AppCompatActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
-    if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
-        pb.setVisibility(View.GONE);
+        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
+            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
+                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
         activity = this;
         /**DEBUGG**/

@@ -53,9 +53,9 @@ public class GroupHolder extends GeneralHolder {
         //groupProfile.setImageResource(R.drawable.boy);
             Glide.with(context)
                     .using(new FirebaseImageLoader())
-                    .load(FirebaseStorage.getInstance().getReference("users").child(g.getId()).child("groupprofile.jpg"))
+                    .load(FirebaseStorage.getInstance().getReference("groups").child(g.getId()).child("grouprofile.jpg"))
                 .centerCrop()
-                //.placeholder(R.drawable.group_profile)
+                .placeholder(R.drawable.group_profile)
                 .crossFade()
                 .into(groupProfile);
         name.setText(g.getName());
@@ -79,6 +79,7 @@ public class GroupHolder extends GeneralHolder {
                         }
                     });
         }
+
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
