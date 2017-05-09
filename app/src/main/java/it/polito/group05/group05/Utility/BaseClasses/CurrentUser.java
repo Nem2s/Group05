@@ -63,6 +63,7 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
         this.authKey = ud.authKey;
         this.telNumber = ud.telNumber;
         this.email = ud.email;
+        this.iProfile = ud.iProfile;
     }
     /*
     public boolean hasCustomValue() {

@@ -30,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
-public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener,GroupDetailsFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -65,7 +65,9 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         Glide.with(context)
                 .using(new FirebaseImageLoader())
-                .load(FirebaseStorage.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .load(FirebaseStorage.getInstance()
+                        .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                        .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
                 .centerCrop()
                 //.placeholder(R.drawable.group_profile)
                 .crossFade()

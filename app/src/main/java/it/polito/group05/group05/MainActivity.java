@@ -124,7 +124,9 @@ public class MainActivity extends AppCompatActivity
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
                 Glide.with(context).using(new FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userprofile.jpg"))
+                        .load(FirebaseStorage.getInstance().getReference("users")
+                                .child(Singleton.getInstance().getCurrentUser().getId())
+                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
                         .placeholder(R.drawable.user_placeholder)
                         .centerCrop()
                         .crossFade()
