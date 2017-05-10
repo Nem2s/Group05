@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context="it.polito.group05.group05.Expense_activity">
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -95,6 +96,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
+                        android:background="@color/card_background"
                         android:orientation="horizontal">
 
                         <ImageView
@@ -123,11 +125,11 @@
                                 app:met_baseColor="#000000"
                                 app:met_errorColor="#646464"
                                 app:met_floatingLabel="highlight"
-                              />
+                                />
 
                             <com.rengwuxian.materialedittext.MaterialEditText
                                 android:id="@+id/et_cost_expense"
-                                android:layout_width="140dp"
+                                android:layout_width="120dp"
                                 android:layout_height="match_parent"
                                 android:layout_margin="8dp"
                                 android:digits="0123456789.,"
@@ -139,7 +141,7 @@
                                 app:met_errorColor="#646464"
                                 app:met_floatingLabel="highlight"
                                 app:met_iconRight="@drawable/euro"
-                                 />
+                                />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -161,7 +163,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="32dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="2dp"
                     app:cardCornerRadius="2dp">
 
                     <LinearLayout
@@ -208,16 +211,16 @@
                                 android:layout_margin="8dp"
                                 android:clickable="true"
                                 android:onClick="file_handler"
-                                android:text="Add a File"
+                                android:text="File"
                                 android:textStyle="normal"
                                 android:buttonTint="@color/colorPrimary" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_margin="8dp"
-                                android:layout_toRightOf="@id/cb2_addfile"
+                                android:layout_margin="16dp"
                                 android:src="@drawable/clip"
+                                android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:visibility="visible" />
 
@@ -234,7 +237,7 @@
                                 android:layout_margin="8dp"
                                 android:clickable="true"
                                 android:onClick="deadline_handler"
-                                android:text="Add a deadline"
+                                android:text="Deadline"
                                 android:textStyle="normal"
                                 android:buttonTint="@color/colorPrimary" />
 
@@ -269,51 +272,53 @@
                                 android:textStyle="normal"
                                 android:buttonTint="@color/colorPrimary" />
 
-                            <LinearLayout
-                                android:id="@+id/layout_policy"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/cb4_proposal"
-                                android:layout_margin="8dp"
-                                android:layout_marginBottom="10dp">
-
-                                <TextView
-                                    android:id="@+id/tv_policy"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_margin="8dp"
-                                    android:text="Split"
-                                    android:textStyle="normal" />
-                                <Spinner
-                                    android:id="@+id/spinner_policy"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:gravity="end"
-                                    android:layout_margin="8dp"
-                                    android:textAlignment="center"
-                                   ></Spinner>
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/layout_policy"
-                                android:orientation="vertical">
-
-                                <android.support.v7.widget.RecyclerView
-                                    android:id="@+id/recyclerView_members"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                </android.support.v7.widget.RecyclerView>
-                            </LinearLayout>
                         </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/layout_policy"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/cb4_proposal"
+                            android:layout_margin="8dp"
+                            android:layout_marginBottom="10dp"
+                            android:visibility="gone"
+                            >
 
+                            <CheckBox
+                                android:id="@+id/cb_policy"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Split"
+                                android:textStyle="normal"
+                                android:buttonTint="@color/colorPrimary"
+                                />
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/card_view2_toshow"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/cardview_light_background"
+                    app:cardCornerRadius="2dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerView_members"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.CardView>
+
 
             </LinearLayout>
 

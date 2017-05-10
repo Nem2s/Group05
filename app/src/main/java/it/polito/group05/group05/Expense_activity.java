@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.twitter.sdk.android.core.models.Card;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,10 +60,8 @@ public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
     private MaterialEditText et_name, et_description, et_cost;
-    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details;
-    private TextView tv_policy, tv_members;
-    private Spinner  spinner_deadline, spinner_policy;
-    private Button addExpense;
+    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details, cb_policy;
+    private Spinner  spinner_deadline;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
@@ -69,6 +70,8 @@ public class Expense_activity extends AppCompatActivity {
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network, info;
+    private CardView card_recycler;
+    private LinearLayout layout_policy;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
@@ -119,11 +122,11 @@ public class Expense_activity extends AppCompatActivity {
         }
 
         costPerUser = ((expense.getPrice() - p_custom)/(list.size() - n_custom));
-       DecimalFormat df=new DecimalFormat("0.00");
+        DecimalFormat df=new DecimalFormat("0.00");
         String formate = df.format(costPerUser);
         double finalValue = Double.parseDouble(formate.replace(',', '.'));
         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
-      // EventBus.getDefault().post(new PriceChangedEvent(costPerUser));
+        // EventBus.getDefault().post(new PriceChangedEvent(costPerUser));
     }
 
     @Subscribe
@@ -182,11 +185,16 @@ public class Expense_activity extends AppCompatActivity {
         spinner_deadline.setVisibility(View.GONE);
         cb_proposal = (CheckBox) findViewById(R.id.cb4_proposal);
         expense_type=TYPE_EXPENSE.MANDATORY;
-        //info = (ImageView) findViewById(R.id.InfoButton);
-        tv_policy= (TextView) findViewById(R.id.tv_policy);
-        spinner_policy = (Spinner) findViewById(R.id.spinner_policy);
+        cb_policy = (CheckBox) findViewById(R.id.cb_policy);
+        cb_policy.setVisibility(View.VISIBLE);
+        layout_policy = (LinearLayout) findViewById(R.id.layout_policy);
+        layout_policy.setVisibility(View.VISIBLE);
         //rel_info= (RelativeLayout) findViewById(R.id.relative_info);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
+        card_recycler = (CardView) findViewById(R.id.card_recycler);
+        card_recycler.setVisibility(View.GONE);
+        //info = (ImageView) findViewById(R.id.InfoButton);
+        // rel_info= (RelativeLayout) findViewById(R.id.relative_info);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -201,18 +209,16 @@ public class Expense_activity extends AppCompatActivity {
             ue.setExpense(expense);
             partecipants.add(ue);
             list.put(ue.getId(),ue);
-       }
-        List<String> array= new ArrayList<>();
-        array.add("Equal part");
-        array.add("Unequal part");
-        ArrayAdapter<String> dataAdapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_policy.setAdapter(dataAdapter);
+        }
 
         final MemberExpandedAdapter memberAdapter = new MemberExpandedAdapter(partecipants, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
-        recyclerView.setVisibility(View.GONE);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                lin_members.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
@@ -226,6 +232,9 @@ public class Expense_activity extends AppCompatActivity {
                 }
                 else {
                     cardView.setVisibility(View.GONE);
+                    if(cb_policy.isChecked()){
+                        card_recycler.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -239,27 +248,33 @@ public class Expense_activity extends AppCompatActivity {
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
                     fdb =   FirebaseDatabase.getInstance()
-                                            .getReference("expenses")
-                                            .child(Singleton.getInstance().getIdCurrentGroup())
-                                            .push();
+                            .getReference("expenses")
+                            .child(Singleton.getInstance().getIdCurrentGroup())
+                            .push();
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-                    Double x = expense.getMembers().get(expense.getOwner());
+                    Double x;// = expense.getMembers().get(expense.getOwner());
                     boolean isOwner = false;
-                    for(String s :expense.getMembers().keySet()) {
-                         x = expense.getMembers().get(s);
-                        if(s==expense.getOwner()) {
-                            expense.getMembers().put(s, expense_price - x);
-                            isOwner = true;
+                    if(!expense.isMandatory()){
+                        for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
+                            expense.getMembers().put(s, 0.0);
                         }
-                        else
-                        expense.getMembers().put(s,(-1.00)*x);
-
                     }
-                    if(!isOwner)
+                    else {
+                        for (String s : expense.getMembers().keySet()) {
+                            x = expense.getMembers().get(s);
+                            if (s == expense.getOwner()) {
+                                expense.getMembers().put(s, expense_price - x);
+                                isOwner = true;
+                            } else
+                                expense.getMembers().put(s, (-1.00) * x);
+
+                        }
+                    }
+                    if(!isOwner && expense.isMandatory())
                         expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
 
-                        fdb.setValue(expense);
+                    fdb.setValue(expense);
                     finish();
                 }
             }
@@ -286,7 +301,7 @@ public class Expense_activity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-              //  expense.setPrice(9.00);
+                //  expense.setPrice(9.00);
             }
 
             @Override
@@ -301,7 +316,7 @@ public class Expense_activity extends AppCompatActivity {
                      /*       if(u.getId().compareTo(expense.getOwner())==0)
                                 expense.getMembers().put(u.getId(), expense.getPrice()-costPerUser);
                             else*/
-                                expense.getMembers().put(u.getId(), costPerUser);
+                            expense.getMembers().put(u.getId(), costPerUser);
                         }
                         DecimalFormat df = new DecimalFormat("0.00");
                         String formate = df.format(costPerUser);
@@ -342,9 +357,17 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v) {
                 if(cb_proposal.isChecked()){
                     expense.setType(1); //; = TYPE_EXPENSE.NOTMANDATORY;
+                    cb_policy.setVisibility(View.INVISIBLE);
+                    layout_policy.setVisibility(View.GONE);
+                    layout_policy.invalidate();
+                    card_recycler.setVisibility(View.INVISIBLE);
                 }
-                else
+                else {
                     expense.setType(0); //expense_type = TYPE_EXPENSE.MANDATORY;
+                    cb_policy.setVisibility(View.VISIBLE);
+                    layout_policy.setVisibility(View.VISIBLE);
+                    layout_policy.invalidate();
+                }
             }
         });
 
@@ -353,25 +376,19 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v){
             }
         });
-
-        spinner_policy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        cb_policy.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view,
-                                       int position, long id) {
-                switch (position){
-                    case 0: recyclerView.setVisibility(View.GONE);
-                        isEqualPart=true;
-                        break;
-                    case 1: recyclerView.setVisibility(View.VISIBLE);
-                        isEqualPart=false;
+            public void onClick(View v) {
+                if(cb_policy.isChecked()){
+                    card_recycler.setVisibility(View.VISIBLE);
+                    isEqualPart = false;
+                }
+                else{
+                    card_recycler.setVisibility(View.GONE);
+                    isEqualPart = true;
                 }
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // TODO Auto-generated method stub
-            }
         });
-
 
     }
 

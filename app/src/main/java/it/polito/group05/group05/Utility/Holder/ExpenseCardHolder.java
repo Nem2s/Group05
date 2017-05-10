@@ -51,9 +51,9 @@ public class ExpenseCardHolder extends GeneralHolder {
         Double c1 = u.getDebt();
         tv_debt.setText(String.format("%.2f",c1));
         if(u.getExpense().isMandatory())
-            if(c1<0)
+            if(c1<-0.001)
                 tv_debt.setTextColor(Color.RED);
-            else if(c1>0)
+            else if(c1>0.001)
                 tv_debt.setTextColor(Color.GREEN);
             else {
                 tv_debt.setText("Payed");
