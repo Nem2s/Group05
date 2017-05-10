@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -91,22 +92,23 @@ public class ExpenseFragment extends Fragment {
         ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
-                R.layout.item_expense,ExpenseHolder.class,ref) {
+                R.layout.item_expense,ExpenseHolder.class,ref.orderByChild("timestamp")) {
+            @Override
+            protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+                super.onChildChanged(type, index, oldIndex);
+                if(type== ChangeEventListener.EventType.ADDED)
+                    ll.smoothScrollToPosition(rv,null,this.getItemCount());
+                //aggiungere animazioni strane
+
+            }
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
+                if(model==null) return;
                 viewHolder.setData(model,getContext());
-                ll.smoothScrollToPosition(rv,null,this.getItemCount());
+
             }
         };
-   /*     rv.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });*/
+
 
 
         rv.setAdapter(ea);

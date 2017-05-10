@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private View user_info;
     private CircleImageView user_img;
-    private CurrentUser ud;
+    private CurrentUser ud = new CurrentUser();;
     private EditText et_user_phone;
 
     @Subscribe
@@ -251,7 +251,7 @@ public class SignUpActivity extends AppCompatActivity {
                     AuthUI.getInstance().createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
                             .setTheme(R.style.FirebaseLoginTheme)
-                            .setLogo(R.drawable.ic_splash_logo)
+                            .setLogo(R.drawable.logowithtext)
                             .setProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
                                     new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
@@ -274,7 +274,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void dialogSignUp(){
 
-       final  CurrentUser ud = new CurrentUser();
         ud.setAuthKey(mCurrentUser.getUid());
         ud.setName(mCurrentUser.getDisplayName());
         ud.setEmail(mCurrentUser.getEmail());

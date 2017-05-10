@@ -164,10 +164,10 @@ public class DB_Manager {
     public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
         for(String s : groupDatabase.getMembers().keySet()){
             if(s==null) continue;
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), true);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 

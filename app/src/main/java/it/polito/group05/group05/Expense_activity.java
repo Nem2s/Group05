@@ -16,8 +16,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.twitter.sdk.android.core.models.Card;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,7 +50,6 @@ import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
-
 
 
 public class Expense_activity extends AppCompatActivity {
@@ -265,14 +261,20 @@ public class Expense_activity extends AppCompatActivity {
                             x = expense.getMembers().get(s);
                             if (s == expense.getOwner()) {
                                 expense.getMembers().put(s, expense_price - x);
+                                FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                                    .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())+expense_price- x);
                                 isOwner = true;
-                            } else
+                            } else {
                                 expense.getMembers().put(s, (-1.00) * x);
-
+                                FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                                        .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())+ x);
+                            }
                         }
                     }
                     if(!isOwner && expense.isMandatory())
                         expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
+                    FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child("lmTime").setValue(expense.getTimestamp());
 
                     fdb.setValue(expense);
                     finish();

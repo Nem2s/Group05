@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="it.polito.group05.group05.Group_Activity">
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:title="Delete"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_pay"
+        android:orderInCategory="100"
+        android:title="Pay"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_subscribe"
+        android:orderInCategory="100"
+        android:title="Subscribe"
+        app:showAsAction="never" />
+</menu>

@@ -101,6 +101,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
