@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +39,7 @@ import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
@@ -127,7 +130,24 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
+    public void checkContacts() {
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
+                    Map<String, UserContact> map = Singleton.getInstance().getLocalContactsList();
+                    if (map.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().addRegContact(new UserContact(user));
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 
 
@@ -158,6 +178,7 @@ public class DB_Manager {
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
         imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
+        Singleton.getInstance().setCurrContext(context);
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
@@ -167,7 +188,7 @@ public class DB_Manager {
         for(String s : groupDatabase.getMembers().keySet()){
             if(s==null) continue;
             Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), true);
+            temp.put(groupDatabase.getId(), 0.0);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
