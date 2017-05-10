@@ -21,7 +21,7 @@ import java.util.Set;
  * Created by user on 04/05/2017.
  */
 
- public class Singleton {
+public class Singleton {
     private static final Singleton ourInstance = new Singleton();
     private GroupDatabase mCurrentGroup;
     private CurrentUser currentUser;
@@ -180,6 +180,7 @@ import java.util.Set;
             usernumberRef = database.getReference("usersNumber");
             userRef = database.getReference("users");
             for(UserContact UC : localList){
+
                 usernumberRef.child(UC.getTelNumber()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

@@ -1,4 +1,4 @@
-package info.devexchanges.firebasechatapplication;
+package it.polito.group05.group05.Utility.Adapter;
 
 import android.app.Activity;
 import android.text.format.DateFormat;
@@ -12,15 +12,14 @@ import com.google.firebase.database.DatabaseReference;
 import it.polito.group05.group05.ChatFragment;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 
-import static android.support.design.R.id.info;
-
-public class MessageAdapter extends FirebaseListAdapter<info.devexchanges.firebasechatapplication.ChatDatabase> {
+public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
     private ChatFragment chat;
     private Activity activity;
 
-    public MessageAdapter(ChatFragment chatfrag, Class<info.devexchanges.firebasechatapplication.ChatDatabase> modelClass, int modelLayout, DatabaseReference ref) {
+    public MessageAdapter(ChatFragment chatfrag, Class<ChatDatabase> modelClass, int modelLayout, DatabaseReference ref) {
 
         super(chatfrag.getActivity(), modelClass, modelLayout, ref);
         activity=chatfrag.getActivity();
@@ -28,7 +27,7 @@ public class MessageAdapter extends FirebaseListAdapter<info.devexchanges.fireba
     }
 
     @Override
-    protected void populateView(View v, info.devexchanges.firebasechatapplication.ChatDatabase model, int position) {
+    protected void populateView(View v, ChatDatabase model, int position) {
         TextView messageText = (TextView) v.findViewById(R.id.message_text);
         TextView messageUser = (TextView) v.findViewById(R.id.message_user);
         TextView messageTime = (TextView) v.findViewById(R.id.message_time);
@@ -42,7 +41,7 @@ public class MessageAdapter extends FirebaseListAdapter<info.devexchanges.fireba
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        info.devexchanges.firebasechatapplication.ChatDatabase ChatDatabase = getItem(position);
+        ChatDatabase ChatDatabase = getItem(position);
         if (ChatDatabase.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId()))
             view = activity.getLayoutInflater().inflate(R.layout.item_out_message, viewGroup, false);
         else

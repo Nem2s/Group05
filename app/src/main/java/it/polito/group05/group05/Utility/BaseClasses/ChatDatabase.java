@@ -1,4 +1,4 @@
-package info.devexchanges.firebasechatapplication;
+package it.polito.group05.group05.Utility.BaseClasses;
 
 import java.util.Date;
 

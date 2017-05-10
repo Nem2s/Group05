@@ -1,38 +1,23 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import info.devexchanges.firebasechatapplication.ChatDatabase;
+import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-
-import static android.app.Activity.RESULT_OK;
-import static it.polito.group05.group05.R.drawable.info;
 
 
 /**
@@ -132,8 +117,8 @@ public class ChatFragment extends Fragment {
 */
     //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
      // if(fdb.getKey().)
-        adapter = new info.devexchanges.firebasechatapplication.MessageAdapter(this,
-                info.devexchanges.firebasechatapplication.ChatDatabase.class, R.layout.item_in_message,
+        adapter = new MessageAdapter(this,
+                ChatDatabase.class, R.layout.item_in_message,
                 FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
         listView.setAdapter(adapter);
     }
