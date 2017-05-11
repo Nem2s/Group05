@@ -18,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.FirebaseApiNotAvailableException;
 import com.google.firebase.database.Query;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,9 +59,9 @@ public class ExpenseHolder extends GeneralHolder{
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
         this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
     }
-    public void setData(Object c, Context context){
+    public void setData(Object c, final Context context){
         if(!(c instanceof ExpenseDatabase)) return;
-        Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
@@ -74,6 +76,17 @@ public class ExpenseHolder extends GeneralHolder{
     //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
     //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    DB_Manager.getInstance().setContext(context).fileDownload(expenseDatabase.getId(), expenseDatabase.getFile());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         for (String i : expenseDatabase.getMembers().keySet()){
 

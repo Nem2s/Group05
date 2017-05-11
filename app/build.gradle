@@ -67,7 +67,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile 'com.firebaseui:firebase-ui-storage:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
-    compile 'com.facebook.android:facebook-android-sdk:4.+'
+
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
     testCompile 'junit:junit:4.12'
