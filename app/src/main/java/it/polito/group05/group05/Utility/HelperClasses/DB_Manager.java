@@ -342,7 +342,7 @@ public class DB_Manager {
                                                 .child(expenseID)
                                                 .child(nomeFile);
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "/Files");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/FileAppPoli");
         if (!folder.exists()) {
             folder.mkdir();
         }
