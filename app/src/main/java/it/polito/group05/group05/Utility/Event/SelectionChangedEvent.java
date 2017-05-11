@@ -1,10 +1,6 @@
-package it.polito.group05.group05.Utility.EventClasses;
+package it.polito.group05.group05.Utility.Event;
 
-import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
-
-import it.polito.group05.group05.NewGroupActivity;
 
 /**
  * Created by Marco on 05/05/2017.
@@ -33,7 +29,9 @@ public class SelectionChangedEvent {
     public static boolean isValid() {
         return selectionIsValid > 0 && textIsValid;
     }
-
+    public static boolean isValidForNewMember() {
+        return selectionIsValid > 0 ;
+    }
     public static void getValues(Context context) {
         //Toast.makeText(context, "selection: " + selectionIsValid + " text: " + textIsValid, Toast.LENGTH_SHORT).show();
     }

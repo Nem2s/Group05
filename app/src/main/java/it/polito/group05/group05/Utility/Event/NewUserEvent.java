@@ -1,4 +1,4 @@
-package it.polito.group05.group05.Utility.EventClasses;
+package it.polito.group05.group05.Utility.Event;
 
 /**
  * Created by andre on 08-May-17.

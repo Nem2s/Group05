@@ -146,12 +146,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
-        //getSupportFragmentManager().getFragments().get(1).onResume();
-
     }
-
     @Override
     public void onStart() {
         super.onStart();}

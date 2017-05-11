@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="Subscribe"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/file_download"
+        android:orderInCategory="100"
+        android:title="File Download"
+        app:showAsAction="never" />
 </menu>

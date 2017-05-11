@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -35,14 +34,9 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.appinvite.AppInviteInvitation;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mvc.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -60,9 +54,8 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
-import it.polito.group05.group05.Utility.Holder.MemberInvitedHolder;
 
 /**
  * Created by Marco on 05/05/2017.
@@ -285,7 +278,6 @@ public class NewGroupActivity extends AppCompatActivity {
                 if ( TextUtils.isEmpty ( newText ) ) {
                     ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
                     no_people.setVisibility(View.GONE);
-
                 } else {
                     ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
                     if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0)
@@ -349,7 +341,6 @@ public class NewGroupActivity extends AppCompatActivity {
         if(id == R.id.m_confirm) {
             DatabaseReference ref = groupRef.push();
             GroupDatabase group = new GroupDatabase();
-
             group.setMembers(new HashMap<String,Object>());
             group.setId(ref.getKey());
             group.setName(et_group_name.getText().toString());
