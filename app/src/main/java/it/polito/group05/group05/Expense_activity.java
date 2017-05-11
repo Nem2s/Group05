@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -260,21 +261,25 @@ public class Expense_activity extends AppCompatActivity {
                         }
                     }
                     else {
+                        Map<String,Double> map = new HashMap<>();
+
+
                         for (String s : expense.getMembers().keySet()) {
                             x = expense.getMembers().get(s);
-                            if (s == expense.getOwner()) {
+                            if (s == expense.getOwner())
                                 expense.getMembers().put(s, expense_price - x);
-                                isOwner = true;
-                                DB_Manager.getInstance().updateGroupFlow(s,x-expense_price);
-                            } else {
+                             else
                                 expense.getMembers().put(s, (-1.00)*x);
-                                DB_Manager.getInstance().updateGroupFlow(s,x);
-
-                            }
+                            DB_Manager.getInstance().updateGroupFlow(s,-1.00*expense.getMembers().get(s));
                         }
+                        if(!expense.getMembers().containsKey(expense.getOwner()))
+                        {
+                            expense.getMembers().put(expense.getOwner(), expense_price);
+                            DB_Manager.getInstance().updateGroupFlow(Singleton.getInstance().getCurrentUser().getId(),(-1.00)*expense_price);
+                        }
+
+
                     }
-                    if(!isOwner && expense.isMandatory())
-                        expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
 
                     fdbgroup.setValue(expense.getTimestamp());
                     fdb.setValue(expense);
