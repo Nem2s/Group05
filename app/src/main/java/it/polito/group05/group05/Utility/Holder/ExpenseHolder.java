@@ -22,6 +22,7 @@ import com.google.firebase.database.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
@@ -29,6 +30,7 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 /**
@@ -155,17 +157,8 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                                 FirebaseDatabase.getInstance().getReference("expenses")
                                     .child(Singleton.getInstance().getmCurrentGroup().getId())
                                     .child(expense.getId()).removeValue();
-                                for (String s : expense.getMembers().keySet()) {
-                                    Double x = expense.getMembers().get(s);
-                                    if (s == expense.getOwner()) {
-                                        FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                                .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())-expense.getPrice());
+                                DB_Manager.getInstance().updateGroupFlow(new HashMap<String, Double>(expense.getMembers()));
 
-                                    } else {
-                                        FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                                .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())- x);
-                                    }
-                                }
                                 break;
                             case R.id.action_pay:
                             //handle menu2 click
@@ -175,22 +168,14 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                                     .child(expense.getId())
                                     .child("members")
                                     .child(s).setValue(0.0);
+                                DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
                             FirebaseDatabase.getInstance().getReference("expenses")
                                     .child(Singleton.getInstance().getmCurrentGroup().getId())
                                     .child(expense.getId())
                                     .child("members")
                                     .child(expense.getOwner())
                                     .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                        FirebaseDatabase.getInstance().getReference("groups")
-                                                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                                .child("members").child(s)
-                                                .setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())-expense.getMembers().get(s));
-                                        FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                                .child("members")
-                                                .child(s)
-                                                .setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(expense.getOwner())).getBalance().getCredit())+ expense.getMembers().get(s));
-
-
+                                DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
                             break;
                         case R.id.action_subscribe:
                             final AlertDialog dialog = new AlertDialog.Builder(context).create();

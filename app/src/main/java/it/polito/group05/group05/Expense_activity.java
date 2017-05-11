@@ -50,6 +50,7 @@ import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 public class Expense_activity extends AppCompatActivity {
@@ -245,8 +246,10 @@ public class Expense_activity extends AppCompatActivity {
                 else {
                     fdb =   FirebaseDatabase.getInstance()
                             .getReference("expenses")
-                            .child(Singleton.getInstance().getIdCurrentGroup())
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
                             .push();
+                    DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child("lmTime");
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
                     Double x;// = expense.getMembers().get(expense.getOwner());
@@ -261,21 +264,19 @@ public class Expense_activity extends AppCompatActivity {
                             x = expense.getMembers().get(s);
                             if (s == expense.getOwner()) {
                                 expense.getMembers().put(s, expense_price - x);
-                                FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                    .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())+expense_price- x);
                                 isOwner = true;
+                                DB_Manager.getInstance().updateGroupFlow(s,x-expense_price);
                             } else {
-                                expense.getMembers().put(s, (-1.00) * x);
-                                FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child("members").child(Singleton.getInstance().getCurrentUser().getId()).setValue((((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getBalance().getCredit())+ x);
+                                expense.getMembers().put(s, (-1.00)*x);
+                                DB_Manager.getInstance().updateGroupFlow(s,x);
+
                             }
                         }
                     }
                     if(!isOwner && expense.isMandatory())
                         expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
-                    FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .child("lmTime").setValue(expense.getTimestamp());
 
+                    fdbgroup.setValue(expense.getTimestamp());
                     fdb.setValue(expense);
                     finish();
                 }

@@ -362,4 +362,53 @@ public class DB_Manager {
         });
     }
 
+
+    public void updateGroupFlow(String s ,final Double d){
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(s);
+
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
+
+                tmp =tmp+((-1.00)*d);
+                fdb.setValue(tmp);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateGroupFlow(final Map<String,Double> map){
+
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members");
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                for(String s : map.keySet()){
+                    if(dataSnapshot.hasChild(s)) {
+                        Double tmp = Double.parseDouble(dataSnapshot.child(s).getValue().toString());
+                        tmp -= map.get(s);
+                        fdb.child(s).setValue(tmp);
+
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+
 }

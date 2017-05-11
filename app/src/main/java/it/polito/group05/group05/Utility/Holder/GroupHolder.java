@@ -63,6 +63,7 @@ public class GroupHolder extends GeneralHolder {
         name.setText(g.getName());
         time.setText(g.getLmTime());
         this.balance.setText(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
+
         Double x = Double.valueOf(balance.getText().toString());
         if(x >0.001)
         balance.setTextColor(Color.GREEN);
