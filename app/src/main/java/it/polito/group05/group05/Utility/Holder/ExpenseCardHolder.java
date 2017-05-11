@@ -41,6 +41,7 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
                 .centerCrop()
+                .crossFade()
                 .placeholder(R.drawable.user_placeholder)
                 .crossFade()
                 .into(civ);
@@ -48,20 +49,20 @@ public class ExpenseCardHolder extends GeneralHolder {
 
 
         tv.setText(s);
-        Double c1 = u.getDebt();
-        tv_debt.setText(String.format("%.2f",c1));
-        if(u.getExpense().isMandatory())
-            if(c1<-0.001)
-                tv_debt.setTextColor(Color.RED);
-            else if(c1>0.001)
-                tv_debt.setTextColor(Color.GREEN);
-            else {
-                tv_debt.setText("Payed");
-                if(u.getId().compareTo(u.getExpense().getOwner())==0)
-                    tv_debt.setTextColor(Color.GREEN);
-                else
+            Double c1 = u.getDebt();
+            tv_debt.setText(String.format("%.2f",c1));
+            if(u.getExpense().isMandatory())
+                if(c1<-0.001)
                     tv_debt.setTextColor(Color.RED);
-            }
+                else if(c1>0.001)
+                    tv_debt.setTextColor(Color.GREEN);
+                else {
+                    tv_debt.setText("Payed");
+                    if(u.getId().compareTo(u.getExpense().getOwner())==0)
+                        tv_debt.setTextColor(Color.GREEN);
+                    else
+                        tv_debt.setTextColor(Color.RED);
+                }
 
 
     }

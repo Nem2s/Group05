@@ -31,13 +31,13 @@ public class User_expense extends UserDatabase {
 
 
     public boolean hasCustomValue() {
-        return customValue > 0;
+             return customValue > 0;
     }
     public double getCustomValue() {
-        return customValue;
+               return customValue;
     }
     public User_expense setCustomValue(double customValue) {
-        this.customValue = customValue;
+                this.customValue = customValue;
         return this;
     }
 
@@ -63,7 +63,6 @@ public class User_expense extends UserDatabase {
             UserDatabase i = (UserDatabase)i1;
             User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
             x.setiProfile(i.getiProfile());
-            //   User_expense x = new User_expense();
             x.setId(i.getId());
             x.setName(i.getName());
             user_expenses.add(x);

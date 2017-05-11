@@ -26,7 +26,7 @@ public class MemberHolder extends GeneralHolder {
 
     private  MemberHolder(View v){
         super(v);
-        this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_user_image);;
+        this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_user_image);
         this.user_name=(TextView)itemView.findViewById(R.id.tv_user_name);
         this.balance= (TextView)itemView.findViewById(R.id.tv_user_balance);
         this.administrator= (TextView)itemView.findViewById(R.id.tv_admin);

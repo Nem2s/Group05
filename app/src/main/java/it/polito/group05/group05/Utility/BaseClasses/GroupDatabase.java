@@ -34,7 +34,7 @@ public class GroupDatabase implements Namable {
         this.balance = balance;
         this.groupColor = groupColor;
         members = new HashMap<>();
-        // setBadge(badgeCount);
+       // setBadge(badgeCount);
     }
 
     public GroupDatabase(GroupDatabase gd) {
@@ -103,7 +103,7 @@ public class GroupDatabase implements Namable {
     public UserDatabase getUserOwner (String id){
         if(!members.containsKey(id) ) return null;
         if(!(members.get(id) instanceof UserDatabase)) return null;
-        return (UserDatabase) members.get(id);
+            return (UserDatabase) members.get(id);
 
     }
 

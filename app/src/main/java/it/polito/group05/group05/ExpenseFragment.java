@@ -1,8 +1,10 @@
 package it.polito.group05.group05;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,7 +26,6 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
-import static it.polito.group05.group05.Group_Activity.fab;
 import static it.polito.group05.group05.Group_Activity.toolbar;
 /**
  * A simple {@link Fragment} subclass.
@@ -75,7 +77,7 @@ public class ExpenseFragment extends Fragment {
 
     private static void showViews() {
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        //fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
     }
 
     @Override
@@ -91,25 +93,46 @@ public class ExpenseFragment extends Fragment {
         ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
-                R.layout.item_expense,ExpenseHolder.class,ref) {
+                R.layout.item_expense,ExpenseHolder.class,ref.orderByChild("timestamp")) {
+            @Override
+            protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+                super.onChildChanged(type, index, oldIndex);
+                if(type== ChangeEventListener.EventType.ADDED)
+                    ll.smoothScrollToPosition(rv,null,this.getItemCount());
+                //aggiungere animazioni strane
+
+            }
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
+                if(model==null) return;
                 viewHolder.setData(model,getContext());
-                ll.smoothScrollToPosition(rv,null,this.getItemCount());
+
             }
         };
-   /*     rv.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });*/
+
 
 
         rv.setAdapter(ea);
+
+
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
+
+                Intent i = new Intent(getActivity(), Expense_activity.class);
+
+                startActivity(i);
+                //startActivity(i, options.toBundle());
+            }
+        });
         return rootView;
     }
 
@@ -139,6 +162,7 @@ public class ExpenseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
     }
     @Override
     public void onStart() {super.onStart();}

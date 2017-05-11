@@ -46,6 +46,7 @@ import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
@@ -141,6 +142,29 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
+    public void checkContacts() {
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (final DataSnapshot data : dataSnapshot.getChildren()) {
+                    UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
+                    Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+                    Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();
+                    if(!rmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().removeRegContact(user);
+                    if (lmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().addRegContact(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
@@ -175,10 +199,10 @@ public class DB_Manager {
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
-        for (String s : groupDatabase.getMembers().keySet()) {
-            if (s == null) continue;
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), 0.0);
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
+        for(String s : groupDatabase.getMembers().keySet()){
+            if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
@@ -204,9 +228,9 @@ public class DB_Manager {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         if (!dataSnapshot.exists()) {
-                            EventBus.getDefault().post(new NewUserEvent());
+                                EventBus.getDefault().post(new NewUserEvent());
                             return;
-                        }
+                            }
                         CurrentUser currentUser = new CurrentUser();
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             for (DataSnapshot child2 : child.getChildren()) {
@@ -234,11 +258,11 @@ public class DB_Manager {
                 });
     }
 
-    public void imageProfileUpload(int type, String Id, String name, Bitmap bitmap) {
+    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
         //String name;
-        switch (type) {
+        switch(type) {
             case (1):
                 ref = storageUserRef;
                 //name = new String("userprofile.jpg");
@@ -257,7 +281,7 @@ public class DB_Manager {
 
         final File localdir = new File(context.getFilesDir(), Id);
 
-        if (!localdir.exists())
+        if(!localdir.exists())
             localdir.mkdir();
 
         final File localFile = new File(context.getFilesDir(), Id + "/" + name);
@@ -318,6 +342,7 @@ public class DB_Manager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         UploadTask uploadTask = storageExpenseRef.child(expenseId).child(name).putBytes(bytes);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -359,5 +384,49 @@ public class DB_Manager {
             }
         });
     }
+    public void updateGroupFlow(String s ,final Double d){
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(s);
+
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
+
+                tmp =tmp+((-1.00)*d);
+                fdb.setValue(tmp);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateGroupFlow(final Map<String,Double> map){
+
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members");
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                for(String s : map.keySet()){
+                    if(dataSnapshot.hasChild(s)) {
+                        Double tmp = Double.parseDouble(dataSnapshot.child(s).getValue().toString());
+                        tmp -= map.get(s);
+                        fdb.child(s).setValue(tmp);
+
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
 }

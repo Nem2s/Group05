@@ -35,7 +35,7 @@ public class SelectionChangedEvent {
     }
 
     public static void getValues(Context context) {
-        Toast.makeText(context, "selection: " + selectionIsValid + " text: " + textIsValid, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "selection: " + selectionIsValid + " text: " + textIsValid, Toast.LENGTH_SHORT).show();
     }
     public static void resetValues() {
         selectionIsValid = 0; textIsValid = false;
