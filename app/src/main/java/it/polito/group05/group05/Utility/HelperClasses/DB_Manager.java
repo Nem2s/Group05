@@ -141,10 +141,13 @@ public class DB_Manager {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) return;
                 for (final DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (!data.exists()) continue;
                     UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
                     Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
                     Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();
+
                     if(!rmap.containsKey(user.getTelNumber()))
                         Singleton.getInstance().removeRegContact(user);
                     if (lmap.containsKey(user.getTelNumber()))
@@ -163,7 +166,6 @@ public class DB_Manager {
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
-
         DatabaseReference ref = userRef.push();
         //currentUserID = ref.getKey();
         userDatabase.setId(ref.getKey());
