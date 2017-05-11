@@ -36,6 +36,8 @@ public class ChatFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference fdb;
 
+
+
     public ChatFragment() {
         // Required empty public constructor
     }
@@ -144,7 +146,12 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
+        //getSupportFragmentManager().getFragments().get(1).onResume();
+
     }
+
     @Override
     public void onStart() {
         super.onStart();}

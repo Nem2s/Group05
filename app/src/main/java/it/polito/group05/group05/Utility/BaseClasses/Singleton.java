@@ -6,24 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
-import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.ui.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 /**
@@ -39,6 +29,7 @@ public class Singleton {
     private Map<String, UserContact> localContactsList;
     private Map<String, UserContact> regContactsList;
     private Context currContext;
+    private Map<String, Double> usersBalance;
 
 
     private Singleton() {

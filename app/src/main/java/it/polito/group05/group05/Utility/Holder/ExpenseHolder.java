@@ -68,14 +68,15 @@ public class ExpenseHolder extends GeneralHolder{
         String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
 
 
-        for (String i : expenseDatabase.getMembers().keySet()){
-        String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+
+
      //   String s =expenseDatabase.getOwner();
     //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
     //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
 
         for (String i : expenseDatabase.getMembers().keySet()){
+
             /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
                 if (Singleton.getInstance().getUsersBalance().containsKey(i))
