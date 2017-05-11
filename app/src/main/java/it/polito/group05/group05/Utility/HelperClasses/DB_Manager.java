@@ -253,11 +253,11 @@ public class DB_Manager {
                 });
     }
 
-    public void imageProfileUpload(int type, String Id, String name, Bitmap bitmap) {
+    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
         //String name;
-        switch (type) {
+        switch(type) {
             case (1):
                 ref = storageUserRef;
                 //name = new String("userprofile.jpg");
@@ -276,7 +276,7 @@ public class DB_Manager {
 
         final File localdir = new File(context.getFilesDir(), Id);
 
-        if (!localdir.exists())
+        if(!localdir.exists())
             localdir.mkdir();
 
         final File localFile = new File(context.getFilesDir(), Id + "/" + name);
@@ -337,6 +337,7 @@ public class DB_Manager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         UploadTask uploadTask = storageExpenseRef.child(expenseId).child(name).putBytes(bytes);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override

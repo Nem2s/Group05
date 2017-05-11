@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.FirebaseApiNotAvailableException;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.FileNotFoundException;
@@ -152,7 +154,6 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     MenuItem pay= popupMenu.findItem(R.id.action_pay);
     MenuItem subscribe= popupMenu.findItem(R.id.action_subscribe);
     MenuItem delete= popupMenu.findItem(R.id.action_delete);
-        MenuItem download= popupMenu.findItem(R.id.file_download);
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
         cnt++;
@@ -241,13 +242,6 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                             dialog.show();
                             //handle menu3 click
                             break;
-                            case R.id.file_download:
-                                try {
-                                    DB_Manager.getInstance().setContext(context).fileDownload(expense.getId(), expense.getFile());
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
                     }
                     return false;
                 }

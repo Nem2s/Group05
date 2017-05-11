@@ -285,7 +285,7 @@ public class Expense_activity extends AppCompatActivity {
                             .child("lmTime");
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-                    Double x;
+                    Double x;// = expense.getMembers().get(expense.getOwner());
                     boolean isOwner = false;
                     if(!expense.isMandatory()){
                         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){

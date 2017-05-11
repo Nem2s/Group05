@@ -32,9 +32,11 @@ public class ChatFragment extends Fragment {
     private static final int SIGN_IN_REQUEST_CODE = 111;
     private FirebaseListAdapter<ChatDatabase> adapter;
     private ListView listView;
+    private EditText input;
     private String textInput;
+    private FloatingActionButton fab;
     private OnFragmentInteractionListener mListener;
-    DatabaseReference fdb;
+    private DatabaseReference fdb;
 
 
 
@@ -57,8 +59,8 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.chat_main, container, false);
-            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-            final EditText input = (EditText) rootView.findViewById(R.id.input);
+            fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+            input = (EditText) rootView.findViewById(R.id.input);
             listView = (ListView) rootView.findViewById(R.id.list);
     //        showAllOldMessages();
 
@@ -125,9 +127,6 @@ public class ChatFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-   //public String getLoggedInUserName() {
-      //  return loggedInUserName;
-   // }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -151,16 +150,6 @@ public class ChatFragment extends Fragment {
     public void onStart() {
         super.onStart();}
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
