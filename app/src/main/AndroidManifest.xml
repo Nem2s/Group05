@@ -24,8 +24,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_main"
@@ -37,8 +36,8 @@
         <activity
             android:name=".NewGroupActivity"
             android:label="New Group Activity"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
@@ -48,9 +47,19 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".UserSettingsActivity"
+            android:label="@string/title_activity_user_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.group05.group05.MainActivity" />
+        </activity>
+        <activity android:name=".UserBalanceActivity"></activity>
     </application>
 
 </manifest>

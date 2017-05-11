@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/parent_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="it.polito.group05.group05.UserBalanceActivity">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/abl_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:transitionName="@string/transition_appbar"
+        >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:background="@color/colorPrimary"
+            android:transitionName="@string/transition_toolbar"
+            >
+
+            <LinearLayout
+                android:id="@+id/cv_header_ll"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal"
+
+                >
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cv_userimage"
+                    android:layout_height="58dp"
+                    android:layout_width="58dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:transitionName="@string/transition_group_image"
+                    android:focusableInTouchMode="true"
+                    />
+
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="24dp"
+                        android:transitionName="@string/transition_text"
+                        android:layout_marginRight="16dp"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/user_piechart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/abl_header"
+        >
+
+    </com.github.mikephil.charting.charts.PieChart>
+</RelativeLayout>

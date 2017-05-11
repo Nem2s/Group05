@@ -153,6 +153,46 @@ public class DB_Manager {
         });
     }
 
+    public void retriveGroups() {
+        final Map<String, Object> currentGroups =  Singleton.getInstance().getCurrentUser().getUserGroups();
+        currentGroups.clear();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    currentGroups.put(data.getKey(), data.getValue());
+                }
+                currentGroups.remove("00");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void getGroupsInfo() {
+        retriveGroups();
+        final Map<String, Object> map = Singleton.getInstance().getCurrentUser().getUserGroups();
+        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    GroupDatabase group = (GroupDatabase)data.getValue(GroupDatabase.class);
+                    if(map.containsKey(group.getId()))
+                        Singleton.getInstance().getCurrentUser().getUserGroups().put(group.getId(), group);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 
     public void pushNewUser(CurrentUser currentUser) {

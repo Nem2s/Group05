@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -275,11 +276,25 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
+        if (id == R.id.nav_balance){
+            DB_Manager.getInstance().getGroupsInfo();
+            startActivity(new Intent(MainActivity.this, UserBalanceActivity.class));
+        }
+        else if (id == R.id.nav_manage) {
+            Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-        if (id == R.id.nav_manage) {
+                        }
+                    })
+                    .show();
 
         } else if (id == R.id.nav_share) {
-
+            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
+                    .setMessage("ciao ciao ciao")
+                    .build();
+            startActivityForResult(intent, 1);
         } else if (id == R.id.nav_logout) {
             AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -290,12 +305,6 @@ public class MainActivity extends AppCompatActivity
             });
 
 
-        } else if (id == R.id.nav_share) {
-
-            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
-                    .setMessage("ciao ciao ciao")
-                    .build();
-            startActivityForResult(intent, 1);
         } else if (id == R.id.nav_contacts) {
 
         }
