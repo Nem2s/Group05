@@ -69,8 +69,8 @@ public class Singleton {
         this.currentUser = currentUser;
         new getRegContactsTask().execute();
     }
-    public void addRegContact(UserContact u) {
-        this.regContactsList.put(u.getId(), u);
+    public void addRegContact(UserDatabase u) {
+        this.regContactsList.put(u.getId(), new UserContact(u));
     }
 
     public Map<String, UserContact> getRegContactsList() {
@@ -118,6 +118,10 @@ public class Singleton {
 
     public void setIdCurrentGroup(String currentGroupId){
         this.currentGroupId=currentGroupId;
+    }
+
+    public UserContact removeRegContact(UserDatabase userContact) {
+        return regContactsList.remove(userContact.getId());
     }
 
 

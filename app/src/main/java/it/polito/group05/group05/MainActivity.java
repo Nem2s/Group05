@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
@@ -41,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mvc.imagepicker.ImagePicker;
 
 import java.util.ArrayList;
@@ -55,6 +62,8 @@ import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     TextView tv_no_groups;
     FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
+    ImageView iv_nav_header;
 
 
     @Override
@@ -129,9 +139,11 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+            public void onDrawerSlide(final View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
+                iv_nav_header = (ImageView) findViewById(R.id.background_nav_header);
                 Glide.with(context).using(new FirebaseImageLoader())
                         .load(FirebaseStorage.getInstance().getReference("users")
                                 .child(Singleton.getInstance().getCurrentUser().getId())
@@ -140,6 +152,13 @@ public class MainActivity extends AppCompatActivity
                         .centerCrop()
                         .crossFade()
                         .into(cv_user_drawer);
+                Glide.with(context).using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("users")
+                                .child(Singleton.getInstance().getCurrentUser().getId())
+                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                        .placeholder(R.drawable.user_placeholder)
+                        .centerCrop()
+                        .into(iv_nav_header);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
                 tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);

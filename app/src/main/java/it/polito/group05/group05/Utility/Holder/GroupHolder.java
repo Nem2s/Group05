@@ -71,6 +71,7 @@ public class GroupHolder extends GeneralHolder {
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.exists()) return;
                             UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
                             g.getMembers().put(u.getId(), u);
                         }

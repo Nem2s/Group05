@@ -140,16 +140,18 @@ public class NewGroupActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
         contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
-        invitedAdapter = new MemberInvitedAdapter(new ArrayList<>(contacts), context);
+        invitedAdapter = new MemberInvitedAdapter(contacts, context);
 
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                contacts.clear();
+                contacts.addAll(Singleton.getInstance().getRegContactsList().values());
                 invitedAdapter.notifyDataSetChanged();
+                mSwipeLayout.setRefreshing(false);
             }
 
         });
-
         if(invitedAdapter.getItemCount() == 0) {
                     Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                             .setAction("ok", new View.OnClickListener() {
@@ -353,13 +355,13 @@ public class NewGroupActivity extends AppCompatActivity {
             group.setName(et_group_name.getText().toString());
             for (UserContact u : contacts) {
                 if(u.isSelected()) {
-                    group.getMembers().put(u.getId(), false);
+                    group.getMembers().put(u.getId(), 0.0);
                     u.setSelected(false);
                 }
 
             }
 
-            group.getMembers().put(currentUser.getId(), true);
+            group.getMembers().put(currentUser.getId(), 0.0);
 
             if(!group.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
 

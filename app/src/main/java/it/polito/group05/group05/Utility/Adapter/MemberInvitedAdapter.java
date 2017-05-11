@@ -46,7 +46,9 @@ public class MemberInvitedAdapter extends RecyclerView.Adapter<MemberInvitedHold
 
     }
 
-
+    public void cleanUp() {
+        this.invited.clear();
+    }
 
     @Override
     public MemberInvitedHolder onCreateViewHolder(ViewGroup parent, int viewType) {

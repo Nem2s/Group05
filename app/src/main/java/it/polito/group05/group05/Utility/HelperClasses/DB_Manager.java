@@ -10,6 +10,7 @@ import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -134,11 +135,14 @@ public class DB_Manager {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                for (final DataSnapshot data : dataSnapshot.getChildren()) {
                     UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
-                    Map<String, UserContact> map = Singleton.getInstance().getLocalContactsList();
-                    if (map.containsKey(user.getTelNumber()))
-                        Singleton.getInstance().addRegContact(new UserContact(user));
+                    Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+                    Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();
+                    if(!rmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().removeRegContact(user);
+                    if (lmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().addRegContact(user);
                 }
             }
 
