@@ -146,7 +146,9 @@ public class DB_Manager {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
                 for (final DataSnapshot data : dataSnapshot.getChildren()) {
+                    if(!data.exists()) continue;
                     UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
                     Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
                     Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();

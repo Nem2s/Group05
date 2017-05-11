@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 
 /**
@@ -62,17 +68,14 @@ public class ChatFragment extends Fragment {
             fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
             input = (EditText) rootView.findViewById(R.id.input);
             listView = (ListView) rootView.findViewById(R.id.list);
-    //        showAllOldMessages();
+            showAllOldMessages();
 
-      /*      input.addTextChangedListener(new TextWatcher() {
+            input.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 }
-
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 }
 
                 @Override
@@ -89,7 +92,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if (input.getText().toString().trim().equals("")) {
-                   //     Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
                     } else {
                         UserDatabase u = Singleton.getInstance().getCurrentUser();
                         fdb =   FirebaseDatabase.getInstance().getReference("chats")
@@ -101,7 +104,7 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
-        */
+
         return rootView;
 
 
