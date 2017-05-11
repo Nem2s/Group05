@@ -16,8 +16,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.twitter.sdk.android.core.models.Card;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,6 +34,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -53,7 +51,7 @@ import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
-
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 public class Expense_activity extends AppCompatActivity {
@@ -249,8 +247,10 @@ public class Expense_activity extends AppCompatActivity {
                 else {
                     fdb =   FirebaseDatabase.getInstance()
                             .getReference("expenses")
-                            .child(Singleton.getInstance().getIdCurrentGroup())
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
                             .push();
+                    DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child("lmTime");
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
                     Double x;// = expense.getMembers().get(expense.getOwner());
@@ -261,19 +261,27 @@ public class Expense_activity extends AppCompatActivity {
                         }
                     }
                     else {
+                        Map<String,Double> map = new HashMap<>();
+
+
                         for (String s : expense.getMembers().keySet()) {
                             x = expense.getMembers().get(s);
-                            if (s == expense.getOwner()) {
+                            if (s == expense.getOwner())
                                 expense.getMembers().put(s, expense_price - x);
-                                isOwner = true;
-                            } else
-                                expense.getMembers().put(s, (-1.00) * x);
-
+                             else
+                                expense.getMembers().put(s, (-1.00)*x);
+                            DB_Manager.getInstance().updateGroupFlow(s,-1.00*expense.getMembers().get(s));
                         }
-                    }
-                    if(!isOwner && expense.isMandatory())
-                        expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
+                        if(!expense.getMembers().containsKey(expense.getOwner()))
+                        {
+                            expense.getMembers().put(expense.getOwner(), expense_price);
+                            DB_Manager.getInstance().updateGroupFlow(Singleton.getInstance().getCurrentUser().getId(),(-1.00)*expense_price);
+                        }
 
+
+                    }
+
+                    fdbgroup.setValue(expense.getTimestamp());
                     fdb.setValue(expense);
                     finish();
                 }

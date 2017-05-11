@@ -62,7 +62,8 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private View user_info;
     private CircleImageView user_img;
-    private CurrentUser ud = new CurrentUser();
+    private CurrentUser ud = new CurrentUser();;
+
     private EditText et_user_phone;
 
     @Subscribe

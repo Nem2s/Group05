@@ -4,13 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -222,17 +219,16 @@ public class DB_Manager {
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
         imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
-        Singleton.getInstance().setCurrContext(context);
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
     public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
         for(String s : groupDatabase.getMembers().keySet()){
             if(s==null) continue;
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), 0.0);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
@@ -426,5 +422,49 @@ public class DB_Manager {
             }
         });
     }
+    public void updateGroupFlow(String s ,final Double d){
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(s);
+
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
+
+                tmp =tmp+((-1.00)*d);
+                fdb.setValue(tmp);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateGroupFlow(final Map<String,Double> map){
+
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members");
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                for(String s : map.keySet()){
+                    if(dataSnapshot.hasChild(s)) {
+                        Double tmp = Double.parseDouble(dataSnapshot.child(s).getValue().toString());
+                        tmp -= map.get(s);
+                        fdb.child(s).setValue(tmp);
+
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
 }
