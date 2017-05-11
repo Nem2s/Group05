@@ -4,9 +4,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.Holder.PersonHolder;
 
 
 /**
@@ -18,19 +30,15 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class GroupDetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-  //  private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
+    RecyclerView rv;
+    Context context;
 
     private OnFragmentInteractionListener mListener;
 
     public GroupDetailsFragment() {
         // Required empty public constructor
+
     }
 
     /**
@@ -62,7 +70,39 @@ public class GroupDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group_details, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_group_details, container, false);
+        rv = (RecyclerView) rootView.findViewById(R.id.detail_fragment_rv);
+        rv.setHasFixedSize(false);
+        final LinearLayoutManager ll=  new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true);
+        rv.setLayoutManager(ll);
+        ll.setStackFromEnd(true);
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+        DatabaseReference usersGroupRef = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getIdCurrentGroup()).child("members");
+        FirebaseIndexRecyclerAdapter personAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
+                R.layout.item_person_details_frag,
+                PersonHolder.class,
+                usersGroupRef,
+                usersRef){
+            @Override
+            protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, Object model, int position) {
+                ((PersonHolder)viewHolder).setData(model,getContext());
+            }
+
+            @Override
+            protected Object parseSnapshot(DataSnapshot snapshot) {
+                //if(snapshot.getKey().equals(Singleton.getInstance().getCurrentUser().getId())) return null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    if (child.getKey().equals("userInfo"))
+                        return child.getValue(UserDatabase.class);
+                }
+                return null;
+                //return super.parseSnapshot(sp);
+            }
+
+
+        };
+        rv.setAdapter(personAdapter);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

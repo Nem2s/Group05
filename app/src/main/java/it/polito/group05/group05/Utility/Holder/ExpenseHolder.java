@@ -69,6 +69,21 @@ public class ExpenseHolder extends GeneralHolder{
 
 
         for (String i : expenseDatabase.getMembers().keySet()){
+        String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+     //   String s =expenseDatabase.getOwner();
+    //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
+    //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+        //description.setText(expenseDatabase.getDescription());
+
+        for (String i : expenseDatabase.getMembers().keySet()){
+            /**Aggiunto da andrea**/
+            if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
+                if (Singleton.getInstance().getUsersBalance().containsKey(i))
+                    Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) + expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+                else
+                    Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+            }
+            /********************/
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
                 x.setCustomValue(expenseDatabase.getMembers().get(i));
@@ -77,6 +92,7 @@ public class ExpenseHolder extends GeneralHolder{
                 description.setText("Posted by "+x.getName()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
             expenseDatabase.getUsersExpense().add(x);
         }
+
       if(!(expenseDatabase.isMandatory())) {
             price.setTextColor(context.getResources().getColor(R.color.colorAccent));
         }
@@ -104,6 +120,7 @@ private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseData
             return expenseDatabase.getUsersExpense().size();
         }
     };
+
 
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));

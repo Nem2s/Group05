@@ -13,8 +13,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,6 +30,7 @@ public class Singleton {
     String currentGroupId;
     private String userId;
     private List<UserContact> contactList;
+    private Map<String, Double> usersBalance;
     private Context currContext;
 
 
@@ -107,6 +110,15 @@ public class Singleton {
             this.contactList.add(user);
     }
 
+    public Map<String, Double> getUsersBalance() {
+        if(this.usersBalance == null)
+            this.usersBalance = new HashMap<>();
+        return usersBalance;
+    }
+
+    public void setUsersBalance(Map<String, Double> usersBalance) {
+        this.usersBalance = usersBalance;
+    }
 
     class getRegContactsTask extends AsyncTask<Void, Void, Void> {
 
