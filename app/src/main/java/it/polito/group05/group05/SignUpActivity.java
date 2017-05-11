@@ -63,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
     private View user_info;
     private CircleImageView user_img;
     private CurrentUser ud = new CurrentUser();;
+
     private EditText et_user_phone;
 
     @Subscribe
@@ -120,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
             Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
             if(user_img != null && bitmap != null) {
                 user_img.setImageBitmap(bitmap);
-                        ud.setImg_profile(bitmap);
+                ud.setImg_profile(bitmap);
             }
 
 
@@ -273,6 +274,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     public void dialogSignUp(){
+
 
         ud.setAuthKey(mCurrentUser.getUid());
         ud.setName(mCurrentUser.getDisplayName());
