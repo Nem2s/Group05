@@ -3,8 +3,13 @@ package it.polito.group05.group05.Utility.HelperClasses;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.github.mikephil.charting.utils.FileUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -20,18 +26,21 @@ import com.google.firebase.storage.UploadTask;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -41,6 +50,9 @@ import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
 
+import static android.widget.Toast.LENGTH_SHORT;
+import static com.github.mikephil.charting.utils.FileUtils.*;
+
 
 /**
  * Created by andre on 05-May-17.
@@ -48,29 +60,32 @@ import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
 
 public class DB_Manager {
 
-    private static  DB_Manager mInstance = null;
+    private static DB_Manager mInstance = null;
     private Context context;
-    private  FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
-    public  String currentUserID;
-    private  List<String> groupUser = new ArrayList<>();
+    public String currentUserID;
+    private List<String> groupUser = new ArrayList<>();
 
     private static FirebaseDatabase database;
 
-    private  DatabaseReference    userRef,
+    private DatabaseReference userRef,
             groupRef,
             expenseRef,
             usernumberRef,
             inviteRef;
 
-    private  FirebaseStorage      storage;
-    private  StorageReference     storageGroupRef,
+    private FirebaseStorage storage;
+    private StorageReference storageGroupRef,
             storageUserRef,
             storageExpenseRef;
 
-    private  String userInfo = new String("userInfo");
-    private  String userGroups = new String("userGroups");
+    private String userInfo = new String("userInfo");
+    private String userGroups = new String("userGroups");
 
+    private File localFile;
+    FileOutputStream outputStream;
+    BufferedOutputStream buff;
 
     private DB_Manager() {
 
@@ -105,9 +120,8 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
-    public static DB_Manager getInstance(){
-        if(mInstance == null)
-        {
+    public static DB_Manager getInstance() {
+        if (mInstance == null) {
             mInstance = new DB_Manager();
 
         }
@@ -126,9 +140,6 @@ public class DB_Manager {
         Singleton.getInstance().clearGroups();
         mAuth.signOut();
     }*/
-
-
-
 
 
     public void pushNewUser(CurrentUser currentUser) {
@@ -150,24 +161,24 @@ public class DB_Manager {
         tmp.clear();
         tmp.put("authKey", userDatabase.getAuthKey());
         ref.updateChildren(tmp);
-        if(currentUser.getTelNumber().startsWith("+"))
+        if (currentUser.getTelNumber().startsWith("+"))
             currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
         usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
 
-        if(currentUser.getImg_profile() == null )
+        if (currentUser.getImg_profile() == null)
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
         imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
-    public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
+    public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
-        for(String s : groupDatabase.getMembers().keySet()){
-            if(s==null) continue;
+        for (String s : groupDatabase.getMembers().keySet()) {
+            if (s == null) continue;
             Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), true);
+            temp.put(groupDatabase.getId(), 0.0);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
@@ -178,13 +189,13 @@ public class DB_Manager {
         return groupDatabase.getId();
     }
 
-    public  void pushNewExpense(ExpenseDatabase expenseDatabase){
+    public void pushNewExpense(ExpenseDatabase expenseDatabase) {
         DatabaseReference ref = expenseRef.push();
         expenseDatabase.setId(ref.getKey());
         ref.setValue(expenseDatabase);
     }
 
-    public  void getCurrentUser() {
+    public void getCurrentUser() {
         userRef.orderByChild("authKey")
                 .equalTo(mAuth.getCurrentUser().getUid())
                 //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
@@ -197,14 +208,14 @@ public class DB_Manager {
                             return;
                         }
                         CurrentUser currentUser = new CurrentUser();
-                        for(DataSnapshot child : dataSnapshot.getChildren()) {
-                            for(DataSnapshot child2 : child.getChildren()) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            for (DataSnapshot child2 : child.getChildren()) {
                                 if (child2.getKey().equals(userInfo)) {
                                     UserDatabase ud = child2.getValue(UserDatabase.class);
                                     currentUser.settingInfoUser(ud);
 
                                 } else if (child2.getKey().equals(userGroups)) {
-                                    Map<String, Object> tmp = (Map<String,Object>)child2.getValue();
+                                    Map<String, Object> tmp = (Map<String, Object>) child2.getValue();
                                     tmp.remove("00");
                                     currentUser.setGroups(new ArrayList<String>(tmp.keySet()));
                                 }
@@ -223,11 +234,11 @@ public class DB_Manager {
                 });
     }
 
-    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
+    public void imageProfileUpload(int type, String Id, String name, Bitmap bitmap) {
 
         StorageReference ref;
         //String name;
-        switch(type) {
+        switch (type) {
             case (1):
                 ref = storageUserRef;
                 //name = new String("userprofile.jpg");
@@ -246,7 +257,7 @@ public class DB_Manager {
 
         final File localdir = new File(context.getFilesDir(), Id);
 
-        if(!localdir.exists())
+        if (!localdir.exists())
             localdir.mkdir();
 
         final File localFile = new File(context.getFilesDir(), Id + "/" + name);
@@ -287,52 +298,13 @@ public class DB_Manager {
 
     }
 
-    public  void fileUpload(String expenseId, String name, File file) {
 
+    public void fileUpload(String expenseId, String name, String file) throws IOException {
         StorageReference ref;
-
         final File localdir = new File(context.getFilesDir(), expenseId);
-
-        if(!localdir.exists())
+        if (!localdir.exists())
             localdir.mkdir();
-
         final File localFile = new File(context.getFilesDir(), expenseId + "/" + name);
-
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(localFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        try {
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         int size = (int) file.length();
         byte[] bytes = new byte[size];
         try {
@@ -346,7 +318,6 @@ public class DB_Manager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         UploadTask uploadTask = storageExpenseRef.child(expenseId).child(name).putBytes(bytes);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -356,8 +327,35 @@ public class DB_Manager {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Toast.makeText(context, "Uploading Done!!!", LENGTH_SHORT).show();
+               //  Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
+
+    }
+
+    public void fileDownload(String expenseID, String nomeFile) throws FileNotFoundException {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                                                .child("expenses")
+                                                .child(expenseID)
+                                                .child(nomeFile);
+
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Files");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        File filelocal = new File(folder, nomeFile);
+        storageRef.getFile(filelocal).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context,"Download failed. Try again!", LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(context,"File downloaded",LENGTH_SHORT).show();
             }
         });
     }

@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.FirebaseApiNotAvailableException;
 import com.google.firebase.database.Query;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,6 +27,7 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 /**
@@ -49,9 +52,9 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
     }
-    public void setData(Object c, Context context){
+    public void setData(Object c, final Context context){
         if(!(c instanceof ExpenseDatabase)) return;
-        Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
@@ -63,6 +66,16 @@ public class ExpenseHolder extends GeneralHolder{
     //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
         //description.setText(expenseDatabase.getDescription());
 
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    DB_Manager.getInstance().setContext(context).fileDownload(expenseDatabase.getId(), expenseDatabase.getFile());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         for (String i : expenseDatabase.getMembers().keySet()){
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;

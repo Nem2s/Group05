@@ -1,6 +1,13 @@
 package it.polito.group05.group05;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -26,14 +34,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.twitter.sdk.android.core.models.Card;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,7 +72,7 @@ import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
 import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
 import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
-
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 public class Expense_activity extends AppCompatActivity {
@@ -88,6 +107,16 @@ public class Expense_activity extends AppCompatActivity {
     private List<User_expense> partecipants = new ArrayList<>();
     private Map<String, User_expense> list = new TreeMap<>();
     private boolean isEqualPart=true;
+    private Uri uri;
+    private boolean newFile = false;
+    private String nameFILE= null;
+    private File fileUploaded;
+    private Context context;
+    private UploadTask uploadTask;
+    private InputStream stream;
+    FirebaseStorage storage;
+    final StorageReference fileRef = null;
+
 
     @Override
     protected void onStart() {
@@ -158,6 +187,9 @@ public class Expense_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = this;
+
         setContentView(R.layout.activity_expense_v2);
         costPerUser = 0.0;
         expense_price = 0.0;
@@ -253,7 +285,7 @@ public class Expense_activity extends AppCompatActivity {
                             .push();
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-                    Double x;// = expense.getMembers().get(expense.getOwner());
+                    Double x;
                     boolean isOwner = false;
                     if(!expense.isMandatory()){
                         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
@@ -273,6 +305,16 @@ public class Expense_activity extends AppCompatActivity {
                     }
                     if(!isOwner && expense.isMandatory())
                         expense.getMembers().put(Singleton.getInstance().getCurrentUser().getId(), expense_price);
+
+                    if(nameFILE != null){
+                        expense.setFile(nameFILE);
+                        upLoadFile(uri);
+                      /* try{
+                        DB_Manager.getInstance().setContext(context).fileUpload(expense.getId(), nameFILE, uri.toString());
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }*/
+                    }
 
                     fdb.setValue(expense);
                     finish();
@@ -374,6 +416,10 @@ public class Expense_activity extends AppCompatActivity {
         cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                startActivityForResult(intent,0);
             }
         });
         cb_policy.setOnClickListener(new View.OnClickListener() {
@@ -392,6 +438,26 @@ public class Expense_activity extends AppCompatActivity {
 
     }
 
+    private void upLoadFile(Uri uri){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                                            .child("expenses")
+                                            .child(expense.getId())
+                                            .child(nameFILE);
+
+        UploadTask uploadTask = storageRef.putFile(uri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Expense_activity.this, "FAIL", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(Expense_activity.this, "Uploading Done!!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     public void description_handler(View v){
         et_description.setVisibility(et_description.isShown() ? View.GONE : View.VISIBLE);
@@ -407,6 +473,35 @@ public class Expense_activity extends AppCompatActivity {
         return true;
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            newFile = true;
+            uri =  data.getData();
+            if(uri != null){
+                //uri.getPath()
+                fileUploaded = new File(uri.toString());
+                //fileUploaded = new File(String.valueOf(uri));
+            }
+            if(uri.getScheme().equals("content")){
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            if (nameFILE== null) {
+                nameFILE= uri.getPath();
+                int cut = nameFILE.lastIndexOf('/');
+                if (cut != -1) {
+                    nameFILE= nameFILE.substring(cut + 1);
+                }
+            }
+        }
+    }
 
 
 

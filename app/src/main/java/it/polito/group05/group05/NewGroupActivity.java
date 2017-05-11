@@ -344,13 +344,13 @@ public class NewGroupActivity extends AppCompatActivity {
             group.setName(et_group_name.getText().toString());
             for (UserContact u : Singleton.getInstance().getContactList(this)) {
                 if(u.isSelected()) {
-                    group.getMembers().put(u.getId(), false);
+                    group.getMembers().put(u.getId(), 0.0);
                     u.setSelected(false);
                 }
 
             }
 
-            group.getMembers().put(currentUser.getId(), true);
+            group.getMembers().put(currentUser.getId(), 0.0);
 
             if(!group.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
 
