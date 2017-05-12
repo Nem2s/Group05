@@ -16,7 +16,6 @@ import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 
 public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
-    private ChatFragment chat;
     private Activity activity;
 
     public MessageAdapter(ChatFragment chatfrag, Class<ChatDatabase> modelClass, int modelLayout, DatabaseReference ref) {
@@ -50,14 +49,11 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
     @Override
     public int getViewTypeCount() {
-        // return the total number of view types. this value should never change
-        // at runtime
         return 2;
     }
 
     @Override
     public int getItemViewType(int position) {
-        // return a value between 0 and (getViewTypeCount - 1)
         return position % 2;
     }
 }
