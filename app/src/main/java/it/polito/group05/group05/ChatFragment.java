@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 
 /**
@@ -32,9 +38,11 @@ public class ChatFragment extends Fragment {
     private static final int SIGN_IN_REQUEST_CODE = 111;
     private FirebaseListAdapter<ChatDatabase> adapter;
     private ListView listView;
+    private EditText input;
     private String textInput;
+    private FloatingActionButton fab;
     private OnFragmentInteractionListener mListener;
-    DatabaseReference fdb;
+    private DatabaseReference fdb;
 
 
 
@@ -56,50 +64,47 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.chat_main, container, false);
-            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-            final EditText input = (EditText) rootView.findViewById(R.id.input);
-            listView = (ListView) rootView.findViewById(R.id.list);
-    //        showAllOldMessages();
+        View rootView = inflater.inflate(R.layout.chat_main, container, false);
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        input = (EditText) rootView.findViewById(R.id.input);
+        listView = (ListView) rootView.findViewById(R.id.list);
+        showAllOldMessages();
 
-      /*      input.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if(s.length()> 0){
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
                     textInput = s.toString();
-                    }
                 }
-            });
+            }
+        });
 
 
-
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (input.getText().toString().trim().equals("")) {
-                   //     Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        UserDatabase u = Singleton.getInstance().getCurrentUser();
-                        fdb =   FirebaseDatabase.getInstance().getReference("chats")
-                                                .child(Singleton.getInstance().getIdCurrentGroup())
-                                                .push();
-                        ChatDatabase cdb = new ChatDatabase(textInput, u.getName().toString(), u.getId().toString());
-                        fdb.setValue(cdb);
-                        input.setText("");
-                    }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (input.getText().toString().trim().equals("")) {
+                    //  Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
+                } else {
+                    UserDatabase u = Singleton.getInstance().getCurrentUser();
+                    fdb = FirebaseDatabase.getInstance().getReference("chats")
+                            .child(Singleton.getInstance().getIdCurrentGroup())
+                            .push();
+                    ChatDatabase cdb = new ChatDatabase(textInput, u.getName().toString(), u.getId().toString());
+                    fdb.setValue(cdb);
+                    input.setText("");
                 }
-            });
-        */
+            }
+        });
+
         return rootView;
 
 
@@ -125,9 +130,6 @@ public class ChatFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-   //public String getLoggedInUserName() {
-      //  return loggedInUserName;
-   // }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -146,26 +148,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
-        //getSupportFragmentManager().getFragments().get(1).onResume();
-
     }
-
     @Override
     public void onStart() {
         super.onStart();}
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

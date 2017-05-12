@@ -47,8 +47,8 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .into(civ);
 
 
-
-        tv.setText(s);
+        String[] s1 = s.split(" ");
+        tv.setText(s1[0]);
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c1));
             if(u.getExpense().isMandatory())

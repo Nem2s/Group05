@@ -3,6 +3,7 @@ package it.polito.group05.group05;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,11 +13,19 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.Holder.GeneralHolder;
 import it.polito.group05.group05.Utility.Holder.PersonHolder;
 
 
@@ -30,6 +39,7 @@ import it.polito.group05.group05.Utility.Holder.PersonHolder;
  */
 public class GroupDetailsFragment extends Fragment {
 
+    RecyclerView.Adapter personAdapter;
     RecyclerView rv;
     Context context;
 
@@ -64,6 +74,8 @@ public class GroupDetailsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Singleton.getInstance().getUsersBalance().clear();
+        retriveExpense();
         super.onCreate(savedInstanceState);
   /*      if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -83,7 +95,7 @@ public class GroupDetailsFragment extends Fragment {
         ll.setStackFromEnd(true);
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         DatabaseReference usersGroupRef = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getIdCurrentGroup()).child("members");
-        FirebaseIndexRecyclerAdapter personAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
+        /*FirebaseIndexRecyclerAdapter personAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
                 R.layout.item_person_details_frag,
                 PersonHolder.class,
                 usersGroupRef,
@@ -105,6 +117,34 @@ public class GroupDetailsFragment extends Fragment {
             }
 
 
+        };*/
+
+        final List<UserDatabase> userlist = new ArrayList<>();
+        for(Object u : Singleton.getInstance().getmCurrentGroup().getMembers().values())
+        {
+            UserDatabase tmp = (UserDatabase) u;
+            if (tmp.getId().equals(Singleton.getInstance().getCurrentUser().getId())) continue;
+            userlist.add(tmp);
+        }
+        personAdapter = new RecyclerView.Adapter()
+        {
+
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View rootView = LayoutInflater.from(getContext()).inflate(R.layout.item_person_details_frag,parent,false);
+                GeneralHolder holder = new PersonHolder(rootView);
+                return holder;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ((GeneralHolder)holder).setData(userlist.get(position),getContext());
+            }
+
+            @Override
+            public int getItemCount() {
+                return userlist.size();
+            }
         };
         rv.setAdapter(personAdapter);
         return rootView;
@@ -148,4 +188,54 @@ public class GroupDetailsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void retriveExpense(){
+        FirebaseDatabase.getInstance()
+                .getReference("expenses")
+                .orderByKey()
+                .equalTo(Singleton.getInstance().getmCurrentGroup().getId())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child1 : dataSnapshot.getChildren()) {
+                            for (DataSnapshot child2 : child1.getChildren()) {
+                                //for (DataSnapshot child3 : child2.getChildren())
+                                //    if (child3.getKey().equals("members"))
+                                        parseSnapshot1(child2);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void parseSnapshot1(DataSnapshot snapshot)
+    {
+        //Map<String, Double> expenseDatabase = (Map<String, Double>) snapshot.getValue();
+        ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
+        for(String i : expenseDatabase.getMembers().keySet()) {
+            //if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && !i.equals(Singleton.getInstance().getCurrentUser().getId())) {
+                if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
+                    if (Singleton.getInstance().getUsersBalance().containsKey(i))
+                        Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) + expenseDatabase.getMembers().get(i));
+                    else
+                        Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(i));
+                }
+                else {
+                    if (expenseDatabase.getMembers().get(i) > 0) {
+                        if (Singleton.getInstance().getUsersBalance().containsKey(i))
+                            Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) - expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+                        else
+                            Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId())*-1);
+                    }
+                }
+            //}
+            personAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

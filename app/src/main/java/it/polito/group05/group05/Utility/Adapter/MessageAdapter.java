@@ -23,7 +23,6 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
         super(chatfrag.getActivity(), modelClass, modelLayout, ref);
         activity=chatfrag.getActivity();
-        this.chat= chat;
     }
 
     @Override
@@ -33,22 +32,19 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
         TextView messageTime = (TextView) v.findViewById(R.id.message_time);
         messageText.setText(model.getMessageText());
         messageUser.setText(model.getMessageUser());
-
-        // Format the date before showing it
-     //   messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getMessageTime()));
-        messageTime.setText(DateFormat.format("HH:mm", model.getMessageTime()));
+        messageTime.setText(DateFormat.format("hh:mm", model.getMessageTime()));
     }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ChatDatabase ChatDatabase = getItem(position);
-        if (ChatDatabase.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId()))
-            view = activity.getLayoutInflater().inflate(R.layout.item_out_message, viewGroup, false);
-        else
+        ChatDatabase cdb = getItem(position);
+        if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
             view = activity.getLayoutInflater().inflate(R.layout.item_in_message, viewGroup, false);
+        }
+        else
+            view = activity.getLayoutInflater().inflate(R.layout.item_out_message, viewGroup, false);
 
-        //generating view
-        populateView(view, ChatDatabase, position);
+        populateView(view, cdb, position);
 
         return view;
     }
