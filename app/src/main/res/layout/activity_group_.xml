@@ -6,7 +6,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     tools:context="it.polito.group05.group05.Group_Activity">
 
     <android.support.design.widget.AppBarLayout
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:transitionName="@string/transition_appbar"
+        android:isScrollContainer="false"
 
         >
 
@@ -44,8 +45,6 @@
                     android:focusableInTouchMode="true"
                     android:transitionName="@string/transition_group_image"
                     />
-
-
                     <TextView
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
@@ -72,6 +71,7 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
+        android:background="@color/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

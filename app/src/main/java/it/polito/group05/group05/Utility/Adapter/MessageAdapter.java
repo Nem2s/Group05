@@ -32,14 +32,15 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
         TextView messageTime = (TextView) v.findViewById(R.id.message_time);
         messageText.setText(model.getMessageText());
         messageUser.setText(model.getMessageUser());
-        messageTime.setText(DateFormat.format("hh:mm",model.getMessageTime()));
+        messageTime.setText(DateFormat.format("hh:mm", model.getMessageTime()));
     }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         ChatDatabase cdb = getItem(position);
-        if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())){
-            view = activity.getLayoutInflater().inflate(R.layout.item_in_message, viewGroup, false);}
+        if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+            view = activity.getLayoutInflater().inflate(R.layout.item_in_message, viewGroup, false);
+        }
         else
             view = activity.getLayoutInflater().inflate(R.layout.item_out_message, viewGroup, false);
 

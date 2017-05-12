@@ -21,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -43,7 +42,7 @@ public class ExpenseHolder extends GeneralHolder{
     TextView name;
     TextView price;
     RecyclerView rv;
-    TextView description;
+    TextView owner, timestamp;
     CardView cv;
     Query ref;
     TextView menu;
@@ -53,7 +52,8 @@ public class ExpenseHolder extends GeneralHolder{
         this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
         this.name= (TextView) itemView.findViewById(R.id.expense_name);
         this.price= (TextView) itemView.findViewById(R.id.expense_price);
-        this.description=(TextView) itemView.findViewById(R.id.expense_owner);
+        this.owner = (TextView) itemView.findViewById(R.id.owner);
+        this.timestamp = (TextView) itemView.findViewById(R.id.timestamp);
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
         this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
@@ -66,7 +66,8 @@ public class ExpenseHolder extends GeneralHolder{
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
         Date date = new Date(System.currentTimeMillis());
 
-        String timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+        String[] timestamp = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(".")).split(" ");
+
 
 
 
@@ -87,6 +88,9 @@ public class ExpenseHolder extends GeneralHolder{
             }
         });
 */
+        String id = Singleton.getInstance().getCurrentUser().getId();
+
+        this.timestamp.setText(timestamp[0]);
         for (String i : expenseDatabase.getMembers().keySet()){
 
             /**Aggiunto da andrea**/
@@ -101,8 +105,11 @@ public class ExpenseHolder extends GeneralHolder{
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
                 x.setCustomValue(expenseDatabase.getMembers().get(i));
                 x.setExpense(expenseDatabase);
-            if(x.getId().compareTo(expenseDatabase.getOwner())==0)
-                description.setText("Posted by "+x.getName()+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
+            if (x.getId().compareTo(expenseDatabase.getOwner()) == 0) {
+                //owner.setText((x.getName().split(" "))[0]);
+                owner.setText(x.getId().compareTo(id) == 0 ? "You" : x.getName());
+                //   description.setText("Posted by " + x.getName() + " on " + ((expenseDatabase.getTimestamp() != null) ? expenseDatabase.getTimestamp() : timestamp));
+            }
             expenseDatabase.getUsersExpense().add(x);
         }
 
@@ -265,14 +272,14 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         @Override
         public void onClick(View v) {
 
-            if(description.getVisibility()==View.GONE) {
-                description.setVisibility(View.VISIBLE);
+            if (rv.getVisibility() == View.GONE) {
+                //  description.setVisibility(View.VISIBLE);
                // file.setVisibility(View.VISIBLE);
                 rv.setVisibility(View.VISIBLE);
 
             }
             else {
-                description.setVisibility(View.GONE);
+                //  description.setVisibility(View.GONE);
                 rv.setVisibility(View.GONE);
                 //file.setVisibility(View.GONE);
             }
