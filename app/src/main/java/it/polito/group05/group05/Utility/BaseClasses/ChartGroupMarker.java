@@ -64,18 +64,25 @@ public class ChartGroupMarker extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         String balance;
         String color;
-        GroupDatabase group = (GroupDatabase) e.getData();
-        if(e.getY() > 0)
+        GroupDatabase g = (GroupDatabase) e.getData();
+        float value;
+        try {
+            value = Float.valueOf(String.valueOf((long)g.getMembers().get(Singleton.getInstance().getCurrentUser().getId())));
+
+        } catch (ClassCastException ex) {
+            value = Float.valueOf(String.valueOf((double)g.getMembers().get(Singleton.getInstance().getCurrentUser().getId())));
+        }
+        if(value > 0)
             color = "#3EA055";
         else
             color = "#C11B17";
-        balance = "<font color=" + color + ">Currently: " + e.getY() + " € </font>";
+        balance = "<font color=" + color + ">Currently: " + value + " € </font>";
         tv_balance.setText(Html.fromHtml(balance), TextView.BufferType.SPANNABLE);
-        tv_name.setText(group.getName());
+        tv_name.setText(g.getName());
         Glide.with(context).using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups")
-                        .child(group.getId())
-                        .child(group.getPictureUrl()))
+                        .child(g.getId())
+                        .child(g.getPictureUrl()))
                 .placeholder(R.drawable.network)
                 .centerCrop()
                 .crossFade()

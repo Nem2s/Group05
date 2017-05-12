@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.MarkerView;
@@ -63,11 +64,20 @@ public class UserBalanceActivity extends AppCompatActivity {
         List<PieEntry> entries = new ArrayList<>();
         for(Object o : Singleton.getInstance().getCurrentUser().getUserGroups().values()) {
             GroupDatabase g = (GroupDatabase)o;
-            PieEntry entry = new PieEntry(g.getTotal(), g.getName());
+            float value;
+            try {
+                value = Float.valueOf(String.valueOf((long)g.getMembers().get(Singleton.getInstance().getCurrentUser().getId())));
+
+            } catch (ClassCastException e) {
+                value = Float.valueOf(String.valueOf((double)g.getMembers().get(Singleton.getInstance().getCurrentUser().getId())));
+            }
+            if(value < 0)
+                value = -value;
+            PieEntry entry = new PieEntry(value, g.getName());
             entry.setData(g);
             entries.add(entry);
         }
-        PieDataSet set = new PieDataSet(entries, "Current balance of " + Singleton.getInstance().getCurrentUser().getName());
+        PieDataSet set = new PieDataSet(entries, null);
         set.setColors(ColorTemplate.COLORFUL_COLORS);
         set.setDrawIcons(false);
 
@@ -81,6 +91,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         data.setValueTextColor(Color.WHITE);
 
         Legend l = pchart.getLegend();
+        l.setTextSize(15f);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
@@ -107,6 +118,7 @@ public class UserBalanceActivity extends AppCompatActivity {
             }
         });
         pchart.setData(data);
+        pchart.animateXY(1000, 1000, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInExpo);
         pchart.invalidate();
 
 

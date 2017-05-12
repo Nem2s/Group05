@@ -1,9 +1,11 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.UserBalanceActivity;
+import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -160,6 +165,7 @@ public class DB_Manager {
                     currentGroups.put(data.getKey(), data.getValue());
                 }
                 currentGroups.remove("00");
+
             }
 
             @Override
@@ -167,19 +173,14 @@ public class DB_Manager {
 
             }
         });
-
-    }
-
-    public void getGroupsInfo() {
-        retriveGroups();
-        final Map<String, Object> map = Singleton.getInstance().getCurrentUser().getUserGroups();
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    GroupDatabase group = (GroupDatabase)data.getValue(GroupDatabase.class);
-                    if(map.containsKey(group.getId()))
-                        Singleton.getInstance().getCurrentUser().getUserGroups().put(group.getId(), group);
+                    if(currentGroups.containsKey(data.getKey())) {
+                        GroupDatabase g = (GroupDatabase)data.getValue(GroupDatabase.class);
+                        Singleton.getInstance().getCurrentUser().getUserGroups().put(g.getId(), g);
+                    }
 
                 }
             }
@@ -189,8 +190,8 @@ public class DB_Manager {
 
             }
         });
-    }
 
+    }
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);

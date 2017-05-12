@@ -277,8 +277,9 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
         if (id == R.id.nav_balance){
-            DB_Manager.getInstance().getGroupsInfo();
+            DB_Manager.getInstance().retriveGroups();
             startActivity(new Intent(MainActivity.this, UserBalanceActivity.class));
+
         }
         else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
