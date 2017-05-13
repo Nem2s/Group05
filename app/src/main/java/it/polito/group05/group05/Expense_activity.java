@@ -182,6 +182,7 @@ public class Expense_activity extends AppCompatActivity {
         String formate = df.format(costPerUser);
         double finalValue = Double.parseDouble(formate.replace(',', '.'));
         EventBus.getDefault().post(new PriceChangedEvent(finalValue));
+
     }
 
     @Override
@@ -311,17 +312,10 @@ public class Expense_activity extends AppCompatActivity {
                             DB_Manager.getInstance().updateGroupFlow(Singleton.getInstance().getCurrentUser().getId(),(-1.00)*expense_price);
                         }
 
-                    if(nameFILE != null){
+                    if(nameFILE != null) {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
-                      /* try{
-                        DB_Manager.getInstance().setContext(context).fileUpload(expense.getId(), nameFILE, uri.toString());
-                       } catch (IOException e) {
-                           e.printStackTrace();
-                       }*/
                     }
-
-
                     }
 
                     fdbgroup.setValue(expense.getTimestamp());

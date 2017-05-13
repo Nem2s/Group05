@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -22,8 +21,6 @@ import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 
 /**
@@ -124,8 +121,12 @@ public class ChatFragment extends Fragment {
 */
     //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
      // if(fdb.getKey().)
-        adapter = new MessageAdapter(this,
+      /*  adapter = new MessageAdapter(this,
                 ChatDatabase.class, R.layout.item_in_message,
+                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
+       */
+        adapter = new MessageAdapter(this,
+                ChatDatabase.class, R.layout.message,
                 FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
         listView.setAdapter(adapter);
     }
