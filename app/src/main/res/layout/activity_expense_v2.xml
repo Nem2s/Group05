@@ -173,32 +173,6 @@
                         android:orientation="vertical">
 
 
-                        <CheckBox
-                            android:id="@+id/cb1_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:clickable="true"
-                            android:onClick="description_handler"
-                            android:text="Description"
-                            android:textStyle="normal"
-                            android:buttonTint="@color/colorPrimary"
-
-                            />
-                        <!--content to hide/show -->
-
-                        <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/et_description_expense"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:inputType="textMultiLine"
-                            android:textSize="13sp"
-                            android:textStyle="normal"
-                            app:met_baseColor="@color/colorPrimary"
-                            app:met_errorColor="#646464"
-                            app:met_floatingLabel="highlight" />
-
                         <RelativeLayout
                             android:id="@+id/rel_lay"
                             android:layout_width="match_parent"

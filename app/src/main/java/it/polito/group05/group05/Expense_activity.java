@@ -78,8 +78,8 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
-    private MaterialEditText et_name, et_description, et_cost;
-    private CheckBox cb_description, cb_addfile, cb_adddeadline, cb_proposal, cb_details, cb_policy;
+    private MaterialEditText et_name, et_cost;
+    private CheckBox cb_addfile, cb_adddeadline, cb_proposal, cb_details, cb_policy;
     private Spinner  spinner_deadline;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
@@ -94,11 +94,10 @@ public class Expense_activity extends AppCompatActivity {
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
-    private String expense_name;
     private Double expense_price;
-    private String expense_description;
     private int expense_deadline;
     private TYPE_EXPENSE expense_type;
+    private String expense_name;
     private UserDatabase expense_owner;
     private GroupDatabase actual_group;
     private RelativeLayout rel_info;
@@ -190,7 +189,6 @@ public class Expense_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         context = this;
-
         setContentView(R.layout.activity_expense_v2);
         costPerUser = 0.0;
         expense_price = 0.0;
@@ -209,9 +207,6 @@ public class Expense_activity extends AppCompatActivity {
         cb_details= (CheckBox) findViewById(R.id.more_details);
         cardView = (CardView) findViewById(R.id.card_view2_toshow);
         cardView.setVisibility(View.GONE);
-        cb_description = (CheckBox) findViewById(R.id.cb1_description);
-        et_description = (MaterialEditText) findViewById(R.id.et_description_expense);
-        et_description.setVisibility(View.GONE);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         cb_adddeadline = (CheckBox) findViewById(R.id.cb3_deadline);
         spinner_deadline = (Spinner) findViewById(R.id.spinner);
@@ -358,9 +353,6 @@ public class Expense_activity extends AppCompatActivity {
                         expense_price =  Double.parseDouble(s.toString().replace(',', '.'));
                         costPerUser = (expense.getPrice()/(list.size()));
                         for(UserDatabase u : partecipants) {
-                     /*       if(u.getId().compareTo(expense.getOwner())==0)
-                                expense.getMembers().put(u.getId(), expense.getPrice()-costPerUser);
-                            else*/
                             expense.getMembers().put(u.getId(), costPerUser);
                         }
                         DecimalFormat df = new DecimalFormat("0.00");
@@ -376,16 +368,6 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-        et_description.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                expense.setDescription(et_description.getText().toString());
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
 
         spinner_deadline.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -479,9 +461,6 @@ public class Expense_activity extends AppCompatActivity {
         });
     }
 
-    public void description_handler(View v){
-        et_description.setVisibility(et_description.isShown() ? View.GONE : View.VISIBLE);
-    }
 
     public void deadline_handler(View v){
         spinner_deadline.setVisibility(spinner_deadline.isShown() ? View.GONE : View.VISIBLE);
