@@ -37,7 +37,6 @@ public class ExpenseDatabase implements Namable{
         this.deadline=edb.deadline;
         this.owner=edb.owner;
         this.file=edb.file;
-        this.description=edb.getDescription();
         this.price = edb.price;
         this.timestamp=edb.timestamp;
         this.type=edb.type;
@@ -63,12 +62,6 @@ public class ExpenseDatabase implements Namable{
     }
     public void setName(String name){
         this.name= name;
-    }
-    public String getDescription(){
-        return description;
-    }
-    public void setDescription(String description){
-        this.description= description;
     }
     public Double getPrice() {
         return price;

@@ -8,257 +8,136 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
-import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
-import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
-import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
-import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
+import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
 
 /**
  * Created by user on 05/05/2017.
  */
 
-public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberExpandedAdapter.MemberIncludedHolder> {
+public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHolder> {
     private List<User_expense> users;
-    private Double cost_procapite;
-    LayoutInflater lin;
-    private double costPerUser;
-    private boolean prezzocambiato = false;
-    private double costAnna = 0.0;
+
+    private double total;
+    private double costPerson;
+    private double differece = 0.0;
+    private boolean bind = true;
     Context context;
+    int numberOfPersonCustom =0;
+    double newTotal = 0.0;
 
 
-///HOLDER
-    public class MemberIncludedHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout parent;
-        public CircleImageView image_person;
-        public TextView name_person;
-        public CheckBox include_person;
-        public ImageView euro_person;
-        public EditText costo_person;
-        private boolean customValue;
-
-
-
-        public MemberIncludedHolder(View itemView) {
-
-            super(itemView);
-            parent = (RelativeLayout) itemView.findViewById(R.id.et_quotae);
-            image_person = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
-            name_person= (TextView) itemView.findViewById(R.id.tv_name_member);
-            include_person= (CheckBox) itemView.findViewById(R.id.cb_include);
-            euro_person = (ImageView) itemView.findViewById(R.id.euro_member);
-            costo_person = (EditText) itemView.findViewById(R.id.et_ins);
-            customValue = false;
-        }
-
-        public void setData(Object c, Context context, final int position) {
-            if (!(c instanceof UserDatabase)) return;
-            final UserDatabase userDatabase = (UserDatabase) c;
-            final User_expense us= users.get(position);
-            name_person.setText(userDatabase.getName());
-            //image_person.setImageResource(R.drawable.group_profile);
-            Glide.with(context)
-                    .using(new FirebaseImageLoader())
-                    .load(FirebaseStorage.getInstance().getReference("users")
-                            .child(us.getId())
-                            .child(us.getiProfile()))
-                    .asBitmap()
-                    .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
-                    .into(image_person);
-
-
-
-
-
-
-            euro_person.setImageResource(R.drawable.euro);
-            include_person.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!include_person.isChecked()) {
-                        parent.setVisibility(View.INVISIBLE);
-                        us.setSelected(false);
-                        users.get(position).setCustomValue(0.0).setSelected(false);
-                        us.setCustomValue(0.0);
-                        //us.getExpense().getMembers().put(us.getId(),0.0);
-
-                        us.getExpense().getMembers().remove(us.getId());
-                        }
-                    else {
-                        users.get(position).setCustomValue(0.0).setSelected(true);
-                        parent.setVisibility(View.VISIBLE);
-                        us.setSelected(true);
-                    }
-                    ExpenseDividerEvent event = (getCustoms() == null ? null : new ExpenseDividerEvent(getCustoms()));
-                    EventBus.getDefault().post(new PartecipantsNumberChangedEvent(us, us.isSelected()  ? 1 : -1, position, event));
-                }
-            });
-            if(!us.hasCustomValue()) {
-                costo_person.setText(String.valueOf(costPerUser));
-                if(!us.isSelected())
-                    us.getExpense().getMembers().remove(us.getId());
-                else
-                    us.getExpense().getMembers().put(us.getId(),costPerUser);
-
-
-            }
-            else {
-                costo_person.setText(String.valueOf(us.getCustomValue()));
-                if(us.isSelected())
-                    us.getExpense().getMembers().put(us.getId(),us.getCustomValue());
-            }
-           costo_person.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-
-                    if (!hasFocus) {
-                        if (cost_procapite == 0.0) {
-                            costo_person.setText(String.valueOf(0.0));
-                            us.getExpense().getMembers().put(us.getId(), 0.0);
-                            us.setCustomValue(0.0);
-                            users.get(position).setCustomValue(0.0);
-                            EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
-                        } else {
-                            if (cost_procapite == costPerUser) {
-                                return;
-                            } else {
-                                us.setCustomValue(cost_procapite)
-                                        .getExpense().getMembers()
-                                        .put(us.getId(), us.getCustomValue());
-
-                                EventBus.getDefault().post(new ExpenseDividerEvent(getCustoms()));
-                            }
-                        }
-
-                    }
-                } });
-
-
-            costo_person.addTextChangedListener(new TextWatcher(){
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //   if(s.length() > 0) costAnna = Double.parseDouble(s.toString().replace(',', '.'));
-                  //  DecimalFormat df = new DecimalFormat("0.00");
-                  //  String formate = df.format(costAnna);
-                  // costAnna = Double.parseDouble(formate.replace(',', '.'));
-                }
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if(s.length() > 0){
-                        try{
-                            double costPerUser =  Double.parseDouble(s.toString().replace(',', '.'));
-                            DecimalFormat df = new DecimalFormat("0.00");
-                            String formate = df.format(costPerUser);
-                            cost_procapite = Double.parseDouble(formate.replace(',', '.'));
-                            prezzocambiato = true;
-                        }
-
-                        catch (NumberFormatException e){
-                            cost_procapite = 0.0;
-                        }
-
-                    } else {
-                        cost_procapite = 0.0;
-                        costo_person.setText(String.valueOf(0.0));
-                        us.getExpense().getMembers().put(us.getId(),0.0);
-                    }
-                }
-            });
-
-
-        }
-        public boolean isCustomValue() {
-            return customValue;
-        }
-
-        public void setCustomValue(boolean customValue) {
-            this.customValue = customValue;
-        }
-    }
-//
-    public List<User_expense> getList(){return users;}
-
-    public MemberExpandedAdapter(List<User_expense> users, Context context){
+    public MemberExpandedAdapter(List<User_expense> users, Context context, double total){
         this.users= users;
-
         this.context= context;
-        cost_procapite= 0.0;
-        setHasStableIds(true);
-        EventBus.getDefault().register(this);
+        this.total = total;
+
+
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPriceChanged(PriceChangedEvent event) {
-        this.costPerUser = event.getPrice();
-
-        notifyDataSetChanged();
-    }
-
-    @Subscribe
-    public void onPriceError(PriceErrorEvent event) {
-        for (User_expense us : users) {
-            us.setCustomValue(0.0);
-            us.getExpense().getMembers().put(us.getId(),0.0);
-        }
-    }
-
-    private Pair<Integer, Double> getCustoms() {
-
-
-        int i = 0;
-        double v = 0;
-        for (User_expense us : users) {
-            //User_expense us = new User_expense(u);
-            if (us.hasCustomValue()) {
-                i++;
-                v += us.getCustomValue();
-            }
-        }
-        if(i == 0 || v == 0)
-            return null;
-        else
-            return new Pair<>(i,v);
-
-    }
     @Override
     public MemberIncludedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.member_expence_row, parent, false);
-        return new MemberIncludedHolder((itemView));
+        return new MemberIncludedHolder(itemView, users);
     }
 
     @Override
-    public void onBindViewHolder(MemberIncludedHolder holder, int position) {
-        holder.setData(users.get(position),context, position);
+    public void onBindViewHolder(final MemberIncludedHolder holder, int position) {
+        bind = true;
+        final User_expense ue = users.get(position);
+        final int pos = position;
+        holder.name_person.setText(ue.getName());
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance().getReference("users")
+                        .child(ue.getId())
+                        .child(ue.getiProfile()))
+                .asBitmap()
+                .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
+                .into(holder.image_person);
+        holder.euro_person.setImageResource(R.drawable.euro);
+        holder.costo_person.setText(String.valueOf(ue.getCustomValue()));
+
+        if(bind){
+            setListeners(ue, holder);
+        }
+        bind = false;
+    }
+
+    private void setListeners(User_expense ue, MemberIncludedHolder holder) {
+       final User_expense user = ue;
+        holder.costo_person.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setSelected(true);
+
+            }
+        });
+        holder.costo_person.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length() > 0){
+                    user.setCustomValue(Double.valueOf(s.toString().replace(',', '.')));
+                    if(user.isSelected()){
+                        Double tmp= total;
+                        int count=0;
+                        for (User_expense e : users){
+                            if(e.isSelected()) {
+                                count++;
+                                tmp -= e.getCustomValue();
+                            }
+                        }
+                        for (int e=0;e<users.size(); e++)
+                        {
+                            if(!users.get(e).isSelected()) {
+                                Double tmpD=Double.parseDouble(Integer.toString(users.size()-count));
+                                if(tmpD<0.9) return;
+                                users.get(e).setCustomValue(tmp / tmpD);
+                                notifyItemChanged(e);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return users.size();
     }
+
+    public void changeTotal(double total){
+        this.total = total;
+
+        for(int j =0 ; j < users.size(); j++){
+            User_expense e = users.get(j);
+                e.setCustomValue(total / (users.size()));
+        }
+        notifyDataSetChanged();
+    }
+
 }
+
 
 

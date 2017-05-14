@@ -148,14 +148,6 @@
 
                 </android.support.v7.widget.CardView>
 
-                <CheckBox
-                    android:id="@+id/more_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:text="More options" />
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_view2_toshow"
@@ -163,7 +155,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:visibility="gone"
                     android:layout_marginBottom="2dp"
                     app:cardCornerRadius="2dp">
 
@@ -201,88 +192,6 @@
 
                         </RelativeLayout>
 
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <CheckBox
-                                android:id="@+id/cb3_deadline"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:clickable="true"
-                                android:onClick="deadline_handler"
-                                android:text="Deadline"
-                                android:textStyle="normal"
-                                android:buttonTint="@color/colorPrimary" />
-
-                            <Spinner
-                                android:id="@+id/spinner"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_margin="8dp"
-                                android:layout_centerInParent="true"
-                                android:entries="@array/deadline_name"
-                                android:textAlignment="center">
-
-                            </Spinner>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:id="@+id/rel_proposal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <CheckBox
-                                android:id="@+id/cb4_proposal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_alignParentTop="true"
-                                android:layout_margin="8dp"
-                                android:clickable="true"
-                                android:onClick="proposal_handler"
-                                android:text="Proposal"
-                                android:textStyle="normal"
-                                android:buttonTint="@color/colorPrimary" />
-                            <RelativeLayout
-                                android:id="@+id/relative_info"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_toRightOf="@id/cb4_proposal">
-                                <ImageView
-                                    android:id="@+id/InfoButton"
-                                    android:layout_width="16dp"
-                                    android:layout_height="16dp"
-                                    android:layout_margin="16dp"
-                                    android:src="@drawable/info"
-                                    android:layout_centerInParent="true"
-                                    android:layout_alignParentStart="true" />
-                            </RelativeLayout>
-
-
-                        </RelativeLayout>
-
-                        <LinearLayout
-                            android:id="@+id/layout_policy"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/rel_proposal"
-                            android:layout_margin="8dp"
-                            android:layout_marginBottom="10dp"
-                            android:visibility="gone"
-                            >
-
-                            <CheckBox
-                                android:id="@+id/cb_policy"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Split"
-                                android:textStyle="normal"
-                                android:buttonTint="@color/colorPrimary"
-                                />
-
-                        </LinearLayout>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -298,7 +207,6 @@
                     android:layout_marginBottom="16dp"
                     app:cardBackgroundColor="@color/cardview_light_background"
                     app:cardCornerRadius="2dp"
-                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <android.support.v7.widget.RecyclerView

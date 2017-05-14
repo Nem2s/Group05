@@ -26,16 +26,18 @@ public class User_expense extends UserDatabase {
         this.iProfile = userDatabase.getiProfile();
         this.balance = userDatabase.getBalance();
         this.customValue = 0.0;
-        isSelected = true;
+        isSelected = false;
     }
 
 
     public boolean hasCustomValue() {
              return customValue > 0;
     }
+
     public double getCustomValue() {
                return customValue;
     }
+
     public User_expense setCustomValue(double customValue) {
                 this.customValue = customValue;
         return this;
@@ -52,7 +54,8 @@ public class User_expense extends UserDatabase {
 
 
     public User_expense setCustomValue(Double customValue) {
-        this.customValue = customValue;return this;
+        this.customValue = customValue;
+        return this;
     }
 
     public static List<UserDatabase> createListUserExpense(GroupDatabase g,Expense e){
