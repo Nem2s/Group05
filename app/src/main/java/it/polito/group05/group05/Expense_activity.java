@@ -2,6 +2,7 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -219,12 +221,11 @@ public class Expense_activity extends AppCompatActivity {
         cb_policy.setVisibility(View.VISIBLE);
         layout_policy = (LinearLayout) findViewById(R.id.layout_policy);
         layout_policy.setVisibility(View.VISIBLE);
-        //rel_info= (RelativeLayout) findViewById(R.id.relative_info);
+        rel_info= (RelativeLayout) findViewById(R.id.relative_info);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         card_recycler = (CardView) findViewById(R.id.card_recycler);
         card_recycler.setVisibility(View.GONE);
-        //info = (ImageView) findViewById(R.id.InfoButton);
-        // rel_info= (RelativeLayout) findViewById(R.id.relative_info);
+        info = (ImageView) findViewById(R.id.InfoButton);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -430,6 +431,23 @@ public class Expense_activity extends AppCompatActivity {
                 startActivityForResult(intent,0);
             }
         });
+        rel_info.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(Expense_activity.this);
+                                builder.setTitle("PROPOSAL");
+                                builder.setMessage("You can use this option to collect money from the users and ask them how much they want to get");
+                                builder.setIcon(android.R.drawable.ic_dialog_info);
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialoginterface, int i) {
+                                                dialoginterface.dismiss();
+                                            }
+                 });
+                               builder.setCancelable(true);
+                                final AlertDialog alert = builder.create();
+                                alert.show();
+                            }
+         });
         cb_policy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
