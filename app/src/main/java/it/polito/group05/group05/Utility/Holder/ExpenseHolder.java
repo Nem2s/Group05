@@ -108,7 +108,7 @@ public class ExpenseHolder extends GeneralHolder{
     //  if(!(expenseDatabase.isMandatory())) {
          //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
       //  }
-          setupListener(cv,price,context,expenseDatabase);
+        setupListener(cv,price,context,expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
     }
 private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
@@ -126,14 +126,11 @@ private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseData
 
             ((GeneralHolder)holder).setData(expenseDatabase.getUsersExpense().get(position),context);
         }
-
         @Override
         public int getItemCount() {
             return expenseDatabase.getUsersExpense().size();
         }
     };
-
-
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
     rv.setVisibility(View.GONE);
@@ -143,7 +140,6 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     int cnt=0;
     try {
         final PopupMenu popup = new PopupMenu(context, menu);
-        //inflating menu from xml resource
 
     popup.inflate(R.menu.expense_card_menu);
     //adding click listener
@@ -177,8 +173,6 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         cnt++;
 
     }
-
-
     if(cnt<4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
