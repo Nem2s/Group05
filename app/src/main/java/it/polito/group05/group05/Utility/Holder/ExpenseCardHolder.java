@@ -49,6 +49,8 @@ public class ExpenseCardHolder extends GeneralHolder {
 
 
         tv.setText(s);
+        tv_debt.setText(String.valueOf(u.getCustomValue()));
+        /*
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c1));
             if(u.getExpense().isMandatory())
@@ -63,7 +65,6 @@ public class ExpenseCardHolder extends GeneralHolder {
                     else
                         tv_debt.setTextColor(Color.RED);
                 }
-
-
+*/
     }
 }

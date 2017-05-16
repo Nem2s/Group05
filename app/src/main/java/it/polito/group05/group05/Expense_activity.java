@@ -184,7 +184,7 @@ public class Expense_activity extends AppCompatActivity {
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
-                    fdb =   FirebaseDatabase.getInstance()
+                    fdb = FirebaseDatabase.getInstance()
                             .getReference("expenses")
                             .child(Singleton.getInstance().getmCurrentGroup().getId())
                             .push();
@@ -192,43 +192,29 @@ public class Expense_activity extends AppCompatActivity {
                             .child("lmTime");
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-                    Map<String,Double> map = new HashMap<>();
-                  /*  double price;
-                    double toSubtractOwner = 0.0;
-                    for(int i = 0; i < partecipants.size(); i++) {
-                        if(partecipants.get(i).getId() != expense.getOwner())
-                            toSubtractOwner += toSubtractOwner + partecipants.get(i).getCustomValue();
-                    }
-                    for(int i = 0; i < partecipants.size(); i++){
-                        price = partecipants.get(i).getCustomValue();
-                        if(partecipants.get(i).getId() == expense.getOwner()){
-                            expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - toSubtractOwner);
-                        }
-                        else {
-                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00)*price);
-                        }
-                    }*/
-                  Double x;
-                    for (String s : Singleton.getInstance().getmCurrentGroup().members.keySet()) {
-                        x = expense.getPrice()/(double)Singleton.getInstance().getmCurrentGroup().members.keySet().size();
-                        if (s == expense.getOwner())
-                            expense.getMembers().put(s, expense.getPrice() - x);
-                        else
-                            expense.getMembers().put(s, (-1.00)*x);
-
-                    }
-                    if(!expense.getMembers().containsKey(expense.getOwner()))
-                    {
-                      expense.getMembers().put(expense.getOwner(), expense_price);
-                    }
-
-                    if(nameFILE != null) {
+                    if (nameFILE != null) {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
-                         }
                     }
-                    fdb.setValue(expense);
-                    finish();
+                        double price;
+                        double toSubtractOwner = 0.0;
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            if (partecipants.get(i).getId() != expense.getOwner()) {
+                                toSubtractOwner += partecipants.get(i).getCustomValue();
+                            }
+                        }
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            price = partecipants.get(i).getCustomValue();
+                            if (partecipants.get(i).getId() == expense.getOwner()) {
+                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                            } else {
+                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
+                            }
+                        }
+                        fdb.setValue(expense);
+                        finish();
+                }
+
                 }
         });
 

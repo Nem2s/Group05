@@ -22,7 +22,7 @@ public class ExpenseDatabase implements Namable{
         owner="";
         name="";
         price=0.0;
-        file="";
+        file=null;
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {

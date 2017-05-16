@@ -76,7 +76,7 @@ public class User_expense extends UserDatabase {
     public static void createListUserExpense(List<UserDatabase> users,Expense e){
         List<User_expense> user_expenses = new ArrayList<>();
     }
-
+/*
     public TYPE_EXPENSE getTypeExpense() {
         return typeExpense;
     }
@@ -85,7 +85,7 @@ public class User_expense extends UserDatabase {
         this.typeExpense = typeExpense;
     }
 
-
+*/
 
     public User_expense(GroupDatabase p,Expense s,boolean isMandatory, String user){
         this.group=p;

@@ -86,18 +86,16 @@ public class ExpenseHolder extends GeneralHolder{
                 e.printStackTrace();
                 }
             }
-        });
+       });
     }
         for (String i : expenseDatabase.getMembers().keySet()){
-
-            /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
                 if (Singleton.getInstance().getUsersBalance().containsKey(i))
                     Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) + expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
                 else
                     Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
             }
-            /********************/
+
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
                 x.setCustomValue(expenseDatabase.getMembers().get(i));
@@ -107,9 +105,9 @@ public class ExpenseHolder extends GeneralHolder{
             expenseDatabase.getUsersExpense().add(x);
         }
 
-      if(!(expenseDatabase.isMandatory())) {
-            price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        }
+    //  if(!(expenseDatabase.isMandatory())) {
+         //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+      //  }
           setupListener(cv,price,context,expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
     }
@@ -157,7 +155,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         delete.setVisible(false);
         cnt++;
     }
-    if(expense.isMandatory()) {
+ /*   if(expense.isMandatory()) {
         subscribe.setVisible(false);
         cnt++;
         if(expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId())!=null)
@@ -171,6 +169,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         pay.setVisible(false);
         cnt++;
     }
+    */
 
     if(cnt>=3)
         menu.setVisibility(View.INVISIBLE);

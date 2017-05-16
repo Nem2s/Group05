@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -8,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
@@ -75,25 +78,32 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                         @Override
                         public void afterTextChanged(Editable s) {
                             if (s.length() > 0) {
-                                ue.setCustomValue(Double.valueOf(s.toString().replace(',', '.')));
-                                if(ue.isSelected()){
-                                    Double tmp = total;
-                                    int count = 0;
-                                    for (User_expense e : users) {
-                                        if (e.isSelected()) {
-                                            count++;
-                                            tmp -= e.getCustomValue();
+                                double actualPrice = 0.0;
+                                actualPrice = Double.valueOf(s.toString().replace(',', '.'));
+                                if (actualPrice > total) {
+                                    Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
+                                    holder.costo_person.setText("0.0");
+                                } else {
+                                    ue.setCustomValue(Double.valueOf(s.toString().replace(',', '.')));
+                                    if (ue.isSelected()) {
+                                        Double tmp = total;
+                                        int count = 0;
+                                        for (User_expense e : users) {
+                                            if (e.isSelected()) {
+                                                count++;
+                                                tmp -= e.getCustomValue();
+                                            }
                                         }
-                                    }
-                                    for (int e = 0; e < users.size(); e++) {
-                                        if (!users.get(e).isSelected()) {
-                                            Double tmpD = Double.parseDouble(Integer.toString(users.size() - count));
-                                            if (tmpD < 0.9) return ;
-                                            users.get(e).setCustomValue(tmp / tmpD);
-                                            notifyItemChanged(e);
+                                        for (int e = 0; e < users.size(); e++) {
+                                            if (!users.get(e).isSelected()) {
+                                                Double tmpD = Double.parseDouble(Integer.toString(users.size() - count));
+                                                if (tmpD < 0.9) return;
+                                                users.get(e).setCustomValue(tmp / tmpD);
+                                                notifyItemChanged(e);
+                                            }
                                         }
-                                    }
 
+                                    }
                                 }
                             }
                         }
