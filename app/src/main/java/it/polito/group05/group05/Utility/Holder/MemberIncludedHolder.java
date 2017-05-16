@@ -16,6 +16,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 

@@ -16,6 +16,7 @@ public class User_expense extends UserDatabase {
     boolean isSelected;
     private double customValue;
 
+
     public User_expense(UserDatabase userDatabase){
         super();
         this.name = userDatabase.getName();
@@ -64,11 +65,11 @@ public class User_expense extends UserDatabase {
         for(Object i1 : u.values()){
             if(!(i1 instanceof UserDatabase)) continue;
             UserDatabase i = (UserDatabase)i1;
-            User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
-            x.setiProfile(i.getiProfile());
-            x.setId(i.getId());
-            x.setName(i.getName());
-            user_expenses.add(x);
+           // User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
+        //    x.setiProfile(i.getiProfile());
+            //   x.setId(i.getId());
+           // x.setName(i.getName());
+           // user_expenses.add(x);
         }
         return user_expenses;
     }

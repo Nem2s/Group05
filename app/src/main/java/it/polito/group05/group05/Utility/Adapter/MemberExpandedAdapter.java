@@ -29,20 +29,13 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     private List<User_expense> users;
 
     private double total;
-    private double costPerson;
-    private double differece = 0.0;
-    private boolean bind = true;
     Context context;
-    int numberOfPersonCustom =0;
-    double newTotal = 0.0;
 
 
     public MemberExpandedAdapter(List<User_expense> users, Context context, double total){
         this.users= users;
         this.context= context;
         this.total = total;
-
-
     }
 
     @Override
@@ -52,8 +45,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     }
 
     @Override
-    public void onBindViewHolder(final MemberIncludedHolder holder, int position) {
-        bind = true;
+    public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
         holder.name_person.setText(ue.getName());
@@ -67,60 +59,50 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                 .into(holder.image_person);
         holder.euro_person.setImageResource(R.drawable.euro);
         holder.costo_person.setText(String.valueOf(ue.getCustomValue()));
-
-        if(bind){
-            setListeners(ue, holder);
-        }
-        bind = false;
-    }
-
-    private void setListeners(User_expense ue, MemberIncludedHolder holder) {
-       final User_expense user = ue;
         holder.costo_person.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user.setSelected(true);
+                @Override
+                public void onClick(View v) {
+                    ue.setSelected(true);
+                    holder.costo_person.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
 
-            }
-        });
-        holder.costo_person.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        }
 
-            }
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (s.length() > 0) {
+                                ue.setCustomValue(Double.valueOf(s.toString().replace(',', '.')));
+                                if(ue.isSelected()){
+                                    Double tmp = total;
+                                    int count = 0;
+                                    for (User_expense e : users) {
+                                        if (e.isSelected()) {
+                                            count++;
+                                            tmp -= e.getCustomValue();
+                                        }
+                                    }
+                                    for (int e = 0; e < users.size(); e++) {
+                                        if (!users.get(e).isSelected()) {
+                                            Double tmpD = Double.parseDouble(Integer.toString(users.size() - count));
+                                            if (tmpD < 0.9) return ;
+                                            users.get(e).setCustomValue(tmp / tmpD);
+                                            notifyItemChanged(e);
+                                        }
+                                    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(s.length() > 0){
-                    user.setCustomValue(Double.valueOf(s.toString().replace(',', '.')));
-                    if(user.isSelected()){
-                        Double tmp= total;
-                        int count=0;
-                        for (User_expense e : users){
-                            if(e.isSelected()) {
-                                count++;
-                                tmp -= e.getCustomValue();
+                                }
                             }
                         }
-                        for (int e=0;e<users.size(); e++)
-                        {
-                            if(!users.get(e).isSelected()) {
-                                Double tmpD=Double.parseDouble(Integer.toString(users.size()-count));
-                                if(tmpD<0.9) return;
-                                users.get(e).setCustomValue(tmp / tmpD);
-                                notifyItemChanged(e);
-                            }
-                        }
-                    }
+                    });
                 }
-            }
-        });
-    }
+            });
+
+
+        }
 
     @Override
     public int getItemCount() {
@@ -129,7 +111,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
 
     public void changeTotal(double total){
         this.total = total;
-
         for(int j =0 ; j < users.size(); j++){
             User_expense e = users.get(j);
                 e.setCustomValue(total / (users.size()));

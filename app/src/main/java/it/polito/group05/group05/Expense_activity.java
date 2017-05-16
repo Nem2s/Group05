@@ -168,6 +168,7 @@ public class Expense_activity extends AppCompatActivity {
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
+        recyclerView.invalidate();
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -178,7 +179,7 @@ public class Expense_activity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if( expense.getName().toString().length() == 0 /*|| expense.getPrice()==0.0 */) {
+                if( expense.getName().toString().length() == 0 || expense.getPrice()==0.0 ) {
                     Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
@@ -192,8 +193,22 @@ public class Expense_activity extends AppCompatActivity {
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
                     Map<String,Double> map = new HashMap<>();
-                    Double x;
-
+                  /*  double price;
+                    double toSubtractOwner = 0.0;
+                    for(int i = 0; i < partecipants.size(); i++) {
+                        if(partecipants.get(i).getId() != expense.getOwner())
+                            toSubtractOwner += toSubtractOwner + partecipants.get(i).getCustomValue();
+                    }
+                    for(int i = 0; i < partecipants.size(); i++){
+                        price = partecipants.get(i).getCustomValue();
+                        if(partecipants.get(i).getId() == expense.getOwner()){
+                            expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - toSubtractOwner);
+                        }
+                        else {
+                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00)*price);
+                        }
+                    }*/
+                  Double x;
                     for (String s : Singleton.getInstance().getmCurrentGroup().members.keySet()) {
                         x = expense.getPrice()/(double)Singleton.getInstance().getmCurrentGroup().members.keySet().size();
                         if (s == expense.getOwner())
@@ -246,6 +261,7 @@ public class Expense_activity extends AppCompatActivity {
                 expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                 expense_price = Double.parseDouble(s.toString().replace(',', '.'));
                 memberAdapter.changeTotal(expense_price);
+                memberAdapter.notifyDataSetChanged();
                 }
             }
         });
