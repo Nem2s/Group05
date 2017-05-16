@@ -45,12 +45,17 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .placeholder(R.drawable.user_placeholder)
                 .crossFade()
                 .into(civ);
-
-
-
         tv.setText(s);
-        tv_debt.setText(String.valueOf(u.getCustomValue()));
-        /*
+        if(u.getCustomValue() < 0.01) {
+             tv_debt.setText(String.valueOf(u.getCustomValue()));
+             tv_debt.setTextColor(Color.RED);
+        }else
+             {
+             tv_debt.setText(String.valueOf(u.getCustomValue()));
+             tv_debt.setTextColor(Color.GREEN);
+             }
+        }
+            /*
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c1));
             if(u.getExpense().isMandatory())
@@ -67,4 +72,3 @@ public class ExpenseCardHolder extends GeneralHolder {
                 }
 */
     }
-}
