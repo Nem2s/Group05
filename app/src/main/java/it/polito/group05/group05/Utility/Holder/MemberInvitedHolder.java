@@ -7,20 +7,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import com.firebase.ui.auth.ui.User;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.EventClasses.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 
 /**
  * Created by Marco on 05/05/2017.

@@ -1,9 +1,9 @@
 <resources>
 
-        <!-- ... -->
-        <string name="facebook_application_id" translatable="false">1477835645624511</string>
-        <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
-        <string name="facebook_login_protocol_scheme" translatable="false">fb1477835645624511</string>
+    <!-- ... -->
+    <string name="facebook_application_id" translatable="false">1477835645624511</string>
+    <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1477835645624511</string>
 
     <string name="app_name">Group05</string>
 
@@ -74,6 +74,7 @@
         completions."
     </string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_new_group2">NewGroupActivity2</string>
 
 
 </resources>

@@ -3,13 +3,10 @@ package it.polito.group05.group05.Utility.HelperClasses;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.utils.FileUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,14 +30,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -48,11 +43,11 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
-import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
+import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
+import it.polito.group05.group05.Utility.Event.NewUserEvent;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static com.github.mikephil.charting.utils.FileUtils.*;
 
 
 /**
@@ -146,9 +141,9 @@ public class DB_Manager {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()) return;
+                if (!dataSnapshot.exists()) return;
                 for (final DataSnapshot data : dataSnapshot.getChildren()) {
-                    if(!data.exists()) continue;
+                    if (!data.exists()) continue;
                     UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
                     Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
                     Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();
@@ -243,7 +238,7 @@ public class DB_Manager {
                                 } else if (child2.getKey().equals(userGroups)) {
                                     Map<String, Object> tmp = (Map<String, Object>) child2.getValue();
                                     tmp.remove("00");
-                                    currentUser.setGroups(new ArrayList<String>(tmp.keySet()));
+                                    currentUser.setGroups(new ArrayList<>(tmp.keySet()));
                                 }
                             }
                         }
@@ -428,6 +423,38 @@ public class DB_Manager {
 
             }
         });
+    }
+
+
+    public boolean checkUserDebtRemoving() {
+        DatabaseReference dbref = groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId());
+        dbref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists())
+                    return;
+
+                EventBus.getDefault().post(new LeaveGroupEvent(Double.parseDouble(dataSnapshot.getValue().toString())));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return false;
+    }
+
+    public void removeUserFromGroup(String userId, String groupId) {
+        userRef.child(userId).child("userGroups").child(groupId).removeValue();
+        groupRef.child(groupId).child("members").child(userId).removeValue();
+    }
+
+    public void addUserToGroup(String userId, String groupId) {
+        userRef.child(userId).child("userGroups").child(groupId).setValue(false);
+        groupRef.child(groupId).child("members").child(userId).setValue(0.0);
     }
 
 

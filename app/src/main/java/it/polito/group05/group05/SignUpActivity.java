@@ -40,8 +40,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
-import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
+import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.Event.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
