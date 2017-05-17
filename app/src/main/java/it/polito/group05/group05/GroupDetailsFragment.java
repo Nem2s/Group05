@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,11 @@ public class GroupDetailsFragment extends Fragment {
     RecyclerView.Adapter personAdapter;
     RecyclerView rv;
     Context context;
+
+    private Map<String, Double> usersBalance = new HashMap<>();
+    private Map<String, Double> totalExpenses  = new HashMap<>();
+    private Map<String, Double> usersTotalBalance = new HashMap<>();
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,7 +82,6 @@ public class GroupDetailsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Singleton.getInstance().getUsersBalance().clear();
         retriveExpense();
         super.onCreate(savedInstanceState);
   /*      if (getArguments() != null) {
@@ -118,27 +125,28 @@ public class GroupDetailsFragment extends Fragment {
 
 
         };*/
-
-        final List<UserDatabase> userlist = new ArrayList<>();
-        for(Object u : Singleton.getInstance().getmCurrentGroup().getMembers().values())
+Map<String,Object> tmp= new HashMap<>(Singleton.getInstance().getmCurrentGroup().getMembers());
+        tmp.remove(Singleton.getInstance().getCurrentUser().getId());
+        final List<Object> userlist = new ArrayList<>(tmp.values());
+        /*for(Object u : Singleton.getInstance().getmCurrentGroup().getMembers().values())
         {
             UserDatabase tmp = (UserDatabase) u;
             if (tmp.getId().equals(Singleton.getInstance().getCurrentUser().getId())) continue;
             userlist.add(tmp);
-        }
+        }*/
         personAdapter = new RecyclerView.Adapter()
         {
 
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View rootView = LayoutInflater.from(getContext()).inflate(R.layout.item_person_details_frag,parent,false);
-                GeneralHolder holder = new PersonHolder(rootView);
+                PersonHolder holder = new PersonHolder(rootView);
                 return holder;
             }
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                ((GeneralHolder)holder).setData(userlist.get(position),getContext());
+                ((PersonHolder)holder).setData(userlist.get(position),getContext(), usersBalance, totalExpenses, usersTotalBalance);
             }
 
             @Override
@@ -191,19 +199,29 @@ public class GroupDetailsFragment extends Fragment {
 
     private void retriveExpense(){
         FirebaseDatabase.getInstance()
-                .getReference("expenses")
+                .getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
-                .equalTo(Singleton.getInstance().getmCurrentGroup().getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                //.equalTo()
+                .addChildEventListener(new ChildEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child1 : dataSnapshot.getChildren()) {
-                            for (DataSnapshot child2 : child1.getChildren()) {
-                                //for (DataSnapshot child3 : child2.getChildren())
-                                //    if (child3.getKey().equals("members"))
-                                        parseSnapshot1(child2);
-                            }
-                        }
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        parseSnapshotAdded(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        //parseSnapshotChanged(dataSnapshot);
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        parseSnapshotRemoved(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                     }
 
                     @Override
@@ -213,27 +231,52 @@ public class GroupDetailsFragment extends Fragment {
                 });
     }
 
-    private void parseSnapshot1(DataSnapshot snapshot)
+    private void parseSnapshotAdded(DataSnapshot snapshot)
     {
-        //Map<String, Double> expenseDatabase = (Map<String, Double>) snapshot.getValue();
         ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
         for(String i : expenseDatabase.getMembers().keySet()) {
-            //if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && !i.equals(Singleton.getInstance().getCurrentUser().getId())) {
+                if (usersTotalBalance.containsKey(i))
+                    usersTotalBalance.put(i, usersTotalBalance.get(i) + expenseDatabase.getMembers().get(i));
+                else
+                    usersTotalBalance.put(i, expenseDatabase.getMembers().get(i));
+
                 if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
-                    if (Singleton.getInstance().getUsersBalance().containsKey(i))
-                        Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) + expenseDatabase.getMembers().get(i));
+                    if (usersBalance.containsKey(i))
+                        usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(i));
                     else
-                        Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(i));
+                        usersBalance.put(i, expenseDatabase.getMembers().get(i));
                 }
                 else {
                     if (expenseDatabase.getMembers().get(i) > 0) {
-                        if (Singleton.getInstance().getUsersBalance().containsKey(i))
-                            Singleton.getInstance().getUsersBalance().put(i, Singleton.getInstance().getUsersBalance().get(i) - expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
-                        else
-                            Singleton.getInstance().getUsersBalance().put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId())*-1);
+                        if (usersBalance.containsKey(i)) {
+                            usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+                            totalExpenses.put(i, totalExpenses.get(i) + expenseDatabase.getPrice());//.getMembers().get(i));
+                        }
+                            else {
+                            usersBalance.put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) * -1);
+                            totalExpenses.put(i, expenseDatabase.getPrice());//getMembers().get(i));
+                        }
                     }
                 }
-            //}
+            personAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void parseSnapshotRemoved(DataSnapshot snapshot)
+    {
+        ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
+        for(String i : expenseDatabase.getMembers().keySet()) {
+                usersTotalBalance.put(i, usersTotalBalance.get(i) - expenseDatabase.getMembers().get(i));
+
+            if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
+                    usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(i));
+            }
+            else {
+                if (expenseDatabase.getMembers().get(i) > 0) {
+                        usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
+                        totalExpenses.put(i, totalExpenses.get(i) - expenseDatabase.getPrice());
+                }
+            }
             personAdapter.notifyDataSetChanged();
         }
     }

@@ -1,41 +1,37 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 /**
  * Created by user on 04/05/2017.
  */
 
- public class Singleton {
+public class Singleton {
     private static final Singleton ourInstance = new Singleton();
     private GroupDatabase mCurrentGroup;
     private CurrentUser currentUser;
     String currentGroupId;
     private String userId;
-    private List<UserContact> contactList;
-    private Map<String, Double> usersBalance;
+    private Map<String, UserContact> localContactsList;
+    private Map<String, UserContact> regContactsList;
     private Context currContext;
 
-
     private Singleton() {
-        this.contactList = new ArrayList<>();
+        regContactsList = new HashMap<>();
     }
 
     public Context getCurrContext() {
@@ -62,10 +58,27 @@ import java.util.Set;
         this.currentUser = currentUser;
         new getRegContactsTask().execute();
     }
+    public void addRegContact(UserDatabase u) {
+        this.regContactsList.put(u.getId(), new UserContact(u));
+    }
+
+    public Map<String, UserContact> getRegContactsList() {
+        return regContactsList;
+    }
+
+    public void setRegContactsList(Map<String, UserContact> regContactsList) {
+        this.regContactsList = regContactsList;
+    }
 
     private Double price_expense;
 
+    public Map<String, UserContact> getLocalContactsList() {
+        return localContactsList;
+    }
 
+    public void setLocalContactsList(Map<String, UserContact> localContactsList) {
+        this.localContactsList = localContactsList;
+    }
 
     public Double getPrice_expense() {
         return price_expense;
@@ -96,34 +109,14 @@ import java.util.Set;
         this.currentGroupId=currentGroupId;
     }
 
-    public List<UserContact> getContactList(final Context context) {
-        return contactList;
-    }
-
-
-    public void setContactList(List<UserContact> contactList) {
-        this.contactList = contactList;
-    }
-
-    public void addContact(UserContact user) {
-        if(this.contactList != null)
-            this.contactList.add(user);
-    }
-
-    public Map<String, Double> getUsersBalance() {
-        if(this.usersBalance == null)
-            this.usersBalance = new HashMap<>();
-        return usersBalance;
-    }
-
-    public void setUsersBalance(Map<String, Double> usersBalance) {
-        this.usersBalance = usersBalance;
+    public UserContact removeRegContact(UserDatabase userContact) {
+        return regContactsList.remove(userContact.getId());
     }
 
     class getRegContactsTask extends AsyncTask<Void, Void, Void> {
 
 
-        List<UserContact> localList = new ArrayList<>();
+        Map<String, UserContact> localList = new HashMap<>();
         private DatabaseReference usernumberRef;
         private FirebaseDatabase database;
         private DatabaseReference userRef;
@@ -132,7 +125,7 @@ import java.util.Set;
         @Override
         protected Void doInBackground(Void... voids) {
 
-            List<UserContact> result = new ArrayList<>();
+            Map<String, UserContact> result = new HashMap<>();
             Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
             String[] projection =
@@ -151,30 +144,31 @@ import java.util.Set;
             int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             query.moveToFirst();
-            do {
-                UserContact user = new UserContact();
-                String number = query.getString(indexNumber);
-                if(number.startsWith("+"))
-                    number=number.substring(3);
-                if (number.length() >= 10) {
+            if (query.getCount() > 0) {
+                do {
+                    UserContact user = new UserContact();
+                    String number = query.getString(indexNumber);
+                    if (number.startsWith("+"))
+                        number = number.substring(3);
                     number = number.replace(" ", "");
+
                     number = number.replace("-", "");
-                    number = number.substring(number.length() - 10);
-                    String name = query.getString(indexName);
-                    user.setName(name);
-                    user.setTelNumber(number);
-                    result.add(user);
-                }
-            } while (query.moveToNext());
+                    if (number.length() > 8 && number.length() <= 10) {
 
-            List<UserContact> result1 = new ArrayList<UserContact>();
-            Set<String> titles = new HashSet<String>();
+                        String name = query.getString(indexName);
+                        user.setName(name);
+                        user.setTelNumber(number);
+                        localList.put(number, user);
+                    }
+                } while (query.moveToNext());
 
-            for (UserContact item : result) {
-                if (titles.add(item.getTelNumber())) {
-                    localList.add(item);
-                }
-            }
+            } else
+                ((Activity) currContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(currContext, "No contacts stored", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             return null;
         }
@@ -187,40 +181,8 @@ import java.util.Set;
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            database = FirebaseDatabase.getInstance();
-            usernumberRef = database.getReference("usersNumber");
-            userRef = database.getReference("users");
-            for(UserContact UC : localList){
-
-                usernumberRef.child(UC.getTelNumber()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.exists()) return;
-                        String s = dataSnapshot.getValue(String.class);
-                        userRef.child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(!dataSnapshot.exists()) return;
-                                UserDatabase ud = dataSnapshot.getValue(UserDatabase.class);
-                                UserContact U = new UserContact(ud);
-                                if(contactList.contains(U)) return;
-                                contactList.add(U);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
+            localContactsList = new HashMap<>(localList);
+            DB_Manager.getInstance().checkContacts();
         }
     }
 }
