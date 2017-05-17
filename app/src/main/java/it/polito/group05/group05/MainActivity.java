@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
@@ -95,6 +96,11 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
