@@ -55,7 +55,7 @@
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Group"
+                        android:text="Add an Expense"
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginRight="16dp"
@@ -167,20 +167,32 @@
                             app:met_floatingLabel="highlight"
                             app:met_iconRight="@drawable/euro" />
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
                         <CheckBox
                             android:id="@+id/cb2_addfile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginTop="18dp"
                             android:buttonTint="@color/quantum_grey_600"
                             android:clickable="true"
                             android:onClick="file_handler"
                             android:text="File"
                             android:textColor="@color/gray"
                             android:textStyle="normal" />
+                        <TextView
+                            android:id="@+id/nomeFile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.6"
+                            android:textStyle="italic"
+                            android:layout_marginLeft="8dp"/>
 
+                        </LinearLayout>
                     </LinearLayout>
 
 

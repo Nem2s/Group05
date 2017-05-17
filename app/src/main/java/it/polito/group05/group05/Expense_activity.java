@@ -94,6 +94,7 @@ public class Expense_activity extends AppCompatActivity {
     private LinearLayout layout_policy;
     private ExpandableRelativeLayout exp_ll;
     private ImageView plus;
+    private TextView nomeFile;
     private int click;
 
     ////////////////////////////////////////
@@ -148,7 +149,8 @@ public class Expense_activity extends AppCompatActivity {
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
-       // cardView = (CardView) findViewById(R.id.card_view2_toshow);
+        // cardView = (CardView) findViewById(R.id.card_view2_toshow);
+        nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
@@ -329,6 +331,8 @@ public class Expense_activity extends AppCompatActivity {
                 try {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                        nomeFile.setText(nameFILE);
+
                     }
                 } finally {
                     cursor.close();
