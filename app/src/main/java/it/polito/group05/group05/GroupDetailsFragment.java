@@ -42,7 +42,8 @@ import it.polito.group05.group05.Utility.Holder.PersonHolder;
  */
 public class GroupDetailsFragment extends Fragment {
 
-    RecyclerView.Adapter personAdapter;
+    //RecyclerView.Adapter personAdapter;
+    FirebaseIndexRecyclerAdapter personAdapter;
     RecyclerView rv;
     Context context;
 
@@ -102,14 +103,15 @@ public class GroupDetailsFragment extends Fragment {
         ll.setStackFromEnd(true);
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         DatabaseReference usersGroupRef = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getIdCurrentGroup()).child("members");
-        /*FirebaseIndexRecyclerAdapter personAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
+         personAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
                 R.layout.item_person_details_frag,
                 PersonHolder.class,
                 usersGroupRef,
                 usersRef){
             @Override
             protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, Object model, int position) {
-                ((PersonHolder)viewHolder).setData(model,getContext());
+                ((PersonHolder)viewHolder).setData(model,getContext(), usersBalance, totalExpenses, usersTotalBalance);
+                //((PersonHolder)viewHolder).setData(model,getContext());
             }
 
             @Override
@@ -124,16 +126,11 @@ public class GroupDetailsFragment extends Fragment {
             }
 
 
-        };*/
-Map<String,Object> tmp= new HashMap<>(Singleton.getInstance().getmCurrentGroup().getMembers());
+        };
+        /*Map<String,Object> tmp= new HashMap<>(Singleton.getInstance().getmCurrentGroup().getMembers());
         tmp.remove(Singleton.getInstance().getCurrentUser().getId());
         final List<Object> userlist = new ArrayList<>(tmp.values());
-        /*for(Object u : Singleton.getInstance().getmCurrentGroup().getMembers().values())
-        {
-            UserDatabase tmp = (UserDatabase) u;
-            if (tmp.getId().equals(Singleton.getInstance().getCurrentUser().getId())) continue;
-            userlist.add(tmp);
-        }*/
+
         personAdapter = new RecyclerView.Adapter()
         {
 
@@ -153,7 +150,7 @@ Map<String,Object> tmp= new HashMap<>(Singleton.getInstance().getmCurrentGroup()
             public int getItemCount() {
                 return userlist.size();
             }
-        };
+        };*/
         rv.setAdapter(personAdapter);
         return rootView;
     }
