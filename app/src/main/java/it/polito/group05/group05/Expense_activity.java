@@ -154,8 +154,10 @@ public class Expense_activity extends AppCompatActivity {
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
-        card_recycler = (CardView) findViewById(R.id.card_recycler);
-        card_recycler.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        // card_recycler = (CardView) findViewById(R.id.card_recycler);
+       // card_recycler.setVisibility(View.GONE);
+
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -177,7 +179,6 @@ public class Expense_activity extends AppCompatActivity {
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
-        recyclerView.invalidate();
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -274,11 +275,11 @@ public class Expense_activity extends AppCompatActivity {
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if(card_recycler.getVisibility() == View.GONE){
-                  card_recycler.setVisibility(View.VISIBLE);
+              if(recyclerView.getVisibility() == View.GONE){
+                  recyclerView.setVisibility(View.VISIBLE);
                   plus.setImageResource(R.drawable.ic_expand_less);
               }else {
-                  card_recycler.setVisibility(View.GONE);
+                  recyclerView.setVisibility(View.GONE);
                   plus.setImageResource(R.drawable.ic_expand_more);
                   }
             }
