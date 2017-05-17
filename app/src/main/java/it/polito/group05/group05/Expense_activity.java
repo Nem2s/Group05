@@ -34,6 +34,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.aakira.expandablelayout.ExpandableLinearLayout;
+import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -90,6 +92,9 @@ public class Expense_activity extends AppCompatActivity {
     private ImageView image_network, info;
     private CardView card_recycler;
     private LinearLayout layout_policy;
+    private ExpandableRelativeLayout exp_ll;
+    private ImageView plus;
+    private int click;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
@@ -113,7 +118,6 @@ public class Expense_activity extends AppCompatActivity {
     FirebaseStorage storage;
     final StorageReference fileRef = null;
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -131,6 +135,7 @@ public class Expense_activity extends AppCompatActivity {
         setContentView(R.layout.activity_expense_v2);
         costPerUser = 0.0;
         expense_price = 0.0;
+        click=0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
@@ -143,11 +148,13 @@ public class Expense_activity extends AppCompatActivity {
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
-        cardView = (CardView) findViewById(R.id.card_view2_toshow);
+       // cardView = (CardView) findViewById(R.id.card_view2_toshow);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         card_recycler = (CardView) findViewById(R.id.card_recycler);
+        card_recycler.setVisibility(View.GONE);
+        plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -262,7 +269,18 @@ public class Expense_activity extends AppCompatActivity {
                 startActivityForResult(intent,0);
             }
         });
-
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              if(card_recycler.getVisibility() == View.GONE){
+                  card_recycler.setVisibility(View.VISIBLE);
+                  plus.setImageResource(R.drawable.ic_expand_less);
+              }else {
+                  card_recycler.setVisibility(View.GONE);
+                  plus.setImageResource(R.drawable.ic_expand_more);
+                  }
+            }
+        });
 
 
     }
