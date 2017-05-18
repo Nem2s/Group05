@@ -25,6 +25,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mvc.imagepicker.ImagePicker;
 
 import org.greenrobot.eventbus.EventBus;
@@ -93,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
         mCurrentUser = mAuth.getCurrentUser();
         Singleton.getInstance().setCurrContext(this);
         String x = getApplicationSignature(getApplicationContext());
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         checkAndRequestPermissions();
         activity = this;
     }

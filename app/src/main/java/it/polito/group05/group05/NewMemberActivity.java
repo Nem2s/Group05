@@ -126,7 +126,7 @@ public class NewMemberActivity extends AppCompatActivity {
         iv_new_group.setVisibility(View.GONE);
         no_people = (TextView)findViewById(R.id.no_people);
         context = this;
-        mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
+        //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
@@ -136,7 +136,7 @@ public class NewMemberActivity extends AppCompatActivity {
         for(UserContact i : Singleton.getInstance().getRegContactsList().values())
             if(!Singleton.getInstance().getmCurrentGroup().getMembers().containsKey(i.getId()))
                 contacts.add(i);
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+       /* mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 contacts.clear();
@@ -148,6 +148,7 @@ public class NewMemberActivity extends AppCompatActivity {
             }
 
         });
+        */
         if(invitedAdapter.getItemCount() == 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
