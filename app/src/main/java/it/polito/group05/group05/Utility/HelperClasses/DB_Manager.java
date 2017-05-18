@@ -214,6 +214,11 @@ public class DB_Manager {
             currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
         usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
 
+        final String refreshedToken =  FirebaseInstanceId.getInstance().getToken();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+
+
+
         if (currentUser.getImg_profile() == null)
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
 
