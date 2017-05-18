@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,21 +14,26 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-
+import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener,GroupDetailsFragment.OnFragmentInteractionListener {
 
@@ -51,30 +55,31 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
     Context context;
     static Toolbar toolbar;
-    static FloatingActionButton fab;
+
     static AppBarLayout appBar;
     static CoordinatorLayout main_content;
     static List<Expense> expenses;
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_);
-
         context = this;
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         Glide.with(context)
                 .using(new FirebaseImageLoader())
-                .load(FirebaseStorage.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .load(FirebaseStorage.getInstance()
+                        .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                        .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
                 .centerCrop()
-                //.placeholder(R.drawable.group_profile)
-                .crossFade()
                 .into(c);
         appBar = (AppBarLayout)findViewById(R.id.appbar);
         final TextView tv = (TextView)findViewById(R.id.tv_group_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+
         main_content = (CoordinatorLayout)findViewById(R.id.main_content);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
       //  tv.setText("CIAO");
@@ -100,9 +105,11 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -113,23 +120,37 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
-                Intent i = new Intent(getBaseContext(), Expense_activity.class);
+    }
 
-                startActivity(i);
-                //startActivity(i, options.toBundle());
-            }
-        });
+    @Subscribe
+   public void leaveGroupEventMethod(LeaveGroupEvent lge){
+        try {
+            if (lge.canLeave()) {
+                DB_Manager.getInstance().removeUserFromGroup(Singleton.getInstance().getCurrentUser().getId(), Singleton.getInstance().getmCurrentGroup().getId());
+                finish();
+            } else
+                if(lge.isCredit())
+                    Toast.makeText(this, "Could you loose money?", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this, "You have debits not payed", Toast.LENGTH_SHORT).show();
+        }
+        catch(Exception e){}
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @Override
@@ -138,12 +159,12 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         return true;
     }
 
-   /* @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_group_, menu);
         return true;
-    }*/
+    }
 
 
     private static void hideViews() {
@@ -154,10 +175,15 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     }
 
 
+
+
+
+
+
     private static void showViews() {
 
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+      //  fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
 
     }
 
@@ -172,6 +198,21 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         if (id == R.id.action_settings) {
             return true;
         }
+        switch(item.getItemId()){
+
+            case R.id.add_member:
+                Intent i = new Intent(this,NewMemberActivity.class);
+                startActivity(i);
+                break;
+            case R.id.leave_group:
+                DB_Manager.getInstance().checkUserDebtRemoving();
+
+                break;
+            case R.id.action_settings:
+                break;
+        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -187,16 +228,16 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     public void onFragmentInteraction(Uri uri) {
 
     }
-
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+
         }
 
         @Override
@@ -210,8 +251,9 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     break;
                 case 1:
                     fragment =ChatFragment.newInstance();
+                    break;
                 case 2:
-                    fragment =GroupDetailsFragment.newInstance();
+                    fragment = GroupDetailsFragment.newInstance();
                 break;
             }
             return fragment;
@@ -237,4 +279,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         }
 
     }
+
+
 }

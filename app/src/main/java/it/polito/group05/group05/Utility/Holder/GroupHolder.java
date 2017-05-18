@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,6 +23,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -56,14 +58,23 @@ public class GroupHolder extends GeneralHolder {
                     .using(new FirebaseImageLoader())
                     .load(FirebaseStorage.getInstance().getReference("groups").child(g.getId()).child(g.getPictureUrl()))
                 .centerCrop()
-                //.placeholder(R.drawable.group_profile)
-                .crossFade()
                 .into(groupProfile);
         name.setText(g.getName());
         time.setText(g.getLmTime());
+        this.balance.setText(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
 
-        Map<String, Object> tmp = new HashMap<>(g.getMembers());
-        g.getMembers().clear();
+        Double x = Double.valueOf(balance.getText().toString());
+        if(x >0.001)
+        balance.setTextColor(Color.GREEN);
+        else if(x <-0.001)
+            balance.setTextColor(Color.RED);
+        else{
+            balance.setText("Saldato");
+
+        }
+
+        final Map<String, Object> tmp = new HashMap<>(g.getMembers());
+
         for(String userID : tmp.keySet()){
             FirebaseDatabase.getInstance()
                     .getReference("users")
@@ -72,7 +83,9 @@ public class GroupHolder extends GeneralHolder {
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.exists()) return;
                             UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                            u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
                             g.getMembers().put(u.getId(), u);
                         }
                         @Override
@@ -80,6 +93,7 @@ public class GroupHolder extends GeneralHolder {
                         }
                     });
         }
+
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override

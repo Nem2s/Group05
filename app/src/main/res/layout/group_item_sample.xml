@@ -7,20 +7,17 @@
     android:layout_height="72dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:baselineAligned="true">
+    android:baselineAligned="true"
+    android:id="@+id/group_item_sample_ll">
 
-    <com.pkmmte.view.CircularImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_group_image"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
         android:layout_height="58dp"
         android:layout_width="58dp"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="16dp"
         android:transitionName="@string/transition_group_image"
-        >
-
-    </com.pkmmte.view.CircularImageView>
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -34,7 +31,6 @@
             android:id="@+id/tv_group_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:text="GroupName05"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -47,6 +43,7 @@
             android:text="Debit/credit   ___$"
             android:textSize="16sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

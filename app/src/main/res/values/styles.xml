@@ -1,4 +1,5 @@
 <resources>
+
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="layout">@layout/toolbar_search_view</item>
         <item name="commitIcon">@drawable/ic_search_commit</item>
@@ -8,6 +9,7 @@
         <item name="suggestionRowLayout">@layout/search_view_suggestion_row</item>
         <item name="android:maxWidth">9999dp</item>
     </style>
+
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -32,6 +34,7 @@
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="searchViewStyle">@style/SearchViewTheme</item>
     </style>
+
     <style name="Theme.Transparent" parent="Theme.AppCompat">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -56,11 +59,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorIcons</item>
@@ -71,7 +82,6 @@
         <item name="android:layout_width">wrap_content</item>
 
         <item name="android:layout_height">wrap_content</item>
-
 
 
         <item name="android:paddingTop">5dp</item>
@@ -87,7 +97,6 @@
         <item name="android:textColor">@android:color/black</item>
 
     </style>
-
 
 
     <style name="chat_timings">
@@ -127,5 +136,22 @@
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="FirebaseLoginTheme" parent="FirebaseUI">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryText</item>
+    </style>
+
 
 </resources>

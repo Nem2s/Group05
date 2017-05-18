@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
@@ -42,8 +41,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     TextView tv_no_groups;
     FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
+    ImageView iv_nav_header;
 
 
     @Override
@@ -79,7 +77,8 @@ public class MainActivity extends AppCompatActivity
             //DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
             String uuid = UUID.randomUUID().toString();
             Singleton.getInstance().getCurrentUser().setiProfile(uuid);
-            DB_Manager.getInstance().setContext(context).imageProfileUpload(1, Singleton.getInstance().getCurrentUser().getId(), uuid,  bitmap);
+            DB_Manager.getInstance().setContext(context)
+                    .imageProfileUpload(1, Singleton.getInstance().getCurrentUser().getId(), uuid,  bitmap);
             FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userInfo").child("iProfile").setValue(uuid);
             drawer.closeDrawers();
             REQUEST_FROM_NEW_USER = -1;
@@ -104,9 +103,11 @@ public class MainActivity extends AppCompatActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
-    if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
-        pb.setVisibility(View.GONE);
+        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
+            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
+                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
+
         activity = this;
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                     startActivity(new Intent(MainActivity.this, NewGroupActivity.class));
             }
         });
@@ -123,15 +125,25 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+            public void onDrawerSlide(final View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
-                Glide.with(context)
-                        .using(new FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                iv_nav_header = (ImageView) findViewById(R.id.background_nav_header);
+                Glide.with(context).using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("users")
+                                .child(Singleton.getInstance().getCurrentUser().getId())
+                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                        //.placeholder(R.drawable.user_placeholder)
                         .centerCrop()
-                        .crossFade()
                         .into(cv_user_drawer);
+                Glide.with(context).using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("users")
+                                .child(Singleton.getInstance().getCurrentUser().getId())
+                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                        .placeholder(R.drawable.user_placeholder)
+                        .centerCrop()
+                        .into(iv_nav_header);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
                 tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
@@ -168,6 +180,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
@@ -189,6 +202,12 @@ public class MainActivity extends AppCompatActivity
 
             }
 
+            @Override
+            protected void onDataChanged() {
+                super.onDataChanged();
+                tv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+            }
         };
 
         rv.setAdapter(mAdapter);
@@ -264,11 +283,16 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(intent, 1);
         } else if (id == R.id.nav_contacts) {
 
+            SmsManager sm = SmsManager.getDefault();
+            String number = "3334459216"                    ;
+            String msg = "https://h5uqp.app.goo.gl/ZjWo";
+            sm.sendTextMessage(number, null, msg, null, null);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 }

@@ -1,38 +1,31 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import android.provider.Settings;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mvc.imagepicker.ImagePicker;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,13 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
-import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
+import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.Event.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
@@ -61,12 +53,18 @@ public class SignUpActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     // [END declare_auth]
     public  static final int PERMISSIONS_MULTIPLE_REQUEST = 123;
+    public static int IMAGE_PICKER_CODE;
 
     private static final String TAG = "SignupActivity";
-
+    private Activity activity;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
+    private View user_info;
+    private CircleImageView user_img;
+    private CurrentUser ud = new CurrentUser();;
+
+    private EditText et_user_phone;
 
     @Subscribe
     public void currentUserReady(CurrentUserReadyEvent event) {
@@ -77,13 +75,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Subscribe
     public void newUser(NewUserEvent event)
     {
-        CurrentUser ud = new CurrentUser();
-        ud.setAuthKey(mCurrentUser.getUid());
-        ud.setName(mCurrentUser.getDisplayName());
-        ud.setEmail(mCurrentUser.getEmail());
-        ud.setBalance(new Balance(0,0));
-        DB_Manager.getInstance().setContext(this).pushNewUser(ud);
-        //// TODO: 08-May-17 SECONDA ARTE REGISTRAZIONE NUOVO UTENTE
+
+        dialogSignUp();
+
+
+        //// TODO: 08-May-17 SECONDA pARTE REGISTRAZIONE NUOVO UTENTE
+
 
     }
 
@@ -97,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
         Singleton.getInstance().setCurrContext(this);
         String x = getApplicationSignature(getApplicationContext());
         checkAndRequestPermissions();
+        activity = this;
     }
 
     @Override
@@ -119,8 +117,19 @@ public class SignUpActivity extends AppCompatActivity {
             handleSignInResponse(resultCode, data);
             //finish();
             return;
+        } else if(requestCode == IMAGE_PICKER_CODE) {
+            Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+            if(user_img != null && bitmap != null) {
+                user_img.setImageBitmap(bitmap);
+                ud.setImg_profile(bitmap);
+            }
+
+
         }
     }
+
+
+
 
     @MainThread
     private void handleSignInResponse(int resultCode, Intent data) {
@@ -130,8 +139,12 @@ public class SignUpActivity extends AppCompatActivity {
         if (resultCode == ResultCodes.OK) {
             mCurrentUser = mAuth.getCurrentUser();
             DB_Manager.getInstance().setContext(this).getCurrentUser();
-            return;
         }
+        else {
+            mAuth.signOut();
+            finish();
+        }
+
     }
 
 
@@ -141,6 +154,8 @@ public class SignUpActivity extends AppCompatActivity {
         ud.setName(mCurrentUser.getDisplayName());
         ud.setEmail(mCurrentUser.getEmail());
         ud.setBalance(new Balance(0,0));
+//        ud.setiProfile(mCurrentUser.getPhotoUrl().toString());
+
         return ud;
     }*/
 
@@ -237,7 +252,7 @@ public class SignUpActivity extends AppCompatActivity {
                     AuthUI.getInstance().createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
                             .setTheme(R.style.FirebaseLoginTheme)
-                            .setLogo(R.drawable.ic_splash_logo)
+                            .setLogo(R.drawable.logowithtext)
                             .setProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
                                     new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
@@ -257,4 +272,81 @@ public class SignUpActivity extends AppCompatActivity {
                 .show();
     }
 
+
+    public void dialogSignUp(){
+
+
+        ud.setAuthKey(mCurrentUser.getUid());
+        ud.setName(mCurrentUser.getDisplayName());
+        ud.setEmail(mCurrentUser.getEmail());
+        ud.setBalance(new Balance(0,0));
+
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .backgroundColor(getResources().getColor(R.color.card_background))
+                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .contentColor(getResources().getColor(R.color.colorPrimary))
+                .titleColor(getResources().getColor(R.color.colorPrimary))
+                .title("Personal Informations")
+                .customView(R.layout.dialog_view, true)
+                .positiveText("Ok")
+                .cancelable(false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if(user_img != null && et_user_phone.getText().length() > 0) {
+                            ud.setTelNumber(et_user_phone.getText().toString());
+                            Singleton.getInstance().setCurrentUser(ud);
+                            DB_Manager.getInstance().setContext(activity).pushNewUser(ud);
+                            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                            dialog.dismiss();
+                            finish();
+                            return;
+                        }
+                    }
+                });
+        final MaterialDialog dialog = builder.build();
+        dialog.show();
+        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+        user_info = dialog.getCustomView();
+        user_img = (CircleImageView)user_info.findViewById(R.id.iv_pick_user_image);
+        et_user_phone = (EditText)user_info.findViewById(R.id.et_phone_number);
+        et_user_phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.length() >8 && charSequence.length() < 17)
+                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                else
+                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        user_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePicker.pickImage(activity, "Select Profile Image:");
+                IMAGE_PICKER_CODE = ImagePicker.PICK_IMAGE_REQUEST_CODE;
+            }
+        });
+
+    }
+
+
+
+
+
+
 }
+
+
+
