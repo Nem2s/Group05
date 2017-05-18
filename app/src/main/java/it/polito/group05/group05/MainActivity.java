@@ -1,6 +1,7 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,8 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +41,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
@@ -46,13 +51,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
     public  static int REQUEST_FROM_NEW_USER;
     DrawerLayout drawer;
     CircleImageView cv_user_drawer;
@@ -69,7 +77,9 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
         Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
-
+        if(requestCode == COMING_FROM_BALANCE_ACTIVITY) {
+            drawer.openDrawer(Gravity.START);
+        }
         if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
             cv_user_drawer.setImageBitmap(bitmap);
             //currentUser.setProfile_image(bitmap);
@@ -108,6 +118,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         activity = this;
+        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
         context = this;
@@ -129,21 +141,8 @@ public class MainActivity extends AppCompatActivity
             public void onDrawerSlide(final View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
                 iv_nav_header = (ImageView) findViewById(R.id.background_nav_header);
-                Glide.with(context).using(new FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference("users")
-                                .child(Singleton.getInstance().getCurrentUser().getId())
-                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
-                        .placeholder(R.drawable.user_placeholder)
-                        .centerCrop()
-                        .crossFade()
-                        .into(cv_user_drawer);
-                Glide.with(context).using(new FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference("users")
-                                .child(Singleton.getInstance().getCurrentUser().getId())
-                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
-                        .placeholder(R.drawable.user_placeholder)
-                        .centerCrop()
-                        .into(iv_nav_header);
+                ImageUtils.LoadMyImageProfile(cv_user_drawer, context);
+                ImageUtils.LoadMyImageProfile(iv_nav_header, context);
                 final TextView tv_username = (TextView)findViewById(R.id.drawer_username);
                 tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
                 final TextView tv_email = (TextView)findViewById(R.id.drawer_email);
@@ -175,7 +174,6 @@ public class MainActivity extends AppCompatActivity
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -261,8 +259,8 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
         if (id == R.id.nav_balance){
-            DB_Manager.getInstance().retriveGroups();
-            startActivity(new Intent(MainActivity.this, UserBalanceActivity.class));
+            Pair<View, String> p = new Pair<>((View)cv_user_drawer, getResources().getString(R.string.transition_group_image));
+            AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
 
         }
         else if (id == R.id.nav_manage) {
@@ -291,7 +289,12 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_contacts) {
-
+            Intent i = new Intent();
+            i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));
+            i.setAction("android.intent.action.MAIN");
+            i.addCategory("android.intent.category.LAUNCHER");
+            i.addCategory("android.intent.category.DEFAULT");
+            startActivity(i);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -299,5 +302,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
 
+    }
 }

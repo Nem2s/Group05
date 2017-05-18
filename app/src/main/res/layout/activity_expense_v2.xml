@@ -278,10 +278,10 @@
                                 android:layout_toRightOf="@id/cb4_proposal">
                                 <ImageView
                                     android:id="@+id/InfoButton"
-                                    android:layout_width="16dp"
-                                    android:layout_height="16dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
                                     android:layout_margin="16dp"
-                                    android:src="@drawable/info"
+                                    android:src="@drawable/ic_action_help"
                                     android:layout_centerInParent="true"
                                     android:layout_alignParentStart="true" />
                             </RelativeLayout>

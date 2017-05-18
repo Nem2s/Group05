@@ -73,6 +73,7 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.2'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:support-vector-drawable:25.3.1'
+    compile 'com.dmitrymalkovich.android:material-design-dimens:1.4'
     testCompile 'junit:junit:4.12'
 }
 
