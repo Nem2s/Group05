@@ -54,7 +54,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
-        holder.setIsRecyclable(false);
         holder.name_person.setText(ue.getName());
         Glide.with(context)
                 .using(new FirebaseImageLoader())
@@ -73,6 +72,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                     switch (v.getId()) {
                         case R.id.et_ins:
                             ue.setSelected(true);
+
                             holder.costo_person.setEnabled(true);
                             holder.costo_person.addTextChangedListener(new TextWatcher() {
                                 @Override
@@ -91,7 +91,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                         double round = new BigDecimal(actualPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
                                         if (actualPrice > total) {
                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
-                                            holder.costo_person.setText("0.0");
+                                            holder.costo_person.setText("");
                                         } else {
                                             ue.setCustomValue(round);
                                             if (ue.isSelected()) {
@@ -120,15 +120,15 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                     }
                                 }
                             });
-                    break;
+                            break;
                     }
-                    return false;
+                return false;
             }
 
         });
 
 
-          }
+    }
 
     @Override
     public int getItemCount() {
@@ -139,13 +139,10 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         this.total = total;
         for(int j =0 ; j < users.size(); j++){
             User_expense e = users.get(j);
-                double round3= new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                e.setCustomValue(round3);
+            double round3= new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            e.setCustomValue(round3);
         }
         notifyDataSetChanged();
     }
 
 }
-
-
-

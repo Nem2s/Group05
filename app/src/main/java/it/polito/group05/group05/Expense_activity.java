@@ -13,7 +13,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -22,42 +21,25 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.aakira.expandablelayout.ExpandableLinearLayout;
-import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,15 +47,10 @@ import java.util.TreeMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
-import it.polito.group05.group05.Utility.Event.ExpenseDividerEvent;
-import it.polito.group05.group05.Utility.Event.PartecipantsNumberChangedEvent;
-import it.polito.group05.group05.Utility.Event.PriceChangedEvent;
-import it.polito.group05.group05.Utility.Event.PriceErrorEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
@@ -81,7 +58,7 @@ public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
     private MaterialEditText et_name, et_cost;
-    private CheckBox cb_addfile, cb_details, cb_policy;
+    private CheckBox cb_addfile;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
@@ -91,19 +68,14 @@ public class Expense_activity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ImageView image_network, info;
     private CardView card_recycler;
-    private LinearLayout layout_policy;
-    private ExpandableRelativeLayout exp_ll;
     private ImageView plus;
     private TextView nomeFile;
-    private int click;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
-    private Double expense_price;
+    private Double expense_price, totalPriceActual;
     private TYPE_EXPENSE expense_type;
     private String expense_name;
-    private UserDatabase expense_owner;
-    private GroupDatabase actual_group;
     private Double costPerUser = 0.0;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
@@ -136,7 +108,6 @@ public class Expense_activity extends AppCompatActivity {
         setContentView(R.layout.activity_expense_v2);
         costPerUser = 0.0;
         expense_price = 0.0;
-        click=0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
@@ -213,16 +184,26 @@ public class Expense_activity extends AppCompatActivity {
                                 toSubtractOwner += partecipants.get(i).getCustomValue();
                             }
                         }
+                        totalPriceActual = 0.0;
                         for (int i = 0; i < partecipants.size(); i++) {
                             price = partecipants.get(i).getCustomValue();
+                            totalPriceActual += partecipants.get(i).getCustomValue();
+                            String id = partecipants.get(i).getId();
                             if (partecipants.get(i).getId() == expense.getOwner()) {
                                 expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
                             } else {
                                 expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                             }
+                            DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
                         }
-                        fdb.setValue(expense);
-                        finish();
+                        if(totalPriceActual == expense.getPrice()){
+                            fdb.setValue(expense);
+                            finish();
+                        }
+                        else{
+                            Snackbar.make(view,"Set prices again",Snackbar.LENGTH_SHORT).show();
+                            memberAdapter.changeTotal(expense.getPrice());
+                        }
                 }
 
                 }
@@ -294,12 +275,11 @@ public class Expense_activity extends AppCompatActivity {
                                             .child("expenses")
                                             .child(expense.getId())
                                             .child(nameFILE);
-
         UploadTask uploadTask = storageRef.putFile(uri);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Expense_activity.this, "FAIL", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Expense_activity.this, "Uploading FAIL", Toast.LENGTH_SHORT).show();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -323,7 +303,6 @@ public class Expense_activity extends AppCompatActivity {
             newFile = true;
             uri =  data.getData();
             if(uri != null){
-                //uri.getPath()
                 fileUploaded = new File(uri.toString());
                 //fileUploaded = new File(String.valueOf(uri));
             }
@@ -333,7 +312,6 @@ public class Expense_activity extends AppCompatActivity {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                         nomeFile.setText(nameFILE);
-
                     }
                 } finally {
                     cursor.close();

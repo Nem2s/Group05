@@ -47,7 +47,8 @@ public class ExpenseHolder extends GeneralHolder{
     CardView cv;
     Query ref;
     TextView menu;
-    //Toolbar toolbar;
+
+
     public ExpenseHolder(View itemView) {
         super(itemView);
         this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
@@ -152,27 +153,25 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         delete.setVisible(false);
         cnt++;
     }
- /*   if(expense.isMandatory()) {
-        subscribe.setVisible(false);
-        cnt++;
-        if(expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId())!=null)
-            if(expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).compareTo(0.0)==0) {
-                cnt++;
-                pay.setVisible(false);
-            }
-
+    else {
+        delete.setVisible(true);
     }
-    if(!expense.isMandatory() || expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
+
+    if( expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
         pay.setVisible(false);
         cnt++;
     }
-  */
+    else{
+        pay.setVisible(true);
+    }
 
     if(expense.getFile().length()==0){
         download.setVisible(false);
         cnt++;
-
+    } else {
+        download.setVisible(true);
     }
+
     if(cnt<4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -247,36 +246,24 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                     return false;
                 }
             });
-            //displaying the popup
             popup.show();
-
         }
     });
     }
     catch(Exception c ){
-
     }
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             if (rv.getVisibility() == View.GONE) {
-                //  description.setVisibility(View.VISIBLE);
-               // file.setVisibility(View.VISIBLE);
                 rv.setVisibility(View.VISIBLE);
-
             }
             else {
-                //  description.setVisibility(View.GONE);
                 rv.setVisibility(View.GONE);
-                //file.setVisibility(View.GONE);
             }
         }
     });
-
-
-
-
 }
 
 }
