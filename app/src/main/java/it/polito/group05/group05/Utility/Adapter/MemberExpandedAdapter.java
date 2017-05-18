@@ -1,8 +1,6 @@
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,18 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
@@ -124,10 +116,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                     }
                 return false;
             }
-
         });
-
-
     }
 
     @Override

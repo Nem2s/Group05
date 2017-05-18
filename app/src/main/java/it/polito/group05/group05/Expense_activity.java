@@ -66,7 +66,7 @@ public class Expense_activity extends AppCompatActivity {
     private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
-    private ImageView image_network, info;
+    private ImageView image_network;
     private CardView card_recycler;
     private ImageView plus;
     private TextView nomeFile;
@@ -128,7 +128,6 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
         // card_recycler = (CardView) findViewById(R.id.card_recycler);
        // card_recycler.setVisibility(View.GONE);
-
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -136,8 +135,6 @@ public class Expense_activity extends AppCompatActivity {
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)instanceof UserDatabase)) return;
             User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
@@ -145,13 +142,12 @@ public class Expense_activity extends AppCompatActivity {
             partecipants.add(ue);
             list.put(ue.getId(),ue);
         }
-
         memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());
+                lin_members.getOrientation());;
         recyclerView.addItemDecoration(dividerItemDecoration);
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
@@ -205,7 +201,6 @@ public class Expense_activity extends AppCompatActivity {
                             memberAdapter.changeTotal(expense.getPrice());
                         }
                 }
-
                 }
         });
 
@@ -217,7 +212,6 @@ public class Expense_activity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 expense.setName(et_name.getText().toString());
                 expense_name=et_name.getText().toString();
-
             }
             @Override
             public void afterTextChanged(Editable s) {
