@@ -1,5 +1,8 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ChatDatabase {
@@ -11,8 +14,8 @@ public class ChatDatabase {
     public ChatDatabase(String messageText, String messageUser, String messageUserId) {
         this.messageText = messageText;
         this.messageUser = messageUser;
-        messageTime = new Date().getTime();
         this.messageUserId = messageUserId;
+        messageTime = new Date().getTime();
     }
 
     public ChatDatabase(){

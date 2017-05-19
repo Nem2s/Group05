@@ -37,6 +37,7 @@
     <string name="emailpassword_title_text">Email and Password</string>
 
 
+
     <string-array name="deadline_name">
         <item>12 ore</item>
         <item>24 ore</item>
@@ -74,6 +75,7 @@
         completions."
     </string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_new_group2">NewGroupActivity2</string>
 
 
 </resources>

@@ -36,7 +36,7 @@ public class ExpenseCardHolder extends GeneralHolder {
 
         if(!(u1 instanceof User_expense)) return;
         User_expense u = (User_expense) u1;
-        String s = (u.getId().compareTo(Singleton.getInstance().getCurrentUser().getId())==0)?"You":u.getName();
+        String s = (u.getName().compareTo(Singleton.getInstance().getCurrentUser().getName())==0)?"You":u.getName();
         Glide.with(c)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
@@ -45,10 +45,17 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .placeholder(R.drawable.user_placeholder)
                 .crossFade()
                 .into(civ);
-
-
-
         tv.setText(s);
+        if(u.getCustomValue() < 0.01) {
+             tv_debt.setText(String.valueOf(u.getCustomValue()));
+             tv_debt.setTextColor(Color.RED);
+        }else
+             {
+             tv_debt.setText(String.valueOf(u.getCustomValue()));
+             tv_debt.setTextColor(Color.GREEN);
+             }
+        }
+            /*
             Double c1 = u.getDebt();
             tv_debt.setText(String.format("%.2f",c1));
             if(u.getExpense().isMandatory())
@@ -63,7 +70,5 @@ public class ExpenseCardHolder extends GeneralHolder {
                     else
                         tv_debt.setTextColor(Color.RED);
                 }
-
-
+*/
     }
-}

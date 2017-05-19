@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -292,25 +293,18 @@ public class DB_Manager {
                 });
     }
 
-
-
-
     public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
-        //String name;
         switch(type) {
             case (1):
                 ref = storageUserRef;
-                //name = new String("userprofile.jpg");
                 break;
             case (2):
                 ref = storageGroupRef;
-                //name = new String("grouprofile.jpg");
                 break;
             case (3):
                 ref = storageExpenseRef;
-                //name = new String("expenseprofile.jpg");
                 break;
             default:
                 return;
@@ -354,43 +348,6 @@ public class DB_Manager {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-            }
-        });
-
-    }
-
-
-    public void fileUpload(String expenseId, String name, String file) throws IOException {
-        StorageReference ref;
-        final File localdir = new File(context.getFilesDir(), expenseId);
-        if (!localdir.exists())
-            localdir.mkdir();
-        final File localFile = new File(context.getFilesDir(), expenseId + "/" + name);
-        int size = (int) file.length();
-        byte[] bytes = new byte[size];
-        try {
-            BufferedInputStream buff = new BufferedInputStream(new FileInputStream(file));
-            buff.read(bytes, 0, bytes.length);
-            buff.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        UploadTask uploadTask = storageExpenseRef.child(expenseId).child(name).putBytes(bytes);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(context, "Uploading Done!!!", LENGTH_SHORT).show();
-               //  Uri downloadUrl = taskSnapshot.getDownloadUrl();
             }
         });
 
@@ -467,14 +424,14 @@ public class DB_Manager {
 
 
     public boolean checkUserDebtRemoving() {
-        DatabaseReference dbref=groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId());
+        DatabaseReference dbref = groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId());
         dbref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists() )
+                if (!dataSnapshot.exists())
                     return;
 
-               EventBus.getDefault().post(new LeaveGroupEvent(Double.parseDouble(dataSnapshot.getValue().toString())));
+                EventBus.getDefault().post(new LeaveGroupEvent(Double.parseDouble(dataSnapshot.getValue().toString())));
             }
 
             @Override
@@ -491,8 +448,11 @@ public class DB_Manager {
         userRef.child(userId).child("userGroups").child(groupId).removeValue();
         groupRef.child(groupId).child("members").child(userId).removeValue();
     }
+
     public void addUserToGroup(String userId, String groupId) {
         userRef.child(userId).child("userGroups").child(groupId).setValue(false);
         groupRef.child(groupId).child("members").child(userId).setValue(0.0);
     }
+
+
 }

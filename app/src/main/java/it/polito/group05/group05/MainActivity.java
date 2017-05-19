@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
@@ -97,6 +98,11 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
@@ -107,7 +113,6 @@ public class MainActivity extends AppCompatActivity
             if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
                 pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
-
         activity = this;
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
@@ -116,7 +121,6 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                     startActivity(new Intent(MainActivity.this, NewGroupActivity.class));
             }
         });
@@ -125,7 +129,6 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-
             @Override
             public void onDrawerSlide(final View drawerView, float slideOffset) {
                 cv_user_drawer = (CircleImageView)findViewById(R.id.drawer_header_image);
@@ -180,7 +183,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
@@ -293,6 +295,5 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
 }

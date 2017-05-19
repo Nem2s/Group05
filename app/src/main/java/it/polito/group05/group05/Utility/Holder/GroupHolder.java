@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -62,8 +61,9 @@ public class GroupHolder extends GeneralHolder {
         name.setText(g.getName());
         time.setText(g.getLmTime());
         this.balance.setText(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
+        this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
 
-        Double x = Double.valueOf(balance.getText().toString());
+        Double x = Double.valueOf(balance.getText().toString().replace(",", "."));
         if(x >0.001)
         balance.setTextColor(Color.GREEN);
         else if(x <-0.001)
@@ -73,7 +73,7 @@ public class GroupHolder extends GeneralHolder {
 
         }
 
-        final Map<String, Object> tmp = new HashMap<>(g.getMembers());
+        Map<String, Object> tmp = new HashMap<>(g.getMembers());
 
         for(String userID : tmp.keySet()){
             FirebaseDatabase.getInstance()
@@ -93,7 +93,6 @@ public class GroupHolder extends GeneralHolder {
                         }
                     });
         }
-
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override

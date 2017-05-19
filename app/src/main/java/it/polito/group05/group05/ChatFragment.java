@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 
 
 /**
@@ -58,50 +61,47 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.chat_main, container, false);
-            fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-            input = (EditText) rootView.findViewById(R.id.input);
-            listView = (ListView) rootView.findViewById(R.id.list);
-    //        showAllOldMessages();
+        View rootView = inflater.inflate(R.layout.chat_main, container, false);
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        input = (EditText) rootView.findViewById(R.id.input);
+        listView = (ListView) rootView.findViewById(R.id.list);
+        showAllOldMessages();
 
-      /*      input.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if(s.length()> 0){
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
                     textInput = s.toString();
-                    }
                 }
-            });
+            }
+        });
 
 
-
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (input.getText().toString().trim().equals("")) {
-                   //     Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        UserDatabase u = Singleton.getInstance().getCurrentUser();
-                        fdb =   FirebaseDatabase.getInstance().getReference("chats")
-                                                .child(Singleton.getInstance().getIdCurrentGroup())
-                                                .push();
-                        ChatDatabase cdb = new ChatDatabase(textInput, u.getName().toString(), u.getId().toString());
-                        fdb.setValue(cdb);
-                        input.setText("");
-                    }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (input.getText().toString().trim().equals("")) {
+                    //  Toast.makeText(ChatFragment.this, "Please enter some texts!", Toast.LENGTH_SHORT).show();
+                } else {
+                    UserDatabase u = Singleton.getInstance().getCurrentUser();
+                    fdb = FirebaseDatabase.getInstance().getReference("chats")
+                            .child(Singleton.getInstance().getIdCurrentGroup())
+                            .push();
+                    ChatDatabase cdb = new ChatDatabase(textInput, u.getName().toString(), u.getId().toString());
+                    fdb.setValue(cdb);
+                    input.setText("");
                 }
-            });
-        */
+            }
+        });
+
         return rootView;
 
 
@@ -121,8 +121,12 @@ public class ChatFragment extends Fragment {
 */
     //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
      // if(fdb.getKey().)
-        adapter = new MessageAdapter(this,
+      /*  adapter = new MessageAdapter(this,
                 ChatDatabase.class, R.layout.item_in_message,
+                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
+       */
+        adapter = new MessageAdapter(this,
+                ChatDatabase.class, R.layout.message,
                 FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
         listView.setAdapter(adapter);
     }

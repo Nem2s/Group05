@@ -39,6 +39,10 @@ dependencies {
 
 
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
+    compile 'com.firebaseui:firebase-ui-database:1.2.0'
+    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
+    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
@@ -64,12 +68,10 @@ dependencies {
     compile 'com.google.firebase:firebase-invites:10.2.0'
     compile 'com.github.arimorty:floatingsearchview:2.0.3'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.firebaseui:firebase-ui-database:1.2.0'
-    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
-    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
-
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
+    compile 'com.github.aakira:expandable-layout:1.6.0@aar'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
     testCompile 'junit:junit:4.12'
 }
 

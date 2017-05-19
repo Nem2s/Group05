@@ -175,11 +175,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     }
 
 
-
-
-
-
-
     private static void showViews() {
 
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
@@ -234,10 +229,8 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-
         }
 
         @Override
@@ -279,6 +272,4 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         }
 
     }
-
-
 }
