@@ -20,64 +20,61 @@
         android:orientation="vertical">
 
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:weightSum="1">
-
-    <ImageView
-        android:id="@+id/expense_image"
-        android:layout_height="48dp"
-        android:layout_width="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-         />
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginRight="16dp"
-    android:textStyle="bold"
-    android:textSize="16sp"
-    android:id="@+id/expense_name"
-    android:layout_toRightOf="@+id/expense_image"
-    android:layout_toLeftOf="@+id/expense_price"
-    />
-
-    <TextView
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/expense_price"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:paddingRight="16dp"
-        android:layout_toLeftOf="@+id/textViewOptions"
-        android:gravity="right"
-        />
-
-    <TextView
-        android:id="@+id/textViewOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:paddingRight="10dp"
-        android:layout_alignTop="@+id/expense_price"
-        android:text="&#8942;"
-        android:textAppearance="?android:textAppearanceLarge" />
-</RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:id="@+id/expense_rv">
-        </android.support.v7.widget.RecyclerView>
+            android:padding="8dp"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/expense_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/expense_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_toLeftOf="@+id/expense_price"
+                android:layout_toRightOf="@+id/expense_image"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/expense_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/textViewOptions"
+                android:gravity="right"
+                android:paddingRight="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignTop="@+id/expense_price"
+                android:paddingRight="10dp"
+                android:text="&#8942;"
+                android:textAppearance="?android:textAppearanceLarge" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/expense_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"></android.support.v7.widget.RecyclerView>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -86,30 +83,30 @@
             android:visibility="visible">
 
             <RelativeLayout
+                android:id="@+id/rl_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rl_desc"
 
                 >
 
                 <ImageView
+                    android:id="@+id/creditcard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/credit_card"
-                    android:layout_marginLeft="10sp"
                     android:layout_marginBottom="10sp"
+                    android:layout_marginLeft="10sp"
                     android:layout_marginTop="10sp"
-                    android:id="@+id/creditcard" />
+                    android:src="@drawable/credit_card" />
 
                 <TextView
+                    android:id="@+id/owner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/owner"
-                    android:textSize="13sp"
+                    android:layout_alignTop="@+id/creditcard"
                     android:layout_margin="10sp"
                     android:layout_toRightOf="@+id/creditcard"
-                    android:layout_alignTop="@+id/creditcard"
-                    android:text="ciao" />
+                    android:text="ciao"
+                    android:textSize="13sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -118,24 +115,24 @@
                 android:layout_toRightOf="@+id/rl_desc">
 
                 <ImageView
-                    android:layout_toLeftOf="@+id/timestamp"
+                    android:id="@+id/calendar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/calendar"
-                    android:id="@+id/calendar"
-                    android:layout_marginLeft="10sp"
                     android:layout_marginBottom="10sp"
-                    android:layout_marginTop="10sp" />
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginTop="10sp"
+                    android:layout_toLeftOf="@+id/timestamp"
+                    android:src="@drawable/calendar" />
 
                 <TextView
+                    android:id="@+id/timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/timestamp"
                     android:layout_alignParentRight="true"
                     android:layout_alignTop="@+id/calendar"
-                    android:textSize="13sp"
                     android:layout_margin="10sp"
-                    android:text="ciao" />
+                    android:text="ciao"
+                    android:textSize="13sp" />
             </RelativeLayout>
 
 
@@ -151,18 +148,18 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/attach"
                 android:visibility="gone" />
-        <TextView
-            android:id="@+id/expense_file"
-            android:textStyle="normal"
-            android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:gravity="left"
-            />
+
+            <TextView
+                android:id="@+id/expense_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:gravity="left"
+                android:textSize="13sp"
+                android:textStyle="normal"
+                android:visibility="gone" />
         </LinearLayout>
-</LinearLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>

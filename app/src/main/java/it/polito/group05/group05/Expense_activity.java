@@ -1,6 +1,8 @@
 package it.polito.group05.group05;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,8 +26,10 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,6 +42,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -68,8 +73,13 @@ public class Expense_activity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ImageView image_network;
     private CardView card_recycler;
-    private ImageView plus;
+    private ImageView plus,calendar1;
     private TextView nomeFile;
+    private String data = null;
+    private String time = null;
+    private String tmsp = null;
+    private int mYear, mMonth, mDay, mHour, mMinute;
+    private boolean clicked_calendar = false;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
@@ -126,8 +136,7 @@ public class Expense_activity extends AppCompatActivity {
         expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
-        // card_recycler = (CardView) findViewById(R.id.card_recycler);
-       // card_recycler.setVisibility(View.GONE);
+        calendar1= (ImageView) findViewById(R.id.calendar);
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -149,10 +158,13 @@ public class Expense_activity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());;
         recyclerView.addItemDecoration(dividerItemDecoration);
+
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
-        final java.sql.Timestamp expense_timestamp = new java.sql.Timestamp(now.getTime());
-        expense.setTimestamp(expense_timestamp.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd HH:mm ");
+        final String dataFormat = sdf.format(now.getTime());
+
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -192,7 +204,15 @@ public class Expense_activity extends AppCompatActivity {
                             }
                             DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
                         }
-                        if(totalPriceActual == expense.getPrice()){
+                        if(clicked_calendar){
+                            tmsp = data + " " + time;
+                            expense.setTimestamp(tmsp);
+                            clicked_calendar= false;
+                        }else {
+                            expense.setTimestamp(dataFormat);
+                        }
+
+                        if(totalPriceActual -expense.getPrice()>=-0.001 || totalPriceActual -expense.getPrice()<=0.001){
                             fdb.setValue(expense);
                             finish();
                         }
@@ -234,6 +254,44 @@ public class Expense_activity extends AppCompatActivity {
                 memberAdapter.changeTotal(expense_price);
                 memberAdapter.notifyDataSetChanged();
                 }
+            }
+        });
+
+        calendar1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get Current Date
+                clicked_calendar = true;
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                if(month < 10){
+                                    String mese = "0"+month;
+                                    data = year + "-" + mese + "-" + dayOfMonth;
+                                }else
+                                    data = year + "-" + month + "-" + dayOfMonth;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+
+                final Calendar c1 = Calendar.getInstance();
+                mHour = c1.get(Calendar.HOUR_OF_DAY);
+                mMinute = c1.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay,
+                                                  int minute) {
+                                time = hourOfDay + ":" + minute + " ";
+                            }
+                        }, mHour, mMinute, true);
+                timePickerDialog.show();
             }
         });
 
@@ -282,8 +340,6 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
     }
-
-
 
     @Override
     public boolean onSupportNavigateUp() {
