@@ -106,6 +106,11 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
