@@ -3,8 +3,8 @@
         <color name="colorPrimary">#0f3d48</color>
         <color name="colorPrimaryDark">#001821 </color>
         <color name="colorPrimaryLight">#3e6873</color>
-        <color name="colorPrimaryLightLight">#64a8b9</color>
-        <color name="colorPrimaryLightProva">#56919F</color>
+    <color name="colorPrimaryLightLight">#64a8b9</color>
+    <color name="colorPrimaryLightProva">#56919F</color>
         <color name="colorAccent">#E96151</color>
         <color name="colorAccentLight">#ff927e</color>
         <color name="colorPrimaryText">#BFFFFFFF</color>

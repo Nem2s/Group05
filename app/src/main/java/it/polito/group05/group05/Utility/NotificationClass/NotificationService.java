@@ -1,13 +1,12 @@
 package it.polito.group05.group05.Utility.NotificationClass;
 
-import android.app.NotificationManager;
-import android.content.Context;
-import android.support.v7.app.NotificationCompat;
+import android.content.Intent;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import it.polito.group05.group05.R;
+import it.polito.group05.group05.Group_Activity;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 
 /**
  * Created by antonino on 16/05/2017.
@@ -16,16 +15,13 @@ import it.polito.group05.group05.R;
 public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getNotification() != null) {
-            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            NotificationCompat.Builder nb = new NotificationCompat.Builder(this);
-            nb.setContentTitle(remoteMessage.getNotification().getTitle()).setContentText(remoteMessage.getNotification().getBody()).setSmallIcon(R.drawable.com_facebook_button_like_icon_selected);
-            nm.notify(0, nb.build());
-
-
+        if (remoteMessage.getData() != null) {
+            if (remoteMessage.getCollapseKey() == "newGroup") {
+                Singleton.getInstance().setIdCurrentGroup(remoteMessage.getData().get("groupId"));
+                Intent i = new Intent(this, Group_Activity.class);
+                this.startActivity(i);
+            }
         }
-
 
     }
 }

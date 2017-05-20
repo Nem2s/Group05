@@ -21,8 +21,8 @@ public class ExpenseDatabase implements Namable{
         id="";
         owner="";
         name="";
-        price=0.0;
-        file=null;
+        price = 0.0;
+        file = null;
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {

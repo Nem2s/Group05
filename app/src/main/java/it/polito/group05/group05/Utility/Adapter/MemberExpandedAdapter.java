@@ -38,7 +38,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     Context context;
 
 
-    public MemberExpandedAdapter(List<User_expense> users, Context context, double total){
+    public MemberExpandedAdapter(List<User_expense> users, Context context, double total) {
         this.users= users;
         this.context= context;
         this.total = total;
@@ -120,27 +120,27 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                     }
                                 }
                             });
-                    break;
+                            break;
                     }
-                    return false;
+                return false;
             }
 
         });
 
 
-          }
+    }
 
     @Override
     public int getItemCount() {
         return users.size();
     }
 
-    public void changeTotal(double total){
+    public void changeTotal(double total) {
         this.total = total;
-        for(int j =0 ; j < users.size(); j++){
+        for (int j = 0; j < users.size(); j++) {
             User_expense e = users.get(j);
-                double round3= new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                e.setCustomValue(round3);
+            double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            e.setCustomValue(round3);
         }
         notifyDataSetChanged();
     }
