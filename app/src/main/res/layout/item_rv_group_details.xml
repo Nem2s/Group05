@@ -7,6 +7,7 @@
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="true"
     android:padding="@dimen/material_component_cards_top_and_bottom_padding"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <de.hdodenhof.circleimageview.CircleImageView
     android:id="@+id/cv_userimage"
@@ -19,10 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:layout_toRightOf="@id/cv_userimage"
         android:layout_centerVertical="true"
-
         >
         <TextView
             android:id="@+id/tv_user_name"
@@ -45,13 +46,18 @@
             android:text="1234567 €"
             />
     </LinearLayout>
-
+    <io.codetail.widget.RevealFrameLayout
+        android:id="@+id/reveal_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        >
     <Button
         android:id="@+id/button_pay"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:text="Pay"
         android:theme="@style/GreenButton"
         />
@@ -59,12 +65,16 @@
         android:id="@+id/button_notify"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:text="Notify"
         android:theme="@style/BlueButton"
         android:visibility="gone"
         />
-
-
+        <ProgressBar
+            android:id="@+id/pb_loading_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            />
+    </io.codetail.widget.RevealFrameLayout>
 </RelativeLayout>

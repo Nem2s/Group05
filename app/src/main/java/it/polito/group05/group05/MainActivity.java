@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         activity = this;
-        String token = FirebaseInstanceId.getInstance().getToken();
         FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());

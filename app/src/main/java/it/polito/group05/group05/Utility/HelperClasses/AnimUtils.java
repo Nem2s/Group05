@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 
 import java.util.List;
 
@@ -37,6 +38,11 @@ public class AnimUtils {
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(from, pairs);
         ActivityCompat.startActivityForResult(from, intent, RequestCode,  options.toBundle());
+    }
+
+    public static Animation morphButtonToCircle(View v, Context context) {
+        Animation anim = AnimationUtils.loadAnimation(context, R.anim.circling);
+        return anim;
     }
 
     public static void toggleOffView(final View view, Context context) {
@@ -130,6 +136,36 @@ public class AnimUtils {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 myView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
+    public static void exitRevealAndShowSecond(View view1, View view2) {
+        // previously visible view
+        final View myView = view1;
+        final View my2nView = view2;
+
+        // get the center for the clipping circle
+        int cx = myView.getMeasuredWidth() / 2;
+        int cy = myView.getMeasuredHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = myView.getWidth() / 2;
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                myView.setVisibility(View.INVISIBLE);
+                enterRevealAnimation(my2nView);
             }
         });
 

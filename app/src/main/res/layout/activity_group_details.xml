@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_view"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:fitsSystemWindows="true"
     tools:context="it.polito.group05.group05.GroupDetailsActivity">
 
@@ -15,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+
+        android:theme="@style/AppTheme.AppBarOverlay"
+        >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -23,18 +24,25 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            android:background="?android:attr/selectableItemBackground"
+
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <io.codetail.widget.RevealFrameLayout
                 android:id="@+id/reveal_parent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:background="?android:attr/selectableItemBackground"
+
+                android:layout_height="match_parent"
+                >
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cv_backimage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/network"
                     android:transitionName="@string/transition_group_image"
+
                     />
             <ImageView
                 android:id="@+id/iv_header_group_image"
@@ -42,6 +50,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/network"
                 android:visibility="invisible"
+                android:background="?android:attr/selectableItemBackground"
 
                 />
             </io.codetail.widget.RevealFrameLayout>
@@ -61,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:srcCompat="@drawable/ic_person_add"
         android:visibility="invisible"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"

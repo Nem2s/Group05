@@ -80,7 +80,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         GroupInfoChartEvent event = EventBus.getDefault().removeStickyEvent(GroupInfoChartEvent.class);
         if(event != null && e.getEntry().size() > 0) {
             ppb.setVisibility(View.GONE);
-            lchart.setVisibility(View.VISIBLE);
+
             pchart.setVisibility(View.VISIBLE);
             snackbar.dismiss();
             iv_nodata.setVisibility(View.GONE);
@@ -90,8 +90,6 @@ public class UserBalanceActivity extends AppCompatActivity {
         } else {
             iv_nodata.setVisibility(View.VISIBLE);
             snackbar.show();
-
-            lchart.setVisibility(View.INVISIBLE);
             pchart.setVisibility(View.INVISIBLE);
         }
     }
@@ -99,8 +97,13 @@ public class UserBalanceActivity extends AppCompatActivity {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onExpenseDataReady(ExpenseCountEvent e) {
         ExpenseCountEvent event = EventBus.getDefault().removeStickyEvent(ExpenseCountEvent.class);
-        if(event.getList().size() > 0)
+        if(event.getList().size() > 0) {
+            lchart.setVisibility(View.VISIBLE);
             setupLineChart(event.getList());
+        } else {
+            lchart.setVisibility(View.GONE);
+        }
+
     }
 
     private void setupLineChart(List<Entry> list) {
@@ -152,7 +155,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         set.setDrawCircleHole(false);
         set.setMode(LineDataSet.Mode.STEPPED);
         lchart.setDragEnabled(true);
-        lchart.getLegend().setTextSize(13f);
+        lchart.getLegend().setTextSize(11f);
         lchart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
        /* lchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
@@ -247,7 +250,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         data.setValueTextSize(10f);
         data.setValueTypeface(Typeface.DEFAULT_BOLD);
         data.setValueTextColors(valueColors);
-        Legend l = pchart.getLegend ();
+        Legend l = pchart.getLegend();
         l.setTextSize(15f);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);

@@ -7,8 +7,18 @@
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="true"
     android:padding="@dimen/material_component_cards_top_and_bottom_padding"
+    android:layout_marginTop="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <View
+        android:layout_width="fill_parent"
+        android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
+        android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.4"
+        android:layout_height="1dp"
+        />
     <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_marginTop="32dp"
         android:id="@+id/cv_userimage"
         android:layout_width="52dp"
         android:layout_height="52dp"
@@ -28,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="VeryLongUserName"
-        android:textStyle="bold"
+        android:textStyle="bold|italic"
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:textSize="16sp"

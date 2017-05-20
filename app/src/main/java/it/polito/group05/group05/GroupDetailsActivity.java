@@ -1,9 +1,12 @@
 package it.polito.group05.group05;
 
-import android.app.SharedElementCallback;
-import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,59 +15,68 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.ui.User;
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.GroupDetailsAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
-import it.polito.group05.group05.Utility.Holder.GeneralHolder;
-import it.polito.group05.group05.Utility.Holder.MemberGroupDetailsHeaderHolder;
-import it.polito.group05.group05.Utility.Holder.MemberGroupDetailsHolder;
-import it.polito.group05.group05.Utility.Holder.MemberInvitedHolder;
 
 public class GroupDetailsActivity extends AppCompatActivity {
 
+    private final int COME_FROM_ADD_MEMBER_ACTIVITY = 123;
     private final GroupDatabase currGroup = Singleton.getInstance().getmCurrentGroup();
     ImageView iv_header;
     CircleImageView cv_back;
     FloatingActionButton fab;
     RecyclerView rv_members;
     GroupDetailsAdapter mAdapter;
+    MaterialDialog editDialog;
+    ProgressBar pb;
 
     private Map<String, Double> usersBalance = new HashMap<>();
-    private ArrayList<String> users = new ArrayList<>();
+    private List<Object> users = new ArrayList<>();
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       /* if(requestCode == COME_FROM_ADD_MEMBER_ACTIVITY) {
+            users.clear();
+            users.put(Singleton.getInstance().getCurrentUser().getId(), Singleton.getInstance().getCurrentUser());
+            users.putAll((Singleton.getInstance().getmCurrentGroup().getMembers()));
+            *//**Possibilmente trovare altro modo **//*
+            mAdapter = new GroupDetailsAdapter(getApplicationContext(), users.values());
+            *//** **//*
+            rv_members.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,24 +89,33 @@ public class GroupDetailsActivity extends AppCompatActivity {
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
         cv_back = (CircleImageView)findViewById(R.id.cv_backimage);
         rv_members = (RecyclerView)findViewById(R.id.rv_group_members);
+        pb = (ProgressBar)findViewById(R.id.pb_loading_members);
         final LinearLayoutManager ll=  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,true);
         rv_members.setLayoutManager(ll);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Intent i = new Intent(GroupDetailsActivity.this,NewMemberActivity.class);
+            startActivityForResult(i, COME_FROM_ADD_MEMBER_ACTIVITY);
         }
         });
         initializeUI();
-        retriveExpense();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
-        users = new ArrayList<>(Singleton.getInstance().getmCurrentGroup().getMembers().keySet());
-        users.remove(Singleton.getInstance().getCurrentUser().getId());
-        users.add(0, Singleton.getInstance().getCurrentUser().getId());
-        mAdapter = new GroupDetailsAdapter(this, users);
+        toolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                editDialog.show();
+                return false;
+            }
+        });
+        users.add(Singleton.getInstance().getCurrentUser());
+        //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
+        mAdapter = new GroupDetailsAdapter(getApplicationContext(), users);
+        rv_members.setAdapter(mAdapter);
+        rv_members.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+
 
        /* DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         DatabaseReference usersGroupRef = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getIdCurrentGroup()).child("members");
@@ -169,7 +190,67 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
         };*/
 
-        rv_members.setAdapter(mAdapter);
+
+        }
+
+        private void retriveUsers() {
+            FirebaseDatabase.getInstance().getReference("groups").child(currGroup.getId())
+                    .child("members")
+                    .orderByKey()
+                    .addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            pb.setVisibility(View.GONE);
+                                            final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
+                                            if (newUser.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
+                                                return;
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    int i = mAdapter.addUser(newUser);
+                                                    int n = mAdapter.getItemCount();
+                                                    if (i == n)
+                                                        mAdapter.notifyItemInserted(n - 1);
+                                                    else
+                                                        mAdapter.notifyItemChanged(i - 1);
+                                                }
+                                            });
+                                            if (pb.getVisibility() == View.GONE){
+                                                rv_members.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
         }
 
 
@@ -203,6 +284,16 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void initializeUI() {
         ImageUtils.LoadImageGroup(cv_back, this, currGroup);
         ImageUtils.LoadImageGroup(iv_header, this, currGroup);
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .title("Group Informations")
+                .content("To be implemented...")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                });
+        editDialog = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @Override
@@ -215,6 +306,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     fab.show();
                     AnimUtils.enterRevealAnimation(iv_header);
                     cv_back.setVisibility(View.INVISIBLE);
+                    retriveUsers();
                 }
 
                 @Override
@@ -249,83 +341,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void retriveExpense(){
-        FirebaseDatabase.getInstance()
-                .getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
-                .orderByKey()
-                //.equalTo()
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        parseSnapshotAdded(dataSnapshot);
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        //parseSnapshotChanged(dataSnapshot);
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        parseSnapshotRemoved(dataSnapshot);
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-
-    private void parseSnapshotAdded(DataSnapshot snapshot)
-    {
-        ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
-        for(String i : expenseDatabase.getMembers().keySet()) {
-            if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
-                if (usersBalance.containsKey(i))
-                    usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(i));
-                else
-                    usersBalance.put(i, expenseDatabase.getMembers().get(i));
-            }
-            else {
-                if (expenseDatabase.getMembers().get(i) > 0) {
-                    if (usersBalance.containsKey(i)) {
-                        usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
-                    }
-                    else {
-                        usersBalance.put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) * -1);
-                    }
-                }
-            }
-
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void parseSnapshotRemoved(DataSnapshot snapshot)
-    {
-        ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
-        for(String i : expenseDatabase.getMembers().keySet()) {
-            if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
-                usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(i));
-            }
-            else {
-                if (expenseDatabase.getMembers().get(i) > 0) {
-                    usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
-                }
-            }
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
 
 
 

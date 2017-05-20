@@ -32,7 +32,7 @@ public class MemberGroupDetailsHeaderHolder extends GeneralHolder{
         if(!(c instanceof UserDatabase)) return;
         final UserDatabase user = (UserDatabase)c;
         ImageUtils.LoadMyImageProfile(cv_userImage, context);
-        tv_userName.setText(user.getName());
+        tv_userName.setText("You");
 
     }
 }
