@@ -1,8 +1,6 @@
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,18 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
@@ -38,7 +30,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     Context context;
 
 
-    public MemberExpandedAdapter(List<User_expense> users, Context context, double total) {
+    public MemberExpandedAdapter(List<User_expense> users, Context context, double total){
         this.users= users;
         this.context= context;
         this.total = total;
@@ -54,7 +46,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
-        holder.setIsRecyclable(false);
         holder.name_person.setText(ue.getName());
         Glide.with(context)
                 .using(new FirebaseImageLoader())
@@ -73,6 +64,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                     switch (v.getId()) {
                         case R.id.et_ins:
                             ue.setSelected(true);
+
                             holder.costo_person.setEnabled(true);
                             holder.costo_person.addTextChangedListener(new TextWatcher() {
                                 @Override
@@ -91,7 +83,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                         double round = new BigDecimal(actualPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
                                         if (actualPrice > total) {
                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
-                                            holder.costo_person.setText("0.0");
+                                            holder.costo_person.setText("");
                                         } else {
                                             ue.setCustomValue(round);
                                             if (ue.isSelected()) {
@@ -124,10 +116,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                     }
                 return false;
             }
-
         });
-
-
     }
 
     @Override
@@ -135,17 +124,14 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         return users.size();
     }
 
-    public void changeTotal(double total) {
+    public void changeTotal(double total){
         this.total = total;
-        for (int j = 0; j < users.size(); j++) {
+        for(int j =0 ; j < users.size(); j++){
             User_expense e = users.get(j);
-            double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double round3= new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             e.setCustomValue(round3);
         }
         notifyDataSetChanged();
     }
 
 }
-
-
-

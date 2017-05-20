@@ -47,7 +47,8 @@ public class ExpenseHolder extends GeneralHolder{
     CardView cv;
     Query ref;
     TextView menu;
-    //Toolbar toolbar;
+
+
     public ExpenseHolder(View itemView) {
         super(itemView);
         this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
@@ -105,10 +106,10 @@ public class ExpenseHolder extends GeneralHolder{
             expenseDatabase.getUsersExpense().add(x);
         }
 
-        //  if(!(expenseDatabase.isMandatory())) {
-        //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        //  }
-        setupListener(cv, price, context, expenseDatabase);
+    //  if(!(expenseDatabase.isMandatory())) {
+         //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+      //  }
+        setupListener(cv,price,context,expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
     }
 private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
@@ -152,18 +153,26 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         delete.setVisible(false);
         cnt++;
     }
+    else {
+        delete.setVisible(true);
+    }
 
-        if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
+    if( expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
         pay.setVisible(false);
         cnt++;
     }
+    else{
+        pay.setVisible(true);
+    }
 
-
-        if (expense.getFile().length() == 0) {
+    if(expense.getFile().length()==0){
         download.setVisible(false);
         cnt++;
-
+    } else {
+        download.setVisible(true);
     }
+
+    if(cnt<4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -237,36 +246,24 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                     return false;
                 }
             });
-            //displaying the popup
             popup.show();
-
         }
     });
     }
     catch(Exception c ){
-
     }
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             if (rv.getVisibility() == View.GONE) {
-                //  description.setVisibility(View.VISIBLE);
-               // file.setVisibility(View.VISIBLE);
                 rv.setVisibility(View.VISIBLE);
-
             }
             else {
-                //  description.setVisibility(View.GONE);
                 rv.setVisibility(View.GONE);
-                //file.setVisibility(View.GONE);
             }
         }
     });
-
-
-
-
 }
 
 }
