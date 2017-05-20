@@ -233,16 +233,17 @@ public class UserBalanceActivity extends AppCompatActivity {
             legendEntry.form = Legend.LegendForm.SQUARE;
             legendEntry.formSize = 15;
             if(v > 0) {
-                legendEntry.label = g.getName()+ "\t\t\t\t+" + res + " €";
                 valueColors.add(getResources().getColor(R.color.green_300));
             }
 
             else {
-
                 valueColors.add(getResources().getColor(R.color.red_300));
-                legendEntry.label = g.getName() + "\t\t\t\t" + res + " €";
 
             }
+            if(entryList.size() < 10)
+                legendEntry.label = g.getName()+ "\t\t\t\t+" + res + " €";
+            if(entryList.size() == 10)
+                legendEntry.label = "...";
             entryList.add(legendEntry);
         }
         pchart.setCenterText(tot > 0 ? "+" + String.format("%.2f", tot) + " €" : String.format("%.2f", tot) + " €");
@@ -251,14 +252,15 @@ public class UserBalanceActivity extends AppCompatActivity {
         data.setValueTypeface(Typeface.DEFAULT_BOLD);
         data.setValueTextColors(valueColors);
         Legend l = pchart.getLegend();
-        l.setTextSize(15f);
+        l.setTextSize(13f);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
         l.setXEntrySpace(220f);
         l.setYEntrySpace(2f);
-        l.setYOffset(0f);
+        l.setYOffset(20f);
+        l.setXOffset(-20f);
         l.setFormToTextSpace(12);
         l.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
         l.setWordWrapEnabled(true);
@@ -288,7 +290,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         pchart.setTransparentCircleColor(getResources().getColor(R.color.grey_300));
         pchart.setTransparentCircleAlpha(110);
         pchart.setTransparentCircleRadius(55);
-        pchart.setExtraOffsets(30.f, 0.f, 30.f, 0.f);
+        pchart.setExtraOffsets(30.f, 5.f, 30.f, 15.f);
         pchart.setCenterTextSize(22f);
         pchart.setCenterTextTypeface(Typeface.DEFAULT_BOLD);
         pchart.setHoleRadius(50);
@@ -361,6 +363,9 @@ public class UserBalanceActivity extends AppCompatActivity {
             });
 
             scheduleStartPostponedTransition(cv_userImage);
+        } else {
+            DB_Manager.getInstance().retriveGroups();
+            DB_Manager.getInstance().retriveExpenses();
         }
     }
 

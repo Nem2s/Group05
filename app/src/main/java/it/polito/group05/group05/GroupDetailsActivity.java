@@ -326,6 +326,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
             });
 
             scheduleStartPostponedTransition(iv_header);
+        } else {
+            fab.show();
+            AnimUtils.enterRevealAnimation(iv_header);
+            cv_back.setVisibility(View.INVISIBLE);
+            retriveUsers();
         }
     }
 

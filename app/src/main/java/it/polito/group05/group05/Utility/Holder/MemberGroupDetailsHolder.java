@@ -79,7 +79,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             if (expense == null) {
                                 continue;
                             }
-
+                            if(!expense.getMembers().containsKey(user.getId()))
+                                continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if(expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
@@ -98,7 +99,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                     button_notify.setVisibility(View.GONE);
 
                                 } else {
-                                    tv_userBalance.setText("No debits/credits");
+                                    tv_userBalance.setText("Already Payed!");
                                     tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                     button_pay.setVisibility(View.GONE);
                                     button_notify.setVisibility(View.GONE);
