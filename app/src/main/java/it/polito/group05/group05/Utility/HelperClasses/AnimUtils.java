@@ -27,16 +27,16 @@ import it.polito.group05.group05.R;
 
 public class AnimUtils {
 
-    public static void startActivityWithAnimation (Activity from,Intent intent, Pair<View, String>... pairs) {
+    public static void startActivityWithAnimation(Activity from, Intent intent, Pair<View, String>... pairs) {
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(from, pairs);
         ActivityCompat.startActivity(from, intent, options.toBundle());
     }
 
-    public static void startActivityForResultWithAnimation (Activity from,Intent intent, int RequestCode, Pair<View, String>... pairs) {
+    public static void startActivityForResultWithAnimation(Activity from, Intent intent, int RequestCode, Pair<View, String>... pairs) {
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(from, pairs);
-        ActivityCompat.startActivityForResult(from, intent, RequestCode,  options.toBundle());
+        ActivityCompat.startActivityForResult(from, intent, RequestCode, options.toBundle());
     }
 
     public static void toggleOffView(final View view, Context context) {
@@ -80,6 +80,7 @@ public class AnimUtils {
 
         anim.start();
     }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void exitRevealAndFinish(View view, final AppCompatActivity activity) {
         // previously visible view
@@ -109,6 +110,7 @@ public class AnimUtils {
         // start the animation
         anim.start();
     }
+
     public static void exitReveal(View view) {
         // previously visible view
         final View myView = view;

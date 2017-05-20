@@ -39,7 +39,7 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == TYPE_HEADER) {
+        if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_rv_group_details_header,
                     parent, false);
 
@@ -61,10 +61,10 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
                 FirebaseDatabase.getInstance().getReference("users").child(users.get(position)).child("userInfo").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dsp) {
-                        if(isCurrentUser(position))
-                            ((MemberGroupDetailsHeaderHolder)holder).setData(dsp.getValue(UserDatabase.class), context);
+                        if (isCurrentUser(position))
+                            ((MemberGroupDetailsHeaderHolder) holder).setData(dsp.getValue(UserDatabase.class), context);
                         else
-                            ((MemberGroupDetailsHolder)holder).setData(dsp.getValue(UserDatabase.class), context);
+                            ((MemberGroupDetailsHolder) holder).setData(dsp.getValue(UserDatabase.class), context);
                     }
 
                     @Override
@@ -82,7 +82,6 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
         });
 
 
-
     }
 
     @Override
@@ -98,8 +97,6 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
     public boolean isCurrentUser(int position) {
         return users.get(position).equals(Singleton.getInstance().getCurrentUser().getId());
     }
-
-
 
 
 }

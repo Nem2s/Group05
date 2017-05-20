@@ -71,21 +71,21 @@ public class GroupDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
-        cv_back = (CircleImageView)findViewById(R.id.cv_backimage);
-        rv_members = (RecyclerView)findViewById(R.id.rv_group_members);
-        final LinearLayoutManager ll=  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,true);
+        cv_back = (CircleImageView) findViewById(R.id.cv_backimage);
+        rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
+        final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
         });
         initializeUI();
         retriveExpense();
@@ -170,8 +170,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         };*/
 
         rv_members.setAdapter(mAdapter);
-        }
-
+    }
 
 
     @Override
@@ -191,7 +190,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -250,7 +249,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 });
     }
 
-    private void retriveExpense(){
+    private void retriveExpense() {
         FirebaseDatabase.getInstance()
                 .getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
@@ -285,22 +284,19 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
 
-    private void parseSnapshotAdded(DataSnapshot snapshot)
-    {
+    private void parseSnapshotAdded(DataSnapshot snapshot) {
         ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
-        for(String i : expenseDatabase.getMembers().keySet()) {
-            if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
+        for (String i : expenseDatabase.getMembers().keySet()) {
+            if (expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
                 if (usersBalance.containsKey(i))
                     usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(i));
                 else
                     usersBalance.put(i, expenseDatabase.getMembers().get(i));
-            }
-            else {
+            } else {
                 if (expenseDatabase.getMembers().get(i) > 0) {
                     if (usersBalance.containsKey(i)) {
                         usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
-                    }
-                    else {
+                    } else {
                         usersBalance.put(i, expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) * -1);
                     }
                 }
@@ -310,14 +306,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void parseSnapshotRemoved(DataSnapshot snapshot)
-    {
+    private void parseSnapshotRemoved(DataSnapshot snapshot) {
         ExpenseDatabase expenseDatabase = snapshot.getValue(ExpenseDatabase.class);
-        for(String i : expenseDatabase.getMembers().keySet()) {
-            if(expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
+        for (String i : expenseDatabase.getMembers().keySet()) {
+            if (expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()) > 0) {
                 usersBalance.put(i, usersBalance.get(i) - expenseDatabase.getMembers().get(i));
-            }
-            else {
+            } else {
                 if (expenseDatabase.getMembers().get(i) > 0) {
                     usersBalance.put(i, usersBalance.get(i) + expenseDatabase.getMembers().get(Singleton.getInstance().getCurrentUser().getId()));
                 }
@@ -325,8 +319,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         }
         mAdapter.notifyDataSetChanged();
     }
-
-
 
 
 }

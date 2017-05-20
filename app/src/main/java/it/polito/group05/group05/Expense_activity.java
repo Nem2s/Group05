@@ -2,7 +2,6 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,6 +26,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -127,7 +127,7 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
         // card_recycler = (CardView) findViewById(R.id.card_recycler);
-       // card_recycler.setVisibility(View.GONE);
+        // card_recycler.setVisibility(View.GONE);
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -147,7 +147,8 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());;
+                lin_members.getOrientation());
+        ;
         recyclerView.addItemDecoration(dividerItemDecoration);
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
@@ -156,7 +157,7 @@ public class Expense_activity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if( expense.getName().toString().length() == 0 || expense.getPrice()==0.0 ) {
+                if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
                     Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
@@ -173,33 +174,32 @@ public class Expense_activity extends AppCompatActivity {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
                     }
-                        double price;
-                        double toSubtractOwner = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            if (partecipants.get(i).getId() != expense.getOwner()) {
-                                toSubtractOwner += partecipants.get(i).getCustomValue();
-                            }
+                    double price;
+                    double toSubtractOwner = 0.0;
+                    for (int i = 0; i < partecipants.size(); i++) {
+                        if (partecipants.get(i).getId() != expense.getOwner()) {
+                            toSubtractOwner += partecipants.get(i).getCustomValue();
                         }
-                        totalPriceActual = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            price = partecipants.get(i).getCustomValue();
-                            totalPriceActual += partecipants.get(i).getCustomValue();
-                            String id = partecipants.get(i).getId();
-                            if (partecipants.get(i).getId() == expense.getOwner()) {
-                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                            } else {
-                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                            }
-                            DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
                         }
-                        if(totalPriceActual == expense.getPrice()){
-                            fdb.setValue(expense);
-                            finish();
+                    totalPriceActual = 0.0;
+                    for (int i = 0; i < partecipants.size(); i++) {
+                        price = partecipants.get(i).getCustomValue();
+                        totalPriceActual += partecipants.get(i).getCustomValue();
+                        String id = partecipants.get(i).getId();
+                        if (partecipants.get(i).getId() == expense.getOwner()) {
+                            expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                        } else {
+                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                         }
-                        else{
-                            Snackbar.make(view,"Set prices again",Snackbar.LENGTH_SHORT).show();
-                            memberAdapter.changeTotal(expense.getPrice());
+                        DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
                         }
+                    if (totalPriceActual == expense.getPrice()) {
+                        fdb.setValue(expense);
+                        finish();
+                    } else {
+                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                        memberAdapter.changeTotal(expense.getPrice());
+                    }
                 }
                 }
         });
@@ -228,11 +228,11 @@ public class Expense_activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-            if(s.length()>0){
-                expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
-                expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                memberAdapter.changeTotal(expense_price);
-                memberAdapter.notifyDataSetChanged();
+                if (s.length() > 0) {
+                    expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
+                    expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+                    memberAdapter.changeTotal(expense_price);
+                    memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -250,13 +250,13 @@ public class Expense_activity extends AppCompatActivity {
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if(recyclerView.getVisibility() == View.GONE){
-                  recyclerView.setVisibility(View.VISIBLE);
-                  plus.setImageResource(R.drawable.ic_expand_less);
-              }else {
-                  recyclerView.setVisibility(View.GONE);
-                  plus.setImageResource(R.drawable.ic_expand_more);
-                  }
+                if (recyclerView.getVisibility() == View.GONE) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    plus.setImageResource(R.drawable.ic_expand_less);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    plus.setImageResource(R.drawable.ic_expand_more);
+                }
             }
         });
 

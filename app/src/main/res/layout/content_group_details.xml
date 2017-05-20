@@ -12,8 +12,7 @@
         android:id="@+id/rv_group_members"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/material_component_lists_padding_above_list"
-        >
+        android:padding="@dimen/material_component_lists_padding_above_list">
 
     </android.support.v7.widget.RecyclerView>
 </android.support.v4.widget.NestedScrollView>

@@ -6,8 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.polito.group05.group05.Expense_activity"
-    >
+    tools:context="it.polito.group05.group05.Expense_activity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -73,30 +72,31 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <RelativeLayout
-            android:id="@+id/layout_totale"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/mainCard"
+            <RelativeLayout
+                android:id="@+id/layout_totale"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                app:cardBackgroundColor="@color/cardview_light_background"
-                android:elevation="4dp"
-                app:cardCornerRadius="4dp">
+                android:layout_height="match_parent">
 
-                <RelativeLayout
-                    android:id="@+id/relNino"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/mainCard"
+                    android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="@color/cardview_light_background"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="4dp">
+
+                    <RelativeLayout
+                        android:id="@+id/relNino"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:background="@color/card_background"
-                    android:orientation="horizontal">
+                        android:layout_margin="16dp"
+                        android:background="@color/card_background"
+                        android:orientation="horizontal">
 
 
                         <TextView
@@ -158,29 +158,30 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            >
-                        <CheckBox
-                            android:id="@+id/cb2_addfile"
+                            android:layout_marginTop="20dp">
+
+                            <CheckBox
+                                android:id="@+id/cb2_addfile"
+                            android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:buttonTint="@color/quantum_grey_600"
+                                android:clickable="true"
+                                android:onClick="file_handler"
+                                android:text="File"
+                                android:textColor="@color/gray"
+                                android:textStyle="normal" />
+
+                            <TextView
+                                android:id="@+id/nomeFile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:buttonTint="@color/quantum_grey_600"
-                            android:clickable="true"
-                            android:onClick="file_handler"
-                            android:text="File"
-                            android:textColor="@color/gray"
-                            android:textStyle="normal" />
-                        <TextView
-                            android:id="@+id/nomeFile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.6"
-                            android:layout_toRightOf="@+id/cb2_addfile"
-                            android:layout_centerVertical="true"
-                            android:textStyle="italic"
-                            android:layout_marginLeft="8dp"/>
+                                android:alpha="0.6"
+                                android:layout_toRightOf="@+id/cb2_addfile"
+                                android:layout_centerVertical="true"
+                                android:textStyle="italic"
+                                android:layout_marginLeft="8dp" />
 
                             <ImageView
                                 android:id="@+id/plus"
@@ -201,11 +202,11 @@
                         android:layout_height="wrap_content">
 
                     </android.support.v7.widget.RecyclerView>
-                </RelativeLayout>
+                    </RelativeLayout>
 
-            </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
 
-        </RelativeLayout>
+            </RelativeLayout>
         </ScrollView>
     </LinearLayout>
 

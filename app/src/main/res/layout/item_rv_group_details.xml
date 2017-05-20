@@ -8,13 +8,14 @@
     android:baselineAligned="true"
     android:padding="@dimen/material_component_cards_top_and_bottom_padding"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<de.hdodenhof.circleimageview.CircleImageView
-    android:id="@+id/cv_userimage"
-    android:layout_width="52dp"
-    android:layout_height="52dp"
-    android:layout_centerVertical="true"
-    android:src="@drawable/placeholder"
-    />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cv_userimage"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/placeholder" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
         android:layout_centerVertical="true"
 
         >
+
         <TextView
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
@@ -32,8 +34,8 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:ellipsize="end"
-            android:maxLines="1"
-            />
+            android:maxLines="1" />
+
         <TextView
             android:id="@+id/tv_user_balance"
             android:layout_width="wrap_content"
@@ -42,8 +44,7 @@
             android:textSize="12sp"
             android:maxLines="1"
             android:textStyle="italic"
-            android:text="1234567 €"
-            />
+            android:text="1234567 €" />
     </LinearLayout>
 
     <Button
@@ -53,8 +54,8 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:text="Pay"
-        android:theme="@style/GreenButton"
-        />
+        android:theme="@style/GreenButton" />
+
     <Button
         android:id="@+id/button_notify"
         android:layout_width="80dp"
@@ -63,8 +64,7 @@
         android:layout_centerVertical="true"
         android:text="Notify"
         android:theme="@style/BlueButton"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 
 </RelativeLayout>

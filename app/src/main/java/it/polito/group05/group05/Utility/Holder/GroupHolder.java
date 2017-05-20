@@ -100,8 +100,8 @@ public class GroupHolder extends GeneralHolder {
             public void onClick(View view) {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
-                Pair<View, String> p1 = new Pair<View, String>((View)groupProfile, context.getResources().getString(R.string.transition_group_image));
-                AnimUtils.startActivityWithAnimation((Activity)context, new Intent(context, GroupDetailsActivity.class), p1);
+                Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
+                AnimUtils.startActivityWithAnimation((Activity) context, new Intent(context, GroupDetailsActivity.class), p1);
             }
         });
 

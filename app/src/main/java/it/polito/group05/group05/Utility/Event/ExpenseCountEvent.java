@@ -13,6 +13,7 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 
 public class ExpenseCountEvent {
     List<Entry> entries;
+
     public ExpenseCountEvent(List<Entry> l) {
         this.entries = l;
     }

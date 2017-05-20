@@ -12,7 +12,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,11 +28,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,7 +39,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
 
 import java.util.UUID;
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
         Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
-        if(requestCode == COMING_FROM_BALANCE_ACTIVITY) {
+        if (requestCode == COMING_FROM_BALANCE_ACTIVITY) {
             drawer.openDrawer(Gravity.START);
         }
         if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
@@ -107,8 +103,8 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(FirebaseInstanceId.getInstance().getToken());
 
 
         setContentView(R.layout.activity_main);
@@ -263,12 +259,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
-        if (id == R.id.nav_balance){
-            Pair<View, String> p = new Pair<>((View)cv_user_drawer, getResources().getString(R.string.transition_group_image));
+        if (id == R.id.nav_balance) {
+            Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
 
-        }
-        else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
                         @Override

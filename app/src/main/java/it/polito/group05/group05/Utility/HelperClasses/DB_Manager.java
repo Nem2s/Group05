@@ -176,7 +176,7 @@ public class DB_Manager {
         expenseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data : dataSnapshot.getChildren())
+                for (DataSnapshot data : dataSnapshot.getChildren())
                     snapshots.add(data);
                 setupEntries(snapshots);
             }
@@ -190,7 +190,7 @@ public class DB_Manager {
 
     private void setupEntries(List<DataSnapshot> snapshots) {
         final Map<Long, Entry> map = new HashMap<>();
-        for(DataSnapshot ex_data : snapshots) {
+        for (DataSnapshot ex_data : snapshots) {
             for (DataSnapshot data : ex_data.getChildren()) {
                 ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
                 if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
@@ -202,7 +202,7 @@ public class DB_Manager {
                 sixMonthsAhead.add(Calendar.MONTH, 6);
                 long differenceInMilis = sixMonthsAhead.getTimeInMillis() - today.getTimeInMillis();
                 long difference = today.getTimeInMillis() - t;
-                if(difference < differenceInMilis) //older than 6 months
+                if (difference < differenceInMilis) //older than 6 months
                     t = TimeUnit.MILLISECONDS.toDays(t);
                 else
                     continue;
@@ -213,15 +213,14 @@ public class DB_Manager {
                 } else {
                     Entry entry = new Entry(t, 1);
                     entry.setData(e);
-                    map.put(t,entry);
+                    map.put(t, entry);
                 }
 
 
             }
         }
         EventBus.getDefault().postSticky(new ExpenseCountEvent(new ArrayList<Entry>(map.values())));
-                }
-
+    }
 
 
     public void retriveGroups() {
@@ -233,7 +232,9 @@ public class DB_Manager {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if (!data.getKey().equals("00"))
                         groupsId.add(data.getKey());
-                }}
+                }
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 throw databaseError.toException();
@@ -245,12 +246,12 @@ public class DB_Manager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<PieEntry> list = new ArrayList<PieEntry>(0);
-                for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    if(groupsId.contains(data.getKey())) {
-                        GroupDatabase g = (GroupDatabase)data.getValue(GroupDatabase.class);
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (groupsId.contains(data.getKey())) {
+                        GroupDatabase g = (GroupDatabase) data.getValue(GroupDatabase.class);
                         float value = Float.valueOf(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
-                        if(value != 0) {
-                            if(value < 0)
+                        if (value != 0) {
+                            if (value < 0)
                                 value = -value;
                             final PieEntry entry = new PieEntry(value, g.getName());
                             entry.setData(g);

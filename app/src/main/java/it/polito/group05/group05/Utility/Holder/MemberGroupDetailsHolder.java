@@ -36,18 +36,18 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 
     public MemberGroupDetailsHolder(View itemView) {
         super(itemView);
-        this.cv_userImage = (CircleImageView)itemView.findViewById(R.id.cv_userimage);
-        this.tv_userName = (TextView)itemView.findViewById(R.id.tv_user_name);
-        this.tv_userBalance = (TextView)itemView.findViewById(R.id.tv_user_balance);
-        this.button_pay = (Button)itemView.findViewById(R.id.button_pay);
-        this.button_notify = (Button)itemView.findViewById(R.id.button_notify);
+        this.cv_userImage = (CircleImageView) itemView.findViewById(R.id.cv_userimage);
+        this.tv_userName = (TextView) itemView.findViewById(R.id.tv_user_name);
+        this.tv_userBalance = (TextView) itemView.findViewById(R.id.tv_user_balance);
+        this.button_pay = (Button) itemView.findViewById(R.id.button_pay);
+        this.button_notify = (Button) itemView.findViewById(R.id.button_notify);
     }
 
     @Override
     public void setData(Object c, final Context context) {
-        if(!(c instanceof UserDatabase)) return;
+        if (!(c instanceof UserDatabase)) return;
 
-        final UserDatabase user = (UserDatabase)c;
+        final UserDatabase user = (UserDatabase) c;
         ImageUtils.LoadUserImageProfile(cv_userImage, context, user);
         tv_userName.setText(user.getName());
 
@@ -57,7 +57,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         ExpenseDatabase expense = dataSnapshot.getValue(ExpenseDatabase.class);
-                        if(expense == null) {
+                        if (expense == null) {
                             tv_userBalance.setText("No debits/credits");
                             button_pay.setVisibility(View.GONE);
                             return;
@@ -90,22 +90,22 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
     }
 
 
-    public void setData(Object c,Map<String, Double> usersBalance, Context context) {
-        if(!(c instanceof UserDatabase)) return;
-        final UserDatabase user = (UserDatabase)c;
+    public void setData(Object c, Map<String, Double> usersBalance, Context context) {
+        if (!(c instanceof UserDatabase)) return;
+        final UserDatabase user = (UserDatabase) c;
         ImageUtils.LoadUserImageProfile(cv_userImage, context, user);
         tv_userName.setText(user.getName());
-        if(usersBalance.containsKey(user.getId())) {
+        if (usersBalance.containsKey(user.getId())) {
             double value = usersBalance.get(user.getId());
             if (value < 0) {
-                tv_userBalance.setText("Debit with you by " + String.format("%.2f €",  (-1)*value));
+                tv_userBalance.setText("Debit with you by " + String.format("%.2f €", (-1) * value));
                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
                 button_pay.setVisibility(View.GONE);
                 button_notify.setVisibility(View.VISIBLE);
             } else if (value > 0) {
                 tv_userBalance.setText("You must pay for " + String.format("%.2f €", value));
                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
-            }else {
+            } else {
                 tv_userBalance.setText("No debits/credits");
                 button_pay.setVisibility(View.GONE);
             }

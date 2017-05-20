@@ -106,10 +106,10 @@ public class ExpenseHolder extends GeneralHolder{
             expenseDatabase.getUsersExpense().add(x);
         }
 
-    //  if(!(expenseDatabase.isMandatory())) {
-         //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-      //  }
-        setupListener(cv,price,context,expenseDatabase);
+        //  if(!(expenseDatabase.isMandatory())) {
+        //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        //  }
+        setupListener(cv, price, context, expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
     }
 private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
@@ -152,27 +152,25 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
         cnt++;
-    }
-    else {
+    } else {
         delete.setVisible(true);
     }
 
-    if( expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
+        if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
         pay.setVisible(false);
         cnt++;
-    }
-    else{
-        pay.setVisible(true);
-    }
+        } else {
+            pay.setVisible(true);
+        }
 
-    if(expense.getFile().length()==0){
+        if (expense.getFile().length() == 0) {
         download.setVisible(false);
         cnt++;
-    } else {
-        download.setVisible(true);
+        } else {
+            download.setVisible(true);
     }
 
-    if(cnt<4)
+        if (cnt < 4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {

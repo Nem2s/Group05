@@ -76,14 +76,17 @@
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorIcons</item>
     </style>
+
     <style name="RedButton" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/red_400</item>
     </style>
+
     <style name="GreenButton" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/green_400</item>
     </style>
+
     <style name="BlueButton" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/blue_400</item>
@@ -164,7 +167,6 @@
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
     </style>
-
 
 
 </resources>
