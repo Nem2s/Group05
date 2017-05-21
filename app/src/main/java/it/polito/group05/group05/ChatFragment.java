@@ -116,15 +116,7 @@ public class ChatFragment extends Fragment {
 
 
     private void showAllOldMessages() {
-      /*  loggedInUserName = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("Main", "user id: " + loggedInUserName);
-*/
-    //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
-     // if(fdb.getKey().)
-      /*  adapter = new MessageAdapter(this,
-                ChatDatabase.class, R.layout.item_in_message,
-                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
-       */
+
         adapter = new MessageAdapter(this,
                 ChatDatabase.class, R.layout.message,
                 FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
