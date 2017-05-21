@@ -47,6 +47,15 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
         return i;
     }
 
+    public synchronized int removeUser(UserDatabase u) {
+        int i = exists(u);
+        if(i != -1) {
+            this.users.remove(i);
+
+        }
+        return i;
+    }
+
     private synchronized int exists(UserDatabase u) {
         for(int i = 0; i < getItemCount(); i++) {
             if(((UserDatabase)users.get(i)).getId().equals(u.getId()))
