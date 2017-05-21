@@ -60,22 +60,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
     GroupDetailsAdapter mAdapter;
     MaterialDialog editDialog;
     ProgressBar pb;
-
-    private Map<String, Double> usersBalance = new HashMap<>();
     private List<Object> users = new ArrayList<>();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       /* if(requestCode == COME_FROM_ADD_MEMBER_ACTIVITY) {
-            users.clear();
-            users.put(Singleton.getInstance().getCurrentUser().getId(), Singleton.getInstance().getCurrentUser());
-            users.putAll((Singleton.getInstance().getmCurrentGroup().getMembers()));
-            *//**Possibilmente trovare altro modo **//*
-            mAdapter = new GroupDetailsAdapter(getApplicationContext(), users.values());
-            *//** **//*
-            rv_members.setAdapter(mAdapter);
-            mAdapter.notifyDataSetChanged();
-        }*/
+      //gestione cambio nome/immagine gruppo.
     }
 
     @Override
@@ -97,7 +86,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent i = new Intent(GroupDetailsActivity.this,NewMemberActivity.class);
-            startActivityForResult(i, COME_FROM_ADD_MEMBER_ACTIVITY);
+            startActivity(i);
         }
         });
         initializeUI();
@@ -112,84 +101,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         });
         users.add(Singleton.getInstance().getCurrentUser());
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
-        mAdapter = new GroupDetailsAdapter(getApplicationContext(), users);
+        mAdapter = new GroupDetailsAdapter(this, users);
         rv_members.setAdapter(mAdapter);
         rv_members.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
-
-
-       /* DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference usersGroupRef = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getIdCurrentGroup()).child("members");
-        Query query = usersGroupRef.orderByKey();
-        mAdapter = new FirebaseIndexRecyclerAdapter(UserDatabase.class,
-                R.layout.item_rv_group_details,
-                GeneralHolder.class,
-                query,
-                usersRef) {
-
-            final static int TYPE_HEADER = 0;
-            final static int TYPE_ITEM = 1;
-            int headerPosition = -1;
-            List<UserDatabase> users = new ArrayList<>();
-
-
-            @Override
-            protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, Object model, int position) {
-                if(viewHolder instanceof MemberGroupDetailsHeaderHolder)
-                    ((MemberGroupDetailsHeaderHolder)viewHolder).setData(model, getApplicationContext());
-                else
-                    ((MemberGroupDetailsHolder)viewHolder).setData(model, usersBalance, getApplicationContext());
-            }
-
-            @Override
-            public int getItemCount() {
-                return super.getItemCount();
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return super.getItem(position);
-            }
-
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                if(viewType == TYPE_HEADER) {
-                    View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_rv_group_details_header,
-                            parent, false);
-
-                    return new MemberGroupDetailsHeaderHolder(view);
-                } else {
-                    View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_rv_group_details,
-                            parent, false);
-
-                    return new MemberGroupDetailsHolder(view);
-                }
-
-            }
-
-            @Override
-            public int getItemViewType(int position) {
-                return headerPosition == position ? TYPE_HEADER : TYPE_ITEM;
-            }
-
-
-
-
-            @Override
-            protected Object parseSnapshot(DataSnapshot snapshot) {
-                for(DataSnapshot data : snapshot.getChildren()) {
-                    if(data.getKey().equals("userInfo")) {
-                        UserDatabase u = data.getValue(UserDatabase.class);
-                        if(u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) headerPosition = users.size();
-                        users.add(u);
-                        return u;
-                    }
-                }
-                return null;
-            }
-
-
-        };*/
-
 
         }
 
@@ -233,12 +147,34 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                         }
 
                         @Override
                         public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            pb.setVisibility(View.GONE);
+                                            final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    int i = mAdapter.removeUser(newUser);
+                                                    if(i != -1)
+                                                        mAdapter.notifyItemRemoved(i);
+                                                }
+                                            });
+                                            if (pb.getVisibility() == View.GONE){
+                                                rv_members.setVisibility(View.VISIBLE);
+                                            }
+                                        }
 
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
                         }
 
                         @Override
