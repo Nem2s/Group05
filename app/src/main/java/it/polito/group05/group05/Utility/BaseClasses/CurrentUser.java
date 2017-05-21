@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +13,23 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
     private List<String> groups;
     private List<UserContact> userContactList;
     private Bitmap img_profile;
+    private Balance balance;
 
     public CurrentUser(UserDatabase u) {
 
         super(u);
         this.id = u.id;
+        this.balance = new Balance(0 ,0);
+    }
+
+    @Override
+    public Balance getBalance() {
+        return balance;
+    }
+
+    @Override
+    public void setBalance(Balance balance) {
+        this.balance = balance;
     }
 
     public List<UserContact> getUserContactList() {

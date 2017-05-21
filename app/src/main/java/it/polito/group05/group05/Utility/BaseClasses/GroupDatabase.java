@@ -17,7 +17,7 @@ public class GroupDatabase implements Namable {
 
     public String id;
     public String name;
-    public Balance balance;
+    public Balance balance = new Balance(0,0);
     public String lmTime;
     public GroupColor groupColor;
     public String pictureUrl;
@@ -26,6 +26,7 @@ public class GroupDatabase implements Namable {
 
 
     public GroupDatabase() {
+        members = new HashMap<>();
     }
 
     public GroupDatabase(String id, String name, Balance balance, String lmTime, GroupColor groupColor) {
@@ -33,7 +34,7 @@ public class GroupDatabase implements Namable {
         this.name = name;
         this.balance = balance;
         this.groupColor = groupColor;
-        members = new HashMap<>();
+
        // setBadge(badgeCount);
     }
 
@@ -121,6 +122,10 @@ public class GroupDatabase implements Namable {
         memb.put(id, true);
         this.setMembers(memb);
         return memb;
+    }
+
+    public float getTotal() {
+        return (float) (this.balance.getCredit() - this.balance.getDebit());
     }
 
 }

@@ -353,6 +353,7 @@ public class NewMemberActivity extends AppCompatActivity {
         if(id == R.id.m_confirm) {
             for (UserContact u : contacts) {
                 if(u.isSelected()) {
+                    Singleton.getInstance().getmCurrentGroup().members.put(u.getId(), u);
                     DB_Manager.getInstance().addUserToGroup(u.getId(),Singleton.getInstance().getmCurrentGroup().getId());
                     u.setSelected(false);
                 }

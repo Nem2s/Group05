@@ -58,6 +58,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".UserBalanceActivity"
+            android:label="UserBalanceActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.group05.group05.MainActivity" />
+        </activity>
         <activity android:name=".NewMemberActivity" />
         <service
             android:name=".Utility.Notification.messageNotificationService">
@@ -65,6 +73,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <activity
+            android:name=".GroupDetailsActivity"
+            android:label="@string/title_activity_group_details"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.group05.group05.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -7,6 +7,8 @@ import android.support.v7.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import it.polito.group05.group05.R;
+
 /**
  * Created by user on 17/05/2017.
  */
@@ -22,7 +24,7 @@ public class messageNotificationService extends FirebaseMessagingService {
 
         nb.setContentText("New group");
         nb.setContentTitle("New Group");
-        nb.setSmallIcon(android.support.v7.appcompat.R.drawable.notify_panel_notification_icon_bg);
+        nb.setSmallIcon(R.drawable.ic_action_help);
         nm.notify(0,nb.build());
 
     }

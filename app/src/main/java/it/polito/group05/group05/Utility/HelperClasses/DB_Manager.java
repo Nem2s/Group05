@@ -7,6 +7,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,11 +32,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
@@ -44,6 +51,8 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.Event.ExpenseCountEvent;
+import it.polito.group05.group05.Utility.Event.GroupInfoChartEvent;
 import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
 import it.polito.group05.group05.Utility.Event.NewUserEvent;
 
@@ -94,7 +103,7 @@ public class DB_Manager {
         usernumberRef.keepSynced(true);
         groupRef = database.getReference("groups");
         groupRef.keepSynced(true);
-        expenseRef = database.getReference("expense");
+        expenseRef = database.getReference("expenses");
         expenseRef.keepSynced(true);
         inviteRef = database.getReference("invites");
         inviteRef.keepSynced(true);
@@ -129,6 +138,9 @@ public class DB_Manager {
         return mInstance;
     }
 
+    public DatabaseReference getExpensesRef() {
+        return expenseRef;
+    }
 
 
    /* public  void signOut(){
@@ -161,7 +173,110 @@ public class DB_Manager {
         });
     }
 
+    public void retriveExpenses() {
+        final List<DataSnapshot> snapshots = new ArrayList<>();
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren())
+                    snapshots.add(data);
+                setupEntries(snapshots);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setupEntries(List<DataSnapshot> snapshots) {
+        final Map<Long, Entry> map = new HashMap<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        for(DataSnapshot ex_data : snapshots) {
+            for (DataSnapshot data : ex_data.getChildren()) {
+                ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
+                if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
+                    continue;
+                long t = 0;
+                try {
+                    t = format.parse(e.getTimestamp()).getTime();
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+                Calendar today = Calendar.getInstance();
+                Calendar sixMonthsAhead = Calendar.getInstance();
+                sixMonthsAhead.add(Calendar.MONTH, 6);
+                long differenceInMilis = sixMonthsAhead.getTimeInMillis() - today.getTimeInMillis();
+                long difference = today.getTimeInMillis() - t;
+                if(difference < differenceInMilis) //older than 6 months
+                    t = TimeUnit.MILLISECONDS.toDays(t);
+                else
+                    continue;
+
+                int i = 0;
+                if (map.containsKey(t)) {
+                    map.get(t).setY(map.get(t).getY() + 1);
+                } else {
+                    Entry entry = new Entry(t, 1);
+                    entry.setData(e);
+                    map.put(t,entry);
+                }
+
+
+            }
+        }
+        EventBus.getDefault().postSticky(new ExpenseCountEvent(new ArrayList<Entry>(map.values())));
+                }
+
+
+
+    public void retriveGroups() {
+        final List<String> groupsId = new ArrayList<>();
+        final Map<Long, Integer> expenses = new HashMap<>();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (!data.getKey().equals("00"))
+                        groupsId.add(data.getKey());
+                }}
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+
+        });
+
+        groupRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<PieEntry> list = new ArrayList<PieEntry>(0);
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    if(groupsId.contains(data.getKey())) {
+                        GroupDatabase g = (GroupDatabase)data.getValue(GroupDatabase.class);
+                        float value = Float.valueOf(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
+                        if(value != 0) {
+                            if(value < 0)
+                                value = -value;
+                            final PieEntry entry = new PieEntry(value, g.getName());
+                            entry.setData(g);
+                            list.add(entry);
+                        }
+
+                    }
+
+                }
+                EventBus.getDefault().postSticky(new GroupInfoChartEvent(list));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        });
+
+    }
 
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
@@ -412,6 +527,7 @@ public class DB_Manager {
     }
 
     public void addUserToGroup(String userId, String groupId) {
+
         userRef.child(userId).child("userGroups").child(groupId).setValue(false);
         groupRef.child(groupId).child("members").child(userId).setValue(0.0);
     }

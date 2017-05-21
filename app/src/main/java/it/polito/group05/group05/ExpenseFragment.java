@@ -88,7 +88,7 @@ public class ExpenseFragment extends Fragment {
 
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
         rv.setHasFixedSize(false);
-        final LinearLayoutManager ll=  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
+        final LinearLayoutManager ll =  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());

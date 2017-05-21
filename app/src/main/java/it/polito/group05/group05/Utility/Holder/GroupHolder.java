@@ -1,8 +1,11 @@
 package it.polito.group05.group05.Utility.Holder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
@@ -20,12 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.GroupDetailsActivity;
 import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 
 /**
@@ -53,13 +59,7 @@ public class GroupHolder extends GeneralHolder {
         if(!(c instanceof GroupDatabase)) return;
         final GroupDatabase g = (GroupDatabase) c;
         //groupProfile.setImageResource(R.drawable.boy);
-            Glide.with(context)
-                    .using(new FirebaseImageLoader())
-                    .load(FirebaseStorage.getInstance().getReference("groups").child(g.getId()).child(g.getPictureUrl()))
-                .centerCrop()
-                .placeholder(R.drawable.group_profile)
-                .crossFade()
-                .into(groupProfile);
+        ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         time.setText(g.getLmTime());
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
@@ -95,12 +95,22 @@ public class GroupHolder extends GeneralHolder {
                     });
         }
 
+        groupProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Singleton.getInstance().setmCurrentGroup(g);
+                Singleton.getInstance().setIdCurrentGroup(g.getId());
+                Pair<View, String> p1 = new Pair<View, String>((View)groupProfile, context.getResources().getString(R.string.transition_group_image));
+                AnimUtils.startActivityWithAnimation((Activity)context, new Intent(context, GroupDetailsActivity.class), p1);
+            }
+        });
+
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Singleton.getInstance().setmCurrentGroup(g);
-                   Singleton.getInstance().setIdCurrentGroup(g.getId());
+                Singleton.getInstance().setIdCurrentGroup(g.getId());
                    Intent i = new Intent(context,Group_Activity.class);
                    context.startActivity(i);
             }

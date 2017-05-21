@@ -9,7 +9,8 @@
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="true">
 
-    <de.hdodenhof.circleimageview.CircleImageView        android:id="@+id/cv_invited_image"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cv_invited_image"
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:layout_centerVertical="true"

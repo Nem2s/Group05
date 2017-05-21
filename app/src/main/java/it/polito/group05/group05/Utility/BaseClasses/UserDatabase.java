@@ -17,7 +17,7 @@ public class UserDatabase implements Namable{
     protected String email;
     protected String iProfile;
     protected Balance balance;
-    protected Map<String, Object> userGroups;
+    protected Map<String, Object> userGroups = new HashMap<>();
 
     public UserDatabase(String id, String name, String authKey, String telNumber, String email, String iProfile) {
         this.id = id;
