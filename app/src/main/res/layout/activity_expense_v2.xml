@@ -140,6 +140,9 @@
                             app:met_errorColor="#646464"
                             app:met_floatingLabel="highlight" />
 
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
                         <com.rengwuxian.materialedittext.MaterialEditText
                             android:id="@+id/et_cost_expense"
                             android:layout_width="120dp"
@@ -154,7 +157,19 @@
                             app:met_errorColor="#646464"
                             app:met_floatingLabel="highlight"
                             app:met_iconRight="@drawable/euro" />
+                        <ImageView
+                            android:id="@+id/calendar"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:padding="2dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignBottom="@+id/et_cost_expense"
+                            android:src="@drawable/calendar"
+                            />
 
+                        </RelativeLayout>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
