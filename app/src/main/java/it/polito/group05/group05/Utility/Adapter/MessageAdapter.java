@@ -1,18 +1,13 @@
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RotateDrawable;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,14 +48,17 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         ChatDatabase cdb = getItem(position);
-        view = activity.getLayoutInflater().inflate(R.layout.message, viewGroup, false);
-        if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId()))
+
+        if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())){
             isSender= true;
-        else
-            isSender= false;
+            view = activity.getLayoutInflater().inflate(R.layout.mess_cur_us, viewGroup, false);
+        }
+        else {
+            isSender = false;
+            view = activity.getLayoutInflater().inflate(R.layout.message, viewGroup, false);
+        }
 
         populateView(view, cdb, position);
-
         return view;
     }
 
@@ -84,7 +82,6 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
                         .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
                         .centerCrop()
                         .into(c);
-
             }
 
             @Override
@@ -95,34 +92,25 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
 
         RelativeLayout message= (RelativeLayout) v.findViewById(R.id.message_container);
-        LinearLayout mymessage = (LinearLayout) v.findViewById(R.id.first_linear);
-      //  color1 = ContextCompat.getColor(v.getContext(), R.color.colorPrimaryLight);
+        LinearLayout messageT = (LinearLayout) v.findViewById(R.id.message);
         color2 = ContextCompat.getColor(v.getContext(), R.color.white);
 
 
         if(isSender){
             color = color2;
             messageUser.setTextColor(Color.rgb(15,61,72));
-          //  leftArrow.setVisibility(View.GONE);
-          //  rightArrow.setVisibility(View.VISIBLE);
             message.setGravity(Gravity.END);
-            messageTime.setGravity(Gravity.START);
         }
         else{
             color = color2;
             messageUser.setTextColor(Color.rgb(62,104,115));
-
-            //leftArrow.setVisibility(View.VISIBLE);
-            //rightArrow.setVisibility(View.GONE);
             message.setGravity(Gravity.START);
         }
 
-        ((GradientDrawable)mymessage.getBackground()).setColor(color);
-      //  ((RotateDrawable) leftArrow.getBackground()).getDrawable().setColorFilter(color, PorterDuff.Mode.SRC);
-       // ((RotateDrawable) rightArrow.getBackground()).getDrawable().setColorFilter(color, PorterDuff.Mode.SRC);
-        messageText.setText(model.getMessageText());
-        messageUser.setText(model.getMessageUser());
-        messageTime.setText(DateFormat.format("hh:mm",model.getMessageTime()));
+           ((GradientDrawable)messageT.getBackground()).setColor(color);
+            messageText.setText(model.getMessageText());
+            messageUser.setText(model.getMessageUser());
+            messageTime.setText(DateFormat.format("hh:mm",model.getMessageTime()));
     }
 
     @Override
