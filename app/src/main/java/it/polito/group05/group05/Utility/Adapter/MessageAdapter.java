@@ -67,11 +67,11 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
         if(isSender){
             color = color1;
-            leftArrow.setVisibility(View.GONE);
-            rightArrow.setVisibility(View.VISIBLE);
-            message.setGravity(Gravity.END);
-            messageTime.setGravity(Gravity.START);
-        }
+        leftArrow.setVisibility(View.GONE);
+        rightArrow.setVisibility(View.VISIBLE);
+        message.setGravity(Gravity.END);
+        messageTime.setGravity(Gravity.START);
+    }
         else{
             color = color2;
             leftArrow.setVisibility(View.VISIBLE);

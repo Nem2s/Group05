@@ -25,18 +25,12 @@
     </android.support.v7.widget.Toolbar>
     </io.codetail.widget.RevealFrameLayout>
 </android.support.design.widget.AppBarLayout>
-   <android.support.v4.widget.NestedScrollView
-       android:id="@+id/nsv"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_marginTop="?attr/actionBarSize"
-       >
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="?android:attr/actionBarSize"
             ></FrameLayout>
-   </android.support.v4.widget.NestedScrollView>
     <com.roughike.bottombar.BottomBar
         android:id="@+id/navigation"
         android:layout_width="match_parent"
