@@ -143,10 +143,11 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+
                         <com.rengwuxian.materialedittext.MaterialEditText
                             android:id="@+id/et_cost_expense"
                             android:layout_width="120dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_margin="4dp"
                             android:digits="0123456789.,"
                             android:hint="Cost"
@@ -157,24 +158,60 @@
                             app:met_errorColor="#646464"
                             app:met_floatingLabel="highlight"
                             app:met_iconRight="@drawable/euro" />
-                        <ImageView
-                            android:id="@+id/calendar"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="2dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginBottom="4dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignBottom="@+id/et_cost_expense"
-                            android:src="@drawable/calendar"
-                            />
 
+                            <RelativeLayout
+                                android:id="@+id/date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@+id/et_cost_expense"
+                                android:layout_alignParentEnd="true">
+
+                                <ImageView
+                                android:id="@+id/calendar"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:padding="2dp"
+                                android:layout_margin="4dp"
+                                android:layout_alignParentEnd="true"
+                                android:src="@drawable/calendar"
+                                />
+                                <TextView
+                                    android:id="@+id/name_date"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/calendar"
+                                   android:layout_centerVertical="true"
+                                    android:text="today"
+                                    android:layout_marginRight="4dp"
+                                    android:layout_centerHorizontal="true"
+                                    />
+                            </RelativeLayout>
                         </RelativeLayout>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
                             >
+
+                            <ImageView
+                                android:id="@+id/plus"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:padding="8dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/ic_expand_more" />
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/relative_file"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:visibility="gone"
+                        android:layout_below="@+id/layout1">
                         <CheckBox
                             android:id="@+id/cb2_addfile"
                             android:layout_width="wrap_content"
@@ -197,21 +234,12 @@
                             android:textStyle="italic"
                             android:layout_marginLeft="8dp"/>
 
-                            <ImageView
-                                android:id="@+id/plus"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:padding="8dp"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:src="@drawable/ic_expand_more" />
-                        </RelativeLayout>
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recyclerView_members"
                         android:layout_width="match_parent"
-                        android:layout_below="@id/layout1"
+                        android:layout_below="@id/relative_file"
                         android:visibility="visible"
                         android:layout_height="wrap_content">
 

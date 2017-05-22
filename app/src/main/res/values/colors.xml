@@ -6,6 +6,9 @@
         <color name="colorPrimaryLightLight">#64a8b9</color>
         <color name="colorPrimaryLightProva">#56919F</color>
         <color name="colorAccent">#E96151</color>
+        <color name="sabbia">#FFE1B0</color>
+        <color name="grigioblu">#71B2CF</color>
+        <color name="vaniglia">#feffce</color>
         <color name="colorAccentLight">#ff927e</color>
         <color name="colorPrimaryText">#BFFFFFFF</color>
         <color name="colorSecondaryText">#8C000000</color>

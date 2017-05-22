@@ -19,10 +19,10 @@ public class GroupDatabase implements Namable {
     public String name;
     public Balance balance = new Balance(0,0);
     public String lmTime;
+    public String creator;
     public GroupColor groupColor;
     public String pictureUrl;
     public Map<String, Object> members;
-    //public Map<String, Object> expenses;
 
 
     public GroupDatabase() {
@@ -45,10 +45,17 @@ public class GroupDatabase implements Namable {
         this.lmTime= gd.getLmTime();
         this.groupColor= gd.getGroupColor();
         this.pictureUrl = gd.getPictureUrl();
+        this.creator = gd.getCreator();
         members = new HashMap<>();
     }
 
+    public String getCreator() {
+        return creator;
+    }
 
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
     public String getId() {
         return id;
     }

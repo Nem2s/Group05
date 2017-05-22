@@ -27,7 +27,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -62,6 +64,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
+    private RelativeLayout rel_file;
     private MaterialEditText et_name, et_cost;
     private CheckBox cb_addfile;
     private RecyclerView recyclerView;
@@ -74,7 +77,7 @@ public class Expense_activity extends AppCompatActivity {
     private ImageView image_network;
     private CardView card_recycler;
     private ImageView plus,calendar1;
-    private TextView nomeFile;
+    private TextView nomeFile, nomedata;
     private String data = null;
     private String time = null;
     private String tmsp = null;
@@ -86,20 +89,15 @@ public class Expense_activity extends AppCompatActivity {
     private Double expense_price, totalPriceActual;
     private TYPE_EXPENSE expense_type;
     private String expense_name;
-    private Double costPerUser = 0.0;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
-    private Map<String, User_expense> list = new TreeMap<>();
+    //private Map<String, User_expense> list = new TreeMap<>();
     private Uri uri;
     private boolean newFile = false;
     private String nameFILE= null;
     private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
-    private UploadTask uploadTask;
-    private InputStream stream;
-    FirebaseStorage storage;
-    final StorageReference fileRef = null;
 
     @Override
     protected void onStart() {
@@ -116,7 +114,6 @@ public class Expense_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_expense_v2);
-        costPerUser = 0.0;
         expense_price = 0.0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
@@ -130,9 +127,10 @@ public class Expense_activity extends AppCompatActivity {
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
-        // cardView = (CardView) findViewById(R.id.card_view2_toshow);
+        nomedata= (TextView) findViewById(R.id.name_date);
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
+        rel_file = (RelativeLayout) findViewById(R.id.relative_file);
         expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
@@ -149,7 +147,7 @@ public class Expense_activity extends AppCompatActivity {
             User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
             ue.setExpense(expense);
             partecipants.add(ue);
-            list.put(ue.getId(),ue);
+           // list.put(ue.getId(),ue);
         }
         memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -163,7 +161,11 @@ public class Expense_activity extends AppCompatActivity {
         java.util.Date now = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd HH:mm ");
+        SimpleDateFormat sdf2 = new SimpleDateFormat();
+        sdf2.applyPattern("HH:mm ");
         final String dataFormat = sdf.format(now.getTime());
+        final String timeFormat = sdf2.format(now.getTime());
+
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -205,7 +207,7 @@ public class Expense_activity extends AppCompatActivity {
                             DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
                         }
                         if(clicked_calendar){
-                            tmsp = data + " " + time;
+                            tmsp = data + " " + timeFormat;
                             expense.setTimestamp(tmsp);
                             clicked_calendar= false;
                         }else {
@@ -274,24 +276,16 @@ public class Expense_activity extends AppCompatActivity {
                                 if(month < 10){
                                     String mese = "0"+month;
                                     data = year + "-" + mese + "-" + dayOfMonth;
-                                }else
+                                    nomedata.setText( dayOfMonth + "/" + mese + "/" + year);
+                                }else{
                                     data = year + "-" + month + "-" + dayOfMonth;
+                                    nomedata.setText(dayOfMonth + "/" + month + "/" + year);
+                                }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
 
-                final Calendar c1 = Calendar.getInstance();
-                mHour = c1.get(Calendar.HOUR_OF_DAY);
-                mMinute = c1.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay,
-                                                  int minute) {
-                                time = hourOfDay + ":" + minute + " ";
-                            }
-                        }, mHour, mMinute, true);
-                timePickerDialog.show();
+
             }
         });
 
@@ -310,9 +304,11 @@ public class Expense_activity extends AppCompatActivity {
             public void onClick(View v) {
               if(recyclerView.getVisibility() == View.GONE){
                   recyclerView.setVisibility(View.VISIBLE);
+                  rel_file.setVisibility(View.VISIBLE);
                   plus.setImageResource(R.drawable.ic_expand_less);
               }else {
                   recyclerView.setVisibility(View.GONE);
+                  rel_file.setVisibility(View.GONE);
                   plus.setImageResource(R.drawable.ic_expand_more);
                   }
             }

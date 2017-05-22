@@ -12,12 +12,18 @@
         android:orderInCategory="100"
         android:title="Leave the group"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/changeBackground"
+        android:orderInCategory="100"
+        android:title="Set Chat Background"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+
 
 
 </menu>
