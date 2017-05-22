@@ -92,7 +92,7 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
 
 
         RelativeLayout message= (RelativeLayout) v.findViewById(R.id.message_container);
-        LinearLayout messageT = (LinearLayout) v.findViewById(R.id.message);
+     //   LinearLayout messageT = (LinearLayout) v.findViewById(R.id.message);
         color2 = ContextCompat.getColor(v.getContext(), R.color.white);
 
 
@@ -100,6 +100,7 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
             color = color2;
             messageUser.setTextColor(Color.rgb(15,61,72));
             message.setGravity(Gravity.END);
+         //   messageTime.setGravity(Gravity.START);
         }
         else{
             color = color2;
@@ -107,7 +108,7 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
             message.setGravity(Gravity.START);
         }
 
-           ((GradientDrawable)messageT.getBackground()).setColor(color);
+    //     ((GradientDrawable)messageT.getBackground()).setColor(color);
             messageText.setText(model.getMessageText());
             messageUser.setText(model.getMessageUser());
             messageTime.setText(DateFormat.format("hh:mm",model.getMessageTime()));

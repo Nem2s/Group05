@@ -64,7 +64,7 @@ public class ChatFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.chat_main, container, false);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         input = (EditText) rootView.findViewById(R.id.input);
-        listView = (ListView) rootView.findViewById(R.id.list);
+        listView = (ListView) rootView.findViewById(R.id.rec);
         showAllOldMessages();
 
         input.addTextChangedListener(new TextWatcher() {

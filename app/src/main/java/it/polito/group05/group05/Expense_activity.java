@@ -154,7 +154,7 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView.setLayoutManager(lin_members);
         recyclerView.setAdapter(memberAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());;
+                lin_members.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         Calendar calendar = Calendar.getInstance();
@@ -197,14 +197,16 @@ public class Expense_activity extends AppCompatActivity {
                         totalPriceActual = 0.0;
                         for (int i = 0; i < partecipants.size(); i++) {
                             price = partecipants.get(i).getCustomValue();
-                            totalPriceActual += partecipants.get(i).getCustomValue();
+                            //totalPriceActual += partecipants.get(i).getCustomValue();
                             String id = partecipants.get(i).getId();
                             if (partecipants.get(i).getId() == expense.getOwner()) {
-                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                                expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice()-price);
                             } else {
                                 expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                             }
                             DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
+                            totalPriceActual += expense.getMembers().get(id);
+
                         }
                         if(clicked_calendar){
                             tmsp = data + " " + timeFormat;
@@ -214,7 +216,7 @@ public class Expense_activity extends AppCompatActivity {
                             expense.setTimestamp(dataFormat);
                         }
 
-                        if(totalPriceActual -expense.getPrice()>=-0.001 || totalPriceActual -expense.getPrice()<=0.001){
+                        if(totalPriceActual>=-0.001 || totalPriceActual <=0.001){
                             fdb.setValue(expense);
                             finish();
                         }
