@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="it.polito.group05.group05.GroupActivity">
+<android.support.design.widget.AppBarLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <io.codetail.widget.RevealFrameLayout
+        android:id="@+id/reveal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:elevation="4dp"
+        >
+
+    </android.support.v7.widget.Toolbar>
+    </io.codetail.widget.RevealFrameLayout>
+</android.support.design.widget.AppBarLayout>
+   <android.support.v4.widget.NestedScrollView
+       android:id="@+id/nsv"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_marginTop="?attr/actionBarSize"
+       >
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ></FrameLayout>
+   </android.support.v4.widget.NestedScrollView>
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        app:bb_tabXmlResource="@xml/tabs"
+        app:bb_behavior="shy"
+
+        />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="72dp"
+        app:layout_anchorGravity="bottom"
+        android:layout_alignParentEnd="true"
+        android:transitionName="@string/transition_fab"
+        app:srcCompat="@drawable/ic_action_add_black"
+        app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior"
+        />
+</android.support.design.widget.CoordinatorLayout>

@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+        <color name="expenseTabColor">#AAC3CA</color>
+        <color name="expenseTabColorDarker">#306599</color>
+        <color name="expenseTabColorLighter">#6BA7FF</color>
+        <color name="historyTabColor">#233A40</color>
+        <color name="historyTabColorDarker">#38D094</color>
+        <color name="historyTabColorLighter">#30937B</color>
+
+
         <color name="colorPrimary">#0f3d48</color>
         <color name="colorPrimaryDark">#001821 </color>
-        <color name="colorPrimaryLight">#3e6873</color>
+        <color name="colorPrimaryLight">#67ADBF</color>
         <color name="colorPrimaryLightLight">#64a8b9</color>
         <color name="colorPrimaryLightProva">#56919F</color>
         <color name="colorAccent">#E96151</color>
-        <color name="colorAccentLight">#ff927e</color>
+        <color name="colorAccentDarker">#D04838</color>
+        <color name="colorAccentLight">#7C4F4D</color>
         <color name="colorPrimaryText">#BFFFFFFF</color>
         <color name="colorSecondaryText">#8C000000</color>
         <color name="colorIcons">#FFFFFF</color>
@@ -403,3 +413,4 @@
 
 
 </resources>
+

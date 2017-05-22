@@ -67,18 +67,29 @@
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
         <activity android:name=".NewMemberActivity" />
-        <service
-            android:name=".Utility.Notification.messageNotificationService">
+
+        <service android:name=".Utility.Notification.messageNotificationService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.group05.group05.MainActivity" />
+        </activity>
+        <activity
+            android:name=".GroupActivity"
+            android:label="@string/title_activity_group"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.group05.group05.MainActivity" />
