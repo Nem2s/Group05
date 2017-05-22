@@ -2,6 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="it.polito.group05.group05.Group_Activity">
+
+    <item
+        android:id="@+id/sort_action"
+        android:title="Sort"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_sort_black_24dp">
+        <menu></menu>
+    </item>
+
+
     <item
         android:id="@+id/add_member"
         android:orderInCategory="100"
@@ -17,13 +27,6 @@
         android:orderInCategory="100"
         android:title="Set Chat Background"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-
 
 
 </menu>

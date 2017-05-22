@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -38,7 +39,7 @@ public class ChatFragment extends Fragment {
     private EditText input;
     private String textInput;
     private FloatingActionButton fab;
-    private OnFragmentInteractionListener mListener;
+
     private DatabaseReference fdb;
 
 
@@ -101,18 +102,13 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Chat");
+        super.onCreateView(inflater, container, savedInstanceState);
         return rootView;
 
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
 
     private void showAllOldMessages() {
@@ -123,21 +119,6 @@ public class ChatFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
     @Override
     public void onResume() {
         super.onResume();

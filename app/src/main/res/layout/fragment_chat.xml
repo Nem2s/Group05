@@ -2,7 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.polito.group05.group05.ChatFragment">
+    tools:context="it.polito.group05.group05.ChatFragment"
+    android:paddingBottom="56dp"
+
+    >
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

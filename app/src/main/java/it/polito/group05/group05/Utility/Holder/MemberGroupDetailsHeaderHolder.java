@@ -65,7 +65,7 @@ public class MemberGroupDetailsHeaderHolder extends GeneralHolder{
                                         value += e.getMembers().get(user.getId());
                                     }
                                 }
-                                if(n > 0 && value > 0) {
+                                if(n > 0 && value != 0) {
                                     builder =
                                             new MaterialDialog.Builder(context)
                                             .title("Error")

@@ -20,7 +20,12 @@
         <color name="material_red_a200">#FF5252</color>
         <color name="chat_user_reply_background_color">#c8f0ff</color>
         <color name="colorPrimaryTransparent">#E60f3d48</color>
-
+        <color name="expenseTabColor">#AAC3CA</color>
+        <color name="expenseTabColorDarker">#306599</color>
+        <color name="expenseTabColorLighter">#6BA7FF</color>
+        <color name="historyTabColor">#233A40</color>
+        <color name="historyTabColorDarker">#38D094</color>
+        <color name="historyTabColorLighter">#30937B</color>
         <color name="chat_company_reply_background_color">#F5F5F5</color>
 
         <color name="gray">@android:color/darker_gray</color>
