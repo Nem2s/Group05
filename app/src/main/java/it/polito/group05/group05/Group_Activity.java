@@ -197,6 +197,10 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                 break;
             case R.id.action_settings:
                 break;
+            case R.id.changeBackground:
+                //(findViewById(R.id.activity_main)).setBackground(R.drawable.haring1);
+
+                break;
         }
 
 

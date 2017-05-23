@@ -35,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,7 +148,7 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
-    public void checkContacts() {
+ /*   public void checkContacts() {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -163,13 +164,44 @@ public class DB_Manager {
                         Singleton.getInstance().addRegContact(user);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+    }*/
+
+    public void checkContacts(){
+        Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+        for(String number : lmap.keySet()) {
+            usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String userid = dataSnapshot.getValue(String.class);
+                    if(userid == null) return;
+                    userRef.child(userid).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserDatabase user = dataSnapshot.getValue(UserDatabase.class);
+                            Singleton.getInstance().addRegContact(user);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
+
+
+
 
     public void retriveExpenses() {
         final List<DataSnapshot> snapshots = new ArrayList<>();
@@ -197,11 +229,12 @@ public class DB_Manager {
                 if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
                     continue;
                 long t = 0;
-                try {
-                    t = format.parse(e.getTimestamp()).getTime();
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }
+                //try {
+                t= e.getTimestamp();
+                   // t = format.parse(e.getTimestamp()).getTime();
+                //} catch (ParseException e1) {
+                 //   e1.printStackTrace();
+                //}
                 Calendar today = Calendar.getInstance();
                 Calendar sixMonthsAhead = Calendar.getInstance();
                 sixMonthsAhead.add(Calendar.MONTH, 6);
@@ -364,9 +397,9 @@ public class DB_Manager {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
-                                                .child("expenses")
-                                                .child(expenseID)
-                                                .child(nomeFile);
+                .child("expenses")
+                .child(expenseID)
+                .child(nomeFile);
 
         File folder = new File(Environment.getExternalStorageDirectory() + "/FileAppPoli");
         if (!folder.exists()) {

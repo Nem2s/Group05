@@ -10,6 +10,8 @@
         android:icon="@drawable/ic_sort_black_24dp">
         <menu></menu>
     </item>
+
+
     <item
         android:id="@+id/add_member"
         android:orderInCategory="100"
@@ -20,7 +22,11 @@
         android:orderInCategory="100"
         android:title="Leave the group"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/changeBackground"
+        android:orderInCategory="100"
+        android:title="Set Chat Background"
+        app:showAsAction="never" />
 
 
 </menu>

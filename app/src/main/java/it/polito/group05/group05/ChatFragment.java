@@ -6,22 +6,26 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
-
-import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import it.polito.group05.group05.Utility.Adapter.MessageAdapter;
+
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.Holder.ChatHolder;
 
 
 /**
@@ -34,14 +38,13 @@ import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
  */
 public class ChatFragment extends Fragment {
     private static final int SIGN_IN_REQUEST_CODE = 111;
-    private FirebaseListAdapter<ChatDatabase> adapter;
-    private ListView listView;
+    private RecyclerView rec;
     private EditText input;
     private String textInput;
     private FloatingActionButton fab;
-
     private DatabaseReference fdb;
-
+    private FirebaseRecyclerAdapter adapter;
+    private LinearLayoutManager ll;
 
 
     public ChatFragment() {
@@ -65,8 +68,32 @@ public class ChatFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.chat_main, container, false);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         input = (EditText) rootView.findViewById(R.id.input);
-        listView = (ListView) rootView.findViewById(R.id.list);
-        showAllOldMessages();
+        rec= (RecyclerView) rootView.findViewById(R.id.rec);
+        rec.setHasFixedSize(false);
+        ll =  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
+        rec.setLayoutManager(ll);
+        ll.setStackFromEnd(true);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chats")
+                                .child(Singleton.getInstance().getIdCurrentGroup());
+        adapter = new FirebaseRecyclerAdapter<ChatDatabase, ChatHolder>(ChatDatabase.class, R.layout.message,
+                ChatHolder.class, ref) {
+
+            @Override
+            protected void populateViewHolder(ChatHolder viewHolder, ChatDatabase model, int position) {
+                if(model==null) return;
+                viewHolder.setData(model,getContext());
+            }
+            @Override
+            public int getItemViewType(int position) {
+                if(getItem(position).getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+                    return R.layout.mess_cur_us;
+                } else return R.layout.message;
+            }
+        };
+
+        rec.setAdapter(adapter);
+
+
 
         input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -107,24 +134,6 @@ public class ChatFragment extends Fragment {
         return rootView;
 
 
-    }
-
-
-
-    private void showAllOldMessages() {
-      /*  loggedInUserName = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("Main", "user id: " + loggedInUserName);
-*/
-    //  fdb = FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup());
-     // if(fdb.getKey().)
-      /*  adapter = new MessageAdapter(this,
-                ChatDatabase.class, R.layout.item_in_message,
-                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
-       */
-        adapter = new MessageAdapter(this,
-                ChatDatabase.class, R.layout.message,
-                FirebaseDatabase.getInstance().getReference("chats").child(Singleton.getInstance().getIdCurrentGroup()));
-        listView.setAdapter(adapter);
     }
 
     @Override

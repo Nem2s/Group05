@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,11 +27,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -42,9 +44,12 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,6 +67,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
+    private RelativeLayout rel_file;
     private MaterialEditText et_name, et_cost;
     private CheckBox cb_addfile;
     private RecyclerView recyclerView;
@@ -73,8 +79,8 @@ public class Expense_activity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ImageView image_network;
     private CardView card_recycler;
-    private ImageView plus, calendar1;
-    private TextView nomeFile;
+    private ImageView plus,calendar1;
+    private TextView nomeFile, nomedata;
     private String data = null;
     private String time = null;
     private String tmsp = null;
@@ -84,22 +90,16 @@ public class Expense_activity extends AppCompatActivity {
     ////////////////////////////////////////
     private ExpenseDatabase expense;
     private Double expense_price, totalPriceActual;
-    private TYPE_EXPENSE expense_type;
     private String expense_name;
-    private Double costPerUser = 0.0;
+    private long timestamp;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
-    private Map<String, User_expense> list = new TreeMap<>();
     private Uri uri;
     private boolean newFile = false;
     private String nameFILE= null;
     private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
-    private UploadTask uploadTask;
-    private InputStream stream;
-    FirebaseStorage storage;
-    final StorageReference fileRef = null;
 
     @Override
     protected void onStart() {
@@ -116,10 +116,10 @@ public class Expense_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_expense_v2);
-        costPerUser = 0.0;
         expense_price = 0.0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
+        timestamp = 0;
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
@@ -130,13 +130,13 @@ public class Expense_activity extends AppCompatActivity {
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
-        // cardView = (CardView) findViewById(R.id.card_view2_toshow);
+        nomedata= (TextView) findViewById(R.id.name_date);
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
-        expense_type=TYPE_EXPENSE.MANDATORY;
+        rel_file = (RelativeLayout) findViewById(R.id.relative_file);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
-        calendar1 = (ImageView) findViewById(R.id.calendar);
+        calendar1= (ImageView) findViewById(R.id.calendar);
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -149,7 +149,6 @@ public class Expense_activity extends AppCompatActivity {
             User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
             ue.setExpense(expense);
             partecipants.add(ue);
-            list.put(ue.getId(),ue);
         }
         memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -157,23 +156,33 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView.setAdapter(memberAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());
-        ;
         recyclerView.addItemDecoration(dividerItemDecoration);
-
+/*
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd HH:mm ");
+        SimpleDateFormat sdf2 = new SimpleDateFormat();
+        sdf2.applyPattern("HH:mm ");
         final String dataFormat = sdf.format(now.getTime());
+        final String timeFormat = sdf2.format(now.getTime());
+*/
+        Calendar calendar= Calendar.getInstance();
+        java.util.Date now = calendar.getTime();
+        timestamp = now.getTime();
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
+                if( expense.getName().toString().length() == 0 || expense.getPrice()==0.0 ) {
                     Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
+                   /* FirebaseDatabase.getInstance().getReference("notifications")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child("expenses").child(expense.getId()).setValue(expense);
+                    */
                     fdb = FirebaseDatabase.getInstance()
                             .getReference("expenses")
                             .child(Singleton.getInstance().getmCurrentGroup().getId())
@@ -186,41 +195,54 @@ public class Expense_activity extends AppCompatActivity {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
                     }
-                    double price;
-                    double toSubtractOwner = 0.0;
-                    for (int i = 0; i < partecipants.size(); i++) {
-                        if (partecipants.get(i).getId() != expense.getOwner()) {
-                            toSubtractOwner += partecipants.get(i).getCustomValue();
+                        double price;
+                        double toSubtractOwner = 0.0;
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            if (partecipants.get(i).getId() != expense.getOwner()) {
+                                toSubtractOwner += partecipants.get(i).getCustomValue();
+                            }
                         }
+                        totalPriceActual = 0.0;
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            price = partecipants.get(i).getCustomValue();
+                            //totalPriceActual += partecipants.get(i).getCustomValue();
+                            String id = partecipants.get(i).getId();
+                            if (partecipants.get(i).getId() == expense.getOwner()) {
+                                expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice()-price);
+                            } else {
+                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
+                            }
+                            DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
+                            totalPriceActual += expense.getMembers().get(id);
+
                         }
-                    totalPriceActual = 0.0;
-                    for (int i = 0; i < partecipants.size(); i++) {
-                        price = partecipants.get(i).getCustomValue();
-                        totalPriceActual += partecipants.get(i).getCustomValue();
-                        String id = partecipants.get(i).getId();
-                        if (partecipants.get(i).getId() == expense.getOwner()) {
-                            expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                        } else {
-                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                        }
-                        DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-                        }
-                    if (clicked_calendar) {
-                        tmsp = data + " " + time;
-                        expense.setTimestamp(tmsp);
-                        clicked_calendar = false;
-                    } else {
-                        expense.setTimestamp(dataFormat);
+                        if(clicked_calendar){
+
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            Date date = null;
+                            try {
+                                date = dateFormat.parse(data);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long timeLong = date.getTime();
+                            //tmsp = data + " " + timeFormat;
+                            //expense.setTimestamp(tmsp);
+                            expense.setTimestamp(timeLong);
+                            clicked_calendar= false;
+                        }else {
+                          //  expense.setTimestamp(dataFormat);
+                                expense.setTimestamp(timestamp);
                         }
 
-                    if (totalPriceActual - expense.getPrice() >= -0.001 || totalPriceActual - expense.getPrice() <= 0.001) {
-                        FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
-                        fdb.setValue(expense);
-                        finish();
-                    } else {
-                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                        memberAdapter.changeTotal(expense.getPrice());
-                    }
+                        if(totalPriceActual>=-0.001 || totalPriceActual <=0.001){
+                            fdb.setValue(expense);
+                            finish();
+                        }
+                        else{
+                            Snackbar.make(view,"Set prices again",Snackbar.LENGTH_SHORT).show();
+                            memberAdapter.changeTotal(expense.getPrice());
+                        }
                 }
                 }
         });
@@ -249,11 +271,11 @@ public class Expense_activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
-                    expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                    memberAdapter.changeTotal(expense_price);
-                    memberAdapter.notifyDataSetChanged();
+            if(s.length()>0){
+                expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
+                expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+                memberAdapter.changeTotal(expense_price);
+             //   memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -272,27 +294,19 @@ public class Expense_activity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                if (month < 10) {
-                                    String mese = "0" + month;
-                                    data = year + "-" + mese + "-" + dayOfMonth;
-                                } else
-                                    data = year + "-" + month + "-" + dayOfMonth;
+                                if(month < 10){
+                                    String mese = "0"+month;
+                                    //data = year + "-" + mese + "-" + dayOfMonth;
+                                    data = dayOfMonth + "/" + mese + "/" + year;
+                                    nomedata.setText( dayOfMonth + "/" + mese + "/" + year);
+                                }else{
+                                    data = dayOfMonth + "/" + month + "/" + year;
+                                    //data = year + "-" + month + "-" + dayOfMonth;
+                                    nomedata.setText(dayOfMonth + "/" + month + "/" + year);
+                                }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
-
-                final Calendar c1 = Calendar.getInstance();
-                mHour = c1.get(Calendar.HOUR_OF_DAY);
-                mMinute = c1.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay,
-                                                  int minute) {
-                                time = hourOfDay + ":" + minute + " ";
-                            }
-                        }, mHour, mMinute, true);
-                timePickerDialog.show();
             }
         });
 
@@ -309,14 +323,22 @@ public class Expense_activity extends AppCompatActivity {
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (recyclerView.getVisibility() == View.GONE) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    plus.setImageResource(R.drawable.ic_expand_less);
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    plus.setImageResource(R.drawable.ic_expand_more);
+
+                if(et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0){
+                    Snackbar.make(v,"Set a Valid price",Snackbar.LENGTH_SHORT).show();
                 }
-            }
+                else{
+                      if(recyclerView.getVisibility() == View.GONE){
+                          recyclerView.setVisibility(View.VISIBLE);
+                          rel_file.setVisibility(View.VISIBLE);
+                          plus.setImageResource(R.drawable.ic_expand_less);
+                      }else {
+                          recyclerView.setVisibility(View.GONE);
+                          rel_file.setVisibility(View.GONE);
+                          plus.setImageResource(R.drawable.ic_expand_more);
+                          }
+                        }
+                    }
         });
 
 

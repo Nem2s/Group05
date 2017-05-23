@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.Holder;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -69,27 +73,18 @@ public class ExpenseHolder extends GeneralHolder{
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-        Date date = new Date(System.currentTimeMillis());
-        final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
-     //   String s =expenseDatabase.getOwner();
-    //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
-    //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
-        //description.setText(expenseDatabase.getDescription());
- /*   if(expenseDatabase.getFile()!= null) {
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    DB_Manager.getInstance().setContext(context).fileDownload(expenseDatabase.getId(), expenseDatabase.getFile());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }*/
+
+        Date date = new Date(expenseDatabase.getTimestamp());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        this.timestamp.setText(sdf.format(date));
+
+        /* final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
+        final String[] invert = ts[0].split("-");
+        this.timestamp.setText(invert[2] + "/" + invert[1] + "/" + invert[0]);
+       */
 
         String id = Singleton.getInstance().getCurrentUser().getId();
-        this.timestamp.setText(ts[0]);
+        //this.timestamp.setText(ts[0]);
         for (String i : expenseDatabase.getMembers().keySet()){
             /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
@@ -109,17 +104,18 @@ public class ExpenseHolder extends GeneralHolder{
             expenseDatabase.getUsersExpense().add(x);
         }
 
-        //  if(!(expenseDatabase.isMandatory())) {
-        //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        //  }
-        setupListener(cv, price, context, expenseDatabase);
+    //  if(!(expenseDatabase.isMandatory())) {
+         //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
+      //  }
+        setupListener(cv,price,context,expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
+
 
 
     }
 
 
-    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context) {
+private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -159,25 +155,27 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
         cnt++;
-    } else {
+    }
+    else {
         delete.setVisible(true);
     }
 
-        if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
+    if( expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())==0) {
         pay.setVisible(false);
         cnt++;
-        } else {
-            pay.setVisible(true);
-        }
-
-        if (expense.getFile().length() == 0) {
-        download.setVisible(false);
-        cnt++;
-        } else {
-            download.setVisible(true);
+    }
+    else{
+        pay.setVisible(true);
     }
 
-        if (cnt < 4)
+    if(expense.getFile().length()==0){
+        download.setVisible(false);
+        cnt++;
+    } else {
+        download.setVisible(true);
+    }
+
+    if(cnt<4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {

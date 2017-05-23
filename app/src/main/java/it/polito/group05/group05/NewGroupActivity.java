@@ -585,12 +585,13 @@ public class NewGroupActivity extends AppCompatActivity {
 
             GroupDatabase group = new GroupDatabase();
 
-
             group.setMembers(new HashMap<String,Object>());
 
             group.setId(ref.getKey());
 
             group.setName(et_group_name.getText().toString());
+
+            group.setCreator(Singleton.getInstance().getCurrentUser().getId());
 
             for (UserContact u : contacts) {
 
