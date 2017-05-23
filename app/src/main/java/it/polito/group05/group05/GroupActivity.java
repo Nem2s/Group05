@@ -78,7 +78,6 @@ public class GroupActivity extends AppCompatActivity {
             mToolbar = (Toolbar)findViewById(R.id.toolbar);
             navigation = (BottomBar) findViewById(R.id.navigation);
             fab = (FloatingActionButton)findViewById(R.id.fab);
-           // mNestedScrollView = (NestedScrollView)findViewById(R.id.nsv);
             setSupportActionBar(mToolbar);
             mToolbar.setBackgroundColor(getResources().getColor(R.color.expenseTabColor));
         }

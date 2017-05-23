@@ -122,26 +122,40 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
     }
     private void payDebit(final UserDatabase user) {
         final String s = Singleton.getInstance().getCurrentUser().getId();
+        final ProgressBar pb = (ProgressBar)itemView.findViewById(R.id.pb_loading_actions);
+        AnimUtils.exitReveal(button_pay);
+        AnimUtils.enterRevealAnimation(pb);
         //Azzero tutti i valori per cui sono in debito in tutte le spese.
         FirebaseDatabase.getInstance().getReference("expenses")
                 .child(Singleton.getInstance().getmCurrentGroup().getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Double tmp=0.0;
                         for(DataSnapshot data : dataSnapshot.getChildren()) {
-                            ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
-                            if(e.getMembers().containsKey(s)) {
-                                double v = e.getMembers().get(user.getId());
-                                double x = e.getMembers().get(s) + v;
-                                double y = 0;
-                                if(e.getOwner().equals(s)) {
-                                    y = x;
-                                    x = 0;
-                                }
-                                data.getRef().child("members").child(user.getId()).setValue(x);
-                                data.getRef().child("members").child(s).setValue(y);
+                            ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
+                            if(expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId())) {
+                                FirebaseDatabase.getInstance().getReference("expenses")
+                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                        .child(expense.getId())
+                                        .child("members")
+                                        .child(s).setValue(0.0);
+                                tmp+=expense.getMembers().get(s);
+                                //DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
+                                FirebaseDatabase.getInstance().getReference("expenses")
+                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                        .child(expense.getId())
+                                        .child("members")
+                                        .child(expense.getOwner())
+                                        .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
+                                //DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
+
                             }
                         }
+                        DB_Manager.getInstance().updateGroupFlow(s,tmp);
+                        DB_Manager.getInstance().updateGroupFlow(user.getId(),(-1.00)*tmp);
+                        AnimUtils.exitRevealAndShowSecond(pb, itemView.findViewById(R.id.iv_loading_end));
+
                     }
 
                     @Override

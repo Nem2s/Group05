@@ -312,6 +312,22 @@ public class DB_Manager {
 
     }
 
+    public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
+        DatabaseReference ref = groupRef.push();
+        groupDatabase.setId(ref.getKey());
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
+        for(String s : groupDatabase.getMembers().keySet()){
+            if(s==null) continue;
+            userRef.child(s).child(userGroups).updateChildren(temp);
+        }
+        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+        String uuid = UUID.randomUUID().toString();
+        groupDatabase.setPictureUrl(uuid);
+        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
+        ref.setValue(groupDatabase);
+        return groupDatabase.getId();
+    }
     public void pushNewUser(CurrentUser currentUser) {
         UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
 
@@ -345,22 +361,7 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
-    public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
-        DatabaseReference ref = groupRef.push();
-        groupDatabase.setId(ref.getKey());
-        Map<String, Object> temp = new HashMap<String, Object>();
-        temp.put(groupDatabase.getId(), true);
-        for(String s : groupDatabase.getMembers().keySet()){
-            if(s==null) continue;
-            userRef.child(s).child(userGroups).updateChildren(temp);
-        }
 
-        String uuid = UUID.randomUUID().toString();
-        groupDatabase.setPictureUrl(uuid);
-        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
-        ref.setValue(groupDatabase);
-        return groupDatabase.getId();
-    }
 
     public void pushNewExpense(ExpenseDatabase expenseDatabase) {
         DatabaseReference ref = expenseRef.push();
