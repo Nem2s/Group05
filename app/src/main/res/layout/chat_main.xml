@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_margin="4dp"
         app:srcCompat="@drawable/ic_send_black_24dp"
         android:tint="@android:color/white"
         app:fabSize="mini" />
@@ -22,16 +23,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        android:background="@drawable/shape2"
         android:layout_toLeftOf="@id/fab">
 
         <EditText
             android:id="@+id/input"
+            android:textSize="10sp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Input" />
+            android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rec"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -39,7 +42,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="16dp"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
+        android:dividerHeight="1dp"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll" />
 </RelativeLayout>

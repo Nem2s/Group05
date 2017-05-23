@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -149,7 +150,7 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
-    public void checkContacts() {
+ /*   public void checkContacts() {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -165,13 +166,44 @@ public class DB_Manager {
                         Singleton.getInstance().addRegContact(user);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+    }*/
+
+    public void checkContacts(){
+        Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+        for(String number : lmap.keySet()) {
+            usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String userid = dataSnapshot.getValue(String.class);
+                    if(userid == null) return;
+                    userRef.child(userid).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserDatabase user = dataSnapshot.getValue(UserDatabase.class);
+                            Singleton.getInstance().addRegContact(user);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
+
+
+
 
     public void retriveExpenses() {
         final List<DataSnapshot> snapshots = new ArrayList<>();
@@ -227,7 +259,7 @@ public class DB_Manager {
             }
         }
         EventBus.getDefault().postSticky(new ExpenseCountEvent(new ArrayList<Entry>(map.values())));
-                }
+    }
 
 
 
@@ -295,11 +327,14 @@ public class DB_Manager {
         ref.child(userInfo).setValue(userDatabase);
         ref.child(userGroups).setValue(tmp);
         tmp.clear();
-        tmp.put("authKey", userDatabase.getAuthKey());
+        tmp.put("email", userDatabase.getEmail());
         ref.updateChildren(tmp);
         if (currentUser.getTelNumber().startsWith("+"))
             currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
         usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
+
+        final String refreshedToken =  FirebaseInstanceId.getInstance().getToken();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
 
         if (currentUser.getImg_profile() == null)
             currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
@@ -332,17 +367,17 @@ public class DB_Manager {
     }
 
     public void getCurrentUser() {
-        userRef.orderByChild("authKey")
-                .equalTo(mAuth.getCurrentUser().getUid())
-                //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
+        final String refreshedToken =  FirebaseInstanceId.getInstance().getToken();
+        userRef.orderByChild("email")
+                .equalTo(mAuth.getCurrentUser().getEmail())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         if (!dataSnapshot.exists()) {
-                                EventBus.getDefault().post(new NewUserEvent());
+                            EventBus.getDefault().post(new NewUserEvent());
                             return;
-                            }
+                        }
                         CurrentUser currentUser = new CurrentUser();
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             for (DataSnapshot child2 : child.getChildren()) {
@@ -359,7 +394,7 @@ public class DB_Manager {
                         }
                         Singleton.getInstance().setCurrentUser(currentUser);
                         EventBus.getDefault().post(new CurrentUserReadyEvent());
-
+                        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
                         /*DOWNLOAD DELL'IMMAGINE????*/
                     }
 
@@ -434,9 +469,9 @@ public class DB_Manager {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
-                                                .child("expenses")
-                                                .child(expenseID)
-                                                .child(nomeFile);
+                .child("expenses")
+                .child(expenseID)
+                .child(nomeFile);
 
         File folder = new File(Environment.getExternalStorageDirectory() + "/FileAppPoli");
         if (!folder.exists()) {
