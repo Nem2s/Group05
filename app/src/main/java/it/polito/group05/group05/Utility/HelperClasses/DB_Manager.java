@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -276,36 +277,6 @@ public class DB_Manager {
 
     }
 
-    public void pushNewUser(CurrentUser currentUser) {
-        UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
-
-        DatabaseReference ref = userRef.push();
-        //currentUserID = ref.getKey();
-        userDatabase.setId(ref.getKey());
-        currentUser.setId(ref.getKey());
-        String uuid = UUID.randomUUID().toString();
-        userDatabase.setiProfile(uuid);
-        currentUser.setiProfile(uuid);
-
-        Map<String, Object> tmp = new HashMap<String, Object>();
-        tmp.put("00", true);
-        currentUser.setGroups(new ArrayList<String>());
-        ref.child(userInfo).setValue(userDatabase);
-        ref.child(userGroups).setValue(tmp);
-        tmp.clear();
-        tmp.put("authKey", userDatabase.getAuthKey());
-        ref.updateChildren(tmp);
-        if (currentUser.getTelNumber().startsWith("+"))
-            currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
-        usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
-
-        if (currentUser.getImg_profile() == null)
-            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
-
-        imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
-        Singleton.getInstance().setCurrentUser(currentUser);
-    }
-
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
@@ -315,7 +286,7 @@ public class DB_Manager {
             if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-
+        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
@@ -327,45 +298,6 @@ public class DB_Manager {
         DatabaseReference ref = expenseRef.push();
         expenseDatabase.setId(ref.getKey());
         ref.setValue(expenseDatabase);
-    }
-
-    public void getCurrentUser() {
-        userRef.orderByChild("authKey")
-                .equalTo(mAuth.getCurrentUser().getUid())
-                //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        if (!dataSnapshot.exists()) {
-                                EventBus.getDefault().post(new NewUserEvent());
-                            return;
-                            }
-                        CurrentUser currentUser = new CurrentUser();
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            for (DataSnapshot child2 : child.getChildren()) {
-                                if (child2.getKey().equals(userInfo)) {
-                                    UserDatabase ud = child2.getValue(UserDatabase.class);
-                                    currentUser.settingInfoUser(ud);
-
-                                } else if (child2.getKey().equals(userGroups)) {
-                                    Map<String, Object> tmp = (Map<String, Object>) child2.getValue();
-                                    tmp.remove("00");
-                                    currentUser.setGroups(new ArrayList<>(tmp.keySet()));
-                                }
-                            }
-                        }
-                        Singleton.getInstance().setCurrentUser(currentUser);
-                        EventBus.getDefault().post(new CurrentUserReadyEvent());
-
-                        /*DOWNLOAD DELL'IMMAGINE????*/
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
@@ -529,6 +461,81 @@ public class DB_Manager {
         userRef.child(userId).child("userGroups").child(groupId).setValue(false);
         groupRef.child(groupId).child("members").child(userId).setValue(0.0);
     }
+
+    public void getCurrentUser() {
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userRef.orderByChild("email")
+                .equalTo(mAuth.getCurrentUser().getEmail())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (!dataSnapshot.exists()) {
+                            EventBus.getDefault().post(new NewUserEvent());
+                            return;
+                        }
+                        CurrentUser currentUser = new CurrentUser();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            for (DataSnapshot child2 : child.getChildren()) {
+                                if (child2.getKey().equals(userInfo)) {
+                                    UserDatabase ud = child2.getValue(UserDatabase.class);
+                                    currentUser.settingInfoUser(ud);
+
+                                } else if (child2.getKey().equals(userGroups)) {
+                                    Map<String, Object> tmp = (Map<String, Object>) child2.getValue();
+                                    tmp.remove("00");
+                                    currentUser.setGroups(new ArrayList<>(tmp.keySet()));
+                                }
+                            }
+                        }
+                        Singleton.getInstance().setCurrentUser(currentUser);
+                        EventBus.getDefault().post(new CurrentUserReadyEvent());
+                        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+                        /*DOWNLOAD DELL'IMMAGINE????*/
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+    public void pushNewUser(CurrentUser currentUser) {
+        UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
+
+        DatabaseReference ref = userRef.push();
+        //currentUserID = ref.getKey();
+        userDatabase.setId(ref.getKey());
+        currentUser.setId(ref.getKey());
+        String uuid = UUID.randomUUID().toString();
+        userDatabase.setiProfile(uuid);
+        currentUser.setiProfile(uuid);
+
+        Map<String, Object> tmp = new HashMap<String, Object>();
+        tmp.put("00", true);
+        currentUser.setGroups(new ArrayList<String>());
+        ref.child(userInfo).setValue(userDatabase);
+        ref.child(userGroups).setValue(tmp);
+        tmp.clear();
+        tmp.put("email", userDatabase.getEmail());
+        ref.updateChildren(tmp);
+        if (currentUser.getTelNumber().startsWith("+"))
+            currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
+        usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
+
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+
+        if (currentUser.getImg_profile() == null)
+            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
+
+        imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
+        Singleton.getInstance().setCurrentUser(currentUser);
+    }
+
+
 
 
 }

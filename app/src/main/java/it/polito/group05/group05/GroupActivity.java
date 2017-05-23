@@ -5,35 +5,18 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.IdRes;
-import android.support.design.internal.TextScale;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
-import android.support.transition.TransitionSet;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
@@ -42,8 +25,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.lang.reflect.Field;
 
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.Adapter.ViewPagerAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -75,9 +56,9 @@ public class GroupActivity extends AppCompatActivity {
             transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
             transaction.commit();
 
-            mToolbar = (Toolbar)findViewById(R.id.toolbar);
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
             navigation = (BottomBar) findViewById(R.id.navigation);
-            fab = (FloatingActionButton)findViewById(R.id.fab);
+            fab = (FloatingActionButton) findViewById(R.id.fab);
             setSupportActionBar(mToolbar);
             mToolbar.setBackgroundColor(getResources().getColor(R.color.expenseTabColor));
         }
@@ -95,7 +76,7 @@ public class GroupActivity extends AppCompatActivity {
                                 break;
                             case R.id.navigation_chat:
                                 replaceWithChatFragment();
-                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth()/2, mToolbar.getHeight());
+                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
                                 break;
                             case R.id.navigation_history:
                                 Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
@@ -108,37 +89,6 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
-   private void replaceWithExpenseFragment() {
-       FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-       transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
-               .commit();
-       fab.show();
-       fab.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
-
-               Intent i = new Intent(GroupActivity.this, Expense_activity.class);
-
-               startActivity(i);
-               //startActivity(i, options.toBundle());
-           }
-       });
-   }
-
-
-
-    private void replaceWithChatFragment() {
-        fab.hide();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, ChatFragment.newInstance())
-                .commit();
-    }
 
     private void animateAppAndStatusBar(final int fromColor, final int toColor, float cx, float cy) {
         // get the final radius for the clipping circle
@@ -147,13 +97,13 @@ public class GroupActivity extends AppCompatActivity {
         int dy = (int) Math.max(cy, mToolbar.getHeight() - cy);
         float finalRadius = (float) Math.hypot(dx, dy);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-           Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
+            Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
 
-                   mToolbar,
-                   (int)cx,
-                   (int)cy, 0,
-                   finalRadius
-           );
+                    mToolbar,
+                    (int) cx,
+                    (int) cy, 0,
+                    finalRadius
+            );
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -166,8 +116,8 @@ public class GroupActivity extends AppCompatActivity {
         } else {
             Animator animator = ViewAnimationUtils.createCircularReveal(
                     mToolbar,
-                    (int)cx,
-                    (int)cy, 0,
+                    (int) cx,
+                    (int) cy, 0,
                     finalRadius);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -182,6 +132,7 @@ public class GroupActivity extends AppCompatActivity {
 
 
     }
+
     private void changeToolbarColor(int from, int to) {
         ArgbEvaluator evaluator = new ArgbEvaluator();
         ValueAnimator animator = new ValueAnimator();
@@ -233,4 +184,75 @@ public class GroupActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, GroupDetailsFragment.newInstance())
                 .commit();
     }
+
+    private void replaceWithExpenseFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
+                .commit();
+        fab.show();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
+
+                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
+
+                startActivity(i);
+                //startActivity(i, options.toBundle());
+            }
+        });
+    }
+
+    private void replaceWithChatFragment() {
+        fab.hide();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, ChatFragment.newInstance())
+                .commit();
+    }
+
+    private void replaceWithFragment(int fragmentType) {
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (fragmentType) {
+            case 0:
+                transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance()).commit();
+                fab.show();
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(GroupActivity.this, Expense_activity.class);
+                        startActivity(i);
+                    }
+                });
+                break;
+            case 1:
+                fab.hide();
+                transaction.replace(R.id.fragment_container, ChatFragment.newInstance()).commit();
+                break;
+            case 2:
+                fab.hide();
+                transaction.replace(R.id.fragment_container, GroupDetailsFragment.newInstance())
+                        .commit();
+            default:
+                transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance()).commit();
+                fab.show();
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(GroupActivity.this, Expense_activity.class);
+                        startActivity(i);
+                    }
+                });
+                break;
+
+        }
+
+
+    }
+
 }

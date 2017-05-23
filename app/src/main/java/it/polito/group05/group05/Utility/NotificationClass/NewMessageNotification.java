@@ -22,6 +22,7 @@ import it.polito.group05.group05.R;
  * This class makes heavy use of the {@link NotificationCompat.Builder} helper
  * class to create notifications in a backward-compatible way.
  */
+
 public class NewMessageNotification {
     /**
      * The unique identifier for this type of notification.
@@ -66,7 +67,7 @@ public class NewMessageNotification {
 
                 // Set required fields, including the small icon, the
                 // notification title, and text.
-                .setSmallIcon(R.drawable.ic_stat_new_message)
+                .setSmallIcon(R.drawable.logo)
                 .setContentTitle(title)
                 .setContentText(text)
 

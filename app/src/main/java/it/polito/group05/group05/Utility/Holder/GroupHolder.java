@@ -112,7 +112,7 @@ public class GroupHolder extends GeneralHolder {
             public void onClick(View v) {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
-                   Intent i = new Intent(context,GroupActivity.class);
+                Intent i = new Intent(context, GroupActivity.class);
                    context.startActivity(i);
             }
         });

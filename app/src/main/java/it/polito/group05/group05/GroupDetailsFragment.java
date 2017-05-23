@@ -175,7 +175,7 @@ public class GroupDetailsFragment extends Fragment {
                             for (DataSnapshot child2 : child1.getChildren()) {
                                 //for (DataSnapshot child3 : child2.getChildren())
                                 //    if (child3.getKey().equals("members"))
-                                        //parseSnapshot1(child2);
+                                //parseSnapshot1(child2);
                             }
                         }
                     }

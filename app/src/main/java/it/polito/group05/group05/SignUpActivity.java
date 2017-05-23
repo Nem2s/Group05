@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
@@ -37,12 +39,14 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.fabric.sdk.android.Fabric;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.Event.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.NotificationClass.MyService;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
 
@@ -76,6 +80,10 @@ public class SignUpActivity extends AppCompatActivity {
         i.putExtra("expenseId", eid);
         //}
         startActivity(i);
+
+        Intent intent = new Intent(getBaseContext(), MyService.class);
+        startService(intent);
+
         finish();
     }
 
@@ -96,6 +104,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
 
 
         mAuth = FirebaseAuth.getInstance();
