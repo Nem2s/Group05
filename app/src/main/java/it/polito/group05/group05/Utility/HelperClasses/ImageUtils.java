@@ -86,15 +86,13 @@ public class ImageUtils {
     }
 
 
-    public static List<Integer> getMatColor(String typeColor, Context context, int n)
-    {
+    public static List<Integer> getMatColor(String typeColor, Context context, int n) {
         List<Integer> result = new ArrayList<>();
         int returnColor = Color.BLACK;
         int arrayId = context.getResources().getIdentifier("mdcolor_" + typeColor, "array", context.getPackageName());
 
-        if (arrayId != 0)
-        {
-            for(int i = 0; i < n; i++) {
+        if (arrayId != 0) {
+            for (int i = 0; i < n; i++) {
                 TypedArray colors = context.getResources().obtainTypedArray(arrayId);
                 int index = (int) (Math.random() * colors.length());
                 returnColor = colors.getColor(index, Color.BLACK);

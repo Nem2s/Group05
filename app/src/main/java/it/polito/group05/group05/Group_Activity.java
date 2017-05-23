@@ -85,25 +85,9 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         main_content = (CoordinatorLayout)findViewById(R.id.main_content);
         tv.setText(Singleton.getInstance().getmCurrentGroup().getName());
-      //  tv.setText("CIAO");
-        /*toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);
-                Intent intent = new Intent(getBaseContext(), GroupDetailsActivity.class);
-                startActivity(intent, options.toBundle());
-
-            }
-        });*/
         setSupportActionBar(toolbar);
-       // c.setImageBitmap(Singleton.getInstance().getmCurrentGroup().getGroupProfile());
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -120,8 +104,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-
 
 
     }
@@ -154,6 +136,8 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
         super.onStart();
         if(!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
+
+
     }
 
     @Override

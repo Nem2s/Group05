@@ -78,12 +78,10 @@ public class FabBehavior extends FloatingActionButton.Behavior {
     }
 
 
-
-
     private void updateFloatingActionMenu(final FloatingActionButton child) {
         int totalHeight = child.getHeight();
-            // Only one fab.
-            updateFirstFloatingActionButton(child, totalHeight);
+        // Only one fab.
+        updateFirstFloatingActionButton(child, totalHeight);
     }
 
 

@@ -78,7 +78,7 @@ public class UserBalanceActivity extends AppCompatActivity {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onDataReady(GroupInfoChartEvent e) {
         GroupInfoChartEvent event = EventBus.getDefault().removeStickyEvent(GroupInfoChartEvent.class);
-        if(event != null && e.getEntry().size() > 0) {
+        if (event != null && e.getEntry().size() > 0) {
             ppb.setVisibility(View.GONE);
 
             pchart.setVisibility(View.VISIBLE);
@@ -97,7 +97,7 @@ public class UserBalanceActivity extends AppCompatActivity {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onExpenseDataReady(ExpenseCountEvent e) {
         ExpenseCountEvent event = EventBus.getDefault().removeStickyEvent(ExpenseCountEvent.class);
-        if(event.getList().size() > 0) {
+        if (event.getList().size() > 0) {
             lchart.setVisibility(View.VISIBLE);
             setupLineChart(event.getList());
         } else {
@@ -124,7 +124,7 @@ public class UserBalanceActivity extends AppCompatActivity {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                long millis = TimeUnit.DAYS.toMillis((long)value);
+                long millis = TimeUnit.DAYS.toMillis((long) value);
                 return mFormat.format(new Date(millis));
             }
         });
@@ -182,17 +182,17 @@ public class UserBalanceActivity extends AppCompatActivity {
         List<Integer> colors = new ArrayList<>();
         set.setDrawValues(false);
         pchart.getDescription().setEnabled(false);
-        for(int i : ColorTemplate.VORDIPLOM_COLORS)
+        for (int i : ColorTemplate.VORDIPLOM_COLORS)
             colors.add(i);
-        for(int i : ColorTemplate.LIBERTY_COLORS)
+        for (int i : ColorTemplate.LIBERTY_COLORS)
             colors.add(i);
-        for(int i : ColorTemplate.PASTEL_COLORS)
+        for (int i : ColorTemplate.PASTEL_COLORS)
             colors.add(i);
-        for(int i : ColorTemplate.MATERIAL_COLORS)
+        for (int i : ColorTemplate.MATERIAL_COLORS)
             colors.add(i);
-        for(int i : ColorTemplate.COLORFUL_COLORS)
+        for (int i : ColorTemplate.COLORFUL_COLORS)
             colors.add(i);
-        for(int i : ColorTemplate.JOYFUL_COLORS)
+        for (int i : ColorTemplate.JOYFUL_COLORS)
             colors.add(i);
 
 
@@ -207,10 +207,10 @@ public class UserBalanceActivity extends AppCompatActivity {
         set.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                GroupDatabase g = (GroupDatabase)entry.getData();
+                GroupDatabase g = (GroupDatabase) entry.getData();
                 float v = Float.valueOf(g.getMembers().get(currUserId).toString());
                 String res = String.format("%.2f", v);
-                if(v > 0)
+                if (v > 0)
                     return "+" + res + " €";
                 else
                     return res + " €";
@@ -223,26 +223,24 @@ public class UserBalanceActivity extends AppCompatActivity {
 
         float tot = 0;
         List<Integer> valueColors = new ArrayList<>();
-        for(PieEntry e : set.getValues()) {
-            GroupDatabase g = (GroupDatabase)e.getData();
+        for (PieEntry e : set.getValues()) {
+            GroupDatabase g = (GroupDatabase) e.getData();
             float v = Float.valueOf(g.getMembers().get(currUserId).toString());
             String res = String.format("%.2f", v);
-            tot+=v;
+            tot += v;
             LegendEntry legendEntry = new LegendEntry();
             legendEntry.formColor = set.getColor(set.getEntryIndex(e));
             legendEntry.form = Legend.LegendForm.SQUARE;
             legendEntry.formSize = 15;
-            if(v > 0) {
+            if (v > 0) {
                 valueColors.add(getResources().getColor(R.color.green_300));
-            }
-
-            else {
+            } else {
                 valueColors.add(getResources().getColor(R.color.red_300));
 
             }
-            if(entryList.size() < 10)
-                legendEntry.label = g.getName()+ "\t\t\t\t+" + res + " €";
-            if(entryList.size() == 10)
+            if (entryList.size() < 10)
+                legendEntry.label = g.getName() + "\t\t\t\t+" + res + " €";
+            if (entryList.size() == 10)
                 legendEntry.label = "...";
             entryList.add(legendEntry);
         }
@@ -309,24 +307,24 @@ public class UserBalanceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_balance);
-        pchart = (PieChart)findViewById(R.id.user_piechart);
-        ppb = (ProgressBar)findViewById(R.id.pb_loading_pchart);
-        tv_username = (TextView)findViewById(R.id.tv_userName_balance);
-        cv_userImage = (CircleImageView)findViewById(R.id.cv_userimage);
-        lchart = (LineChart)findViewById(R.id.user_linechart);
-        iv_nodata = (ImageView)findViewById(R.id.iv_nodata);
+        pchart = (PieChart) findViewById(R.id.user_piechart);
+        ppb = (ProgressBar) findViewById(R.id.pb_loading_pchart);
+        tv_username = (TextView) findViewById(R.id.tv_userName_balance);
+        cv_userImage = (CircleImageView) findViewById(R.id.cv_userimage);
+        lchart = (LineChart) findViewById(R.id.user_linechart);
+        iv_nodata = (ImageView) findViewById(R.id.iv_nodata);
 
         tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
         snackbar = Snackbar.make(findViewById(R.id.parent_layout), "You're not in any groups, Try to create one!", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Ok", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            startActivity(new Intent(UserBalanceActivity.this, NewGroupActivity.class));
-                            finish();
-                        }
-                    });
+                .setAction("Ok", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(UserBalanceActivity.this, NewGroupActivity.class));
+                        finish();
+                    }
+                });
         mAppFont = Typeface.createFromAsset(getAssets(), "fonts/Streetwear.otf");
-        ((TextView)findViewById(R.id.tv_hello)).setTypeface(mAppFont);
+        ((TextView) findViewById(R.id.tv_hello)).setTypeface(mAppFont);
 
         initializeUI();
     }

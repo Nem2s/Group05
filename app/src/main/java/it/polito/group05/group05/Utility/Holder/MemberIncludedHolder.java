@@ -34,21 +34,25 @@ public class MemberIncludedHolder extends RecyclerView.ViewHolder {
     private boolean customValue;
 
 
-    public MemberIncludedHolder(View itemView, List<User_expense> users ) {
+    public MemberIncludedHolder(View itemView, List<User_expense> users) {
         super(itemView);
-        this.users= users;
+        this.users = users;
         parent = (RelativeLayout) itemView.findViewById(R.id.et_quotae);
         image_person = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
-        name_person= (TextView) itemView.findViewById(R.id.tv_name_member);
+        name_person = (TextView) itemView.findViewById(R.id.tv_name_member);
         euro_person = (ImageView) itemView.findViewById(R.id.euro_member);
         costo_person = (EditText) itemView.findViewById(R.id.et_ins);
         customValue = false;
     }
+
     public boolean isCustomValue() {
         return customValue;
     }
+
     //
-    public List<User_expense> getList(){return users;}
+    public List<User_expense> getList() {
+        return users;
+    }
 
     public void setCustomValue(boolean customValue) {
         this.customValue = customValue;

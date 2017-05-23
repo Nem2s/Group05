@@ -187,7 +187,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
         context = this;
 
-        mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
+        //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -201,7 +201,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
         invitedAdapter = new MemberInvitedAdapter(contacts, context);
 
-
+/*
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -220,7 +220,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
 
         });
-
+*/
         if(invitedAdapter.getItemCount() == 0) {
 
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)

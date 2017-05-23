@@ -1,10 +1,7 @@
 package it.polito.group05.group05;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -68,11 +65,11 @@ public class ExpenseFragment extends Fragment {
         if (id == R.id.sort_price)
             q = QueryParam.Possibilities.BYPRICE;
 
-        else if(id == R.id.sort_owner)
+        else if (id == R.id.sort_owner)
             q = QueryParam.Possibilities.BYOWNER;
-        else if(id == R.id.sort_date)
+        else if (id == R.id.sort_date)
             q = QueryParam.Possibilities.BYDATE;
-        if(q != null)
+        if (q != null)
             sortRecyclerViewBy(q);
         item.setChecked(true);
         return super.onOptionsItemSelected(item);
@@ -123,12 +120,14 @@ public class ExpenseFragment extends Fragment {
         setHasOptionsMenu(true);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
         rv.setHasFixedSize(false);
-       ll =  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
+        ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref.orderByChild("timestamp")) {
+
+
             @Override
             protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
                 super.onChildChanged(type, index, oldIndex);
@@ -148,8 +147,6 @@ public class ExpenseFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Expenses");
         rv.setAdapter(ea);
-
-
 
 
         super.onCreateView(inflater, container, savedInstanceState);
@@ -183,27 +180,27 @@ public class ExpenseFragment extends Fragment {
     private void sortRecyclerViewBy(QueryParam.Possibilities param) {
 
         Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup()).orderByChild(param.getValue());
-        ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
-                R.layout.item_expense,ExpenseHolder.class,ref) {
+        ea = new FirebaseRecyclerAdapter<ExpenseDatabase, ExpenseHolder>(ExpenseDatabase.class,
+                R.layout.item_expense, ExpenseHolder.class, ref) {
             @Override
             protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
                 super.onChildChanged(type, index, oldIndex);
-                if(type== ChangeEventListener.EventType.ADDED)
-                    ll.smoothScrollToPosition(rv,null,this.getItemCount());
+                if (type == ChangeEventListener.EventType.ADDED)
+                    ll.smoothScrollToPosition(rv, null, this.getItemCount());
                 //aggiungere animazioni strane
 
             }
+
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
-                if(model==null) return;
-                viewHolder.setData(model,getContext());
+                if (model == null) return;
+                viewHolder.setData(model, getContext());
 
             }
         };
 
         rv.setAdapter(ea);
     }
-
 
 
 }
@@ -215,7 +212,7 @@ class QueryParam {
         BYDATE("timestamp");
         private String string;
 
-       private Possibilities(String s) {
+        private Possibilities(String s) {
             this.string = s;
         }
 

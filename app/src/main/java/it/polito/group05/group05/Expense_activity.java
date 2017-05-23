@@ -2,9 +2,7 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,12 +25,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +40,6 @@ import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,14 +47,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.TYPE_EXPENSE;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
@@ -79,7 +72,7 @@ public class Expense_activity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ImageView image_network;
     private CardView card_recycler;
-    private ImageView plus,calendar1;
+    private ImageView plus, calendar1;
     private TextView nomeFile, nomedata;
     private String data = null;
     private String time = null;
@@ -130,13 +123,13 @@ public class Expense_activity extends AppCompatActivity {
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
-        nomedata= (TextView) findViewById(R.id.name_date);
+        nomedata = (TextView) findViewById(R.id.name_date);
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         rel_file = (RelativeLayout) findViewById(R.id.relative_file);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
-        calendar1= (ImageView) findViewById(R.id.calendar);
+        calendar1 = (ImageView) findViewById(R.id.calendar);
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -167,14 +160,14 @@ public class Expense_activity extends AppCompatActivity {
         final String dataFormat = sdf.format(now.getTime());
         final String timeFormat = sdf2.format(now.getTime());
 */
-        Calendar calendar= Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if( expense.getName().toString().length() == 0 || expense.getPrice()==0.0 ) {
+                if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
                     Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
@@ -195,58 +188,54 @@ public class Expense_activity extends AppCompatActivity {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
                     }
-                        double price;
-                        double toSubtractOwner = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            if (partecipants.get(i).getId() != expense.getOwner()) {
-                                toSubtractOwner += partecipants.get(i).getCustomValue();
-                            }
+                    double price;
+                    double toSubtractOwner = 0.0;
+                    for (int i = 0; i < partecipants.size(); i++) {
+                        if (partecipants.get(i).getId() != expense.getOwner()) {
+                            toSubtractOwner += partecipants.get(i).getCustomValue();
                         }
-                        totalPriceActual = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            price = partecipants.get(i).getCustomValue();
-                            //totalPriceActual += partecipants.get(i).getCustomValue();
-                            String id = partecipants.get(i).getId();
-                            if (partecipants.get(i).getId() == expense.getOwner()) {
-                                expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice()-price);
-                            } else {
-                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                            }
-                            DB_Manager.getInstance().updateGroupFlow(id, -1.00*expense.getMembers().get(id));
-                            totalPriceActual += expense.getMembers().get(id);
+                        }
+                    totalPriceActual = 0.0;
+                    for (int i = 0; i < partecipants.size(); i++) {
+                        price = partecipants.get(i).getCustomValue();
+                        //totalPriceActual += partecipants.get(i).getCustomValue();
+                        String id = partecipants.get(i).getId();
+                        if (partecipants.get(i).getId() == expense.getOwner()) {
+                            expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
+                        } else {
+                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
+                        }
+                        DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
+                        totalPriceActual += expense.getMembers().get(id);
 
                         }
-                        if(clicked_calendar){
+                    if (clicked_calendar) {
 
-                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                            Date date = null;
-                            try {
-                                date = dateFormat.parse(data);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            long timeLong = date.getTime();
-                            //tmsp = data + " " + timeFormat;
-                            //expense.setTimestamp(tmsp);
-                            expense.setTimestamp(timeLong);
-                            clicked_calendar= false;
-                        }else {
-                          //  expense.setTimestamp(dataFormat);
-                                expense.setTimestamp(timestamp);
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(data);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        long timeLong = date.getTime();
+                        //tmsp = data + " " + timeFormat;
+                        //expense.setTimestamp(tmsp);
+                        expense.setTimestamp(timeLong);
+                        clicked_calendar = false;
+                    } else {
+                        //  expense.setTimestamp(dataFormat);
+                        expense.setTimestamp(timestamp);
                         }
 
-                        if(totalPriceActual>=-0.001 || totalPriceActual <=0.001){
-                            FirebaseDatabase.getInstance().getReference("notifications")
-                            .child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .child("expenses").child(expense.getId()).setValue(expense);
-
-                            fdb.setValue(expense);
-                            finish();
-                        }
-                        else{
-                            Snackbar.make(view,"Set prices again",Snackbar.LENGTH_SHORT).show();
-                            memberAdapter.changeTotal(expense.getPrice());
-                        }
+                    if (totalPriceActual >= -0.001 || totalPriceActual <= 0.001) {
+                        FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
+                        fdb.setValue(expense);
+                        finish();
+                    } else {
+                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                        memberAdapter.changeTotal(expense.getPrice());
+                    }
                 }
                 }
         });
@@ -275,11 +264,11 @@ public class Expense_activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-            if(s.length()>0){
-                expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
-                expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                memberAdapter.changeTotal(expense_price);
-             //   memberAdapter.notifyDataSetChanged();
+                if (s.length() > 0) {
+                    expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
+                    expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+                    memberAdapter.changeTotal(expense_price);
+                    //   memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -298,12 +287,12 @@ public class Expense_activity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                if(month < 10){
-                                    String mese = "0"+month;
+                                if (month < 10) {
+                                    String mese = "0" + month;
                                     //data = year + "-" + mese + "-" + dayOfMonth;
                                     data = dayOfMonth + "/" + mese + "/" + year;
-                                    nomedata.setText( dayOfMonth + "/" + mese + "/" + year);
-                                }else{
+                                    nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                                } else {
                                     data = dayOfMonth + "/" + month + "/" + year;
                                     //data = year + "-" + month + "-" + dayOfMonth;
                                     nomedata.setText(dayOfMonth + "/" + month + "/" + year);
@@ -328,21 +317,20 @@ public class Expense_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0){
-                    Snackbar.make(v,"Set a Valid price",Snackbar.LENGTH_SHORT).show();
-                }
-                else{
-                      if(recyclerView.getVisibility() == View.GONE){
-                          recyclerView.setVisibility(View.VISIBLE);
-                          rel_file.setVisibility(View.VISIBLE);
-                          plus.setImageResource(R.drawable.ic_expand_less);
-                      }else {
-                          recyclerView.setVisibility(View.GONE);
-                          rel_file.setVisibility(View.GONE);
-                          plus.setImageResource(R.drawable.ic_expand_more);
-                          }
-                        }
+                if (et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0) {
+                    Snackbar.make(v, "Set a Valid price", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    if (recyclerView.getVisibility() == View.GONE) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        rel_file.setVisibility(View.VISIBLE);
+                        plus.setImageResource(R.drawable.ic_expand_less);
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        rel_file.setVisibility(View.GONE);
+                        plus.setImageResource(R.drawable.ic_expand_more);
                     }
+                }
+            }
         });
 
 

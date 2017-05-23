@@ -17,7 +17,7 @@ public class GroupDatabase implements Namable {
 
     public String id;
     public String name;
-    public Balance balance = new Balance(0,0);
+    public Balance balance = new Balance(0, 0);
     public String lmTime;
     public String creator;
     public GroupColor groupColor;

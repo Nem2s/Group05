@@ -29,7 +29,7 @@ public class ChatHolder extends GeneralHolder {
     private TextView time;
     private CircleImageView imageView;
 
-    public ChatHolder(View v){
+    public ChatHolder(View v) {
         super(v);
         this.userName = (TextView) v.findViewById(R.id.name_text);
         this.text = (TextView) v.findViewById(R.id.message_text);
@@ -39,8 +39,8 @@ public class ChatHolder extends GeneralHolder {
 
     @Override
     public void setData(Object c, final Context context) {
-        if(!(c instanceof ChatDatabase)) return;
-        ChatDatabase cdb= (ChatDatabase) c;
+        if (!(c instanceof ChatDatabase)) return;
+        ChatDatabase cdb = (ChatDatabase) c;
         userName.setText(cdb.getMessageUser());
         text.setText(cdb.getMessageText());
         SimpleDateFormat sdf = new SimpleDateFormat();
@@ -52,7 +52,7 @@ public class ChatHolder extends GeneralHolder {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.exists()) return;
+                        if (!dataSnapshot.exists()) return;
                         UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
                         Glide.with(context)
                                 .using(new FirebaseImageLoader())
@@ -60,6 +60,7 @@ public class ChatHolder extends GeneralHolder {
                                 .centerCrop()
                                 .into(imageView);
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -67,8 +68,6 @@ public class ChatHolder extends GeneralHolder {
                 });
 
     }
-
-
 
 
 }
