@@ -33,6 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -190,19 +192,24 @@ public class DB_Manager {
 
     private void setupEntries(List<DataSnapshot> snapshots) {
         final Map<Long, Entry> map = new HashMap<>();
-        for (DataSnapshot ex_data : snapshots) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        for(DataSnapshot ex_data : snapshots) {
             for (DataSnapshot data : ex_data.getChildren()) {
                 ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
                 if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
                     continue;
-
-                long t = Timestamp.valueOf(e.getTimestamp()).getTime();
+                long t = 0;
+                try {
+                    t = format.parse(e.getTimestamp()).getTime();
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
                 Calendar today = Calendar.getInstance();
                 Calendar sixMonthsAhead = Calendar.getInstance();
                 sixMonthsAhead.add(Calendar.MONTH, 6);
                 long differenceInMilis = sixMonthsAhead.getTimeInMillis() - today.getTimeInMillis();
                 long difference = today.getTimeInMillis() - t;
-                if (difference < differenceInMilis) //older than 6 months
+                if(difference < differenceInMilis) //older than 6 months
                     t = TimeUnit.MILLISECONDS.toDays(t);
                 else
                     continue;
@@ -521,6 +528,7 @@ public class DB_Manager {
     }
 
     public void addUserToGroup(String userId, String groupId) {
+
         userRef.child(userId).child("userGroups").child(groupId).setValue(false);
         groupRef.child(groupId).child("members").child(userId).setValue(0.0);
     }

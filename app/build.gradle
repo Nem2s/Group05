@@ -1,12 +1,16 @@
 apply plugin: 'com.android.application'
 repositories {
     maven { url "https://jitpack.io" }
+    maven {
+        url "http://dl.bintray.com/jlmd/maven"
+    }
     mavenCentral()
 }
 android {
     dexOptions {
         jumboMode true
     }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
     defaultConfig {
@@ -43,7 +47,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile 'com.firebaseui:firebase-ui-storage:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
-
+    compile 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'

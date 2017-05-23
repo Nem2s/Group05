@@ -83,6 +83,7 @@
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
