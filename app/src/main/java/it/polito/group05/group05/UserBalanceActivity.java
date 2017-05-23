@@ -1,19 +1,27 @@
 package it.polito.group05.group05;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -51,10 +59,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.Utility.Adapter.LegendAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.ExpenseCountEvent;
 import it.polito.group05.group05.Utility.Event.GroupInfoChartEvent;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -68,11 +79,18 @@ public class UserBalanceActivity extends AppCompatActivity {
     CircleImageView cv_userImage;
     Typeface mAppFont;
     ImageView iv_nodata;
+    CircleImageView cv_groupImage;
+    LinearLayout linearLayout;
+    RecyclerView rv;
+    LegendAdapter adapter;
 
-    private Entry entry;
+    private Entry currEntry;
     private Highlight highlighted;
     private String currUserId = Singleton.getInstance().getCurrentUser().getId();
     private List<Entry> expenseEntries = new ArrayList<>();
+    private FloatingActionButton fab_group_color;
+    private TextView tv_groupName;
+    private TextView tv_groupBalance;
 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -150,14 +168,15 @@ public class UserBalanceActivity extends AppCompatActivity {
         set.setDrawCircles(true);
         set.setCircleRadius(4f);
         set.setDrawValues(true);
-        set.setFillAlpha(65);
+        set.setFillAlpha(110);
         set.setHighLightColor(getResources().getColor(R.color.colorAccent));
         set.setDrawCircleHole(false);
-        set.setMode(LineDataSet.Mode.STEPPED);
+        set.setMode(LineDataSet.Mode.LINEAR);
+        set.setFillColor(R.color.colorPrimary);
         lchart.setDragEnabled(true);
         lchart.getLegend().setTextSize(11f);
         lchart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-       /* lchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+        lchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMMM yyyy");
             @Override
@@ -171,13 +190,14 @@ public class UserBalanceActivity extends AppCompatActivity {
             public void onNothingSelected() {
 
             }
-        });*/
+        });
         lchart.setData(new LineData(set));
         lchart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         lchart.invalidate();
     }
 
     private void updatePieChart(List<PieEntry> entries) {
+
         final PieDataSet set = new PieDataSet(entries, null);
         List<Integer> colors = new ArrayList<>();
         set.setDrawValues(false);
@@ -195,26 +215,36 @@ public class UserBalanceActivity extends AppCompatActivity {
         for(int i : ColorTemplate.JOYFUL_COLORS)
             colors.add(i);
 
-
+        //if(adapter == null) {
+            adapter = new LegendAdapter(entries, colors, this);
+            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rv.setLayoutManager(llm);
+            rv.setAdapter(adapter);
+       /* } else {
+            adapter.updateEntries(entries);
+        }*/
         set.setColors(colors);
         set.setDrawIcons(false);
-        set.setValueLinePart1Length(0.5f);
-        set.setValueLinePart2Length(0.1f);
-        set.setValueLineColor(getResources().getColor(R.color.grey_600));
-        set.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         set.setSelectionShift(5f);
-
         set.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                GroupDatabase g = (GroupDatabase)entry.getData();
-                float v = Float.valueOf(g.getMembers().get(currUserId).toString());
-                String res = String.format("%.2f", v);
-                if(v > 0)
-                    return "+" + res + " €";
-                else
-                    return res + " €";
+                if (entry.equals(currEntry)) {
+                    GroupDatabase g = (GroupDatabase) entry.getData();
+
+                    float v = Float.valueOf(g.getMembers().get(currUserId).toString());
+                    String s = String.format("%.2f", v);
+                    String res;
+                    if (v > 0)
+                        res = "+" + s + " €";
+                    else
+                        res = s + " €";
+                    return res;
+                } else {
+                    return "";
+                }
             }
+
         });
         set.setValueTypeface(Typeface.SANS_SERIF);
         PieData data = new PieData(set);
@@ -226,12 +256,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         for(PieEntry e : set.getValues()) {
             GroupDatabase g = (GroupDatabase)e.getData();
             float v = Float.valueOf(g.getMembers().get(currUserId).toString());
-            String res = String.format("%.2f", v);
             tot+=v;
-            LegendEntry legendEntry = new LegendEntry();
-            legendEntry.formColor = set.getColor(set.getEntryIndex(e));
-            legendEntry.form = Legend.LegendForm.SQUARE;
-            legendEntry.formSize = 15;
             if(v > 0) {
                 valueColors.add(getResources().getColor(R.color.green_300));
             }
@@ -240,45 +265,33 @@ public class UserBalanceActivity extends AppCompatActivity {
                 valueColors.add(getResources().getColor(R.color.red_300));
 
             }
-            if(entryList.size() < 10)
-                legendEntry.label = g.getName()+ "\t\t\t\t+" + res + " €";
-            if(entryList.size() == 10)
-                legendEntry.label = "...";
-            entryList.add(legendEntry);
         }
         pchart.setCenterText(tot > 0 ? "+" + String.format("%.2f", tot) + " €" : String.format("%.2f", tot) + " €");
         pchart.setCenterTextColor(tot > 0 ? getResources().getColor(R.color.green_300) : getResources().getColor(R.color.red_300));
         data.setValueTextSize(10f);
         data.setValueTypeface(Typeface.DEFAULT_BOLD);
-        data.setValueTextColors(valueColors);
-        Legend l = pchart.getLegend();
-        l.setTextSize(13f);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setXEntrySpace(220f);
-        l.setYEntrySpace(2f);
-        l.setYOffset(20f);
-        l.setXOffset(-20f);
-        l.setFormToTextSpace(12);
-        l.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
-        l.setWordWrapEnabled(true);
-        l.setCustom(entryList);
-        set.setDrawValues(true);
+        pchart.getLegend().setEnabled(false);
+
+
+
         pchart.setData(data);
         pchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+
+
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                IPieDataSet set = pchart.getData().getDataSet();
-                set.setDrawValues(!set.isDrawValuesEnabled() || h != highlighted);
-                entry = e;
+                GroupDatabase g = (GroupDatabase)e.getData();
+                currEntry = e;
                 highlighted = h;
+                set.setDrawValues(true);
+                Pair<View, String> p = new Pair<View, String>(pchart, "qwe");
+                AnimUtils.startActivityWithAnimation(UserBalanceActivity.this, new Intent(UserBalanceActivity.this, GroupDetailsActivity.class),
+                        p);
             }
 
             @Override
             public void onNothingSelected() {
-                onValueSelected(entry, highlighted);
+                onValueSelected(currEntry, highlighted);
             }
         });
         pchart.invalidate();
@@ -290,7 +303,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         pchart.setTransparentCircleColor(getResources().getColor(R.color.grey_300));
         pchart.setTransparentCircleAlpha(110);
         pchart.setTransparentCircleRadius(55);
-        pchart.setExtraOffsets(30.f, 5.f, 30.f, 15.f);
+        pchart.setExtraOffsets(20, 0, 20, 5);
         pchart.setCenterTextSize(22f);
         pchart.setCenterTextTypeface(Typeface.DEFAULT_BOLD);
         pchart.setHoleRadius(50);
@@ -315,8 +328,9 @@ public class UserBalanceActivity extends AppCompatActivity {
         cv_userImage = (CircleImageView)findViewById(R.id.cv_userimage);
         lchart = (LineChart)findViewById(R.id.user_linechart);
         iv_nodata = (ImageView)findViewById(R.id.iv_nodata);
-
         tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
+        rv = (RecyclerView)findViewById(R.id.rv_legend);
+
         snackbar = Snackbar.make(findViewById(R.id.parent_layout), "You're not in any groups, Try to create one!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
                         @Override

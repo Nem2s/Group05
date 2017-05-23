@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
@@ -94,6 +93,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
+        <meta-data xmlns:tools="http://schemas.android.com/tools"
+            tools:replace="android:value"
+            android:name="io.fabric.ApiKey"
+            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
     </application>
 
 </manifest>

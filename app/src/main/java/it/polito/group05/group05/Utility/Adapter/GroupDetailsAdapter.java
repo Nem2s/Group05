@@ -26,6 +26,7 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
     private Context context;
     private ArrayList<Object> users;
     private Map<String, Object> helper = new HashMap<>();
+
     final static int TYPE_HEADER = 0;
     final static int TYPE_ITEM = 1;
 
