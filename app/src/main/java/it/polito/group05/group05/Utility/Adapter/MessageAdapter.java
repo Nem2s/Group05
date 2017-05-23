@@ -43,9 +43,9 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
         ChatDatabase cdb = getItem(position);
         view = activity.getLayoutInflater().inflate(R.layout.message, viewGroup, false);
         if (cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId()))
-            isSender = true;
+            isSender= true;
         else
-            isSender = false;
+            isSender= false;
 
         populateView(view, cdb, position);
 
@@ -60,30 +60,31 @@ public class MessageAdapter extends FirebaseListAdapter<ChatDatabase> {
         TextView messageTime = (TextView) v.findViewById(R.id.message_time);
         FrameLayout leftArrow = (FrameLayout) v.findViewById(R.id.left_arrow);
         FrameLayout rightArrow = (FrameLayout) v.findViewById(R.id.right_arrow);
-        RelativeLayout message = (RelativeLayout) v.findViewById(R.id.message_container);
+        RelativeLayout message= (RelativeLayout) v.findViewById(R.id.message_container);
         LinearLayout mymessage = (LinearLayout) v.findViewById(R.id.message);
         color1 = ContextCompat.getColor(v.getContext(), R.color.colorPrimaryLightLight);
         color2 = ContextCompat.getColor(v.getContext(), R.color.white);
 
-        if (isSender) {
+        if(isSender){
             color = color1;
-            leftArrow.setVisibility(View.GONE);
-            rightArrow.setVisibility(View.VISIBLE);
-            message.setGravity(Gravity.END);
-            messageTime.setGravity(Gravity.START);
-        } else {
+        leftArrow.setVisibility(View.GONE);
+        rightArrow.setVisibility(View.VISIBLE);
+        message.setGravity(Gravity.END);
+        messageTime.setGravity(Gravity.START);
+    }
+        else{
             color = color2;
             leftArrow.setVisibility(View.VISIBLE);
             rightArrow.setVisibility(View.GONE);
             message.setGravity(Gravity.START);
         }
 
-        ((GradientDrawable) mymessage.getBackground()).setColor(color);
+        ((GradientDrawable)mymessage.getBackground()).setColor(color);
         ((RotateDrawable) leftArrow.getBackground()).getDrawable().setColorFilter(color, PorterDuff.Mode.SRC);
         ((RotateDrawable) rightArrow.getBackground()).getDrawable().setColorFilter(color, PorterDuff.Mode.SRC);
         messageText.setText(model.getMessageText());
         messageUser.setText(model.getMessageUser());
-        messageTime.setText(DateFormat.format("hh:mm", model.getMessageTime()));
+        messageTime.setText(DateFormat.format("hh:mm",model.getMessageTime()));
     }
 
     @Override

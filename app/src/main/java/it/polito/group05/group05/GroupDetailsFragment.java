@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,8 +40,6 @@ public class GroupDetailsFragment extends Fragment {
     RecyclerView.Adapter personAdapter;
     RecyclerView rv;
     Context context;
-
-    private OnFragmentInteractionListener mListener;
 
     public GroupDetailsFragment() {
         // Required empty public constructor
@@ -145,31 +144,8 @@ public class GroupDetailsFragment extends Fragment {
             }
         };
         rv.setAdapter(personAdapter);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("History");
         return rootView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     /**
@@ -199,7 +175,7 @@ public class GroupDetailsFragment extends Fragment {
                             for (DataSnapshot child2 : child1.getChildren()) {
                                 //for (DataSnapshot child3 : child2.getChildren())
                                 //    if (child3.getKey().equals("members"))
-                                        parseSnapshot1(child2);
+                                        //parseSnapshot1(child2);
                             }
                         }
                     }
@@ -232,7 +208,7 @@ public class GroupDetailsFragment extends Fragment {
                     }
                 }
             //}
-            personAdapter.notifyDataSetChanged();
+//            personAdapter.notifyDataSetChanged();
         }
     }
 

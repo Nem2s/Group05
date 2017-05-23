@@ -118,6 +118,8 @@
         android:src="@drawable/ic_menu_share"
         android:transitionName="@string/transition_fab"
         app:layout_anchor="@+id/new_group_view"
-        app:layout_anchorGravity="bottom|right" />
+        app:layout_anchorGravity="bottom|right"
+        app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

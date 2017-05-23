@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.GroupDetailsActivity;
 import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
@@ -111,7 +112,7 @@ public class GroupHolder extends GeneralHolder {
             public void onClick(View v) {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
-                   Intent i = new Intent(context,Group_Activity.class);
+                   Intent i = new Intent(context,GroupActivity.class);
                    context.startActivity(i);
             }
         });

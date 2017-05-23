@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -167,11 +169,72 @@ public class AnimUtils {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 myView.setVisibility(View.INVISIBLE);
-                enterRevealAnimation(my2nView);
+                enterRevealAnimationAndFade(my2nView);
             }
         });
 
         // start the animation
+        anim.start();
+    }
+
+    private static void enterRevealAnimationAndFade(final View view) {
+        // previously invisible view
+        final View myView = view;
+
+        // get the center for the clipping circle
+        int cx = myView.getMeasuredWidth() / 2;
+        int cy = myView.getMeasuredHeight() / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(myView.getWidth(), myView.getHeight()) / 2;
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                Animation fadeOut = new AlphaAnimation(1, 0);
+                fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+                fadeOut.setStartOffset(1000);
+                fadeOut.setDuration(1000);
+                view.startAnimation(fadeOut);
+                fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        view.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        // make the view visible and start the animation
+        myView.setVisibility(View.VISIBLE);
+
         anim.start();
     }
 

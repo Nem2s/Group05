@@ -6,9 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -18,6 +22,7 @@ import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.List;
 
@@ -39,10 +44,39 @@ public class ExpenseFragment extends Fragment {
     FirebaseRecyclerAdapter ea;
     RecyclerView rv;
     List<Expense> expenses;
+    LinearLayoutManager ll;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-    private OnFragmentInteractionListener mListener;
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_group_, menu);
+        MenuItem subMenu = menu.findItem(R.id.sort_action);
+        inflater.inflate(R.menu.sort_menu, subMenu.getSubMenu());
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        QueryParam.Possibilities q = null;
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.sort_price)
+            q = QueryParam.Possibilities.BYPRICE;
+
+        else if(id == R.id.sort_owner)
+            q = QueryParam.Possibilities.BYOWNER;
+        else if(id == R.id.sort_date)
+            q = QueryParam.Possibilities.BYDATE;
+        if(q != null)
+            sortRecyclerViewBy(q);
+        item.setChecked(true);
+        return super.onOptionsItemSelected(item);
+    }
 
 
 
@@ -68,6 +102,7 @@ public class ExpenseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
+
     }
 
 
@@ -85,10 +120,10 @@ public class ExpenseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
-
+        setHasOptionsMenu(true);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
         rv.setHasFixedSize(false);
-        final LinearLayoutManager ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
+       ll =  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
@@ -111,54 +146,18 @@ public class ExpenseFragment extends Fragment {
         };
 
 
-
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Expenses");
         rv.setAdapter(ea);
 
 
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
-                Intent i = new Intent(getActivity(), Expense_activity.class);
-
-                startActivity(i);
-                //startActivity(i, options.toBundle());
-            }
-        });
+        super.onCreateView(inflater, container, savedInstanceState);
         return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
     @Override
     public void onResume() {
         super.onResume();
@@ -181,5 +180,50 @@ public class ExpenseFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void sortRecyclerViewBy(QueryParam.Possibilities param) {
 
+        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup()).orderByChild(param.getValue());
+        ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
+                R.layout.item_expense,ExpenseHolder.class,ref) {
+            @Override
+            protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+                super.onChildChanged(type, index, oldIndex);
+                if(type== ChangeEventListener.EventType.ADDED)
+                    ll.smoothScrollToPosition(rv,null,this.getItemCount());
+                //aggiungere animazioni strane
+
+            }
+            @Override
+            protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
+                if(model==null) return;
+                viewHolder.setData(model,getContext());
+
+            }
+        };
+
+        rv.setAdapter(ea);
+    }
+
+
+
+}
+
+class QueryParam {
+    public enum Possibilities {
+        BYPRICE("price"),
+        BYOWNER("owner"),
+        BYDATE("timestamp");
+        private String string;
+
+       private Possibilities(String s) {
+            this.string = s;
+        }
+
+        public String getValue() {
+            return string;
+        }
+    }
+
+    public QueryParam() {
+    }
 }

@@ -16,9 +16,7 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         android:transitionName="@string/transition_appbar"
         android:isScrollContainer="false"
-
         >
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -45,21 +43,22 @@
                     android:focusableInTouchMode="true"
                     android:transitionName="@string/transition_group_image"
                     />
-                    <TextView
-                        android:id="@+id/tv_group_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GroupName05"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginRight="16dp"
-                        android:textStyle="bold"
-                        android:transitionName="@string/transition_text"
-                        android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/tv_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GroupName05"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:textStyle="bold"
+                    android:transitionName="@string/transition_text"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
+
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
@@ -67,6 +66,7 @@
             android:layout_height="match_parent" />
 
     </android.support.design.widget.AppBarLayout>
+
 
 
     <android.support.v4.view.ViewPager
