@@ -48,7 +48,7 @@ public class MyService extends IntentService {
             for (String s : list)
                 map.put(s, s);
             db.addChildEventListener(new ChildEventListener() {
-                String myId = Singleton.getInstance().getCurrentUser().getId();
+
 
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -57,55 +57,7 @@ public class MyService extends IntentService {
                     while (iterator.hasNext()) {
 
                         DataSnapshot tmp = iterator.next();
-                        switch (tmp.getKey()) {
-                            case "members":
-                                if (!tmp.child(myId).exists()) return;
-                                String tmp1 = tmp.child(myId).getValue().toString();
-                                boolean isNotified = tmp1.equals("notified");
-                                if (isNotified) break;
-                                buildNotification(dataSnapshot, 0);
-                                tmp.child(myId).getRef().setValue("notified");
-                                break;
-                            case "expenses":
-                                Iterator<DataSnapshot> iterator2 = tmp.getChildren().iterator();
-                                while (iterator2.hasNext()) {
-                                    DataSnapshot tmp2 = iterator2.next();
-                                    if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 1);
-                                    if (tmp2.child("members").getChildrenCount() == 1)
-                                        tmp2.getRef().removeValue();
-                                    else
-                                        tmp2.child("members").child(myId).getRef().removeValue();
-                                }
-
-                                break;
-                            case "chats":
-                                iterator2 = tmp.getChildren().iterator();
-                                while (iterator2.hasNext()) {
-                                    DataSnapshot tmp2 = iterator2.next();
-                                    if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 2);
-                                    if (tmp2.child("members").getChildrenCount() == 1)
-                                        tmp2.getRef().removeValue();
-                                    else
-                                        tmp2.child("members").child(myId).getRef().removeValue();
-                                }
-
-                                break;
-                            case "paymentNotification":
-                                iterator2 = tmp.getChildren().iterator();
-                                while (iterator2.hasNext()) {
-                                    DataSnapshot tmp2 = iterator2.next();
-                                    if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 3);
-                                    if (tmp2.child("members").getChildrenCount() == 1)
-                                        tmp2.getRef().removeValue();
-                                    else
-                                        tmp2.child("members").child(myId).getRef().removeValue();
-                                }
-                                break;
-
-                        }
+                        defineNotification(tmp);
 
 
                     }
@@ -142,6 +94,61 @@ public class MyService extends IntentService {
         } catch (Exception e) {
 
         }
+
+    }
+
+    private void defineNotification(DataSnapshot tmp) {
+        String myId = Singleton.getInstance().getCurrentUser().getId();
+        switch (tmp.getKey()) {
+            case "members":
+                if (!tmp.child(myId).exists()) return;
+                String tmp1 = tmp.child(myId).getValue().toString();
+                boolean isNotified = tmp1.equals("notified");
+                if (isNotified) break;
+                buildNotification(tmp, 0);
+                tmp.child(myId).getRef().setValue("notified");
+                break;
+            case "expenses":
+                Iterator<DataSnapshot> iterator2 = tmp.getChildren().iterator();
+                while (iterator2.hasNext()) {
+                    DataSnapshot tmp2 = iterator2.next();
+                    if (!tmp2.child("members").child(myId).exists()) continue;
+                    buildNotification(tmp2, 1);
+                    if (tmp2.child("members").getChildrenCount() == 1)
+                        tmp2.getRef().removeValue();
+                    else
+                        tmp2.child("members").child(myId).getRef().removeValue();
+                }
+
+                break;
+            case "chats":
+                iterator2 = tmp.getChildren().iterator();
+                while (iterator2.hasNext()) {
+                    DataSnapshot tmp2 = iterator2.next();
+                    if (!tmp2.child("members").child(myId).exists()) continue;
+                    buildNotification(tmp2, 2);
+                    if (tmp2.child("members").getChildrenCount() == 1)
+                        tmp2.getRef().removeValue();
+                    else
+                        tmp2.child("members").child(myId).getRef().removeValue();
+                }
+
+                break;
+            case "paymentNotification":
+                iterator2 = tmp.getChildren().iterator();
+                while (iterator2.hasNext()) {
+                    DataSnapshot tmp2 = iterator2.next();
+                    if (!tmp2.child("members").child(myId).exists()) continue;
+                    buildNotification(tmp2, 3);
+                    if (tmp2.child("members").getChildrenCount() == 1)
+                        tmp2.getRef().removeValue();
+                    else
+                        tmp2.child("members").child(myId).getRef().removeValue();
+                }
+                break;
+
+        }
+
 
     }
 
