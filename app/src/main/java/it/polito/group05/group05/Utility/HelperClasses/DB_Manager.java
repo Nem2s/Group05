@@ -407,6 +407,14 @@ public class DB_Manager {
                 });
     }
 
+    public void historyPush(String groupID)
+    {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + groupID).push();
+        Map<String, Object> historystruct  =  new HashMap<String, Object>();
+        //historystruct.put("what", )
+
+    }
+
     public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
