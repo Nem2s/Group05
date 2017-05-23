@@ -138,10 +138,15 @@ exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eI
         body: 'Debit: '+ expense.members[uid],
 		sound: 'default',
 		badge: '1',
-		collapse_key : 'newExpense'
+		collapse_key : 'newExpense',
+		icon:'idea.png'
+		
+		
       },
 	  data: { 
-		  groupId:gid
+		  groupId:gid,
+		  expenseId:expense.id
+		  
 		  
 	  }
     };
@@ -160,7 +165,7 @@ exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eI
 
 
 
-
+/*
 exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').onWrite(event => {
   
   const gid = event.params.gId;
@@ -172,7 +177,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
   }
   
   const message_content = event.data.val();
-  /*
+ */ /*
   if(event.previous.val()){
 	  return;
   }
@@ -182,6 +187,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
   // Get the list of device notification tokens.
   
   //var obj = Object.values(expense);
+  /*
   console.log(uid,'       ', gid,'     ', eid);
   
   
@@ -221,7 +227,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
 	  var promise = new Array();
 	  tokens.forEach(function(t){
 		  promise.push(admin.database().ref('/users/'+t+'/fcmToken').once('value'));
-	  }
+	  });
 	  return Promise.all([promise]).then(results => {
 		 const token;
 		 results.forEach(function(f){
@@ -241,3 +247,4 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
     });
   });
 });
+*/

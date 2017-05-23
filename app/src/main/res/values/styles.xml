@@ -80,10 +80,12 @@
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/red_400</item>
     </style>
+
     <style name="GreenButton" parent="Theme.AppCompat.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/green_400</item>
     </style>
+
     <style name="BlueButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/blue_400</item>
@@ -164,7 +166,6 @@
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
     </style>
-
 
 
 </resources>

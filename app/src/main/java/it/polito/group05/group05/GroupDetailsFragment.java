@@ -3,7 +3,6 @@ package it.polito.group05.group05;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -122,6 +119,7 @@ public class GroupDetailsFragment extends Fragment {
         final List<UserDatabase> userlist = new ArrayList<>();
         for(Object u : Singleton.getInstance().getmCurrentGroup().getMembers().values())
         {
+            if (!(u instanceof UserDatabase)) continue;
             UserDatabase tmp = (UserDatabase) u;
             if (tmp.getId().equals(Singleton.getInstance().getCurrentUser().getId())) continue;
             userlist.add(tmp);

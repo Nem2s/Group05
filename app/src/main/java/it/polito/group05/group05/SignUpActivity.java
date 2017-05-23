@@ -68,7 +68,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Subscribe
     public void currentUserReady(CurrentUserReadyEvent event) {
-        startActivity(new Intent(this, MainActivity.class));
+        String gid = (String) getIntent().getStringExtra("groupId");
+        String eid = (String) getIntent().getStringExtra("expenseId");
+        Intent i = new Intent(this, MainActivity.class);
+        //if(gid!=null) {
+        i.putExtra("groupId", gid);
+        i.putExtra("expenseId", eid);
+        //}
+        startActivity(i);
         finish();
     }
 
@@ -89,6 +96,8 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         Singleton.getInstance().setCurrContext(this);

@@ -1,6 +1,5 @@
 package it.polito.group05.group05.Utility.Holder;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.FileNotFoundException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -119,11 +116,10 @@ public class ExpenseHolder extends GeneralHolder{
         setupRecyclerViewExpense(rv, expenseDatabase,context);
 
 
-
     }
 
 
-private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context){
+    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context) {
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

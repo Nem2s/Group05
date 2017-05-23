@@ -36,10 +36,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mvc.imagepicker.ImagePicker;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.UUID;
 
@@ -47,6 +53,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.Event.ReadyEvent;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
@@ -91,10 +98,19 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Subscribe
+    public void groupStart(ReadyEvent cu) {
+        Intent i = new Intent(context, Group_Activity.class);
+        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
+        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        context.startActivity(i);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -103,8 +119,8 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-
-        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(FirebaseInstanceId.getInstance().getToken());
+        String tkn = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(tkn);
 
 
         setContentView(R.layout.activity_main);
@@ -119,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         activity = this;
-        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(FirebaseInstanceId.getInstance().getToken());
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
         context = this;
@@ -213,9 +229,38 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
+        String groupId = getIntent().getStringExtra("groupId");
+        if (groupId != null) {
+
+            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) return;
+                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
+                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
+                    Singleton.getInstance().setmCurrentGroup(g);
+                    Singleton.getInstance().setIdCurrentGroup(g.getId());
+                    EventBus.getDefault().post(new ReadyEvent());
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
