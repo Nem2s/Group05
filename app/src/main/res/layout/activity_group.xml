@@ -7,30 +7,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="it.polito.group05.group05.GroupActivity">
-<android.support.design.widget.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <io.codetail.widget.RevealFrameLayout
-        android:id="@+id/reveal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        android:elevation="4dp"
-        >
 
-    </android.support.v7.widget.Toolbar>
-    </io.codetail.widget.RevealFrameLayout>
-</android.support.design.widget.AppBarLayout>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
+        <io.codetail.widget.RevealFrameLayout
+            android:id="@+id/reveal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            ></FrameLayout>
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                android:elevation="4dp">
+
+            </android.support.v7.widget.Toolbar>
+        </io.codetail.widget.RevealFrameLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
     <com.roughike.bottombar.BottomBar
         android:id="@+id/navigation"
         android:layout_width="match_parent"
@@ -52,6 +53,5 @@
         android:layout_alignParentEnd="true"
         android:transitionName="@string/transition_fab"
         app:srcCompat="@drawable/ic_action_add_black"
-        app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior"
-        />
+        app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior" />
 </android.support.design.widget.CoordinatorLayout>

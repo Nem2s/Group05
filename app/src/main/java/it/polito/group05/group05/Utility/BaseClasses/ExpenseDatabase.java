@@ -61,9 +61,11 @@ public class ExpenseDatabase implements Namable{
         this.file = file;
     }
     public String getFile(){return file;}
+
     public long getTimestamp() {
         return timestamp;
     }
+
     public void setTimestamp(long timestamp) {
         this.timestamp = (timestamp);
     }

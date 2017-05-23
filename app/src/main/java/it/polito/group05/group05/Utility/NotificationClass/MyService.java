@@ -71,7 +71,7 @@ public class MyService extends IntentService {
                                 while (iterator2.hasNext()) {
                                     DataSnapshot tmp2 = iterator2.next();
                                     if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 2);
+                                    buildNotification(tmp2, 1);
                                     if (tmp2.child("members").getChildrenCount() == 1)
                                         tmp2.getRef().removeValue();
                                     else
@@ -84,7 +84,7 @@ public class MyService extends IntentService {
                                 while (iterator2.hasNext()) {
                                     DataSnapshot tmp2 = iterator2.next();
                                     if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 3);
+                                    buildNotification(tmp2, 2);
                                     if (tmp2.child("members").getChildrenCount() == 1)
                                         tmp2.getRef().removeValue();
                                     else
@@ -97,7 +97,7 @@ public class MyService extends IntentService {
                                 while (iterator2.hasNext()) {
                                     DataSnapshot tmp2 = iterator2.next();
                                     if (!tmp2.child("members").child(myId).exists()) continue;
-                                    buildNotification(tmp2, 4);
+                                    buildNotification(tmp2, 3);
                                     if (tmp2.child("members").getChildrenCount() == 1)
                                         tmp2.getRef().removeValue();
                                     else

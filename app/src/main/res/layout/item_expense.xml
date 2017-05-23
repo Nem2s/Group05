@@ -125,6 +125,7 @@
                     android:layout_toLeftOf="@+id/calendar"
                     android:text="ciao"
                     android:textSize="13sp" />
+
                 <ImageView
                     android:id="@+id/calendar"
                     android:layout_width="20dp"

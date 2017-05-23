@@ -31,11 +31,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,17 +168,18 @@ public class DB_Manager {
         });
     }*/
 
-    public void checkContacts(){
+    public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
-        for(String number : lmap.keySet()) {
+        for (String number : lmap.keySet()) {
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String userid = dataSnapshot.getValue(String.class);
-                    if(userid == null) return;
+                    if (userid == null) return;
                     userRef.child(userid).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) return;
                             UserDatabase user = dataSnapshot.getValue(UserDatabase.class);
                             Singleton.getInstance().addRegContact(user);
                         }
@@ -199,8 +198,6 @@ public class DB_Manager {
             });
         }
     }
-
-
 
 
     public void retriveExpenses() {
@@ -230,10 +227,10 @@ public class DB_Manager {
                     continue;
                 long t = 0;
                 //try {
-                t= e.getTimestamp();
-                   // t = format.parse(e.getTimestamp()).getTime();
+                t = e.getTimestamp();
+                // t = format.parse(e.getTimestamp()).getTime();
                 //} catch (ParseException e1) {
-                 //   e1.printStackTrace();
+                //   e1.printStackTrace();
                 //}
                 Calendar today = Calendar.getInstance();
                 Calendar sixMonthsAhead = Calendar.getInstance();
