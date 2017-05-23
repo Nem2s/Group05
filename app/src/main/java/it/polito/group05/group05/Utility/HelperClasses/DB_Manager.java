@@ -38,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,11 +232,12 @@ public class DB_Manager {
                 if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
                     continue;
                 long t = 0;
-                try {
-                    t = format.parse(e.getTimestamp()).getTime();
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }
+                //try {
+                t= e.getTimestamp();
+                   // t = format.parse(e.getTimestamp()).getTime();
+                //} catch (ParseException e1) {
+                 //   e1.printStackTrace();
+                //}
                 Calendar today = Calendar.getInstance();
                 Calendar sixMonthsAhead = Calendar.getInstance();
                 sixMonthsAhead.add(Calendar.MONTH, 6);

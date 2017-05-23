@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,10 +73,16 @@ public class ExpenseHolder extends GeneralHolder{
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-        Date date = new Date(System.currentTimeMillis());
-        final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
+
+        Date date = new Date(expenseDatabase.getTimestamp());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        this.timestamp.setText(sdf.format(date));
+
+        /* final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
         final String[] invert = ts[0].split("-");
         this.timestamp.setText(invert[2] + "/" + invert[1] + "/" + invert[0]);
+       */
+
         String id = Singleton.getInstance().getCurrentUser().getId();
         //this.timestamp.setText(ts[0]);
         for (String i : expenseDatabase.getMembers().keySet()){

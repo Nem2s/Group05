@@ -44,9 +44,12 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -87,11 +90,10 @@ public class Expense_activity extends AppCompatActivity {
     ////////////////////////////////////////
     private ExpenseDatabase expense;
     private Double expense_price, totalPriceActual;
-    private TYPE_EXPENSE expense_type;
     private String expense_name;
+    private long timestamp;
     private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
-    //private Map<String, User_expense> list = new TreeMap<>();
     private Uri uri;
     private boolean newFile = false;
     private String nameFILE= null;
@@ -117,6 +119,7 @@ public class Expense_activity extends AppCompatActivity {
         expense_price = 0.0;
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
+        timestamp = 0;
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
@@ -131,7 +134,6 @@ public class Expense_activity extends AppCompatActivity {
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-        expense_type=TYPE_EXPENSE.MANDATORY;
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
         calendar1= (ImageView) findViewById(R.id.calendar);
@@ -147,7 +149,6 @@ public class Expense_activity extends AppCompatActivity {
             User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
             ue.setExpense(expense);
             partecipants.add(ue);
-           // list.put(ue.getId(),ue);
         }
         memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
         LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -156,7 +157,7 @@ public class Expense_activity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
-
+/*
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat();
@@ -165,7 +166,10 @@ public class Expense_activity extends AppCompatActivity {
         sdf2.applyPattern("HH:mm ");
         final String dataFormat = sdf.format(now.getTime());
         final String timeFormat = sdf2.format(now.getTime());
-
+*/
+        Calendar calendar= Calendar.getInstance();
+        java.util.Date now = calendar.getTime();
+        timestamp = now.getTime();
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -175,6 +179,10 @@ public class Expense_activity extends AppCompatActivity {
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
+                   /* FirebaseDatabase.getInstance().getReference("notifications")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                            .child("expenses").child(expense.getId()).setValue(expense);
+                    */
                     fdb = FirebaseDatabase.getInstance()
                             .getReference("expenses")
                             .child(Singleton.getInstance().getmCurrentGroup().getId())
@@ -209,11 +217,22 @@ public class Expense_activity extends AppCompatActivity {
 
                         }
                         if(clicked_calendar){
-                            tmsp = data + " " + timeFormat;
-                            expense.setTimestamp(tmsp);
+
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            Date date = null;
+                            try {
+                                date = dateFormat.parse(data);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long timeLong = date.getTime();
+                            //tmsp = data + " " + timeFormat;
+                            //expense.setTimestamp(tmsp);
+                            expense.setTimestamp(timeLong);
                             clicked_calendar= false;
                         }else {
-                            expense.setTimestamp(dataFormat);
+                          //  expense.setTimestamp(dataFormat);
+                                expense.setTimestamp(timestamp);
                         }
 
                         if(totalPriceActual>=-0.001 || totalPriceActual <=0.001){
@@ -277,17 +296,17 @@ public class Expense_activity extends AppCompatActivity {
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 if(month < 10){
                                     String mese = "0"+month;
-                                    data = year + "-" + mese + "-" + dayOfMonth;
+                                    //data = year + "-" + mese + "-" + dayOfMonth;
+                                    data = dayOfMonth + "/" + mese + "/" + year;
                                     nomedata.setText( dayOfMonth + "/" + mese + "/" + year);
                                 }else{
-                                    data = year + "-" + month + "-" + dayOfMonth;
+                                    data = dayOfMonth + "/" + month + "/" + year;
+                                    //data = year + "-" + month + "-" + dayOfMonth;
                                     nomedata.setText(dayOfMonth + "/" + month + "/" + year);
                                 }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
-
-
             }
         });
 
