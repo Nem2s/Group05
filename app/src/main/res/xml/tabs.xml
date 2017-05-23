@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <tab
+        id="@+id/navigation_expenses"
+        icon="@drawable/ic_receipt_black_24dp"
+        title="Expenses"
+        barColorWhenSelected ="@color/expenseTabColor"
+        />
+    <tab
+        id="@+id/navigation_chat"
+        icon="@drawable/ic_chat_black_24dp"
+        title="Chat"
+        barColorWhenSelected ="@color/colorPrimaryLight"
+
+        />
+   <tab
+       id="@+id/navigation_history"
+       icon="@drawable/ic_receipt_black_24dp"
+       title="History"
+       barColorWhenSelected ="@color/historyTabColor"
+
+       />
+</tabs>
