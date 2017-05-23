@@ -2,35 +2,81 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by antonino on 04/04/2017.
  */
 
-public class User_expense extends User {
-    Group group;
-    Expense expense;
+public class User_expense extends UserDatabase {
+    GroupDatabase group;
+    ExpenseDatabase expense;
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
+    boolean isSelected;
+    private double customValue;
 
 
-    public static List<User> createListUserExpense(Group g,Expense e){
-        List<User> user_expenses = new ArrayList<>();
-        List<User> u = g.getMembers();
-        for(User i : u){
-            User_expense x = new User_expense(g,e,e.getType(),i.getId());
-            x.setProfile_image(i.getProfile_image());
-         //   User_expense x = new User_expense();
-            x.setId(i.getId());
-            x.setUser_name(i.getUser_name());
-            user_expenses.add(x);
+    public User_expense(UserDatabase userDatabase){
+        super();
+        this.name = userDatabase.getName();
+        this.id = userDatabase.getId();
+        this.authKey = userDatabase.getAuthKey();
+        this.telNumber = userDatabase.getTelNumber();
+        this.email = userDatabase.getEmail();
+        this.iProfile = userDatabase.getiProfile();
+        this.balance = userDatabase.getBalance();
+        this.customValue = 0.0;
+        isSelected = false;
+    }
+
+
+    public boolean hasCustomValue() {
+             return customValue > 0;
+    }
+
+    public double getCustomValue() {
+               return customValue;
+    }
+
+    public User_expense setCustomValue(double customValue) {
+                this.customValue = customValue;
+        return this;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public User_expense setSelected(boolean selected) {
+        isSelected = selected;
+        return this;
+    }
+
+
+    public User_expense setCustomValue(Double customValue) {
+        this.customValue = customValue;
+        return this;
+    }
+
+    public static List<UserDatabase> createListUserExpense(GroupDatabase g,Expense e){
+        List<UserDatabase> user_expenses = new ArrayList<>();
+        Map<String,Object> u = g.getMembers();
+        for(Object i1 : u.values()){
+            if(!(i1 instanceof UserDatabase)) continue;
+            UserDatabase i = (UserDatabase)i1;
+           // User_expense x = new User_expense(g,e,e.isMandatory(),i.getId());
+        //    x.setiProfile(i.getiProfile());
+            //   x.setId(i.getId());
+           // x.setName(i.getName());
+           // user_expenses.add(x);
         }
         return user_expenses;
     }
-    public static void createListUserExpense(List<User> users,Expense e){
+    public static void createListUserExpense(List<UserDatabase> users,Expense e){
         List<User_expense> user_expenses = new ArrayList<>();
     }
-
+/*
     public TYPE_EXPENSE getTypeExpense() {
         return typeExpense;
     }
@@ -39,41 +85,39 @@ public class User_expense extends User {
         this.typeExpense = typeExpense;
     }
 
-    public User_expense(){
-        super();
-    }
+*/
 
-    public User_expense(Group p,Expense s,TYPE_EXPENSE t, String user){
+    public User_expense(GroupDatabase p,Expense s,boolean isMandatory, String user){
         this.group=p;
         this.expense=s;
-        this.typeExpense=t;
-        int i = user.compareTo(s.getOwner().getId());
-        if(t==TYPE_EXPENSE.MANDATORY && i!=0) {
+        this.typeExpense=(isMandatory)?TYPE_EXPENSE.MANDATORY:TYPE_EXPENSE.NOTMANDATORY;
+        int i = user.compareTo(s.getOwner());
+        if(isMandatory && i!=0) {
             debt -= s.getPrice();
             debt/=(float)p.getMembers().size();
         }
-        else if(t==TYPE_EXPENSE.MANDATORY && i==0) debt = s.getPrice()-(s.getPrice()/(float)p.getMembers().size());
-        else if (t==TYPE_EXPENSE.NOTMANDATORY) debt = 0.0;
+        else if(isMandatory&& i==0) debt = s.getPrice()-(s.getPrice()/(float)p.getMembers().size());
+        else if (!isMandatory) debt = 0.0;
     }
 
-    public Group getGroup() {
+    public GroupDatabase getGroup() {
         return group;
     }
 
-    public void setGroup(Group p) {
+    public void setGroup(GroupDatabase p) {
         this.group = p;
     }
 
-    public Expense getExpense() {
+    public ExpenseDatabase getExpense() {
         return expense;
     }
 
-    public void setExpense(Expense s) {
+    public void setExpense(ExpenseDatabase s) {
         this.expense = s;
     }
 
     public Double getDebt() {
-        return debt;
+        return customValue;
     }
 
     public void setDebt(Double debt) {

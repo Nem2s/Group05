@@ -15,10 +15,70 @@
       },
       "oauth_client": [
         {
+          "client_id": "661335874124-vm6v927d42pf3biep255da4jreir9lk7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.polito.group05.group05",
+            "certificate_hash": "aa358bc81b5a5d379c693ff550c9125cb437b420"
+          }
+        },
+        {
+          "client_id": "661335874124-cvr5g74rjqucusem3o3kcq61fsqnr2lj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.polito.group05.group05",
+            "certificate_hash": "e3eb9a793eb8fd3d00e398d8d7cbac0378f60db6"
+          }
+        },
+        {
           "client_id": "661335874124-nvlpptt6ej04mcaq3p3ht7ul0t1l7797.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "it.polito.group05.group05",
+            "certificate_hash": "47f27961faef3ff8d5e05125d746ec31a29582c6"
+          }
+        },
+        {
+          "client_id": "661335874124-ujgnjt2n30htipa73l6bemmpcdeebfs2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCkxc6YmCEEG7u4fxbZ89iri9y0RbBUHw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661335874124-ujgnjt2n30htipa73l6bemmpcdeebfs2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661335874124:android:20f06f6c6c484e3f",
+        "android_client_info": {
+          "package_name": "com.example.andre.firebaseadaptertest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661335874124-cokher8r6aho19mjmduguo9o1ct5qnum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.andre.firebaseadaptertest",
             "certificate_hash": "47f27961faef3ff8d5e05125d746ec31a29582c6"
           }
         },

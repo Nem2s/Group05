@@ -17,6 +17,7 @@
         android:textSize="17sp"
         android:text="GroupName05"
         android:textStyle="bold"
+        android:fitsSystemWindows="true"
         android:layout_margin="10dp"
         android:layout_marginLeft="100dp"
         android:layout_weight="0.7"
