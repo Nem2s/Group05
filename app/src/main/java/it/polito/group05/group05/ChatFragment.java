@@ -71,8 +71,10 @@ public class ChatFragment extends Fragment {
         rec= (RecyclerView) rootView.findViewById(R.id.rec);
         rec.setHasFixedSize(false);
         ll =  new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,true);
-        rec.setLayoutManager(ll);
+        ll.setReverseLayout(true);
         ll.setStackFromEnd(true);
+        rec.setLayoutManager(ll);
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chats")
                                 .child(Singleton.getInstance().getIdCurrentGroup());
         adapter = new FirebaseRecyclerAdapter<ChatDatabase, ChatHolder>(ChatDatabase.class, R.layout.message,
@@ -83,6 +85,17 @@ public class ChatFragment extends Fragment {
                 if(model==null) return;
                 viewHolder.setData(model,getContext());
             }
+
+            @Override
+            public int getItemCount() {
+                return super.getItemCount();
+            }
+
+            @Override
+            public ChatDatabase getItem(int position) {
+                return super.getItem(getItemCount() - (position + 1));
+            }
+
             @Override
             public int getItemViewType(int position) {
                 if(getItem(position).getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
