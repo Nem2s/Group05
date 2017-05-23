@@ -53,24 +53,28 @@ public class MyService extends IntentService {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     if (!dataSnapshot.exists()) return;
+                    if (dataSnapshot.child("members").child(Singleton.getInstance().getCurrentUser().getId()).exists())
+                        if (dataSnapshot.child("members").child(Singleton.getInstance().getCurrentUser().getId()).getValue().toString().equals("notNotify"))
+                            return;
                     Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                     while (iterator.hasNext()) {
-
                         DataSnapshot tmp = iterator.next();
                         defineNotification(tmp);
-
-
                     }
-
-
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                     if (!dataSnapshot.exists()) return;
-
-                    //     buildNotification(dataSnapshot,1);
+                    if (dataSnapshot.child("members").child(Singleton.getInstance().getCurrentUser().getId()).exists())
+                        if (dataSnapshot.child("members").child(Singleton.getInstance().getCurrentUser().getId()).getValue().toString().equals("notNotify"))
+                            return;
+                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                    while (iterator.hasNext()) {
+                        DataSnapshot tmp = iterator.next();
+                        defineNotification(tmp);
+                    }
 
                 }
 
@@ -103,7 +107,7 @@ public class MyService extends IntentService {
             case "members":
                 if (!tmp.child(myId).exists()) return;
                 String tmp1 = tmp.child(myId).getValue().toString();
-                boolean isNotified = tmp1.equals("notified");
+                boolean isNotified = tmp1.equals("notified") | tmp1.equals("notNotify");
                 if (isNotified) break;
                 buildNotification(tmp, 0);
                 tmp.child(myId).getRef().setValue("notified");
@@ -170,11 +174,18 @@ public class MyService extends IntentService {
                 .addAction(R.drawable.ic_mail_white_24dp, "Pay", null)
                 .addAction(R.drawable.ic_mail_white_24dp, "Another Pay", null);
         String s = "default";
-        if (type == 0)
-            s = "new group";
-        else if (type == 1)
-            s = "new expense";
+        switch (type) {
+            case 0:
+                s = "new Group";
+                break;
+            case 1:
+                s = "new Expense";
+                break;
+            case 2:
+                s = "new Message";
+                break;
 
+        }
         nb.setContentText(s).setContentTitle(s).setTicker(s);
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(type, nb.build());
 
