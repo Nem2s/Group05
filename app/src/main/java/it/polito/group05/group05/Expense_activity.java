@@ -256,7 +256,7 @@ public class Expense_activity extends AppCompatActivity {
                 expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                 expense_price = Double.parseDouble(s.toString().replace(',', '.'));
                 memberAdapter.changeTotal(expense_price);
-                memberAdapter.notifyDataSetChanged();
+             //   memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -304,16 +304,22 @@ public class Expense_activity extends AppCompatActivity {
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if(recyclerView.getVisibility() == View.GONE){
-                  recyclerView.setVisibility(View.VISIBLE);
-                  rel_file.setVisibility(View.VISIBLE);
-                  plus.setImageResource(R.drawable.ic_expand_less);
-              }else {
-                  recyclerView.setVisibility(View.GONE);
-                  rel_file.setVisibility(View.GONE);
-                  plus.setImageResource(R.drawable.ic_expand_more);
-                  }
-            }
+
+                if(et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0){
+                    Snackbar.make(v,"Set a Valid price",Snackbar.LENGTH_SHORT).show();
+                }
+                else{
+                      if(recyclerView.getVisibility() == View.GONE){
+                          recyclerView.setVisibility(View.VISIBLE);
+                          rel_file.setVisibility(View.VISIBLE);
+                          plus.setImageResource(R.drawable.ic_expand_less);
+                      }else {
+                          recyclerView.setVisibility(View.GONE);
+                          rel_file.setVisibility(View.GONE);
+                          plus.setImageResource(R.drawable.ic_expand_more);
+                          }
+                        }
+                    }
         });
 
 

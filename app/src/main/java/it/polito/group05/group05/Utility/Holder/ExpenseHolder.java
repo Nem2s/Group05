@@ -74,25 +74,10 @@ public class ExpenseHolder extends GeneralHolder{
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
         Date date = new Date(System.currentTimeMillis());
         final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
-     //   String s =expenseDatabase.getOwner();
-    //    String s1=((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s)).getName();
-    //    description.setText("Posted by "+s1+" on "+ ((expenseDatabase.getTimestamp()!=null)?expenseDatabase.getTimestamp(): timestamp));
-        //description.setText(expenseDatabase.getDescription());
- /*   if(expenseDatabase.getFile()!= null) {
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    DB_Manager.getInstance().setContext(context).fileDownload(expenseDatabase.getId(), expenseDatabase.getFile());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }*/
-
+        final String[] invert = ts[0].split("-");
+        this.timestamp.setText(invert[2] + "/" + invert[1] + "/" + invert[0]);
         String id = Singleton.getInstance().getCurrentUser().getId();
-        this.timestamp.setText(ts[0]);
+        //this.timestamp.setText(ts[0]);
         for (String i : expenseDatabase.getMembers().keySet()){
             /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
