@@ -21,8 +21,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -73,7 +75,7 @@ public class Expense_activity extends AppCompatActivity {
     private ImageView image_network;
     private CardView card_recycler;
     private ImageView plus, calendar1;
-    private TextView nomeFile, nomedata;
+    private TextView nomeFile, nomedata, more;
     private String data = null;
     private String time = null;
     private String tmsp = null;
@@ -122,7 +124,10 @@ public class Expense_activity extends AppCompatActivity {
         image_network = (ImageView) findViewById(R.id.image_network);
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        et_name.setSingleLine();
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
+        et_cost.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        et_cost.setSingleLine();
         nomedata = (TextView) findViewById(R.id.name_date);
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
@@ -131,6 +136,7 @@ public class Expense_activity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
         calendar1 = (ImageView) findViewById(R.id.calendar);
         plus = (ImageView) findViewById(R.id.plus);
+        more = (TextView) findViewById(R.id.more);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -150,16 +156,7 @@ public class Expense_activity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 lin_members.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
-/*
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date now = calendar.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy-MM-dd HH:mm ");
-        SimpleDateFormat sdf2 = new SimpleDateFormat();
-        sdf2.applyPattern("HH:mm ");
-        final String dataFormat = sdf.format(now.getTime());
-        final String timeFormat = sdf2.format(now.getTime());
-*/
+
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
@@ -320,10 +317,12 @@ public class Expense_activity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE);
                         rel_file.setVisibility(View.VISIBLE);
                         plus.setImageResource(R.drawable.ic_expand_less);
+                        more.setText("Less");
                     } else {
                         recyclerView.setVisibility(View.GONE);
                         rel_file.setVisibility(View.GONE);
                         plus.setImageResource(R.drawable.ic_expand_more);
+                        more.setText("More");
                     }
                 }
             }

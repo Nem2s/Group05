@@ -283,7 +283,6 @@ private void setupListener(CardView cv, final TextView price, final Context cont
             File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(f), "*/*");
-           // intent.setData(Uri.fromFile(f));
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             context.startActivity(intent);
         }
