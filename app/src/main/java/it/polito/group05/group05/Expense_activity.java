@@ -172,10 +172,6 @@ public class Expense_activity extends AppCompatActivity {
                 }
                 else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
-                   /* FirebaseDatabase.getInstance().getReference("notifications")
-                            .child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .child("expenses").child(expense.getId()).setValue(expense);
-                    */
                     fdb = FirebaseDatabase.getInstance()
                             .getReference("expenses")
                             .child(Singleton.getInstance().getmCurrentGroup().getId())
@@ -191,26 +187,26 @@ public class Expense_activity extends AppCompatActivity {
                     double price;
                     double toSubtractOwner = 0.0;
                     for (int i = 0; i < partecipants.size(); i++) {
-                        if (partecipants.get(i).getId() != expense.getOwner()) {
+                        if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
                             toSubtractOwner += partecipants.get(i).getCustomValue();
                         }
                         }
                     totalPriceActual = 0.0;
                     for (int i = 0; i < partecipants.size(); i++) {
                         price = partecipants.get(i).getCustomValue();
-                        //totalPriceActual += partecipants.get(i).getCustomValue();
+                        totalPriceActual += partecipants.get(i).getCustomValue();
                         String id = partecipants.get(i).getId();
-                        if (partecipants.get(i).getId() == expense.getOwner()) {
-                            expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
+                        if (partecipants.get(i).getId().equals(expense.getOwner())) {
+                            expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                          // expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
                         } else {
                             expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                         }
                         DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-                        totalPriceActual += expense.getMembers().get(id);
+                 //       totalPriceActual += expense.getMembers().get(id);
 
                         }
                     if (clicked_calendar) {
-
                         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                         Date date = null;
                         try {
@@ -219,23 +215,22 @@ public class Expense_activity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         long timeLong = date.getTime();
-                        //tmsp = data + " " + timeFormat;
-                        //expense.setTimestamp(tmsp);
                         expense.setTimestamp(timeLong);
                         clicked_calendar = false;
                     } else {
-                        //  expense.setTimestamp(dataFormat);
                         expense.setTimestamp(timestamp);
                         }
+                        
+                if((totalPriceActual-expense.getPrice()) > 0.001 || (totalPriceActual -expense.getPrice()) < -0.001){
+                    Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                    memberAdapter.changeTotal(expense.getPrice());
+                }
+                else {
+                    FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
+                    fdb.setValue(expense);
+                    finish();
+                }
 
-                    if (totalPriceActual >= -0.001 || totalPriceActual <= 0.001) {
-                        FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
-                        fdb.setValue(expense);
-                        finish();
-                    } else {
-                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                        memberAdapter.changeTotal(expense.getPrice());
-                    }
                 }
                 }
         });
@@ -268,7 +263,7 @@ public class Expense_activity extends AppCompatActivity {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
                     memberAdapter.changeTotal(expense_price);
-                    //   memberAdapter.notifyDataSetChanged();
+                    memberAdapter.notifyDataSetChanged();
                 }
             }
         });
