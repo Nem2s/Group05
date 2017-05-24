@@ -17,7 +17,9 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -45,13 +47,17 @@ public class ExpenseHolder extends GeneralHolder{
     ImageView expense_image;
     TextView name;
     TextView price;
-    TextView owner, timestamp;
+    TextView owner, timestamp, name_File;
     RecyclerView rv;
+    RelativeLayout rel;
     TextView description;
+    ImageView clip;
     CardView cv;
     Query ref;
     TextView menu;
     ImageView calendar;
+    boolean filePresent;
+    String nomeF;
 
 
     public ExpenseHolder(View itemView) {
@@ -65,6 +71,11 @@ public class ExpenseHolder extends GeneralHolder{
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
         this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
+        this.rel = (RelativeLayout) itemView.findViewById(R.id.rel_file);
+        this.rel.setVisibility(View.GONE);
+        this.name_File = (TextView) itemView.findViewById(R.id.name_File);
+        this.clip = (ImageView) itemView.findViewById(R.id.clip);
+        filePresent = false;
     }
 
     public void setData(Object c, final Context context){
@@ -73,18 +84,10 @@ public class ExpenseHolder extends GeneralHolder{
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-
         Date date = new Date(expenseDatabase.getTimestamp());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         this.timestamp.setText(sdf.format(date));
-
-        /* final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
-        final String[] invert = ts[0].split("-");
-        this.timestamp.setText(invert[2] + "/" + invert[1] + "/" + invert[0]);
-       */
-
         String id = Singleton.getInstance().getCurrentUser().getId();
-        //this.timestamp.setText(ts[0]);
         for (String i : expenseDatabase.getMembers().keySet()){
             /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
@@ -103,10 +106,12 @@ public class ExpenseHolder extends GeneralHolder{
             }
             expenseDatabase.getUsersExpense().add(x);
         }
+     /*   if(expenseDatabase.getFile() != null){
+            filePresent = true;
+            nomeF = expenseDatabase.getFile();
+        }
+*/
 
-        //  if(!(expenseDatabase.isMandatory())) {
-        //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        //  }
         setupListener(cv, price, context, expenseDatabase);
         setupRecyclerViewExpense(rv, expenseDatabase,context);
 
@@ -151,28 +156,25 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     MenuItem subscribe= popupMenu.findItem(R.id.action_subscribe);
     MenuItem delete= popupMenu.findItem(R.id.action_delete);
         MenuItem download = popupMenu.findItem(R.id.file_download);
+        subscribe.setVisible(false);
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
-        cnt++;
+
     } else {
         delete.setVisible(true);
     }
-
         if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
         pay.setVisible(false);
-        cnt++;
         } else {
             pay.setVisible(true);
         }
 
-        if (expense.getFile().length() == 0) {
+        if (expense.getFile() == null) {
         download.setVisible(false);
-        cnt++;
         } else {
             download.setVisible(true);
     }
 
-        if (cnt < 4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -251,6 +253,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     });
     }
     catch(Exception c ){
+        Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
     }
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -258,9 +261,16 @@ private void setupListener(CardView cv, final TextView price, final Context cont
 
             if (rv.getVisibility() == View.GONE) {
                 rv.setVisibility(View.VISIBLE);
+         //
+                if(expense.getFile() != null) {
+                    rel.setVisibility(View.VISIBLE);
+                    name_File.setText(expense.getFile());
+                    //     }
+                }
             }
             else {
                 rv.setVisibility(View.GONE);
+                rel.setVisibility(View.GONE);
             }
         }
     });

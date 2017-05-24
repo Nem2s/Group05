@@ -180,6 +180,7 @@ public class Expense_activity extends AppCompatActivity {
                             .child("lmTime");
                     expense.setId(fdb.getKey());
                     expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+
                     if (nameFILE != null) {
                         expense.setFile(nameFILE);
                         upLoadFile(uri);
@@ -284,12 +285,10 @@ public class Expense_activity extends AppCompatActivity {
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 if (month < 10) {
                                     String mese = "0" + month;
-                                    //data = year + "-" + mese + "-" + dayOfMonth;
                                     data = dayOfMonth + "/" + mese + "/" + year;
                                     nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month + "/" + year;
-                                    //data = year + "-" + month + "-" + dayOfMonth;
                                     nomedata.setText(dayOfMonth + "/" + month + "/" + year);
                                 }
                             }
@@ -302,10 +301,12 @@ public class Expense_activity extends AppCompatActivity {
         cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
+                if(!newFile){
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
                 startActivityForResult(intent,0);
+                }
             }
         });
         plus.setOnClickListener(new View.OnClickListener() {

@@ -74,7 +74,35 @@
             android:id="@+id/expense_rv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"></android.support.v7.widget.RecyclerView>
+            android:orientation="horizontal">
+
+        </android.support.v7.widget.RecyclerView>
+        <RelativeLayout
+            android:id="@+id/rel_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="visible">
+            <ImageView
+                android:id="@+id/clip"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@android:color/darker_gray"
+                android:src="@drawable/ic_file_download_black_24dp"/>
+
+            <TextView
+                android:id="@+id/name_File"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/clip"
+                android:layout_marginLeft="8dp"
+                android:alpha="0.6"/>
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
