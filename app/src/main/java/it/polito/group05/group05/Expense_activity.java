@@ -42,6 +42,7 @@ import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -162,6 +165,7 @@ public class Expense_activity extends AppCompatActivity {
         java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
 
+
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -202,11 +206,10 @@ public class Expense_activity extends AppCompatActivity {
                             expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                         }
                         DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-                 //       totalPriceActual += expense.getMembers().get(id);
 
                         }
                     if (clicked_calendar) {
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY);
                         Date date = null;
                         try {
                             date = dateFormat.parse(data);
@@ -276,6 +279,8 @@ public class Expense_activity extends AppCompatActivity {
                 mYear = c.get(Calendar.YEAR);
                 mMonth = c.get(Calendar.MONTH);
                 mDay = c.get(Calendar.DAY_OF_MONTH);
+                mHour = c.get(Calendar.HOUR);
+                mMinute = c.get(Calendar.MINUTE);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
@@ -284,10 +289,10 @@ public class Expense_activity extends AppCompatActivity {
                                 int month1= month +1;
                                 if (month < 10) {
                                     String mese = "0" + (month1);
-                                    data = dayOfMonth + "/" + mese + "/" + year;
+                                    data = dayOfMonth+"/"+mese+"/"+year+" "+mHour+":"+mMinute;
                                     nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
-                                    data = dayOfMonth + "/" + month1 + "/" + year;
+                                    data = dayOfMonth + "/" + month1 + "/" + year+" "+mHour+":"+mMinute;
                                     nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
