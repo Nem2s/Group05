@@ -46,6 +46,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.Event.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.NotificationClass.MyService;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
 
