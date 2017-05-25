@@ -66,8 +66,11 @@ public class ExpenseHolder extends GeneralHolder{
         this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
     }
-
     public void setData(Object c, final Context context){
+        setData(c, context, View.GONE);
+    }
+
+    public void setData(Object c, final Context context, int type) {
         if(!(c instanceof ExpenseDatabase)) return;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
@@ -108,13 +111,23 @@ public class ExpenseHolder extends GeneralHolder{
         //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
         //  }
         setupListener(cv, price, context, expenseDatabase);
-        setupRecyclerViewExpense(rv, expenseDatabase,context);
+        setupRecyclerViewExpense(rv, expenseDatabase, context, type);
 
 
     }
 
+    public void setData(Object c, final Context context, String eid) {
+        if (!(c instanceof ExpenseDatabase)) return;
+        final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        //
+        if (eid != null)
+            if (eid.equals(expenseDatabase.getId()))
+                setData(c, context, View.VISIBLE);
+            else
+                setData(c, context, View.GONE);
+    }
 
-    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context) {
+    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context, int visibility) {
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -136,7 +149,7 @@ public class ExpenseHolder extends GeneralHolder{
     };
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
-    rv.setVisibility(View.GONE);
+        rv.setVisibility(visibility);
 }
 private void setupListener(CardView cv, final TextView price, final Context context, final Expense expense){
 

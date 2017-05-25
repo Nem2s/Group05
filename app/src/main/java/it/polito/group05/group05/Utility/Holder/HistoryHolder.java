@@ -19,7 +19,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import it.polito.group05.group05.HistoryFragment;
 import it.polito.group05.group05.R;
@@ -29,7 +28,7 @@ import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
  * Created by andre on 24-May-17.
  */
 
-public class HistoryHolder extends GeneralHolder  {
+public class HistoryHolder extends GeneralHolder {
 
     TextView history_text_view;
     TextView when_text_view;
@@ -44,12 +43,11 @@ public class HistoryHolder extends GeneralHolder  {
     }
 
 
-
     @Override
     public void setData(Object c, final Context context) {
 
         final List<HistoryClass> history = (List<HistoryClass>) c;
-        final LinearLayoutManager ll=  new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,true);
+        final LinearLayoutManager ll = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true);
         internal_rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
         /*DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(internal_rv.getContext(),
@@ -58,7 +56,7 @@ public class HistoryHolder extends GeneralHolder  {
         internal_adapter = new RecyclerView.Adapter() {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View rootView = LayoutInflater.from(context).inflate(R.layout.history_rec_element,parent,false);
+                View rootView = LayoutInflater.from(context).inflate(R.layout.history_rec_element, parent, false);
                 GeneralHolder holder = new InternalHistoryHolder(rootView);
                 return holder;
             }
@@ -66,8 +64,8 @@ public class HistoryHolder extends GeneralHolder  {
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
                 boolean last = false;
-                if(position == 0) last = true;
-                ((InternalHistoryHolder)holder).setData(history.get(position),context, last);
+                if (position == 0) last = true;
+                ((InternalHistoryHolder) holder).setData(history.get(position), context, last);
             }
 
             @Override
@@ -78,17 +76,15 @@ public class HistoryHolder extends GeneralHolder  {
         internal_rv.setAdapter(internal_adapter);
 
         Date date = new Date(history.get(0).getWhen());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALY);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
         String time = sdf.format(date);
         Date today = new Date();
         String today_s = sdf.format(today);
-        if(time.equals(today_s)) {
+        if (time.equals(today_s)) {
             when_text_view.setText("Today");
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(context.getResources().getColor(R.color.expenseTabColor));
-        }
-        else
-        {
+        } else {
             when_text_view.setText(time);
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(Color.parseColor("#ffffff"));

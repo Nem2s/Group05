@@ -143,6 +143,7 @@ public class GroupDetailsFragment extends Fragment {
                 return userlist.size();
             }
         };
+        rv.setAdapter(personAdapter);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("History");
         return rootView;

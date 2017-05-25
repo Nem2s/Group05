@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -69,7 +68,7 @@ public class HistoryFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_history, container, false);
         rv = (RecyclerView) root.findViewById(R.id.history_rv);
-        final LinearLayoutManager ll=  new LinearLayoutManager(getActivity().getApplicationContext() ,LinearLayoutManager.VERTICAL,true);
+        final LinearLayoutManager ll = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
         /*DatabaseReference historyref = FirebaseDatabase.getInstance().getReference("history/" + Singleton.getInstance().getmCurrentGroup().getId());
@@ -79,18 +78,18 @@ public class HistoryFragment extends Fragment {
                 ((HistoryHolder)viewHolder).setData(model,getActivity().getApplicationContext());
             }
         };*/
-        adapter = new RecyclerView.Adapter(){
+        adapter = new RecyclerView.Adapter() {
 
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View rootView = LayoutInflater.from(getContext()).inflate(R.layout.history_element,parent,false);
+                View rootView = LayoutInflater.from(getContext()).inflate(R.layout.history_element, parent, false);
                 GeneralHolder holder = new HistoryHolder(rootView);
                 return holder;
             }
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                ((GeneralHolder)holder).setData(historyList.get(position),getContext());
+                ((GeneralHolder) holder).setData(historyList.get(position), getContext());
             }
 
             @Override
@@ -105,8 +104,8 @@ public class HistoryFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         return root;
     }
-    public void retriveHistory()
-    {
+
+    public void retriveHistory() {
         FirebaseDatabase.getInstance().getReference("history/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByChild("when")
                 .addChildEventListener(new ChildEventListener() {
@@ -114,19 +113,18 @@ public class HistoryFragment extends Fragment {
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         HistoryClass h = dataSnapshot.getValue(HistoryClass.class);
                         Date date = new Date(h.getWhen());
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALY);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
                         String time = sdf.format(date);
-                        if(day.contains(time)){
+                        if (day.contains(time)) {
                             int i = day.indexOf(time);
                             historyList.get(i).add(h);
-                        }
-                        else{
+                        } else {
                             day.add(time);
                             int i = day.indexOf(time);
                             historyList.add(new ArrayList<HistoryClass>());
                             historyList.get(i).add(h);
                         }
-                        if(adapter!= null)
+                        if (adapter != null)
                             adapter.notifyDataSetChanged();
                     }
 

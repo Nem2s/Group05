@@ -46,11 +46,10 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .crossFade()
                 .into(civ);
         tv.setText(s);
+        tv_debt.setText(String.format("%.2f", u.getCustomValue()));
         if (u.getCustomValue() < 0.01) {
-            tv_debt.setText(String.valueOf(u.getCustomValue()));
             tv_debt.setTextColor(Color.RED);
         } else {
-            tv_debt.setText(String.valueOf(u.getCustomValue()));
             tv_debt.setTextColor(Color.GREEN);
         }
     }

@@ -47,7 +47,11 @@ public class HistoryClass {
         this.when = when;
     }
 
-    public int getType() { return type; }
+    public int getType() {
+        return type;
+    }
 
-    public void setType(int type) { this.type = type; }
+    public void setType(int type) {
+        this.type = type;
+    }
 }

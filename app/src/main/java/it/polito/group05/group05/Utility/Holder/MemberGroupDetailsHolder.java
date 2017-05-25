@@ -1,33 +1,18 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.firebase.ui.auth.ui.User;
-import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -121,10 +106,12 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             }
         });
     }
+
+
     private void payDebit(final UserDatabase user) {
         final String s = Singleton.getInstance().getCurrentUser().getId();
-        final ProgressBar pb = (ProgressBar) itemView.findViewById(R.id.pb_loading_actions);
         AnimUtils.exitReveal(button_pay);
+        final ProgressBar pb = (ProgressBar) itemView.findViewById(R.id.pb_loading_actions);
         AnimUtils.enterRevealAnimation(pb);
         //Azzero tutti i valori per cui sono in debito in tutte le spese.
         FirebaseDatabase.getInstance().getReference("expenses")

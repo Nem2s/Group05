@@ -178,6 +178,7 @@ public class DB_Manager {
     public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
         for (String number : lmap.keySet()) {
+            if (number.contains("\\.") || number.contains("#")) continue;
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -323,12 +324,13 @@ public class DB_Manager {
             if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+
+
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(),  groupDatabase);
+        newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
 
@@ -573,43 +575,6 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
-
-    public void newhistory(String GroupID, Object o)
-    {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
-        HistoryClass h;
-        String data = null;
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
-        Date date = new Date();
-        if(o instanceof ExpenseDatabase){
-            ExpenseDatabase e = (ExpenseDatabase) o;
-             h = new HistoryClass(
-                    Singleton.getInstance().getCurrentUser().getName(),
-                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
-                    e.getTimestamp(),
-                    0);
-        }
-        else if(o instanceof GroupDatabase){
-            GroupDatabase g = (GroupDatabase) o;
-             h = new HistoryClass(
-                    Singleton.getInstance().getCurrentUser().getName(),
-                    "created " + g.getName(),
-                     date.getTime(),
-                    1);
-        }
-        else if(o instanceof UserDatabase)
-        {
-            UserDatabase u = (UserDatabase) o;
-             h = new HistoryClass(
-                    Singleton.getInstance().getCurrentUser().getName(),
-                    "added " + u.getName(),
-                     date.getTime(),
-                    2);
-        }
-        else return;
-        groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
-        ref.setValue(h);
-    }
 
 
 

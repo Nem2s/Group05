@@ -18,7 +18,6 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -28,7 +27,7 @@ import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
  * Created by andre on 25-May-17.
  */
 
-public class InternalHistoryHolder extends GeneralHolder{
+public class InternalHistoryHolder extends GeneralHolder {
 
     TextView history_text_view;
     LinearLayout ll_history;
@@ -84,9 +83,9 @@ public class InternalHistoryHolder extends GeneralHolder{
                 break;
         }
         Date date = new Date(history.getWhen());
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time = sdf.format(date);
         history_time.setText(time);
-        if(last) divider_history.setVisibility(View.GONE);
+        if (last) divider_history.setVisibility(View.GONE);
     }
 }
