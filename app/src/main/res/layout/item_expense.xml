@@ -95,7 +95,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:backgroundTint="@android:color/darker_gray"
-                android:src="@drawable/ic_file_download_black_24dp" />
+                app:srcCompat="@drawable/ic_file_download_black_24dp" />
 
             <TextView
                 android:id="@+id/name_File"

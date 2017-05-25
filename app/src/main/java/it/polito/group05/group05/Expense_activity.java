@@ -21,10 +21,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -42,7 +40,6 @@ import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
-import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,7 +48,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -201,7 +197,7 @@ public class Expense_activity extends AppCompatActivity {
                         String id = partecipants.get(i).getId();
                         if (partecipants.get(i).getId().equals(expense.getOwner())) {
                             expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                          // expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
+                            // expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
                         } else {
                             expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
                         }
@@ -223,18 +219,17 @@ public class Expense_activity extends AppCompatActivity {
                         expense.setTimestamp(timestamp);
                         }
 
-                if((totalPriceActual-expense.getPrice()) > 0.001 || (totalPriceActual -expense.getPrice()) < -0.001){
-                    Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                    memberAdapter.changeTotal(expense.getPrice());
+                    if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
+                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                        memberAdapter.changeTotal(expense.getPrice());
+                    } else {
+                        DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
+                        fdb.setValue(expense);
+                        finish();
                 }
-                else {
 
-                    fdb.setValue(expense);
-                    finish();
                 }
-
-                }
-                }
+            }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -286,13 +281,13 @@ public class Expense_activity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                int month1= month +1;
+                                int month1 = month + 1;
                                 if (month < 10) {
                                     String mese = "0" + (month1);
-                                    data = dayOfMonth+"/"+mese+"/"+year+" "+mHour+":"+mMinute;
+                                    data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
                                     nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
-                                    data = dayOfMonth + "/" + month1 + "/" + year+" "+mHour+":"+mMinute;
+                                    data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
                                     nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
@@ -305,7 +300,7 @@ public class Expense_activity extends AppCompatActivity {
         cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
-                if(!newFile){
+                if (!newFile) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");

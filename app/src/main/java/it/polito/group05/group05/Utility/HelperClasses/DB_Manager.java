@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -33,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
@@ -576,6 +573,36 @@ public class DB_Manager {
     }
 
 
-
+    public void newhistory(String GroupID, Object o) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
+        HistoryClass h;
+        String data = null;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        Date date = new Date();
+        if (o instanceof ExpenseDatabase) {
+            ExpenseDatabase e = (ExpenseDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
+                    e.getTimestamp(),
+                    0);
+        } else if (o instanceof GroupDatabase) {
+            GroupDatabase g = (GroupDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "created " + g.getName(),
+                    date.getTime(),
+                    1);
+        } else if (o instanceof UserDatabase) {
+            UserDatabase u = (UserDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + u.getName(),
+                    date.getTime(),
+                    2);
+        } else return;
+        groupRef.child(GroupID).child("lmTime").setValue(date.getTime());
+        ref.setValue(h);
+    }
 
 }

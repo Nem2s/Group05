@@ -1,11 +1,9 @@
 package it.polito.group05.group05.Utility.Holder;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
@@ -19,13 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -33,7 +28,6 @@ import com.google.firebase.database.Query;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -58,7 +52,7 @@ public class ExpenseHolder extends GeneralHolder{
     RecyclerView rv;
     RelativeLayout rel;
     TextView description;
-    ImageView clip,expand;
+    ImageView clip, expand;
     CardView cv;
     Query ref;
     TextView menu;
@@ -99,9 +93,9 @@ public class ExpenseHolder extends GeneralHolder{
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         this.timestamp.setText(sdf.format(date));
 
-        if(expenseDatabase.getFile() != null){
-            this.nf.setText(expenseDatabase.getFile());}
-        else nf.setText("");
+        if (expenseDatabase.getFile() != null) {
+            this.nf.setText(expenseDatabase.getFile());
+        } else nf.setText("");
 
         String id = Singleton.getInstance().getCurrentUser().getId();
         for (String i : expenseDatabase.getMembers().keySet()){
@@ -274,7 +268,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     });
     }
     catch(Exception c ){
-       // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
     }
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -283,7 +277,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
             if (rv.getVisibility() == View.GONE) {
                 rv.setVisibility(View.VISIBLE);
                 expand.setImageResource(R.drawable.ic_expand_less);
-                if(expense.getFile() != null) {
+                if (expense.getFile() != null) {
                     rel.setVisibility(View.VISIBLE);
                 }
             }
@@ -300,9 +294,9 @@ private void setupListener(CardView cv, final TextView price, final Context cont
         public void onClick(View v) {
             try {
                 DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
-                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
+                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/" + expense.getFile());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(f),"*/*");
+                intent.setDataAndType(Uri.fromFile(f), "*/*");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
             } catch (FileNotFoundException e) {

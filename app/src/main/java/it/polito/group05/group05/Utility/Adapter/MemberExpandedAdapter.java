@@ -104,11 +104,10 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                                                 .setScale(2, RoundingMode.HALF_UP)
                                                                 .doubleValue();
 
-                                                        if(round2 > 0){
+                                                        if (round2 > 0) {
                                                             users.get(e).setCustomValue(round2);
                                                             notifyItemChanged(e);
-                                                        }
-                                                        else {
+                                                        } else {
                                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
                                                             holder.costo_person.setText("");
                                                         }
