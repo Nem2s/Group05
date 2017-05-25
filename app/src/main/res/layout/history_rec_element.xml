@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/ll_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,6 +28,12 @@
             android:text="Andrea Giualiano sdsdsdsdsdsdsdsdsdsdsdsdsd"
             android:textSize="13sp" />
 
-    </LinearLayout>
+
+        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/divider_history"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/list_divider"/>
 
 </LinearLayout>

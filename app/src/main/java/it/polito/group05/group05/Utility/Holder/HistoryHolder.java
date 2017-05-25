@@ -49,9 +49,9 @@ public class HistoryHolder extends GeneralHolder  {
         final LinearLayoutManager ll=  new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,true);
         internal_rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(internal_rv.getContext(),
+        /*DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(internal_rv.getContext(),
                 ll.getOrientation());
-        internal_rv.addItemDecoration(dividerItemDecoration);
+        internal_rv.addItemDecoration(dividerItemDecoration);*/
         internal_adapter = new RecyclerView.Adapter() {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,7 +62,9 @@ public class HistoryHolder extends GeneralHolder  {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                ((GeneralHolder)holder).setData(history.get(position),context);
+                boolean last = false;
+                if(position == 0) last = true;
+                ((InternalHistoryHolder)holder).setData(history.get(position),context, last);
             }
 
             @Override
