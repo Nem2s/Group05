@@ -22,7 +22,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,7 +65,7 @@ public class GroupHolder extends GeneralHolder {
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         Date date = new Date(g.getLmTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time_s = sdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
