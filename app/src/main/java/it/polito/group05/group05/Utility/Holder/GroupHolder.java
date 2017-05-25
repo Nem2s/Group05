@@ -19,7 +19,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,7 +65,10 @@ public class GroupHolder extends GeneralHolder {
         //groupProfile.setImageResource(R.drawable.boy);
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
-        time.setText(g.getLmTime());
+        Date date = new Date(g.getLmTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        String time_s = sdf.format(date);
+        time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
 
         Double x = Double.valueOf(balance.getText().toString().replace(",", "."));

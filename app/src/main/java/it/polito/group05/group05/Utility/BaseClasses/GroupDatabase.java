@@ -18,7 +18,7 @@ public class GroupDatabase implements Namable {
     public String id;
     public String name;
     public Balance balance = new Balance(0, 0);
-    public String lmTime;
+    public long lmTime;
     public String creator;
     public GroupColor groupColor;
     public String pictureUrl;
@@ -80,11 +80,11 @@ public class GroupDatabase implements Namable {
         this.balance = balance;
     }
 
-    public String getLmTime() {
+    public long getLmTime() {
         return lmTime;
     }
 
-    public void setLmTime(String lmTime) {
+    public void setLmTime(long lmTime) {
         this.lmTime = lmTime;
     }
 
