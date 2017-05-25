@@ -322,14 +322,7 @@ public class DB_Manager {
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
-        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), Singleton.getInstance().getCurrentUser().getName(), groupDatabase);
         return groupDatabase.getId();
     }
 

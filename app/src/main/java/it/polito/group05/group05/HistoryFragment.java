@@ -40,7 +40,8 @@ public class HistoryFragment extends Fragment {
     RecyclerView rv;
     //FirebaseRecyclerAdapter adapter;
     RecyclerView.Adapter adapter;
-    List<HistoryClass> historyList = new ArrayList<>();
+    List<List<HistoryClass>> historyList = new ArrayList<List<HistoryClass>>();
+    List<String> day = new ArrayList<>();
 
     public HistoryFragment() {
     }
@@ -68,8 +69,8 @@ public class HistoryFragment extends Fragment {
         final LinearLayoutManager ll=  new LinearLayoutManager(getActivity().getApplicationContext() ,LinearLayoutManager.VERTICAL,true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
-        DatabaseReference historyref = FirebaseDatabase.getInstance().getReference("history/" + Singleton.getInstance().getmCurrentGroup().getId());
-       /* adapter = new FirebaseRecyclerAdapter(HistoryClass.class, R.layout.history_element, HistoryHolder.class, historyref) {
+        /*DatabaseReference historyref = FirebaseDatabase.getInstance().getReference("history/" + Singleton.getInstance().getmCurrentGroup().getId());
+        adapter = new FirebaseRecyclerAdapter(HistoryClass.class, R.layout.history_element, HistoryHolder.class, historyref) {
             @Override
             protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, Object model, int position) {
                 ((HistoryHolder)viewHolder).setData(model,getActivity().getApplicationContext());
@@ -109,7 +110,16 @@ public class HistoryFragment extends Fragment {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         HistoryClass h = dataSnapshot.getValue(HistoryClass.class);
-                        historyList.add(h);
+                        if(day.contains(h.getWhen())){
+                            int i = day.indexOf(h.getWhen());
+                            historyList.get(i).add(h);
+                        }
+                        else{
+                            day.add(h.getWhen());
+                            int i = day.indexOf(h.getWhen());
+                            historyList.add(new ArrayList<HistoryClass>());
+                            historyList.get(i).add(h);
+                        }
                         if(adapter!= null)
                             adapter.notifyDataSetChanged();
                     }
