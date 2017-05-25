@@ -1,85 +1,83 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public class ExpenseDatabase {
-
-    public String id;
-    public String name;
-    public String description;
-    public String owner;
-    public double price;
-    public String deadline;
-    public String timestamp;
-    //public String fileUrl;
-    //public String pictureUrl;
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
-    public ExpenseDatabase(String id, String name, String description, String owner, double price, String deadline, String timestamp) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.owner = owner;
-        this.price = price;
-        this.deadline = deadline;
-        this.timestamp = timestamp;
-    }
+public class ExpenseDatabase implements Namable{
+    private String id;
+    private String owner;
+    private String name;
+    private Double price;
+    private String file;
+    private long timestamp;
+    private Map<String,Double> members;
+
 
     public ExpenseDatabase() {
+        members= new HashMap<>();
+        id="";
+        owner="";
+        name="";
+        price = 0.0;
+        file = null;
     }
 
+    public ExpenseDatabase(ExpenseDatabase edb) {
+        this.id=edb.id;
+        this.name=edb.name;
+        this.owner=edb.owner;
+        this.file=edb.file;
+        this.price = edb.price;
+        this.timestamp=edb.timestamp;
+        if(edb.members== null) members = new HashMap<>();
+        else  members = edb.members;
+    }
+
+    //METHODS
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getName() {
+    public String getOwner() {return owner;}
+    public void setOwner(String owner) {this.owner = owner;}
+    public String getName(){
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name){
+        this.name= name;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPrice(Double price){
+        this.price=price;
     }
-
-    public String getDeadline() {
-        return deadline;
+    public void setFile(String file) {
+        this.file = file;
     }
+    public String getFile(){return file;}
 
-    public void setDeadline(String deadline) {
-        this.deadline = deadline;
-    }
-
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = (timestamp);
     }
+    public Map<String, Double> getMembers() {
+        return members;
+    }
+    public  void setMembers(Map<String, Double> map) {
+        this.members = map;
+
+
+
+    }
+
 }
+

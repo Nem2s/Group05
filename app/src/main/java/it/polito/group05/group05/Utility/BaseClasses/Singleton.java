@@ -1,106 +1,200 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.DB_Manager;
-import it.polito.group05.group05.Utility.ImageUtils;
+import java.util.HashMap;
+import java.util.Map;
+
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 /**
- * Created by Marco on 28/03/2017.
+ * Created by user on 04/05/2017.
  */
 
 public class Singleton {
-    private static Singleton mInstance = null;
-    private List<Group> mCurrentGroups;
-    private List<User> mCurrenUsersList;
-    private Group mCurrentGroup;
-    private String user;
-    private User currentUser;
+    private static final Singleton ourInstance = new Singleton();
+    private GroupDatabase mCurrentGroup;
+    private CurrentUser currentUser;
+    String currentGroupId;
+    private String userId;
+    private Map<String, UserContact> localContactsList;
+    private Map<String, UserContact> regContactsList;
+    private Context currContext;
+    private Map<String, Double> usersBalance;
 
-    private Singleton(){
-        mCurrentGroups = new ArrayList<>();
-        mCurrentGroup = new Group();
-        mCurrenUsersList = new ArrayList<>();
+
+    private Singleton() {
+        regContactsList = new HashMap<>();
     }
 
-    public static Singleton getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new Singleton();
-        }
-        return mInstance;
+    public Context getCurrContext() {
+        return currContext;
     }
 
-    public void setmCurrentGroup(Group g) {
-    this.mCurrentGroup = g;}
-
-    public Group getmCurrentGroup() {
-        return this.mCurrentGroup;
-    }
-    public void setmCurrentGroups(List<Group> g) {
-        this.mCurrentGroups = g;}
-    public void addGroup(Group g) {
-        this.mCurrentGroups.add(g);
-  }
-
-  public void deleteGroup (Group g) {
-      this.mCurrentGroups.remove(g);
-  }
-
-    public List<Group> getmCurrentGroups() {
-        return this.mCurrentGroups;
-    }
-    public void setId(String s){this.user=new String(s);}
-    public String getId() {
-        return user;
+    public void setCurrContext(Context currContext) {
+        this.currContext = currContext;
     }
 
-    public void clearGroups(){
-        this.mCurrentGroups.clear();
+    public GroupDatabase getmCurrentGroup() {
+        return mCurrentGroup;
     }
 
-    public List<UserContact> createRandomListUsers(int n, Context context, Group g) {
-        Random r = new Random();
-        List<UserContact> users = new ArrayList<>();
-        for(int i = 0; i < n; i++) {
-            UserContact u = new UserContact(""+i, "User " + i, new Balance(r.nextInt(n),r.nextInt(n)),
-                    ImageUtils.getBitmpapFromDrawable(context.getResources().getDrawable( i%2 == 0 ? R.drawable.boy : R.drawable.girl)), g, true, false);
-            users.add(u);
-        }
-        return users;
+    public void setmCurrentGroup(GroupDatabase mCurrentGroup) {
+        this.mCurrentGroup = mCurrentGroup;
     }
 
-    public int getPositionGroup(String id) {
-        int i = 0;
-        for (Group g : this.mCurrentGroups) {
-            if (g.getGroupID().equals(id))
-                return i;
-            i++;
-        }
-        return -1;
-    }
-
-    public User getCurrentUser() {
+    public UserDatabase getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(CurrentUser currentUser) {
         this.currentUser = currentUser;
-        if(currentUser != null) {
-            user = currentUser.getId();
-        }
+        new getRegContactsTask().execute();
+    }
+    public void addRegContact(UserDatabase u) {
+        this.regContactsList.put(u.getId(), new UserContact(u));
+    }
+
+    public Map<String, UserContact> getRegContactsList() {
+        return regContactsList;
+    }
+
+    public void setRegContactsList(Map<String, UserContact> regContactsList) {
+        this.regContactsList = regContactsList;
+    }
+
+    private Double price_expense;
+
+    public Map<String, UserContact> getLocalContactsList() {
+        return localContactsList;
+    }
+
+    public void setLocalContactsList(Map<String, UserContact> localContactsList) {
+        this.localContactsList = localContactsList;
+    }
+
+    public Double getPrice_expense() {
+        return price_expense;
+    }
+
+    public void setPrice_expense(Double price_expense) {
+        this.price_expense = price_expense;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    static public Singleton getInstance() {
+        return ourInstance;
     }
 
 
+    public String getIdCurrentGroup(){
+        return currentGroupId;
+    }
 
+    public void setIdCurrentGroup(String currentGroupId){
+        this.currentGroupId=currentGroupId;
+    }
+
+    public UserContact removeRegContact(UserDatabase userContact) {
+        return regContactsList.remove(userContact.getId());
+    }
+
+    public Map<String, Double> getUsersBalance() {
+        if(this.usersBalance == null)
+            this.usersBalance = new HashMap<>();
+        return usersBalance;
+    }
+
+    public void setUsersBalance(Map<String, Double> usersBalance) {
+        this.usersBalance = usersBalance;
+    }
+
+    class getRegContactsTask extends AsyncTask<Void, Void, Void> {
+
+
+        Map<String, UserContact> localList = new HashMap<>();
+        private DatabaseReference usernumberRef;
+        private FirebaseDatabase database;
+        private DatabaseReference userRef;
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            Map<String, UserContact> result = new HashMap<>();
+            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+            String[] projection =
+                    new String[]{
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                            ContactsContract.CommonDataKinds.Phone.NUMBER,
+                            ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                    };
+            String selection = null;
+            String[] selectionArgs = null;
+            String sortOrder = ContactsContract.Contacts.DISPLAY_NAME +
+                    " COLLATE LOCALIZED ASC";
+            Cursor query = currContext.getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+
+
+            int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            query.moveToFirst();
+            if (query.getCount() > 0) {
+                do {
+                    UserContact user = new UserContact();
+                    String number = query.getString(indexNumber);
+                    if (number.startsWith("+"))
+                        number = number.substring(3);
+                    number = number.replace(" ", "");
+
+                    number = number.replace("-", "");
+                    if (number.length() > 8 && number.length() <= 10) {
+
+                        String name = query.getString(indexName);
+                        user.setName(name);
+                        user.setTelNumber(number);
+                        localList.put(number, user);
+                    }
+                } while (query.moveToNext());
+
+            } else
+                ((Activity) currContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(currContext, "No contacts stored", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            localContactsList = new HashMap<>(localList);
+            DB_Manager.getInstance().checkContacts();
+        }
+    }
 }

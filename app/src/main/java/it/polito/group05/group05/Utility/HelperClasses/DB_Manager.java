@@ -1,49 +1,60 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.EventClasses.CurrentUserReadyEvent;
-import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
+import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
+import it.polito.group05.group05.Utility.Event.ExpenseCountEvent;
+import it.polito.group05.group05.Utility.Event.GroupInfoChartEvent;
+import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
+import it.polito.group05.group05.Utility.Event.NewUserEvent;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 
 /**
@@ -52,31 +63,58 @@ import it.polito.group05.group05.Utility.EventClasses.NewUserEvent;
 
 public class DB_Manager {
 
-    private static  DB_Manager mInstance = null;
+    private static DB_Manager mInstance = null;
     private Context context;
-    private  FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
-    public  String currentUserID;
-    private  List<String> groupUser = new ArrayList<>();
+    public String currentUserID;
+    private List<String> groupUser = new ArrayList<>();
 
     private static FirebaseDatabase database;
 
-    private  DatabaseReference    userRef,
+    private DatabaseReference userRef,
             groupRef,
             expenseRef,
             usernumberRef,
             inviteRef;
 
-    private  FirebaseStorage      storage;
-    private  StorageReference     storageGroupRef,
+    private FirebaseStorage storage;
+    private StorageReference storageGroupRef,
             storageUserRef,
             storageExpenseRef;
 
-    private  String userInfo = new String("userInfo");
-    private  String userGroups = new String("userGroups");
+    private String userInfo = new String("userInfo");
+    private String userGroups = new String("userGroups");
 
+    private File localFile;
+    FileOutputStream outputStream;
+    BufferedOutputStream buff;
 
     private DB_Manager() {
+
+        //Realtime Database Init
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
+        userRef = database.getReference("users");
+        userRef.keepSynced(true);
+        usernumberRef = database.getReference("usersNumber");
+        usernumberRef.keepSynced(true);
+        groupRef = database.getReference("groups");
+        groupRef.keepSynced(true);
+        expenseRef = database.getReference("expenses");
+        expenseRef.keepSynced(true);
+        inviteRef = database.getReference("invites");
+        inviteRef.keepSynced(true);
+
+        //Storege Init\
+        storage = FirebaseStorage.getInstance();
+        storageGroupRef = storage.getReference("groups");
+        storageUserRef = storage.getReference("users");
+        storageExpenseRef = storage.getReference("expenses");
+
+        //Authentication Init
+        mAuth = FirebaseAuth.getInstance();
+
     }
 
    /* public  void signOut(){
@@ -85,11 +123,10 @@ public class DB_Manager {
         mAuth.signOut();
     }*/
 
-    public static DB_Manager getInstance(){
-        if(mInstance == null)
-        {
+    public static DB_Manager getInstance() {
+        if (mInstance == null) {
             mInstance = new DB_Manager();
-            database = getInstance().getDatabase();
+
         }
         return mInstance;
     }
@@ -99,131 +136,221 @@ public class DB_Manager {
         return mInstance;
     }
 
-    public FirebaseDatabase getDatabase() {
+    public DatabaseReference getExpensesRef() {
+        return expenseRef;
+    }
 
-        if (database == null) {
 
-            //Realtime Database Init
-            database = FirebaseDatabase.getInstance();
-            database.setPersistenceEnabled(true);
-            userRef = database.getReference("users");
-            userRef.keepSynced(true);
-            usernumberRef = database.getReference("usersNumber");
-            usernumberRef.keepSynced(true);
-            groupRef = database.getReference("groups");
-            groupRef.keepSynced(true);
-            expenseRef = database.getReference("expense");
-            expenseRef.keepSynced(true);
-            inviteRef = database.getReference("invites");
-            inviteRef.keepSynced(true);
+   /* public  void signOut(){
+        currentUserID = null;
+        Singleton.getInstance().clearGroups();
+        mAuth.signOut();
+    }*/
 
-            //Storege Init
-            storage = FirebaseStorage.getInstance();
-            storageGroupRef = storage.getReference("groups");
-            storageUserRef = storage.getReference("users");
-            storageExpenseRef = storage.getReference("expenses");
+ /*   public void checkContacts() {
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) return;
+                for (final DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (!data.exists()) continue;
+                    UserDatabase user = (UserDatabase) data.child("userInfo").getValue(UserDatabase.class);
+                    Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+                    Map<String, UserContact> rmap = Singleton.getInstance().getRegContactsList();
+                    if(!rmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().removeRegContact(user);
+                    if (lmap.containsKey(user.getTelNumber()))
+                        Singleton.getInstance().addRegContact(user);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }*/
 
-            //Authentication Init
-            mAuth = FirebaseAuth.getInstance();
+    public void checkContacts() {
+        Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
+        for (String number : lmap.keySet()) {
+            usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String userid = dataSnapshot.getValue(String.class);
+                    if (userid == null) return;
+                    userRef.child(userid).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) return;
+                            UserDatabase user = dataSnapshot.getValue(UserDatabase.class);
+                            Singleton.getInstance().addRegContact(user);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
-        return database;
     }
 
 
-    public void pushNewUser(CurrentUser currentUser) {
-        UserDatabase userDatabase = currentUser;
+    public void retriveExpenses() {
+        final List<DataSnapshot> snapshots = new ArrayList<>();
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren())
+                    snapshots.add(data);
+                setupEntries(snapshots);
+            }
 
-        DatabaseReference ref = userRef.push();
-        //currentUserID = ref.getKey();
-        userDatabase.setId(ref.getKey());
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        Map<String, Object> tmp = new HashMap<String, Object>();
-        tmp.put("00", true);
-
-        ref.child(userInfo).setValue(userDatabase);
-        ref.child(userGroups).setValue(tmp);
-        tmp.clear();
-        tmp.put("authKey", userDatabase.getAuthKey());
-        ref.updateChildren(tmp);
-
-        if(currentUser.getImg_profile() == null )
-            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
-
-        imageProfileUpload(1, userDatabase.getId(), currentUser.getImg_profile());
-        Singleton.getInstance().setCurrentUser(currentUser);
+            }
+        });
     }
 
-    public  String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap){
+    private void setupEntries(List<DataSnapshot> snapshots) {
+        final Map<Long, Entry> map = new HashMap<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        for (DataSnapshot ex_data : snapshots) {
+            for (DataSnapshot data : ex_data.getChildren()) {
+                ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
+                if (!(e.getOwner().equals(Singleton.getInstance().getCurrentUser().getId())))
+                    continue;
+                long t = 0;
+                //try {
+                t = e.getTimestamp();
+                // t = format.parse(e.getTimestamp()).getTime();
+                //} catch (ParseException e1) {
+                //   e1.printStackTrace();
+                //}
+                Calendar today = Calendar.getInstance();
+                Calendar sixMonthsAhead = Calendar.getInstance();
+                sixMonthsAhead.add(Calendar.MONTH, 6);
+                long differenceInMilis = sixMonthsAhead.getTimeInMillis() - today.getTimeInMillis();
+                long difference = today.getTimeInMillis() - t;
+                if (difference < differenceInMilis) //older than 6 months
+                    t = TimeUnit.MILLISECONDS.toDays(t);
+                else
+                    continue;
+
+                int i = 0;
+                if (map.containsKey(t)) {
+                    map.get(t).setY(map.get(t).getY() + 1);
+                } else {
+                    Entry entry = new Entry(t, 1);
+                    entry.setData(e);
+                    map.put(t, entry);
+                }
+
+
+            }
+        }
+        EventBus.getDefault().postSticky(new ExpenseCountEvent(new ArrayList<Entry>(map.values())));
+    }
+
+
+    public void retriveGroups() {
+        final List<String> groupsId = new ArrayList<>();
+        final Map<Long, Integer> expenses = new HashMap<>();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (!data.getKey().equals("00"))
+                        groupsId.add(data.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+
+        });
+
+        groupRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<PieEntry> list = new ArrayList<PieEntry>(0);
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (groupsId.contains(data.getKey())) {
+                        GroupDatabase g = (GroupDatabase) data.getValue(GroupDatabase.class);
+                        float value = Float.valueOf(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString());
+                        if (value != 0) {
+                            if (value < 0)
+                                value = -value;
+                            final PieEntry entry = new PieEntry(value, g.getName());
+                            entry.setData(g);
+                            list.add(entry);
+                        }
+
+                    }
+
+                }
+                EventBus.getDefault().postSticky(new GroupInfoChartEvent(list));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        });
+
+    }
+
+    public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
+        groupDatabase.setId(ref.getKey());
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
         for(String s : groupDatabase.getMembers().keySet()){
             if(s==null) continue;
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put(groupDatabase.getId(), true);
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        imageProfileUpload(2, groupDatabase.getId(), bitmap);
-        groupDatabase.setId(ref.getKey());
+        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+        String uuid = UUID.randomUUID().toString();
+        groupDatabase.setPictureUrl(uuid);
+        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
+        newhistory(groupDatabase.getId(), "Andrea Giuliano", groupDatabase);
         return groupDatabase.getId();
     }
 
-    public  void pushNewExpense(ExpenseDatabase expenseDatabase){
+    public void pushNewExpense(ExpenseDatabase expenseDatabase) {
         DatabaseReference ref = expenseRef.push();
         expenseDatabase.setId(ref.getKey());
         ref.setValue(expenseDatabase);
     }
 
-    public  void getCurrentUser() {
-        userRef.orderByChild("authKey")
-                .equalTo(mAuth.getCurrentUser().getUid())
-                //.equalTo("nFKLMUtkqxcYdkEi8t0uVi0GkcZ2")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        CurrentUser currentUser = new CurrentUser();
-                        if (!dataSnapshot.exists()) {
-                                EventBus.getDefault().post(new NewUserEvent());
-                            }
-                        for(DataSnapshot child : dataSnapshot.getChildren()) {
-                            for(DataSnapshot child2 : child.getChildren()) {
-                                if (child2.getKey().equals(userInfo)) {
-                                    UserDatabase u = child2.getValue(UserDatabase.class);
-                                    currentUser = new CurrentUser(u);
-                                } /*else if (child2.getKey().equals(userGroups)) {
-                                    Map<String, Object> tmp = child2.getValue(Map.class);
-                                    currentUser.setGroups(new ArrayList<String>(tmp.keySet()));
-                                }*/
-                            }
-                        }
-                        Singleton.getInstance().setCurrentUser(currentUser);
-                        EventBus.getDefault().post(new CurrentUserReadyEvent());
-
-                        /*DOWNLOAD DELL'IMMAGINE????*/
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-    public  void imageProfileUpload(int type, String Id, Bitmap bitmap){
+    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
-        String name;
         switch(type) {
             case (1):
                 ref = storageUserRef;
-                name = new String("userprofile.jpg");
                 break;
             case (2):
                 ref = storageGroupRef;
-                name = new String("grouprofile.jpg");
                 break;
             case (3):
                 ref = storageExpenseRef;
-                name = new String("expenseprofile.jpg");
                 break;
             default:
                 return;
@@ -272,79 +399,212 @@ public class DB_Manager {
 
     }
 
-    public  void fileUpload(String expenseId, String name, File file) {
+    public void fileDownload(String expenseID, String nomeFile) throws FileNotFoundException {
 
-        StorageReference ref;
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                .child("expenses")
+                .child(expenseID)
+                .child(nomeFile);
 
-        final File localdir = new File(context.getFilesDir(), expenseId);
-
-        if(!localdir.exists())
-            localdir.mkdir();
-
-        final File localFile = new File(context.getFilesDir(), expenseId + "/" + name);
-
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        File folder = new File(Environment.getExternalStorageDirectory() + "/FileAppPoli");
+        if (!folder.exists()) {
+            folder.mkdir();
         }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(localFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        try {
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        int size = (int) file.length();
-        byte[] bytes = new byte[size];
-        try {
-            BufferedInputStream buff = new BufferedInputStream(new FileInputStream(file));
-            buff.read(bytes, 0, bytes.length);
-            buff.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        UploadTask uploadTask = storageExpenseRef.child(expenseId).child(name).putBytes(bytes);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        File filelocal = new File(folder, nomeFile);
+        storageRef.getFile(filelocal).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context,"Download failed. Try again!", LENGTH_SHORT).show();
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(context,"File downloaded",LENGTH_SHORT).show();
             }
         });
     }
+    public void updateGroupFlow(String s ,final Double d){
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(s);
+
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
+
+                tmp =tmp+((-1.00)*d);
+                fdb.setValue(tmp);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateGroupFlow(final Map<String,Double> map){
+
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members");
+        fdb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+                for(String s : map.keySet()){
+                    if(dataSnapshot.hasChild(s)) {
+                        Double tmp = Double.parseDouble(dataSnapshot.child(s).getValue().toString());
+                        tmp -= map.get(s);
+                        fdb.child(s).setValue(tmp);
+
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public boolean checkUserDebtRemoving() {
+        DatabaseReference dbref = groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId());
+        dbref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists())
+                    return;
+
+                EventBus.getDefault().post(new LeaveGroupEvent(Double.parseDouble(dataSnapshot.getValue().toString())));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return false;
+    }
+
+    public void removeUserFromGroup(String userId, String groupId) {
+        userRef.child(userId).child("userGroups").child(groupId).removeValue();
+        groupRef.child(groupId).child("members").child(userId).removeValue();
+    }
+
+    public void addUserToGroup(String userId, String groupId) {
+
+        userRef.child(userId).child("userGroups").child(groupId).setValue(false);
+        groupRef.child(groupId).child("members").child(userId).setValue(0.0);
+    }
+
+    public void getCurrentUser() {
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userRef.orderByChild("email")
+                .equalTo(mAuth.getCurrentUser().getEmail())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (!dataSnapshot.exists()) {
+                            EventBus.getDefault().post(new NewUserEvent());
+                            return;
+                        }
+                        CurrentUser currentUser = new CurrentUser();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            for (DataSnapshot child2 : child.getChildren()) {
+                                if (child2.getKey().equals(userInfo)) {
+                                    UserDatabase ud = child2.getValue(UserDatabase.class);
+                                    currentUser.settingInfoUser(ud);
+
+                                } else if (child2.getKey().equals(userGroups)) {
+                                    Map<String, Object> tmp = (Map<String, Object>) child2.getValue();
+                                    tmp.remove("00");
+                                    currentUser.setGroups(new ArrayList<>(tmp.keySet()));
+                                }
+                            }
+                        }
+                        Singleton.getInstance().setCurrentUser(currentUser);
+                        EventBus.getDefault().post(new CurrentUserReadyEvent());
+                        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+                        /*DOWNLOAD DELL'IMMAGINE????*/
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+    public void pushNewUser(CurrentUser currentUser) {
+        UserDatabase userDatabase = new UserDatabase((UserDatabase) currentUser);
+
+        DatabaseReference ref = userRef.push();
+        //currentUserID = ref.getKey();
+        userDatabase.setId(ref.getKey());
+        currentUser.setId(ref.getKey());
+        String uuid = UUID.randomUUID().toString();
+        userDatabase.setiProfile(uuid);
+        currentUser.setiProfile(uuid);
+
+        Map<String, Object> tmp = new HashMap<String, Object>();
+        tmp.put("00", true);
+        currentUser.setGroups(new ArrayList<String>());
+        ref.child(userInfo).setValue(userDatabase);
+        ref.child(userGroups).setValue(tmp);
+        tmp.clear();
+        tmp.put("email", userDatabase.getEmail());
+        ref.updateChildren(tmp);
+        if (currentUser.getTelNumber().startsWith("+"))
+            currentUser.setTelNumber(currentUser.getTelNumber().substring(3));
+        usernumberRef.child(currentUser.getTelNumber()).setValue(currentUser.getId());
+
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+
+        if (currentUser.getImg_profile() == null)
+            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
+
+        imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
+        Singleton.getInstance().setCurrentUser(currentUser);
+    }
+
+
+    public void newhistory(String GroupID, String name, Object o)
+    {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
+        Map<String, Object> tmp = new HashMap<>();
+        if(o instanceof ExpenseDatabase){
+            ExpenseDatabase e = (ExpenseDatabase) o;
+            tmp.put("who", name);
+            tmp.put("what", "added expense " + e.getName());
+            //TODO: TIMESTAMP
+            tmp.put("when", "oggi");
+        }
+        else if(o instanceof GroupDatabase){
+            GroupDatabase g = (GroupDatabase) o;
+            tmp.put("who", name);
+            tmp.put("what", "created " + g.getName());
+            //TODO: TIMESTAMP
+            tmp.put("when", "oggi");
+        }
+        else if(o instanceof UserDatabase)
+        {
+            UserDatabase u = (UserDatabase) o;
+            tmp.put("who", name);
+            tmp.put("what", "added " + u.getName() + " to group");
+            //TODO: TIMESTAMP
+            tmp.put("when", "oggi");
+        }
+        else return;
+        ref.setValue(tmp);
+    }
+
+
 
 }

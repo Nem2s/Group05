@@ -6,16 +6,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserDatabase {
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
-    public String id;
-    public String name;
-    public String authKey;
-    public String telNumber;
-    public String email;
-    public String profileImmage;
-    public Balance balance;
-    public Map<String, Object> userGroups;
+public class UserDatabase implements Namable{
+
+    protected String id;
+    protected String name;
+    protected String authKey;
+    protected String telNumber;
+    protected String email;
+    protected String iProfile;
+    protected Balance balance;
+    protected Map<String, Object> userGroups = new HashMap<>();
+
+    public UserDatabase(String id, String name, String authKey, String telNumber, String email, String iProfile) {
+        this.id = id;
+        this.name = name;
+        this.authKey = authKey;
+        this.telNumber = telNumber;
+        this.email = email;
+        this.iProfile = iProfile;
+    }
 
     public UserDatabase(String id, String name, String authKey, String telNumber, String email) {
         this.id = id;
@@ -25,11 +36,15 @@ public class UserDatabase {
         this.email = email;
     }
 
+    public UserDatabase() {}
 
-
-
-
-    public UserDatabase() {
+    public UserDatabase(UserDatabase ud) {
+        this.id = ud.id;
+        this.name = ud.name;
+        this.authKey = ud.authKey;
+        this.telNumber = ud.telNumber;
+        this.email = ud.email;
+        this.iProfile=ud.iProfile;
     }
 
     public String getId() {
@@ -72,13 +87,6 @@ public class UserDatabase {
         this.email = email;
     }
 
-    public String getProfileImmage() {
-        return profileImmage;
-    }
-
-    public void setProfileImmage(String profileImmage) {
-        this.profileImmage = profileImmage;
-    }
 
     public Balance getBalance() {
         return balance;
@@ -95,8 +103,17 @@ public class UserDatabase {
     public List<String> UserGruopsList() {
 
 
+       if(userGroups!=null)
         return new ArrayList<>(userGroups.keySet());
+        else return new ArrayList<>();
+    }
 
+    public String getiProfile() {
+        return iProfile;
+    }
+
+    public void setiProfile(String iProfile) {
+        this.iProfile = iProfile;
     }
 
     public void setUserGroups(Map<String, Object> userGroups) {

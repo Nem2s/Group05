@@ -37,17 +37,14 @@
                     android:transitionName="@string/transition_group_image"
                     >
 
-                    <com.pkmmte.view.CircularImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_group_image"
-                        android:scaleType="centerInside"
-                        android:adjustViewBounds="true"
                         android:layout_height="48dp"
                         android:layout_width="48dp"
                         android:focusableInTouchMode="true"
                         android:transitionName="@string/transition_group_image"
-                        >
+                        />
 
-                    </com.pkmmte.view.CircularImageView>
 
                     <TextView
                         android:id="@+id/tv_group_name"
