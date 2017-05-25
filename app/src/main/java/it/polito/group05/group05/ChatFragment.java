@@ -74,6 +74,7 @@ public class ChatFragment extends Fragment {
                 .child(Singleton.getInstance().getIdCurrentGroup());
         adapter = new FirebaseRecyclerAdapter<ChatDatabase, ChatHolder>(ChatDatabase.class, R.layout.message,
                 ChatHolder.class, ref) {
+
             @Override
             protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
                 super.onChildChanged(type, index, oldIndex);
@@ -128,7 +129,7 @@ public class ChatFragment extends Fragment {
                             .child(Singleton.getInstance().getIdCurrentGroup())
                             .push();
                     ChatDatabase cdb = new ChatDatabase(textInput, u.getName().toString(), u.getId().toString());
-                    notifyToOthers(fdb.getKey(), cdb);
+
                     fdb.setValue(cdb);
                     input.setText("");
                 }
@@ -152,22 +153,6 @@ public class ChatFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void notifyToOthers(String id, ChatDatabase cdb) {
-
-        FirebaseDatabase.getInstance().getReference("notifications")
-                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                .child("chats")
-                .child(id)
-                .setValue(cdb);
-        FirebaseDatabase.getInstance().getReference("notifications")
-                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                .child("chats")
-                .child(id)
-                .child("members")
-                .setValue(Singleton.getInstance().getmCurrentGroup().getMembers());
-
 
     }
 }

@@ -75,12 +75,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
         final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
-        FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId())
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups")
+                .child(Singleton.getInstance().getmCurrentGroup().getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) return;
-                        if (dataSnapshot.getValue().equals("notNotify"))
+                        boolean b = (Boolean) dataSnapshot.getValue();
+                        if (!b)
                             sc.setChecked(false);
                     }
 
@@ -93,11 +95,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
-                    FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId())
-                            .setValue("notified");
+                    FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId()).setValue(true);
                 else
-                    FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId())
-                            .setValue("notNotify");
+                    FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups")
+                            .child(Singleton.getInstance().getmCurrentGroup().getId()).setValue(false);
             }
         });
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

@@ -5,35 +5,18 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.IdRes;
-import android.support.design.internal.TextScale;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
-import android.support.transition.TransitionSet;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
@@ -42,8 +25,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.lang.reflect.Field;
 
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.Adapter.ViewPagerAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -72,7 +53,10 @@ public class GroupActivity extends AppCompatActivity {
             // Intent, pass the Intent's extras to the fragment as arguments
             mFragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
+            if (getIntent().getStringExtra("message") != null)
+                transaction.add(R.id.fragment_container, ChatFragment.newInstance());
+            else
+                transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
             transaction.commit();
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -106,11 +90,14 @@ public class GroupActivity extends AppCompatActivity {
                 });
             }
         });
+
+        //      replaceWithChatFragment();
     }
 
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
+        ExpenseFragment e = ExpenseFragment.newInstance();
+        transaction.replace(R.id.fragment_container, e)
                 .commit();
         fab.show();
         fab.setOnClickListener(new View.OnClickListener() {

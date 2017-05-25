@@ -200,7 +200,7 @@ public class Expense_activity extends AppCompatActivity {
                         price = partecipants.get(i).getCustomValue();
                         //totalPriceActual += partecipants.get(i).getCustomValue();
                         String id = partecipants.get(i).getId();
-                        if (partecipants.get(i).getId() == expense.getOwner()) {
+                        if (partecipants.get(i).getId().equals(expense.getOwner())) {
                             expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
                         } else {
                             expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
@@ -229,7 +229,7 @@ public class Expense_activity extends AppCompatActivity {
                         }
 
                     if (totalPriceActual >= -0.001 || totalPriceActual <= 0.001) {
-                        FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
+
                         fdb.setValue(expense);
                         finish();
                     } else {

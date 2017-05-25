@@ -211,7 +211,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-        //getSupportFragmentManager().getFragments().get(1).onResume();
 
     }
 

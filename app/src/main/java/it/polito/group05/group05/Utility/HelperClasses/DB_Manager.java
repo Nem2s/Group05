@@ -171,6 +171,7 @@ public class DB_Manager {
     public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
         for (String number : lmap.keySet()) {
+            if (number.contains("\\.") || number.contains("#")) continue;
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -316,11 +317,13 @@ public class DB_Manager {
             if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+
+
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
+        groupDatabase.getMembers().put(groupDatabase.getCreator(), "notified");
         return groupDatabase.getId();
     }
 

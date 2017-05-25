@@ -7,7 +7,6 @@
     android:background="@drawable/keith4"
     android:padding="4dp">
 
-
     <RelativeLayout
         android:id="@+id/rel"
         android:layout_width="match_parent"
@@ -30,6 +29,7 @@
             android:layout_height="wrap_content"
             android:textColorLink="@color/gray"
             android:textColorHighlight="@color/gray"
+            android:shadowColor="@color/gray"
             android:textSize="15sp"
             android:textColor="@color/black" />
     </android.support.design.widget.TextInputLayout>

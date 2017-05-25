@@ -42,6 +42,7 @@ public class ExpenseFragment extends Fragment {
     RecyclerView rv;
     List<Expense> expenses;
     LinearLayoutManager ll;
+    String ei;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -116,6 +117,7 @@ public class ExpenseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        ei = getActivity().getIntent().getStringExtra("expenseId");
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         setHasOptionsMenu(true);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
@@ -145,7 +147,7 @@ public class ExpenseFragment extends Fragment {
         };
 
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Expenses");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(Singleton.getInstance().getmCurrentGroup().getName());
         rv.setAdapter(ea);
 
 
@@ -194,7 +196,7 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if (model == null) return;
-                viewHolder.setData(model, getContext());
+                viewHolder.setData(model, getContext(), ei);
 
             }
         };
