@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -113,7 +114,7 @@ public class HistoryFragment extends Fragment {
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         HistoryClass h = dataSnapshot.getValue(HistoryClass.class);
                         Date date = new Date(h.getWhen());
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALY);
                         String time = sdf.format(date);
                         if(day.contains(time)){
                             int i = day.indexOf(time);

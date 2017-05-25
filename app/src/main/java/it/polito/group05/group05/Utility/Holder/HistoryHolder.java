@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import it.polito.group05.group05.HistoryFragment;
 import it.polito.group05.group05.R;
@@ -77,7 +78,7 @@ public class HistoryHolder extends GeneralHolder  {
         internal_rv.setAdapter(internal_adapter);
 
         Date date = new Date(history.get(0).getWhen());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALY);
         String time = sdf.format(date);
         Date today = new Date();
         String today_s = sdf.format(today);

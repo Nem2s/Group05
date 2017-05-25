@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -83,7 +84,7 @@ public class InternalHistoryHolder extends GeneralHolder{
                 break;
         }
         Date date = new Date(history.getWhen());
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
         String time = sdf.format(date);
         history_time.setText(time);
         if(last) divider_history.setVisibility(View.GONE);

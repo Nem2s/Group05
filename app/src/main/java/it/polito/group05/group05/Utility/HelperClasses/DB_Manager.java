@@ -607,6 +607,7 @@ public class DB_Manager {
                     2);
         }
         else return;
+        groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
         ref.setValue(h);
     }
 
