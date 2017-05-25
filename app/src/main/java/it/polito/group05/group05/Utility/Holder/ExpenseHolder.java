@@ -262,6 +262,8 @@ private void setupListener(CardView cv, final TextView price, final Context cont
             else {
                 rv.setVisibility(View.GONE);
             }
+
+
         }
     });
 }

@@ -4,6 +4,7 @@ package it.polito.group05.group05;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -27,13 +29,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,11 +49,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
+import it.polito.group05.group05.Utility.Adapter.MemberContactsAdapter;
 import it.polito.group05.group05.Utility.Adapter.MemberInvitedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -81,9 +90,9 @@ public class NewGroupActivity extends AppCompatActivity {
     MaterialEditText et_group_name;
 
     RecyclerView rv_invited;
-
+    RecyclerView rv_contacts;
     List<UserContact> contacts;
-
+    List<UserContact> local_contacts;
     SwipeRefreshLayout mSwipeLayout;
 
     private MenuItem mSearchItem;
@@ -107,8 +116,9 @@ public class NewGroupActivity extends AppCompatActivity {
     private String[] ids;
 
     MemberInvitedAdapter invitedAdapter;
-
+    MemberContactsAdapter contactsAdapter;
     private boolean formIsValid = false;
+    private Activity activity;
 
 
     @Override
@@ -159,7 +169,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
         else {
 
-            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.network));
+            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.group_placeholder));
 
         }
 
@@ -174,10 +184,9 @@ public class NewGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_new_group);
-
+        activity = this;
         isNameEmpty = true;
 
-        rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
 
         et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
 
@@ -197,10 +206,6 @@ public class NewGroupActivity extends AppCompatActivity {
 
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
 
-        contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
-
-        invitedAdapter = new MemberInvitedAdapter(contacts, context);
-
 /*
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -219,145 +224,14 @@ public class NewGroupActivity extends AppCompatActivity {
             }
 
 
-        });
-*/
-        if(invitedAdapter.getItemCount() == 0) {
+        });*/
 
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
-
-                    .setAction("ok", new View.OnClickListener() {
-
-                        @Override
-
-                        public void onClick(View view) {
-
-                        }
-
-                    });
-
-            snackbar.show();
-
-            final View snackbarView = snackbar.getView();
-
-            snackbarView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-
-                @Override
-
-                public boolean onPreDraw() {
-
-                    snackbarView.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                    ((CoordinatorLayout.LayoutParams) snackbarView.getLayoutParams()).setBehavior(null);
-
-                    return true;
-
-                }
-
-            });
-
-
-            et_group_name.setEnabled(false);
-
-            iv_new_group.setEnabled(false);
-
-
-            no_people.setVisibility(View.VISIBLE);
-
-        }
-
-
-
-        LinearLayoutManager invitedManager = new LinearLayoutManager(this);
-
-        rv_invited.setHasFixedSize(true);
-
-        rv_invited.setLayoutManager(invitedManager);
-
-        rv_invited.setAdapter(invitedAdapter);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
-
-                invitedManager.getOrientation());
-
-        rv_invited.addItemDecoration(dividerItemDecoration);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-
-            public void onClick(View v) {
-
-
-                Intent intent = new AppInviteInvitation.IntentBuilder("")
-
-                        .setMessage("")
-
-                        .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
-
-                        .build();
-
-                startActivityForResult(intent, INVITE);
-
-
-            }
-
-        });
-
-
-        iv_new_group.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-
-            public void onClick(View view) {
-
-                ImagePicker.pickImage((Activity) context, "Select Image:");
-
-                REQUEST_FROM_NEW_GROUP = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-
-
-            }
-
-        });
-
-        /**TROVARE METODO ALTERNATIVO **/
-
-        //checkSelected();
-
-
-        et_group_name.addTextChangedListener(new TextWatcher() {
-
-            @Override
-
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-            }
-
-
-            @Override
-
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                EventBus.getDefault().post(SelectionChangedEvent.onTextChangedEvent(charSequence.length() > 0));
-
-            }
-
-
-            @Override
-
-            public void afterTextChanged(Editable editable){
-
-
-            }
-
-        });
 
 
     }
 
 
-
-/*
+    /*
 
     @Subscribe
 
@@ -446,14 +320,13 @@ public class NewGroupActivity extends AppCompatActivity {
 
             mSearchItem.setEnabled(true);
 
-/*
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
 
             public boolean onQueryTextSubmit(String query) {
 
-                no_people.setVisibility(View.GONE);
 
                 return true;
 
@@ -464,9 +337,11 @@ public class NewGroupActivity extends AppCompatActivity {
 
             public boolean onQueryTextChange(String newText) {
 
+                new SearchViewManager().execute();
                 if ( TextUtils.isEmpty ( newText ) ) {
 
                     ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
+                    ((MemberContactsAdapter)rv_contacts.getAdapter()).getFilter().filter("");
 
                     no_people.setVisibility(View.GONE);
 
@@ -474,19 +349,21 @@ public class NewGroupActivity extends AppCompatActivity {
                 } else {
 
                     ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
-
-                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0)
-
+                    ((MemberContactsAdapter)rv_contacts.getAdapter()).getFilter().filter(newText);
+                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
+                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0)
                         no_people.setVisibility(View.VISIBLE);
-
+                    return true;
                 }
 
-                return true;
 
+                return false;
             }
 
+
+
         });
-*/
+
         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
 
             @Override
@@ -739,6 +616,11 @@ public class NewGroupActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new InitializeViews().execute();
+    }
 
     @Override
     public void onBackPressed() {
@@ -748,7 +630,221 @@ public class NewGroupActivity extends AppCompatActivity {
                 u.setSelected(false);
             }
         }
+        finish();
+    }
+
+    class InitializeViews extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog dialog;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
+            local_contacts = new ArrayList<>(Singleton.getInstance().getLocalContactsList().values());
+            invitedAdapter = new MemberInvitedAdapter(contacts, context);
+            contactsAdapter = new MemberContactsAdapter(local_contacts, context);
+            Collections.sort(contacts, new Comparator<UserContact>() {
+                @Override
+                public int compare(UserContact u1, UserContact u2) {
+                    return u1.getName().compareTo(u2.getName());
+                }
+            });
+            Collections.sort(local_contacts, new Comparator<UserContact>() {
+                @Override
+                public int compare(UserContact u1, UserContact u2) {
+                    return u1.getName().compareTo(u2.getName());
+                }
+            });
+
+
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
+            rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
+            dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
+            LinearLayoutManager contactsManager = new LinearLayoutManager(getApplicationContext());
+            contactsManager.setItemPrefetchEnabled(true);
+            contactsManager.setInitialPrefetchItemCount(25);
+
+            DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(rv_invited.getContext(),
+
+                    contactsManager.getOrientation());
+
+            rv_contacts.addItemDecoration(dividerItemDecoration2);
+
+            LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
+
+                    invitedManager.getOrientation());
+
+            rv_contacts.setHasFixedSize(true);
+
+            rv_contacts.setLayoutManager(contactsManager);
+
+            rv_invited.setHasFixedSize(true);
+
+            rv_invited.setLayoutManager(invitedManager);
+            rv_invited.addItemDecoration(dividerItemDecoration);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            rv_contacts.setAdapter(contactsAdapter);
+
+            rv_invited.setAdapter(invitedAdapter);
+
+            if(invitedAdapter.getItemCount() == 0) {
+
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
+
+                        .setAction("ok", new View.OnClickListener() {
+
+                            @Override
+
+                            public void onClick(View view) {
+
+                            }
+
+                        });
+
+                snackbar.show();
+
+                final View snackbarView = snackbar.getView();
+
+                snackbarView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+
+                    @Override
+
+                    public boolean onPreDraw() {
+
+                        snackbarView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                        ((CoordinatorLayout.LayoutParams) snackbarView.getLayoutParams()).setBehavior(null);
+
+                        return true;
+
+                    }
+
+                });
+
+
+                et_group_name.setEnabled(false);
+
+                iv_new_group.setEnabled(false);
+
+                if(contactsAdapter.getItemCount() == 0)
+                    no_people.setVisibility(View.VISIBLE);
+
+            }
+
+            rv_contacts.setNestedScrollingEnabled(false);
+            rv_invited.setNestedScrollingEnabled(false);
+
+
+            rv_contacts.post(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                }
+            });
+            fab.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+
+                public void onClick(View v) {
+
+
+                    Intent intent = new AppInviteInvitation.IntentBuilder("")
+
+                            .setMessage("")
+
+                            .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
+
+                            .build();
+
+                    startActivityForResult(intent, INVITE);
+
+
+                }
+
+            });
+
+
+            iv_new_group.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+
+                public void onClick(View view) {
+
+                    ImagePicker.pickImage((Activity) context, "Select Image:");
+
+                    REQUEST_FROM_NEW_GROUP = ImagePicker.PICK_IMAGE_REQUEST_CODE;
+
+
+                }
+
+            });
+
+            /**TROVARE METODO ALTERNATIVO **/
+
+            //checkSelected();
+
+
+            et_group_name.addTextChangedListener(new TextWatcher() {
+
+                @Override
+
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                }
+
+
+                @Override
+
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    EventBus.getDefault().post(SelectionChangedEvent.onTextChangedEvent(charSequence.length() > 0));
+
+                }
+
+
+                @Override
+
+                public void afterTextChanged(Editable editable){
+
+
+                }
+
+            });
+
+        }
     }
 
 
+    private class SearchViewManager extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
 }

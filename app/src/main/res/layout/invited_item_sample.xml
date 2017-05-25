@@ -30,6 +30,9 @@
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:textSize="16sp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:layout_marginEnd="85dp"
              />
         <TextView
             android:id="@+id/tv_invited_email"
@@ -37,6 +40,9 @@
             android:layout_height="wrap_content"
             android:text="user@example.it"
             android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:layout_marginEnd="85dp"
             />
         <TextView
             android:id="@+id/tv_invited_pnumber"

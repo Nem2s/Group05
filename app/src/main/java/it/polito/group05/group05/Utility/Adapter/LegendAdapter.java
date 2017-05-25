@@ -49,6 +49,7 @@ public class LegendAdapter extends RecyclerView.Adapter<LegendHolder> {
         return groups.size();
     }
 
+
     public void updateEntries(List<PieEntry> entries) {
         List<PieEntry> tmp = new ArrayList<>(groups);
         groups.removeAll(entries);

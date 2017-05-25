@@ -1,5 +1,9 @@
 package it.polito.group05.group05;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -8,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -40,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.Adapter.GroupDetailsAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -47,10 +54,13 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.AppBarStateChangeListener;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupDetailsActivity extends AppCompatActivity {
 
+    private static int EXTRA_COLOR = -1;
+    private int DEFAULT_COLOR = -1;
     private final int COME_FROM_ADD_MEMBER_ACTIVITY = 123;
     private final GroupDatabase currGroup = Singleton.getInstance().getmCurrentGroup();
     ImageView iv_header;
@@ -60,6 +70,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     GroupDetailsAdapter mAdapter;
     MaterialDialog editDialog;
     ProgressBar pb;
+    Toolbar toolbar;
+    AppBarLayout appbar;
+    RevealFrameLayout root;
     private List<Object> users = new ArrayList<>();
 
     @Override
@@ -72,16 +85,24 @@ public class GroupDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
+        iv_header.setVisibility(View.INVISIBLE);
         cv_back = (CircleImageView) findViewById(R.id.cv_backimage);
+        cv_back.setVisibility(View.INVISIBLE);
         rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
+        pb.setVisibility(View.INVISIBLE);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        root = (RevealFrameLayout)findViewById(R.id.reveal_root);
+        appbar = (AppBarLayout)findViewById(R.id.app_bar);
         final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        onStartView(savedInstanceState);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +110,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        initializeUI();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
         toolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -103,11 +124,153 @@ public class GroupDetailsActivity extends AppCompatActivity {
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
         mAdapter = new GroupDetailsAdapter(this, users);
         rv_members.setAdapter(mAdapter);
-        rv_members.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+
+
 
     }
 
+    private void onStartView(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            final Intent i = getIntent();
+            final int color = i.getIntExtra("Color", getResources().getColor(R.color.colorPrimary));
+            if(!(color == getResources().getColor(R.color.colorPrimary))) {
+
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                        .title("Group Informations")
+                        .content("To be implemented...")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        });
+                editDialog = builder.build();
+                ViewTreeObserver viewTreeObserver = root.getViewTreeObserver();
+                if (viewTreeObserver.isAlive()) {
+                    viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            EXTRA_COLOR = color;
+                            final int cx = (int) (appbar.getX() + (appbar.getWidth() / 2));
+                            final int cy = (int) (appbar.getY() + (appbar.getHeight() / 2));
+                            final float finalRadius = (float) Math.hypot(cx, cy);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                                Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
+
+                                        root,
+                                        (int) cx,
+                                        (int) cy, finalRadius,
+                                        0
+                                );
+                                final ValueAnimator anim = ValueAnimator.ofArgb(color, getResources().getColor(R.color.colorPrimary));
+                                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
+                                    }
+
+                                });
+                                anim.addListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+                                        iv_header.setVisibility(View.INVISIBLE);
+                                        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
+                                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+
+                                        AnimUtils.enterRevealAnimation(iv_header);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
+                                anim.setDuration(1000);
+                                animator.addListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        root.setBackgroundColor(color);
+
+                                        anim.start();
+                                        cv_back.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        retriveUsers();
+
+                                        root.setVisibility(View.INVISIBLE);
+                                        fab.show();
+                                        //AnimUtils.enterRevealAnimation(iv_header);
+                                    }
+                                });
+                                animator.setStartDelay(200);
+                                animator.setDuration(250);
+                                animator.start();
+                            } else {
+                                Animator animator = ViewAnimationUtils.createCircularReveal(
+                                        root,
+                                        (int) cx,
+                                        (int) cy, 0,
+                                        finalRadius);
+                                final ValueAnimator anim = new ValueAnimator();
+                                anim.setIntValues(color, getResources().getColor(R.color.colorPrimary));
+                                anim.setEvaluator(new ArgbEvaluator());
+                                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
+                                    }
+                                });
+
+                                anim.setDuration(1000);
+                                animator.addListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        anim.start();
+                                        iv_header.setVisibility(View.INVISIBLE);
+                                        root.setBackgroundColor(color);
+                                        cv_back.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        retriveUsers();
+                                        root.setVisibility(View.INVISIBLE);
+                                        fab.show();
+                                        cv_back.setVisibility(View.INVISIBLE);
+                                        AnimUtils.enterRevealAnimation(iv_header);
+                                    }
+                                });
+                            }
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                root.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            } else {
+                                root.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                        }
+                    });
+                }
+            } else {
+                cv_back.setVisibility(View.VISIBLE);
+                initializeUI();
+            }
+
+        }
+    }
+
     private void retriveUsers() {
+        pb.setVisibility(View.VISIBLE);
         FirebaseDatabase.getInstance().getReference("groups").child(currGroup.getId())
                 .child("members")
                 .orderByKey()
@@ -194,6 +357,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AnimUtils.exitReveal(iv_header);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AnimUtils.exitRevealAndFinish(fab, this);
         } else {
@@ -220,6 +384,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void initializeUI() {
         ImageUtils.LoadImageGroup(cv_back, this, currGroup);
         ImageUtils.LoadImageGroup(iv_header, this, currGroup);
+
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .title("Group Informations")
                 .content("To be implemented...")
@@ -231,44 +396,44 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 });
         editDialog = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                @Override
-                public void onTransitionStart(Transition transition) {
+                getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
 
-                }
+                    }
 
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    fab.show();
-                    AnimUtils.enterRevealAnimation(iv_header);
-                    cv_back.setVisibility(View.INVISIBLE);
-                    retriveUsers();
-                }
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        fab.show();
+                        AnimUtils.enterRevealAnimation(iv_header);
+                        cv_back.setVisibility(View.INVISIBLE);
+                        retriveUsers();
+                    }
 
-                @Override
-                public void onTransitionCancel(Transition transition) {
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
 
-                }
+                    }
 
-                @Override
-                public void onTransitionPause(Transition transition) {
+                    @Override
+                    public void onTransitionPause(Transition transition) {
 
-                }
+                    }
 
-                @Override
-                public void onTransitionResume(Transition transition) {
+                    @Override
+                    public void onTransitionResume(Transition transition) {
 
-                }
-            });
+                    }
+                });
 
-            scheduleStartPostponedTransition(iv_header);
-        } else {
-            fab.show();
-            AnimUtils.enterRevealAnimation(iv_header);
-            cv_back.setVisibility(View.INVISIBLE);
-            retriveUsers();
+                scheduleStartPostponedTransition(iv_header);
+            } else {
+                fab.show();
+                AnimUtils.enterRevealAnimation(iv_header);
+                cv_back.setVisibility(View.INVISIBLE);
+                retriveUsers();
+            }
         }
-    }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {
         sharedElement.getViewTreeObserver().addOnPreDrawListener(

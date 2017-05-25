@@ -1,5 +1,8 @@
 package it.polito.group05.group05;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -15,7 +18,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -51,14 +56,19 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.Adapter.LegendAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -83,7 +93,7 @@ public class UserBalanceActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     RecyclerView rv;
     LegendAdapter adapter;
-
+    RevealFrameLayout reveal;
     private Entry currEntry;
     private Highlight highlighted;
     private String currUserId = Singleton.getInstance().getCurrentUser().getId();
@@ -126,10 +136,11 @@ public class UserBalanceActivity extends AppCompatActivity {
 
     private void setupLineChart(List<Entry> list) {
         Collections.sort(list, new EntryXComparator());
-        LineDataSet set = new LineDataSet(list, "History of Expenses posted by You (last 6 months)");
+        final LineDataSet set = new LineDataSet(list, "History of Expenses posted by You (last 6 months)");
         lchart.setExtraOffsets(16, 5, 30, 30);
         lchart.getDescription().setEnabled(false);
         XAxis xaxis = lchart.getXAxis();
+
         xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xaxis.setTextSize(10f);
         xaxis.setDrawAxisLine(false);
@@ -138,12 +149,15 @@ public class UserBalanceActivity extends AppCompatActivity {
         xaxis.setGranularity(1f); // one day
         xaxis.setValueFormatter(new IAxisValueFormatter() {
 
-            private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM yy");
+            private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ITALY);
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
+                mFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 long millis = TimeUnit.DAYS.toMillis((long)value);
-                return mFormat.format(new Date(millis));
+                String s = mFormat.format(new Date(millis));
+                //String st = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.AM_PM_FIELD, Locale.ITALY).format(new Date(millis));
+                return s;
             }
         });
 
@@ -173,6 +187,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         set.setDrawCircleHole(false);
         set.setMode(LineDataSet.Mode.LINEAR);
         set.setFillColor(R.color.colorPrimary);
+
         lchart.setDragEnabled(true);
         lchart.getLegend().setTextSize(11f);
         lchart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -216,6 +231,11 @@ public class UserBalanceActivity extends AppCompatActivity {
             colors.add(i);
 
         //if(adapter == null) {
+        if(entries.size() > 6) {
+            ViewGroup.LayoutParams params=rv.getLayoutParams();
+            params.height= 600;
+            rv.setLayoutParams(params);
+        }
             adapter = new LegendAdapter(entries, colors, this);
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             rv.setLayoutManager(llm);
@@ -275,27 +295,100 @@ public class UserBalanceActivity extends AppCompatActivity {
 
 
         pchart.setData(data);
-        pchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-
-
+        findViewById(R.id.toggle_reveal).setOnTouchListener(new View.OnTouchListener() {
+            int cx, cy;
             @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                GroupDatabase g = (GroupDatabase)e.getData();
-                currEntry = e;
-                highlighted = h;
-                set.setDrawValues(true);
-                Pair<View, String> p = new Pair<View, String>(pchart, "qwe");
-                AnimUtils.startActivityWithAnimation(UserBalanceActivity.this, new Intent(UserBalanceActivity.this, GroupDetailsActivity.class),
-                        p);
-            }
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                cx = (int)motionEvent.getX();
+                cy = (int)motionEvent.getY();
+                pchart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
-            @Override
-            public void onNothingSelected() {
-                onValueSelected(currEntry, highlighted);
+                    @Override
+                    public void onValueSelected(Entry e, Highlight h) {
+                        if(e == null) return;
+                        GroupDatabase g = (GroupDatabase)e.getData();
+                        currEntry = e;
+                        highlighted = h;
+                        set.setDrawValues(true);
+                        Singleton.getInstance().setmCurrentGroup(g);
+                /*NestedScrollView v = (NestedScrollView)findViewById(R.id.nested_scrollview);
+                v.smoothScrollTo(0,0);
+                View itemSelected = rv.findViewHolderForLayoutPosition(set.getEntryIndex(e)).itemView;
+                rv.smoothScrollToPosition(set.getEntryIndex(e));
+                int cx = (int)itemSelected.getX();
+                int cy = (int)itemSelected.getY();
+                animateAndLaunchActivity(cx, cy, set.getColor(set.getEntryIndex(e)));*/
+
+                        animateAndLaunchActivity(cx, cy, set.getColor(set.getEntryIndex(e)));
+
+                    }
+
+
+
+                    @Override
+                    public void onNothingSelected() {
+                        onValueSelected(currEntry, highlighted);
+                    }
+                });
+                return false;
             }
         });
+
         pchart.invalidate();
         pchart.notifyDataSetChanged();
+    }
+
+    private void animateAndLaunchActivity(int cx, int cy, final int color) {
+
+        float finalRadius = (float) Math.hypot(cx, cy);
+        final Intent i = new Intent(UserBalanceActivity.this, GroupDetailsActivity.class);
+        i.putExtra("Color", color);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
+
+                    findViewById(R.id.toggle_reveal),
+                    (int)cx,
+                    (int)cy, 0,
+                    finalRadius
+            );
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    findViewById(R.id.toggle_reveal).setBackgroundColor(color);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    startActivity(i);
+
+
+
+                }
+            });
+            animator.setStartDelay(200);
+            animator.setDuration(250);
+            animator.start();
+        } else {
+            Animator animator = ViewAnimationUtils.createCircularReveal(
+                    findViewById(R.id.toggle_reveal),
+                    (int) cx,
+                    (int) cy, 0,
+                    finalRadius);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    findViewById(R.id.toggle_reveal).setBackgroundColor(color);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    startActivity(i);
+
+
+                }
+            });
+        }
     }
 
 
@@ -303,7 +396,7 @@ public class UserBalanceActivity extends AppCompatActivity {
         pchart.setTransparentCircleColor(getResources().getColor(R.color.grey_300));
         pchart.setTransparentCircleAlpha(110);
         pchart.setTransparentCircleRadius(55);
-        pchart.setExtraOffsets(20, 0, 20, 5);
+        pchart.setExtraOffsets(15, 0, 15, 5);
         pchart.setCenterTextSize(22f);
         pchart.setCenterTextTypeface(Typeface.DEFAULT_BOLD);
         pchart.setHoleRadius(50);
@@ -330,8 +423,8 @@ public class UserBalanceActivity extends AppCompatActivity {
         iv_nodata = (ImageView)findViewById(R.id.iv_nodata);
         tv_username.setText(Singleton.getInstance().getCurrentUser().getName());
         rv = (RecyclerView)findViewById(R.id.rv_legend);
-
-        snackbar = Snackbar.make(findViewById(R.id.parent_layout), "You're not in any groups, Try to create one!", Snackbar.LENGTH_INDEFINITE)
+        reveal = (RevealFrameLayout)findViewById(R.id.reveal_parent);
+        snackbar = Snackbar.make(findViewById(R.id.parent_layout), "You're not in any groups, or you haven't pending expenses! Try to create one!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -351,6 +444,7 @@ public class UserBalanceActivity extends AppCompatActivity {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
+                    findViewById(R.id.toggle_reveal).setVisibility(View.INVISIBLE);
 
                 }
 
@@ -358,6 +452,8 @@ public class UserBalanceActivity extends AppCompatActivity {
                 public void onTransitionEnd(Transition transition) {
                     DB_Manager.getInstance().retriveGroups();
                     DB_Manager.getInstance().retriveExpenses();
+                    findViewById(R.id.toggle_reveal).setVisibility(View.VISIBLE);
+
                 }
 
                 @Override
@@ -416,6 +512,7 @@ public class UserBalanceActivity extends AppCompatActivity {
     protected void onStart() {
 
         super.onStart();
+        findViewById(R.id.toggle_reveal).setBackgroundColor(getResources().getColor(R.color.transparent));
         EventBus.getDefault().register(this);
 
     }

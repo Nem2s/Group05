@@ -133,7 +133,7 @@ public class Expense_activity extends AppCompatActivity {
         plus = (ImageView) findViewById(R.id.plus);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
-        iv_group_image.setImageResource(R.drawable.network);
+        iv_group_image.setImageResource(R.drawable.group_placeholder);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -200,7 +200,7 @@ public class Expense_activity extends AppCompatActivity {
                         price = partecipants.get(i).getCustomValue();
                         //totalPriceActual += partecipants.get(i).getCustomValue();
                         String id = partecipants.get(i).getId();
-                        if (partecipants.get(i).getId() == expense.getOwner()) {
+                        if (partecipants.get(i).getId().equals(expense.getOwner())) {
                             expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
                         } else {
                             expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
@@ -211,7 +211,7 @@ public class Expense_activity extends AppCompatActivity {
                         }
                     if (clicked_calendar) {
 
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                         Date date = null;
                         try {
                             date = dateFormat.parse(data);
@@ -268,7 +268,7 @@ public class Expense_activity extends AppCompatActivity {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
                     memberAdapter.changeTotal(expense_price);
-                    //   memberAdapter.notifyDataSetChanged();
+                    memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -280,21 +280,23 @@ public class Expense_activity extends AppCompatActivity {
                 clicked_calendar = true;
                 final Calendar c = Calendar.getInstance();
                 mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
+                mMonth = c.get(Calendar.MONTH );
                 mDay = c.get(Calendar.DAY_OF_MONTH);
+                mHour = c.get(Calendar.HOUR);
+                mMinute=c.get(Calendar.MINUTE);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                month++;
                                 if (month < 10) {
                                     String mese = "0" + month;
-                                    //data = year + "-" + mese + "-" + dayOfMonth;
-                                    data = dayOfMonth + "/" + mese + "/" + year;
+                                    data = dayOfMonth + "/" + mese + "/" + year+" "+ mHour + ":" + mMinute;
                                     nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
-                                    data = dayOfMonth + "/" + month + "/" + year;
-                                    //data = year + "-" + month + "-" + dayOfMonth;
+
+                                    data = dayOfMonth + "/" + month + "/" + year+" "+ mHour + ":" + mMinute;
                                     nomedata.setText(dayOfMonth + "/" + month + "/" + year);
                                 }
                             }
