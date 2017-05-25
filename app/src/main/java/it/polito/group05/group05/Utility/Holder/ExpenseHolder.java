@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,7 +58,7 @@ public class ExpenseHolder extends GeneralHolder{
     RecyclerView rv;
     RelativeLayout rel;
     TextView description;
-    ImageView clip;
+    ImageView clip,expand;
     CardView cv;
     Query ref;
     TextView menu;
@@ -78,6 +81,7 @@ public class ExpenseHolder extends GeneralHolder{
         this.rel = (RelativeLayout) itemView.findViewById(R.id.rel_file);
         this.rel.setVisibility(View.GONE);
         this.nf = (TextView) itemView.findViewById(R.id.name_File);
+        this.expand = (ImageView) itemView.findViewById(R.id.expand);
         this.clip = (ImageView) itemView.findViewById(R.id.clip);
         filePresent = false;
     }
@@ -263,14 +267,13 @@ private void setupListener(CardView cv, final TextView price, final Context cont
 
             if (rv.getVisibility() == View.GONE) {
                 rv.setVisibility(View.VISIBLE);
-         //
+                expand.setImageResource(R.drawable.ic_expand_less);
                 if(expense.getFile() != null) {
                     rel.setVisibility(View.VISIBLE);
-                   // name_File.setText(expense.getFile());
-                    //     }
                 }
             }
             else {
+                expand.setImageResource(R.drawable.ic_expand_more);
                 rv.setVisibility(View.GONE);
                 rel.setVisibility(View.GONE);
             }
@@ -280,11 +283,18 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     rel.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(f), "*/*");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            context.startActivity(intent);
+            try {
+                DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
+                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(f),"*/*");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                context.startActivity(intent);
+            } catch (FileNotFoundException e) {
+                Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
         }
     });
 

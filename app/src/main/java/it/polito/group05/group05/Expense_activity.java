@@ -62,7 +62,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 public class Expense_activity extends AppCompatActivity {
 
     private CoordinatorLayout parent;
-    private RelativeLayout rel_file;
+    private RelativeLayout rel_file, moreLayout;
     private MaterialEditText et_name, et_cost;
     private CheckBox cb_addfile;
     private RecyclerView recyclerView;
@@ -134,6 +134,7 @@ public class Expense_activity extends AppCompatActivity {
         rel_file = (RelativeLayout) findViewById(R.id.relative_file);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
         recyclerView.setVisibility(View.GONE);
+        moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
         plus = (ImageView) findViewById(R.id.plus);
         more = (TextView) findViewById(R.id.more);
@@ -280,13 +281,14 @@ public class Expense_activity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                int month1= month +1;
                                 if (month < 10) {
-                                    String mese = "0" + month;
+                                    String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year;
                                     nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
-                                    data = dayOfMonth + "/" + month + "/" + year;
-                                    nomedata.setText(dayOfMonth + "/" + month + "/" + year);
+                                    data = dayOfMonth + "/" + month1 + "/" + year;
+                                    nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
                         }, mYear, mMonth, mDay);
@@ -306,10 +308,9 @@ public class Expense_activity extends AppCompatActivity {
                 }
             }
         });
-        plus.setOnClickListener(new View.OnClickListener() {
+        moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0) {
                     Snackbar.make(v, "Set a Valid price", Snackbar.LENGTH_SHORT).show();
                 } else {

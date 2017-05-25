@@ -189,8 +189,9 @@
                             </RelativeLayout>
                         </RelativeLayout>
                         <RelativeLayout
+                            android:id="@+id/moreLayout"
                             android:layout_width="match_parent"
-                            android:layout_height="25dp"
+                            android:layout_height="43dp"
                             android:background="@color/light_gray"
                             android:layout_marginTop="20dp">
                             <TextView
@@ -199,15 +200,16 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:text="More"
+                                android:layout_marginTop="6dp"
                                 android:textColor="@color/dark_gray"
-                                android:layout_centerVertical="true"
                                 />
                             <ImageView
                                 android:id="@+id/plus"
-                                android:layout_width="40dp"
-                                android:layout_toRightOf="@+id/more"
-                                android:layout_height="match_parent"
-                                android:layout_centerVertical="true"
+                                android:layout_width="20dp"
+                                android:layout_below="@+id/more"
+                                android:layout_height="20dp"
+                                android:layout_marginBottom="3dp"
+                                android:layout_centerHorizontal="true"
                                 android:src="@drawable/ic_expand_more" />
                         </RelativeLayout>
                     </LinearLayout>
