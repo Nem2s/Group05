@@ -64,7 +64,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-      //gestione cambio nome/immagine gruppo.
+        //gestione cambio nome/immagine gruppo.
     }
 
     @Override
@@ -72,22 +72,22 @@ public class GroupDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.toolbar_layout);
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
-        cv_back = (CircleImageView)findViewById(R.id.cv_backimage);
-        rv_members = (RecyclerView)findViewById(R.id.rv_group_members);
-        pb = (ProgressBar)findViewById(R.id.pb_loading_members);
-        final LinearLayoutManager ll=  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,true);
+        cv_back = (CircleImageView) findViewById(R.id.cv_backimage);
+        rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
+        pb = (ProgressBar) findViewById(R.id.pb_loading_members);
+        final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent i = new Intent(GroupDetailsActivity.this,NewMemberActivity.class);
-            startActivity(i);
-        }
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(GroupDetailsActivity.this, NewMemberActivity.class);
+                startActivity(i);
+            }
         });
         initializeUI();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -105,89 +105,89 @@ public class GroupDetailsActivity extends AppCompatActivity {
         rv_members.setAdapter(mAdapter);
         rv_members.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
 
-        }
+    }
 
-        private void retriveUsers() {
-            FirebaseDatabase.getInstance().getReference("groups").child(currGroup.getId())
-                    .child("members")
-                    .orderByKey()
-                    .addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            pb.setVisibility(View.GONE);
-                                            final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
-                                            if (newUser.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
-                                                return;
-                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    int i = mAdapter.addUser(newUser);
-                                                    int n = mAdapter.getItemCount();
-                                                    if (i == n)
-                                                        mAdapter.notifyItemInserted(n - 1);
-                                                    else
-                                                        mAdapter.notifyItemChanged(i - 1);
-                                                }
-                                            });
-                                            if (pb.getVisibility() == View.GONE){
-                                                rv_members.setVisibility(View.VISIBLE);
+    private void retriveUsers() {
+        FirebaseDatabase.getInstance().getReference("groups").child(currGroup.getId())
+                .child("members")
+                .orderByKey()
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        pb.setVisibility(View.GONE);
+                                        final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
+                                        if (newUser.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
+                                            return;
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                int i = mAdapter.addUser(newUser);
+                                                int n = mAdapter.getItemCount();
+                                                if (i == n)
+                                                    mAdapter.notifyItemInserted(n - 1);
+                                                else
+                                                    mAdapter.notifyItemChanged(i - 1);
                                             }
+                                        });
+                                        if (pb.getVisibility() == View.GONE) {
+                                            rv_members.setVisibility(View.VISIBLE);
                                         }
+                                    }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                        }
-                                    });
-                        }
+                                    }
+                                });
+                    }
 
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-                            FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            pb.setVisibility(View.GONE);
-                                            final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
-                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    int i = mAdapter.removeUser(newUser);
-                                                    if(i != -1)
-                                                        mAdapter.notifyItemRemoved(i);
-                                                }
-                                            });
-                                            if (pb.getVisibility() == View.GONE){
-                                                rv_members.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot.getKey()).child("userInfo")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        pb.setVisibility(View.GONE);
+                                        final UserDatabase newUser = dataSnapshot.getValue(UserDatabase.class);
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                int i = mAdapter.removeUser(newUser);
+                                                if (i != -1)
+                                                    mAdapter.notifyItemRemoved(i);
                                             }
+                                        });
+                                        if (pb.getVisibility() == View.GONE) {
+                                            rv_members.setVisibility(View.VISIBLE);
                                         }
+                                    }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                        }
-                                    });
-                        }
+                                    }
+                                });
+                    }
 
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
-        }
+                    }
+                });
+    }
 
 
 
@@ -208,7 +208,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }

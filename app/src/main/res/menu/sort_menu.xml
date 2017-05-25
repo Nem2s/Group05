@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group
-android:checkableBehavior="single">
-<item
-    android:id="@+id/sort_owner"
-    android:title="Sort by Owner"
-    ></item>
-    <item
-        android:id="@+id/sort_price"
-        android:title="Sort by Price"
-        ></item>
-    <item
-        android:id="@+id/sort_date"
-        android:title="Sort by Date"
-        ></item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sort_owner"
+            android:title="Sort by Owner"></item>
+        <item
+            android:id="@+id/sort_price"
+            android:title="Sort by Price"></item>
+        <item
+            android:id="@+id/sort_date"
+            android:title="Sort by Date"></item>
     </group>
 </menu>

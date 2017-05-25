@@ -12,7 +12,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,21 +28,24 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.storage.FirebaseStorage;
 import com.mvc.imagepicker.ImagePicker;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.UUID;
 
@@ -51,6 +53,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.Event.ReadyEvent;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
         Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
-        if(requestCode == COMING_FROM_BALANCE_ACTIVITY) {
+        if (requestCode == COMING_FROM_BALANCE_ACTIVITY) {
             drawer.openDrawer(Gravity.START);
         }
         if(bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
@@ -95,10 +98,19 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Subscribe
+    public void groupStart(ReadyEvent cu) {
+        Intent i = new Intent(context, Group_Activity.class);
+        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
+        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        context.startActivity(i);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -107,8 +119,8 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+        String tkn = FirebaseInstanceId.getInstance().getToken();
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(tkn);
 
 
         setContentView(R.layout.activity_main);
@@ -123,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         activity = this;
-        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(token);
+        FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(FirebaseInstanceId.getInstance().getToken());
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
         context = this;
@@ -217,9 +229,38 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
+        String groupId = getIntent().getStringExtra("groupId");
+        if (groupId != null) {
+
+            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) return;
+                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
+                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
+                    Singleton.getInstance().setmCurrentGroup(g);
+                    Singleton.getInstance().setIdCurrentGroup(g.getId());
+                    EventBus.getDefault().post(new ReadyEvent());
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -262,12 +303,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
-        if (id == R.id.nav_balance){
-            Pair<View, String> p = new Pair<>((View)cv_user_drawer, getResources().getString(R.string.transition_group_image));
+        if (id == R.id.nav_balance) {
+            Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
 
-        }
-        else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
                         @Override

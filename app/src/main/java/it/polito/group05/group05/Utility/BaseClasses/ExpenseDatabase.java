@@ -12,7 +12,7 @@ public class ExpenseDatabase implements Namable{
     private String name;
     private Double price;
     private String file;
-    private String timestamp;
+    private long timestamp;
     private Map<String,Double> members;
 
 
@@ -21,8 +21,8 @@ public class ExpenseDatabase implements Namable{
         id="";
         owner="";
         name="";
-        price=0.0;
-        file=null;
+        price = 0.0;
+        file = null;
     }
 
     public ExpenseDatabase(ExpenseDatabase edb) {
@@ -61,10 +61,12 @@ public class ExpenseDatabase implements Namable{
         this.file = file;
     }
     public String getFile(){return file;}
-    public String getTimestamp() {
+
+    public long getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(String timestamp) {
+
+    public void setTimestamp(long timestamp) {
         this.timestamp = (timestamp);
     }
     public Map<String, Double> getMembers() {

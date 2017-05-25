@@ -10,10 +10,13 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -66,13 +69,13 @@
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
         <activity android:name=".NewMemberActivity" />
-
-        <service android:name=".Utility.Notification.messageNotificationService">
+        <!--
+        <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
+        -->
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
@@ -97,6 +100,25 @@
             tools:replace="android:value"
             android:name="io.fabric.ApiKey"
             android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
+
+        <receiver
+            android:name=".Utility.NotificationClass.MyReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".Utility.NotificationClass.MyService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4ef5773036dfe9d1f65180c60108881fcfa257f6"
+            tools:replace="android:value" />
     </application>
 
 </manifest>

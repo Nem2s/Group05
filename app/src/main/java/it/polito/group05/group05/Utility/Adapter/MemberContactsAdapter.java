@@ -1,0 +1,8 @@
+package it.polito.group05.group05.Utility.Adapter;
+
+/**
+ * Created by Marco on 25/05/2017.
+ */
+
+public class MemberContactsAdapter {
+}

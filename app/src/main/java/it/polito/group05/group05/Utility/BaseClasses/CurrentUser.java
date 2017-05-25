@@ -19,7 +19,7 @@ public class CurrentUser extends UserDatabase{ //This will be the CurrentUser cl
 
         super(u);
         this.id = u.id;
-        this.balance = new Balance(0 ,0);
+        this.balance = new Balance(0, 0);
     }
 
     @Override

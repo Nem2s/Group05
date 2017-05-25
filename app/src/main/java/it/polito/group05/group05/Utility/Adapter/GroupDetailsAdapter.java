@@ -43,14 +43,14 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
             this.users.add(u);
         } else {
             this.users.remove(i);
-            this.users.add(i,u);
+            this.users.add(i, u);
         }
         return i;
     }
 
     public synchronized int removeUser(UserDatabase u) {
         int i = exists(u);
-        if(i != -1) {
+        if (i != -1) {
             this.users.remove(i);
 
         }
@@ -58,16 +58,16 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
     }
 
     private synchronized int exists(UserDatabase u) {
-        for(int i = 0; i < getItemCount(); i++) {
-            if(((UserDatabase)users.get(i)).getId().equals(u.getId()))
+        for (int i = 0; i < getItemCount(); i++) {
+            if (((UserDatabase) users.get(i)).getId().equals(u.getId()))
                 return i;
         }
         return -1;
     }
 
     public synchronized int getIndex(UserDatabase u) {
-        for(int i = 0; i < getItemCount(); i++) {
-            if(((UserDatabase)users.get(i)).getId().equals(u.getId()))
+        for (int i = 0; i < getItemCount(); i++) {
+            if (((UserDatabase) users.get(i)).getId().equals(u.getId()))
                 return i;
         }
         return -1;
@@ -76,7 +76,7 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == TYPE_HEADER) {
+        if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_rv_group_details_header,
                     parent, false);
 
@@ -92,10 +92,10 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        if(isCurrentUser(position))
-            ((MemberGroupDetailsHeaderHolder)holder).setData(users.get(position), context);
+        if (isCurrentUser(position))
+            ((MemberGroupDetailsHeaderHolder) holder).setData(users.get(position), context);
         else
-            ((MemberGroupDetailsHolder)holder).setData(users.get(position), context);
+            ((MemberGroupDetailsHolder) holder).setData(users.get(position), context);
             }
 
     @Override
@@ -109,10 +109,8 @@ public class GroupDetailsAdapter extends RecyclerView.Adapter {
     }
 
     public boolean isCurrentUser(int position) {
-        return ((UserDatabase)users.get(position)).getId().equals(Singleton.getInstance().getCurrentUser().getId());
+        return ((UserDatabase) users.get(position)).getId().equals(Singleton.getInstance().getCurrentUser().getId());
     }
-
-
 
 
 }

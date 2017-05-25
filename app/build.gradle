@@ -56,12 +56,18 @@ dependencies {
 
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
-    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'com.firebaseui:firebase-ui-storage:1.2.0'
+    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
+    compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
+        transitive = true;
+    }
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
-    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
     compile 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
     compile 'com.firebaseui:firebase-ui:1.2.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
@@ -98,3 +104,8 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+crashlytics {
+    enableNdk true
+    androidNdkOut 'src/main/obj'
+    androidNdkLibsOut 'src/main/libs'
+}
