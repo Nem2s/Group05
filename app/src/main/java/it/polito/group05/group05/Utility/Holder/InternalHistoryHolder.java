@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
@@ -30,6 +33,7 @@ public class InternalHistoryHolder extends GeneralHolder{
     LinearLayout ll_history;
     ImageView history_image;
     FrameLayout divider_history;
+    TextView history_time;
 
     public InternalHistoryHolder(View itemView) {
         super(itemView);
@@ -37,6 +41,7 @@ public class InternalHistoryHolder extends GeneralHolder{
         this.ll_history = (LinearLayout) itemView.findViewById(R.id.ll_history);
         this.history_image = (ImageView) itemView.findViewById(R.id.history_image);
         this.divider_history = (FrameLayout) itemView.findViewById(R.id.divider_history);
+        this.history_time = (TextView) itemView.findViewById(R.id.history_time);
 
     }
 
@@ -77,6 +82,10 @@ public class InternalHistoryHolder extends GeneralHolder{
             default:
                 break;
         }
+        Date date = new Date(history.getWhen());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String time = sdf.format(date);
+        history_time.setText(time);
         if(last) divider_history.setVisibility(View.GONE);
     }
 }

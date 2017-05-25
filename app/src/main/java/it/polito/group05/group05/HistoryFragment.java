@@ -20,8 +20,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -110,13 +112,16 @@ public class HistoryFragment extends Fragment {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         HistoryClass h = dataSnapshot.getValue(HistoryClass.class);
-                        if(day.contains(h.getWhen())){
-                            int i = day.indexOf(h.getWhen());
+                        Date date = new Date(h.getWhen());
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                        String time = sdf.format(date);
+                        if(day.contains(time)){
+                            int i = day.indexOf(time);
                             historyList.get(i).add(h);
                         }
                         else{
-                            day.add(h.getWhen());
-                            int i = day.indexOf(h.getWhen());
+                            day.add(time);
+                            int i = day.indexOf(time);
                             historyList.add(new ArrayList<HistoryClass>());
                             historyList.get(i).add(h);
                         }

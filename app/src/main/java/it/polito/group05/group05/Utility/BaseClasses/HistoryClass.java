@@ -1,5 +1,7 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import java.security.Timestamp;
+
 /**
  * Created by andre on 24-May-17.
  */
@@ -8,13 +10,13 @@ public class HistoryClass {
 
     private String who;
     private String what;
-    private String when;
+    private long when;
     private int type;
 
     public HistoryClass() {
     }
 
-    public HistoryClass(String who, String what, String when, int type) {
+    public HistoryClass(String who, String what, long when, int type) {
         this.who = who;
         this.what = what;
         this.when = when;
@@ -37,11 +39,11 @@ public class HistoryClass {
         this.what = what;
     }
 
-    public String getWhen() {
+    public long getWhen() {
         return when;
     }
 
-    public void setWhen(String when) {
+    public void setWhen(long when) {
         this.when = when;
     }
 

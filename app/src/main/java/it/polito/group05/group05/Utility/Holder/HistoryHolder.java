@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import it.polito.group05.group05.HistoryFragment;
@@ -74,25 +76,21 @@ public class HistoryHolder extends GeneralHolder  {
         };
         internal_rv.setAdapter(internal_adapter);
 
-        when_text_view.setText(history.get(0).getWhen());
-        if(history.get(0).getWhen().equals("Today")) {
+        Date date = new Date(history.get(0).getWhen());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        String time = sdf.format(date);
+        Date today = new Date();
+        String today_s = sdf.format(today);
+        if(time.equals(today_s)) {
+            when_text_view.setText("Today");
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(context.getResources().getColor(R.color.expenseTabColor));
         }
         else
         {
+            when_text_view.setText(time);
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(Color.parseColor("#ffffff"));
         }
     }
-
-  /*  public void setData(Object c, Object previous, Context context) {
-
-        HistoryFragment.historyclass history = (HistoryFragment.historyclass) c;
-        HistoryFragment.historyclass previoushistory = (HistoryFragment.historyclass) previous;
-
-        when_text_view.setText(((HistoryFragment.historyclass) c).getWhen());
-        String sourceString = "<b>" + ((HistoryFragment.historyclass) c).getWho() + "</b> " + ((HistoryFragment.historyclass) c).getWhat();
-        history_text_view.setText(Html.fromHtml(sourceString));
-    }*/
 }

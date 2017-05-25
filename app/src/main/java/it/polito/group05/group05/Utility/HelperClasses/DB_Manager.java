@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -577,38 +578,24 @@ public class DB_Manager {
     {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
         HistoryClass h;
-        //Map<String, Object> tmp = new HashMap<>();
-       /* DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = null;
-        try {
-            date = dateFormat.parse(data);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long timeLong = date.getTime();*/
+        String data = null;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        Date date = new Date();
         if(o instanceof ExpenseDatabase){
             ExpenseDatabase e = (ExpenseDatabase) o;
              h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
-                    "added " + e.getName(),
-                    "Today",
+                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
+                    e.getTimestamp(),
                     0);
-            /*tmp.put("who", profile);
-            tmp.put("what", "added expense " + e.getName());
-            tmp.put("type", 0);
-            tmp.put("when", "oggi" );*/
         }
         else if(o instanceof GroupDatabase){
             GroupDatabase g = (GroupDatabase) o;
              h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
                     "created " + g.getName(),
-                    "Today",
+                     date.getTime(),
                     1);
-            /*tmp.put("who", profile);
-            tmp.put("what", "created " + g.getName());
-            tmp.put("type", 1);
-            tmp.put("when", "oggi");*/
         }
         else if(o instanceof UserDatabase)
         {
@@ -616,11 +603,8 @@ public class DB_Manager {
              h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
                     "added " + u.getName(),
-                    "Today",
+                     date.getTime(),
                     2);
-            /*tmp.put("who", profile);
-            tmp.put("what", "added " + u.getName() + " to group");
-            tmp.put("when", "oggi");*/
         }
         else return;
         ref.setValue(h);
