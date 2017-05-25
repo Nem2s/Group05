@@ -7,10 +7,10 @@
 
         />
     <corners
-        android:bottomRightRadius="2dp"
-        android:bottomLeftRadius="2dp"
-        android:topLeftRadius="2dp"
-        android:topRightRadius="2dp" />
+        android:bottomRightRadius="28dp"
+        android:bottomLeftRadius="28dp"
+        android:topLeftRadius="28dp"
+        android:topRightRadius="28dp" />
     <stroke
         android:width="2sp"
         android:color="#E1E1E1" />

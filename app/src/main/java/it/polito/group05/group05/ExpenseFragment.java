@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -125,6 +126,8 @@ public class ExpenseFragment extends Fragment {
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
+
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref.orderByChild("timestamp")) {

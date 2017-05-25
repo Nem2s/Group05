@@ -68,13 +68,45 @@
                 android:paddingRight="10dp"
                 android:text="&#8942;"
                 android:textAppearance="?android:textAppearanceLarge" />
+
+
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/expense_rv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"></android.support.v7.widget.RecyclerView>
+            android:orientation="horizontal">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <RelativeLayout
+            android:id="@+id/rel_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="8dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/clip"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@android:color/darker_gray"
+                android:src="@drawable/ic_file_download_black_24dp" />
+
+            <TextView
+                android:id="@+id/name_File"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@+id/clip"
+                android:alpha="0.6" />
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -84,6 +116,7 @@
 
             <RelativeLayout
                 android:id="@+id/rl_desc"
+                android:layout_margin="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
@@ -93,9 +126,7 @@
                     android:id="@+id/creditcard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10sp"
-                    android:layout_marginLeft="10sp"
-                    android:layout_marginTop="10sp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/credit_card" />
 
                 <TextView
@@ -103,15 +134,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/creditcard"
-                    android:layout_margin="10sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/creditcard"
                     android:text="ciao"
                     android:textSize="13sp" />
             </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/expand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_expand_more" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/rl_desc">
 
@@ -120,9 +161,9 @@
                     android:id="@+id/timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/calendar"
-                    android:layout_margin="10sp"
-                    android:layout_toLeftOf="@+id/calendar"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toStartOf="@+id/calendar"
                     android:text="ciao"
                     android:textSize="13sp" />
 
@@ -130,14 +171,12 @@
                     android:id="@+id/calendar"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
                     android:src="@drawable/calendar" />
 
             </RelativeLayout>
-
-
         </RelativeLayout>
 
         <LinearLayout

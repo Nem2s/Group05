@@ -10,17 +10,18 @@
     <RelativeLayout
         android:id="@+id/rel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/shape2">
+        android:layout_marginBottom="55dp"
+        >
 
-
+<!--
     <android.support.design.widget.TextInputLayout
         android:id="@+id/inputFi"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="50dp"
+        android:background="@drawable/shape2"
         android:layout_toLeftOf="@id/fab">
 
         <EditText
@@ -29,19 +30,37 @@
             android:layout_height="wrap_content"
             android:textColorLink="@color/gray"
             android:textColorHighlight="@color/gray"
-            android:shadowColor="@color/gray"
-            android:textSize="15sp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="16sp"
             android:textColor="@color/black" />
     </android.support.design.widget.TextInputLayout>
+-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_toLeftOf="@id/fab"
+            android:background="@drawable/shape2"
+            android:layout_height="50dp">
 
-        <android.support.design.widget.FloatingActionButton
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColorLink="@color/gray"
+            android:textColorHighlight="@color/gray"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
+            android:textSize="16sp"
+            />
+        </RelativeLayout>
+            <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            app:srcCompat="@drawable/ic_action_tick"
+            android:layout_margin="4dp"
+            app:srcCompat="@drawable/ic_send_black_24dp"
             android:tint="@android:color/white"
             app:fabSize="mini" />
 

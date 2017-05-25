@@ -40,7 +40,7 @@
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
         app:bb_tabXmlResource="@xml/tabs"
-        app:bb_behavior="shy"
+        app:bb_behavior="shifting"
 
         />
     <android.support.design.widget.FloatingActionButton
