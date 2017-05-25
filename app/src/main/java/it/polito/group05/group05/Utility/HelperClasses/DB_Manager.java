@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -31,9 +32,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,7 @@ import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -322,7 +327,7 @@ public class DB_Manager {
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(), Singleton.getInstance().getCurrentUser().getName(), groupDatabase);
+        newhistory(groupDatabase.getId(),  groupDatabase);
         return groupDatabase.getId();
     }
 
@@ -568,34 +573,57 @@ public class DB_Manager {
     }
 
 
-    public void newhistory(String GroupID, String name, Object o)
+    public void newhistory(String GroupID, Object o)
     {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
-        Map<String, Object> tmp = new HashMap<>();
+        HistoryClass h;
+        //Map<String, Object> tmp = new HashMap<>();
+       /* DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long timeLong = date.getTime();*/
         if(o instanceof ExpenseDatabase){
             ExpenseDatabase e = (ExpenseDatabase) o;
-            tmp.put("who", name);
+             h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + e.getName(),
+                    "Today",
+                    0);
+            /*tmp.put("who", profile);
             tmp.put("what", "added expense " + e.getName());
-            //TODO: TIMESTAMP
-            tmp.put("when", "oggi");
+            tmp.put("type", 0);
+            tmp.put("when", "oggi" );*/
         }
         else if(o instanceof GroupDatabase){
             GroupDatabase g = (GroupDatabase) o;
-            tmp.put("who", name);
+             h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "created " + g.getName(),
+                    "Today",
+                    1);
+            /*tmp.put("who", profile);
             tmp.put("what", "created " + g.getName());
-            //TODO: TIMESTAMP
-            tmp.put("when", "oggi");
+            tmp.put("type", 1);
+            tmp.put("when", "oggi");*/
         }
         else if(o instanceof UserDatabase)
         {
             UserDatabase u = (UserDatabase) o;
-            tmp.put("who", name);
+             h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + u.getName(),
+                    "Today",
+                    2);
+            /*tmp.put("who", profile);
             tmp.put("what", "added " + u.getName() + " to group");
-            //TODO: TIMESTAMP
-            tmp.put("when", "oggi");
+            tmp.put("when", "oggi");*/
         }
         else return;
-        ref.setValue(tmp);
+        ref.setValue(h);
     }
 
 

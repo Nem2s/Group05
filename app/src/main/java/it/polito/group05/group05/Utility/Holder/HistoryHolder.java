@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -48,6 +49,9 @@ public class HistoryHolder extends GeneralHolder  {
         final LinearLayoutManager ll=  new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,true);
         internal_rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(internal_rv.getContext(),
+                ll.getOrientation());
+        internal_rv.addItemDecoration(dividerItemDecoration);
         internal_adapter = new RecyclerView.Adapter() {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,7 +73,7 @@ public class HistoryHolder extends GeneralHolder  {
         internal_rv.setAdapter(internal_adapter);
 
         when_text_view.setText(history.get(0).getWhen());
-        if(history.get(0).getWhen().equals("oggi")) {
+        if(history.get(0).getWhen().equals("Today")) {
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(context.getResources().getColor(R.color.expenseTabColor));
         }

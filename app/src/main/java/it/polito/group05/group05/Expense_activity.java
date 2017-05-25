@@ -231,6 +231,7 @@ public class Expense_activity extends AppCompatActivity {
                     if (totalPriceActual >= -0.001 || totalPriceActual <= 0.001) {
                         FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
                         fdb.setValue(expense);
+                        DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                         finish();
                     } else {
                         Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();

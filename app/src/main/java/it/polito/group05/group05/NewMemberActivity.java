@@ -356,6 +356,7 @@ public class NewMemberActivity extends AppCompatActivity {
                 if(u.isSelected()) {
                     Singleton.getInstance().getmCurrentGroup().members.put(u.getId(), u);
                     DB_Manager.getInstance().addUserToGroup(u.getId(),Singleton.getInstance().getmCurrentGroup().getId());
+                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), u);
                     u.setSelected(false);
                 }
 

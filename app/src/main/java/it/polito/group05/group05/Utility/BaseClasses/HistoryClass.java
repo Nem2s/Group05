@@ -14,6 +14,13 @@ public class HistoryClass {
     public HistoryClass() {
     }
 
+    public HistoryClass(String who, String what, String when, int type) {
+        this.who = who;
+        this.what = what;
+        this.when = when;
+        this.type = type;
+    }
+
     public String getWho() {
         return who;
     }
