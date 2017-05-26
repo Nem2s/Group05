@@ -199,7 +199,7 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if (model == null) return;
-                viewHolder.setData(model, getContext(), ei);
+                viewHolder.setData(model, getContext());
 
             }
         };
