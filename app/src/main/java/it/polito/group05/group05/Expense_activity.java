@@ -230,6 +230,7 @@ public class Expense_activity extends AppCompatActivity {
                 else {
 
                     fdb.setValue(expense);
+                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                     finish();
                 }
 

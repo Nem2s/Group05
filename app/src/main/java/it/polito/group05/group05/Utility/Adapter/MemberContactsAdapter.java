@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.Filterable;
 import com.firebase.ui.auth.ui.User;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import it.polito.group05.group05.R;
@@ -109,6 +111,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
 
     public void replaceAll(List<UserContact> models) {
         contacts.beginBatchedUpdates();
+
         for (int i = contacts.size() - 1; i >= 0; i--) {
             final UserContact model = contacts.get(i);
             if (!models.contains(model)) {
@@ -117,6 +120,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
         }
         contacts.addAll(models);
         contacts.endBatchedUpdates();
+
     }
 
     public List<UserContact> retriveAll() {
@@ -127,8 +131,6 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
         }
         return list;
     }
-
-
     @Override
     public int getItemCount() {
         return contacts.size();
@@ -140,26 +142,35 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 final FilterResults oReturn = new FilterResults();
-                final List<UserContact> results = retriveAll();
-
+                final List<UserContact> results = new ArrayList<UserContact>();
+                if (orig == null)
+                    orig = retriveAll();
                 if (constraint != null) {
                     if (orig != null & orig.size() > 0) {
                         for (final UserContact u : orig) {
                             if (!((Namable)u).getName().toLowerCase().contains(constraint.toString().toLowerCase()))
-                                contacts.remove(u);
+                                remove(u);
                         }
                     }
-                    oReturn.values = contacts;
-                    contacts.addAll(results);
+                    oReturn.values = retriveAll();
                 }
                 return oReturn;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                contacts.addAll((UserContact[]) filterResults.values);
-
             }
         };
+    }
+
+    public List<UserContact> filter(String newText) {
+        List<UserContact> res = new ArrayList<>();
+
+        for(UserContact u : retriveAll()) {
+            if (((Namable)u).getName().toLowerCase().contains(newText.toString().toLowerCase()))
+                res.add(u);
+
+        }
+        return res;
     }
 }

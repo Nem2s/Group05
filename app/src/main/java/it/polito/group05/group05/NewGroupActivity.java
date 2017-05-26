@@ -36,9 +36,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -53,7 +55,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
@@ -65,6 +69,7 @@ import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
 /**
@@ -88,7 +93,7 @@ public class NewGroupActivity extends AppCompatActivity {
     CircleImageView iv_new_group;
 
     MaterialEditText et_group_name;
-
+    TextView tv_contacts;
     RecyclerView rv_invited;
     RecyclerView rv_contacts;
     List<UserContact> contacts;
@@ -195,7 +200,7 @@ public class NewGroupActivity extends AppCompatActivity {
         no_people = (TextView)findViewById(R.id.no_people);
 
         context = this;
-
+        tv_contacts = (TextView)findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -326,41 +331,71 @@ public class NewGroupActivity extends AppCompatActivity {
             @Override
 
             public boolean onQueryTextSubmit(String query) {
-
-
-                return true;
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+                );
+                return false;
 
             }
-
 
             @Override
 
             public boolean onQueryTextChange(String newText) {
 
-                new SearchViewManager().execute();
+
+
                 if ( TextUtils.isEmpty ( newText ) ) {
 
-                    ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter("");
-                    ((MemberContactsAdapter)rv_contacts.getAdapter()).getFilter().filter("");
-
+                    invitedAdapter.replaceAll(filterRegistered(""));
+                    contactsAdapter.replaceAll(filterLocal(""));
+                    tv_partecipants.setVisibility(View.VISIBLE);
+                    tv_contacts.setVisibility(View.VISIBLE);
                     no_people.setVisibility(View.GONE);
-
 
                 } else {
 
-                    ((MemberInvitedAdapter)rv_invited.getAdapter()).getFilter().filter(newText);
-                    ((MemberContactsAdapter)rv_contacts.getAdapter()).getFilter().filter(newText);
+                    invitedAdapter.replaceAll(filterRegistered(newText));
+                    contactsAdapter.replaceAll(filterLocal(newText));
                     if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
-                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0)
+                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0) {
                         no_people.setVisibility(View.VISIBLE);
+                        tv_partecipants.setVisibility(View.GONE);
+                        tv_contacts.setVisibility(View.GONE);
+                    } else {
+                        tv_partecipants.setVisibility(View.VISIBLE);
+                        tv_contacts.setVisibility(View.VISIBLE);
+                    }
+
                     return true;
                 }
 
+                rv_contacts.smoothScrollToPosition(0);
+                rv_invited.smoothScrollToPosition(0);
 
                 return false;
             }
 
+            private List<UserContact> filterLocal(String s) {
+                List<UserContact> res = new ArrayList<>();
 
+                for(UserContact u : local_contacts) {
+                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                        res.add(u);
+
+                }
+
+                return res;
+            }
+            private List<UserContact> filterRegistered(String s) {
+                List<UserContact> res = new ArrayList<>();
+
+                for(UserContact u : contacts) {
+                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                        res.add(u);
+
+                }
+                return res;
+            }
 
         });
 
@@ -642,6 +677,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
             contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
             local_contacts = new ArrayList<>(Singleton.getInstance().getLocalContactsList().values());
+
             invitedAdapter = new MemberInvitedAdapter(contacts, context);
             contactsAdapter = new MemberContactsAdapter(local_contacts, context);
             Collections.sort(contacts, new Comparator<UserContact>() {
@@ -830,21 +866,5 @@ public class NewGroupActivity extends AppCompatActivity {
     }
 
 
-    private class SearchViewManager extends AsyncTask<Void, Void, Void>{
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
-        }
-    }
 }
