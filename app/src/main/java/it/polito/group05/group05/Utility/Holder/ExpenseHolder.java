@@ -209,6 +209,8 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                             case R.id.action_pay:
                             //handle menu2 click
                                 String s = Singleton.getInstance().getCurrentUser().getId();
+                                DB_Manager.getInstance().notifyPayment(Singleton.getInstance().getmCurrentGroup().getId(), expense.getId(), s);
+                                /*
                             FirebaseDatabase.getInstance().getReference("expenses")
                                     .child(Singleton.getInstance().getmCurrentGroup().getId())
                                     .child(expense.getId())
@@ -221,7 +223,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
                                     .child("members")
                                     .child(expense.getOwner())
                                     .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
+                                DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));*/
                             break;
                         case R.id.action_subscribe:
                             final AlertDialog dialog = new AlertDialog.Builder(context).create();
