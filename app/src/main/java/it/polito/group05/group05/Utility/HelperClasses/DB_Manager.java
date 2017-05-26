@@ -575,7 +575,47 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
+    public void newhistory(String GroupID, Object o)
+    {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
 
+        HistoryClass h;
+        String data = null;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        Date date = new Date();
+        if(o instanceof ExpenseDatabase){
+            ExpenseDatabase e = (ExpenseDatabase) o;
+            ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).child(e.getId());
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
+                    e.getTimestamp(),
+                    0);
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+        }
+        else if(o instanceof GroupDatabase){
+            GroupDatabase g = (GroupDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "created " + g.getName(),
+                    date.getTime(),
+                    1);
+            groupRef.child(g.getId()).child("lmTime").setValue(date.getTime());
+        }
+        else if(o instanceof UserDatabase)
+        {
+            UserDatabase u = (UserDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + u.getName(),
+                    date.getTime(),
+                    2);
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+        }
+        else return;
+
+        ref.setValue(h);
+    }
 
 
 }

@@ -228,8 +228,8 @@ public class Expense_activity extends AppCompatActivity {
                     memberAdapter.changeTotal(expense.getPrice());
                 }
                 else {
-
                     fdb.setValue(expense);
+                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                     finish();
                 }
 

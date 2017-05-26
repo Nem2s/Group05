@@ -100,7 +100,6 @@ public class HistoryFragment extends Fragment {
 
         rv.setAdapter(adapter);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("History");
-
         super.onCreateView(inflater, container, savedInstanceState);
         return root;
     }
