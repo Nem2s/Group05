@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -184,7 +183,7 @@ public class ExpenseFragment extends Fragment {
 
     private void sortRecyclerViewBy(QueryParam.Possibilities param) {
 
-        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup()).orderByChild(param.getValue());
+        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getmCurrentGroup().getId()).orderByChild(param.getValue());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase, ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense, ExpenseHolder.class, ref) {
             @Override

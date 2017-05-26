@@ -14,9 +14,20 @@ public class MyService extends IntentService {
         super("Myservice");
     }
 
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        onStart(intent, startId);
+        b = intent.getStringExtra("action");
+        eid = intent.getStringExtra("expenseId");
+        uid = intent.getStringExtra("requestFromId");
+        gid = intent.getStringExtra("groupId");
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @Override
-    public void onCreate() {
+    public void onStart(@Nullable Intent intent, int startId) {
+        super.onStart(intent, startId);
+
         super.onCreate();
 
         if (b.equals("true"))
@@ -27,10 +38,12 @@ public class MyService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+
+    }
+
+    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        b = intent.getStringExtra("action");
-        eid = intent.getStringExtra("expenseId");
-        uid = intent.getStringExtra("requestFromId");
-        gid = intent.getStringExtra("groupId");
+
     }
 }

@@ -83,10 +83,10 @@ public class NotificationService extends FirebaseMessagingService {
                 for (String s : map.keySet()) {
                     intent.putExtra(s, map.get(s));
                 }
-                intent.putExtra("action", "true");
-                nb.addAction(R.drawable.ic_action_tick_white, "Accept", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
-                intent.putExtra("action", "false");
-                nb.addAction(R.drawable.close_button, "Decline", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
+                //         intent.putExtra("action", "true");
+                //   nb.addAction(R.drawable.ic_action_tick_white, "Accept", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
+//                intent.putExtra("action", "false");
+                //              nb.addAction(R.drawable.close_button, "Decline", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
                 break;
 
         }
@@ -95,7 +95,7 @@ public class NotificationService extends FirebaseMessagingService {
             i.putExtra(s, map.get(s));
         }
         nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, i, FLAG_ONE_SHOT));
-        nb.setContentText(body).setContentTitle(title).setTicker(ticker);
+        nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
         nm.notify(map.get("groupId"), notificationId, nb.build());
 

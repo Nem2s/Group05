@@ -50,6 +50,8 @@
         android:id="@+id/divider_history"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/list_divider" />
+        android:background="@drawable/list_divider"
+        android:alpha="0.1"
+        android:backgroundTint="#000000" />
 
 </LinearLayout>
