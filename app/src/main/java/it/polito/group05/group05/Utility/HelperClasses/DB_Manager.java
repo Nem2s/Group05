@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -31,19 +32,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -171,6 +178,7 @@ public class DB_Manager {
     public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
         for (String number : lmap.keySet()) {
+            if (number.contains("\\.") || number.contains("#")) continue;
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -316,11 +324,13 @@ public class DB_Manager {
             if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+
+
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
+        newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
 

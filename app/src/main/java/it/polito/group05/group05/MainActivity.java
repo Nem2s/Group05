@@ -100,7 +100,11 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe
     public void groupStart(ReadyEvent cu) {
-        Intent i = new Intent(context, Group_Activity.class);
+        Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
+        Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
+        Intent i = new Intent(context, GroupActivity.class);
+        getIntent().getStringExtra("message");
+        i.putExtra("message", getIntent().getStringExtra("message"));
         i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
         i.putExtra("groupId", getIntent().getStringExtra("groupId"));
         context.startActivity(i);
@@ -248,9 +252,7 @@ public class MainActivity extends AppCompatActivity
                     if (!dataSnapshot.exists()) return;
                     //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
                     GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
-                    Singleton.getInstance().setmCurrentGroup(g);
-                    Singleton.getInstance().setIdCurrentGroup(g.getId());
-                    EventBus.getDefault().post(new ReadyEvent());
+                    EventBus.getDefault().post(new ReadyEvent(g));
 
                 }
 

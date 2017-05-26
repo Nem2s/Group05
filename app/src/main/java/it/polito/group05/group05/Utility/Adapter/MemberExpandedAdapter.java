@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -102,8 +103,15 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                                         double round2 = new BigDecimal(tmp / tmpD)
                                                                 .setScale(2, RoundingMode.HALF_UP)
                                                                 .doubleValue();
-                                                        users.get(e).setCustomValue(round2);
-                                                        notifyItemChanged(e);
+
+                                                        if(round2 > 0){
+                                                            users.get(e).setCustomValue(round2);
+                                                            notifyItemChanged(e);
+                                                        }
+                                                        else {
+                                                            Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
+                                                            holder.costo_person.setText("");
+                                                        }
                                                     }
                                                 }
 

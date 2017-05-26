@@ -4,6 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,14 +19,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,13 +54,17 @@ public class ExpenseHolder extends GeneralHolder{
     ImageView expense_image;
     TextView name;
     TextView price;
-    TextView owner, timestamp;
+    TextView owner, timestamp, nf;
     RecyclerView rv;
+    RelativeLayout rel;
     TextView description;
+    ImageView clip,expand;
     CardView cv;
     Query ref;
     TextView menu;
     ImageView calendar;
+    boolean filePresent;
+    String nomeF;
 
 
     public ExpenseHolder(View itemView) {
@@ -65,26 +78,32 @@ public class ExpenseHolder extends GeneralHolder{
         this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
         this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
+        this.rel = (RelativeLayout) itemView.findViewById(R.id.rel_file);
+        this.rel.setVisibility(View.GONE);
+        this.nf = (TextView) itemView.findViewById(R.id.name_File);
+        this.expand = (ImageView) itemView.findViewById(R.id.expand);
+        this.clip = (ImageView) itemView.findViewById(R.id.clip);
+        filePresent = false;
+    }
+    public void setData(Object c, final Context context){
+        setData(c, context, View.GONE);
     }
 
-    public void setData(Object c, final Context context){
+    public void setData(Object c, final Context context, int type) {
         if(!(c instanceof ExpenseDatabase)) return;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         expense_image.setImageResource(R.drawable.idea);
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
-
         Date date = new Date(expenseDatabase.getTimestamp());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         this.timestamp.setText(sdf.format(date));
 
-        /* final String[] ts = expenseDatabase.getTimestamp().substring(0, expenseDatabase.getTimestamp().indexOf(" ")).split(" ");
-        final String[] invert = ts[0].split("-");
-        this.timestamp.setText(invert[2] + "/" + invert[1] + "/" + invert[0]);
-       */
+        if(expenseDatabase.getFile() != null){
+            this.nf.setText(expenseDatabase.getFile());}
+        else nf.setText("");
 
         String id = Singleton.getInstance().getCurrentUser().getId();
-        //this.timestamp.setText(ts[0]);
         for (String i : expenseDatabase.getMembers().keySet()){
             /**Aggiunto da andrea**/
             if(expenseDatabase.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) && expenseDatabase.getMembers().get(i) > 0 ) {
@@ -104,17 +123,24 @@ public class ExpenseHolder extends GeneralHolder{
             expenseDatabase.getUsersExpense().add(x);
         }
 
-        //  if(!(expenseDatabase.isMandatory())) {
-        //   price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        //  }
         setupListener(cv, price, context, expenseDatabase);
-        setupRecyclerViewExpense(rv, expenseDatabase,context);
+        setupRecyclerViewExpense(rv, expenseDatabase, context, type);
 
 
     }
 
+    public void setData(Object c, final Context context, String eid) {
+        if (!(c instanceof ExpenseDatabase)) return;
+        final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        //
+        if (eid != null)
+            if (eid.equals(expenseDatabase.getId()))
+                setData(c, context, View.VISIBLE);
+            else
+                setData(c, context, View.GONE);
+    }
 
-    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context) {
+    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context, int visibility) {
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -136,7 +162,7 @@ public class ExpenseHolder extends GeneralHolder{
     };
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
-    rv.setVisibility(View.GONE);
+        rv.setVisibility(visibility);
 }
 private void setupListener(CardView cv, final TextView price, final Context context, final Expense expense){
 
@@ -151,28 +177,25 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     MenuItem subscribe= popupMenu.findItem(R.id.action_subscribe);
     MenuItem delete= popupMenu.findItem(R.id.action_delete);
         MenuItem download = popupMenu.findItem(R.id.file_download);
+        subscribe.setVisible(false);
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
-        cnt++;
+
     } else {
         delete.setVisible(true);
     }
-
         if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
         pay.setVisible(false);
-        cnt++;
         } else {
             pay.setVisible(true);
         }
 
-        if (expense.getFile().length() == 0) {
+        if (expense.getFile() == null) {
         download.setVisible(false);
-        cnt++;
         } else {
             download.setVisible(true);
     }
 
-        if (cnt < 4)
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -251,6 +274,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     });
     }
     catch(Exception c ){
+       // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
     }
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -258,14 +282,39 @@ private void setupListener(CardView cv, final TextView price, final Context cont
 
             if (rv.getVisibility() == View.GONE) {
                 rv.setVisibility(View.VISIBLE);
+                expand.setImageResource(R.drawable.ic_expand_less);
+                if(expense.getFile() != null) {
+                    rel.setVisibility(View.VISIBLE);
+                }
             }
             else {
+                expand.setImageResource(R.drawable.ic_expand_more);
                 rv.setVisibility(View.GONE);
+                rel.setVisibility(View.GONE);
             }
 
 
         }
     });
+
+    rel.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
+                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(f),"*/*");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                context.startActivity(intent);
+            } catch (FileNotFoundException e) {
+                Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+        }
+    });
+
 }
 
 }
