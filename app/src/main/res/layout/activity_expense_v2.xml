@@ -137,7 +137,7 @@
                             app:met_baseColor="#000000"
                             app:met_errorColor="#646464"
                             app:met_floatingLabel="highlight"
-                            android:imeOptions="actionDone"/>
+                            android:imeOptions="actionDone" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -194,6 +194,7 @@
                             android:layout_height="43dp"
                             android:background="@color/light_gray"
                             android:layout_marginTop="20dp">
+
                             <TextView
                                 android:id="@+id/more"
                                 android:layout_width="wrap_content"
@@ -201,8 +202,7 @@
                                 android:layout_centerHorizontal="true"
                                 android:text="More"
                                 android:layout_marginTop="6dp"
-                                android:textColor="@color/dark_gray"
-                                />
+                                android:textColor="@color/dark_gray" />
                             <ImageView
                                 android:id="@+id/plus"
                                 android:layout_width="20dp"

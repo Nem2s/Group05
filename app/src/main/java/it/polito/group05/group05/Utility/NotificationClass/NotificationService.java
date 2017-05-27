@@ -74,6 +74,20 @@ public class NotificationService extends FirebaseMessagingService {
                 title = map.get("groupName");
                 ticker = "New message" + " @ " + title + "\n" + map.get("messageUser") + ":" + map.get("message");
                 break;
+            case "paymentRequest":
+                notificationId = 4;
+                body = map.get("requestFrom") + "   " + map.get("expenseName") + "   " + map.get("expenseDebit");
+                title = map.get("groupName");
+                ticker = "paymentRequest" + " from " + map.get("requestFrom") + "\n";
+                Intent intent = new Intent(this, MyService.class);
+                for (String s : map.keySet()) {
+                    intent.putExtra(s, map.get(s));
+                }
+                //         intent.putExtra("action", "true");
+                //   nb.addAction(R.drawable.ic_action_tick_white, "Accept", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
+//                intent.putExtra("action", "false");
+                //              nb.addAction(R.drawable.close_button, "Decline", PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT));
+                break;
 
         }
         Intent i = new Intent(this, SignUpActivity.class);
@@ -81,7 +95,7 @@ public class NotificationService extends FirebaseMessagingService {
             i.putExtra(s, map.get(s));
         }
         nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, i, FLAG_ONE_SHOT));
-        nb.setContentText(body).setContentTitle(title).setTicker(ticker);
+        nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
         nm.notify(map.get("groupId"), notificationId, nb.build());
 

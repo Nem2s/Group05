@@ -331,5 +331,73 @@ const map_debit = expense_content.members;
 });
 });
 
+exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/notify/{uId}').onWrite(event => {
+  
+  const gid = event.params.gId;
+  const uid =  event.params.uId;
+  const eid =  event.params.eId;
+  
+  // If un-follow we exit the function.	
+  if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
+  
+  const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
+  const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
+  //const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid).once('value');
+  const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
+  
+  return Promise.all([ getGroupProfilePromise,getExpenseProfilePromise,getUserProfilePromise]).then(results => {
+    const group = results[0].val();
+	const expense = results[1].val();
+    const user = results[2].val();
+    
+	
+	
+    // Check if there are any device tokens.
+   
+    console.log(group,',',expense,',',user);
+    //console.log('Fetched follower profile', follower);
+
+    // Notification details.
+    const payload = {
+	  data: {
+		  type:"paymentRequest",
+		  groupName:group.name,
+		  expenseDebit:expense.members[uid].toString(),
+		  expenseName:expense.name,
+		  requestFrom:user.userInfo.name,
+		  expenseId:eid,
+		  requestFromId:uid,
+		  groupId:gid
+		  
+	  }
+	};
+	  const promise =admin.database().ref('/users/'+expense.owner).once('value');
+
+	  return Promise.all([promise]).then(results => {
+		
+		 const result= results[0].val();
+		 const token = result.fcmToken;		 
+		 console.log(result.userInfo.name);
+		 
+		return admin.messaging().sendToDevice(token, payload).then(response => {
+		const tokensToRemove = [];
+		response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', token[index], error);
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+  });
+});
+});
+
 
 

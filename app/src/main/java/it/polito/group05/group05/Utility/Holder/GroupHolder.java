@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +23,6 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.GroupDetailsActivity;
-import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -46,7 +40,7 @@ public class GroupHolder extends GeneralHolder {
     TextView name;
     TextView balance;
     TextView badge;
-    TextClock time;
+    TextView time;
     LinearLayout ll;
 
     public  GroupHolder(View itemView) {
@@ -56,7 +50,7 @@ public class GroupHolder extends GeneralHolder {
         this.balance=(TextView)itemView.findViewById(R.id.tv_group_balance);
         this.name=(TextView)itemView.findViewById(R.id.tv_group_name);
         this.badge=(TextView)itemView.findViewById(R.id.tv_badge_counter);
-        this.time=(TextClock)itemView.findViewById(R.id.tc_last_message);
+        this.time = (TextView) itemView.findViewById(R.id.tc_last_message);
 
     }
     public void setData(Object c, final Context context){
@@ -66,7 +60,7 @@ public class GroupHolder extends GeneralHolder {
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         Date date = new Date(g.getLmTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:", Locale.ITALY);
         String time_s = sdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
