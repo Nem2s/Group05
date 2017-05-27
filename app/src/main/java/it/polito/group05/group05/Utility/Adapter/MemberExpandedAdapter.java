@@ -57,7 +57,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(holder.image_person);
         holder.euro_person.setImageResource(R.drawable.euro);
-        holder.costo_person.setText(String.valueOf(ue.getRoundValue()));
+        holder.costo_person.setText(String.format("%.2f", ue.getCustomValue()));
+       // holder.costo_person.setText(String.valueOf(ue.getRoundValue()));
         holder.costo_person.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -87,7 +88,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                               holder.costo_person.setText("");
                                           } else {
                                               ue.setCustomValue(actualPrice);
-                                              ue.setRoundValue(round);
+                                    //          ue.setRoundValue(round);
                                               if (ue.isSelected()) {
                                                   Double tmp = total;
                                                   int count = 0;
@@ -106,7 +107,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                                                   .doubleValue();
 
                                                           if (round2 > 0) {
-                                                              users.get(e).setRoundValue(round2);
+                                                          //    users.get(e).setRoundValue(round2);
                                                               users.get(e).setCustomValue(tmp / tmpD);
                                                               notifyItemChanged(e);
                                                           } else {
@@ -143,7 +144,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         for (int j = 0; j < users.size(); j++) {
             User_expense e = users.get(j);
             double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
-            e.setRoundValue(round3);
+        //    e.setRoundValue(round3);
             e.setCustomValue(total / (users.size()));
         }
         notifyDataSetChanged();
