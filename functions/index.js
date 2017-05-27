@@ -232,7 +232,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
 			 const map = userrr.userInfo;
 			 console.log(map["id"]!=uid,map["name"],uid,map["id"]);
 			 const map_group=userrr.userGroups;
-			 if(map["id"]!=uid && map_group[gid])
+			 if(/*map["id"]!=uid && */map_group[gid])
 				token.push(userrr.fcmToken);
 			
 		 });
@@ -338,9 +338,10 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
   const eid =  event.params.eId;
   
   // If un-follow we exit the function.	
-  if (event.data.previous.exists()) {
+ /* if (event.data.previous.exists()) {
         return;
-      }
+      }*/
+	  
       // Exit when the data is deleted.
       if (!event.data.exists()) {
         return;
@@ -350,17 +351,26 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
   const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
   //const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid).once('value');
   const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
+  const getHistoryProfilePromise = admin.database().ref('/history/'+gid+'/'+eid).once('value');
   
-  return Promise.all([ getGroupProfilePromise,getExpenseProfilePromise,getUserProfilePromise]).then(results => {
+  return Promise.all([ getGroupProfilePromise,getExpenseProfilePromise,getUserProfilePromise,getHistoryProfilePromise]).then(results => {
     const group = results[0].val();
 	const expense = results[1].val();
     const user = results[2].val();
-    
-	
+    const history = results[3].val();
+	console.log(history);
+	if(history.payment!=null){
+					const map_history= history.payment;
+						if(map_history[uid]!=null)
+							if(map_history[uid])
+							{admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).remove();
+							return;
+							}
+				}
 	
     // Check if there are any device tokens.
    
-    console.log(group,',',expense,',',user);
+   // console.log(group,',',expense,',',user);
     //console.log('Fetched follower profile', follower);
 
     // Notification details.
@@ -378,7 +388,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
 	  }
 	};
 	  const promise =admin.database().ref('/users/'+expense.owner).once('value');
-
+	admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).remove();
 	  return Promise.all([promise]).then(results => {
 		
 		 const result= results[0].val();

@@ -159,7 +159,7 @@ public class Singleton {
             Cursor phones = currContext.getContentResolver().query(
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
                     null, null);
-            if(phones.getCount() > 0) {
+            if (phones.getCount() > 0) {
                 while (phones.moveToNext()) {
 
                     String Name = phones
@@ -185,7 +185,7 @@ public class Singleton {
 
                     localList.put(Number, user);
                 }
-            }else
+            } else
                 ((Activity) currContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

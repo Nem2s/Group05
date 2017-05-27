@@ -3,8 +3,10 @@ package it.polito.group05.group05.Utility.HelperClasses;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.data.Entry;
@@ -175,6 +177,7 @@ public class DB_Manager {
     public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
         for (String number : lmap.keySet()) {
+            if (number.contains("#") || number.contains("\\.") || number.contains("$")) continue;
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -221,6 +224,7 @@ public class DB_Manager {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void setupEntries(List<DataSnapshot> snapshots) {
         final Map<Long, Entry> map = new HashMap<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -325,7 +329,7 @@ public class DB_Manager {
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(),  groupDatabase);
+        newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
 
@@ -579,6 +583,7 @@ public class DB_Manager {
         Date date = new Date();
         if (o instanceof ExpenseDatabase) {
             ExpenseDatabase e = (ExpenseDatabase) o;
+            ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).child(e.getId());
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
                     "added " + e.getName() + " of " + e.getPrice().toString() + "€",

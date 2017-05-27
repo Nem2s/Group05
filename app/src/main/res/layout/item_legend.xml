@@ -23,6 +23,7 @@
         android:transitionName="@string/transition_group_image"
 
         />
+
     <TextView
         android:id="@+id/tv_group_name"
         android:layout_width="wrap_content"
@@ -33,8 +34,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
         android:ellipsize="end"
-        android:maxLines="1"
-        />
+        android:maxLines="1" />
+
     <TextView
         android:id="@+id/tv_group_balance"
         android:layout_width="wrap_content"
@@ -46,8 +47,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
-        android:maxLines="1"
-        />
+        android:maxLines="1" />
 </RelativeLayout>
 
 

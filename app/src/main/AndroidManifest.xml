@@ -92,12 +92,12 @@
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"
-            >
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
+
         <meta-data xmlns:tools="http://schemas.android.com/tools"
             tools:replace="android:value"
             android:name="io.fabric.ApiKey"

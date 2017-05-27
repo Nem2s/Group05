@@ -151,7 +151,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 */
                             }
                         }
-                        Integer [] res;
+                        Integer[] res;
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(false)
                                 .title("Choose to Pay")

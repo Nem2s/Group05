@@ -74,9 +74,9 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         />
+
     <io.codetail.widget.RevealFrameLayout
         android:id="@+id/reveal_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </io.codetail.widget.RevealFrameLayout>
+        android:layout_height="match_parent"></io.codetail.widget.RevealFrameLayout>
 </android.support.design.widget.CoordinatorLayout>
