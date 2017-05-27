@@ -330,7 +330,7 @@ public class DB_Manager {
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(), groupDatabase);
+        newhistory(groupDatabase.getId(),  groupDatabase);
         return groupDatabase.getId();
     }
 

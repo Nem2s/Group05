@@ -239,8 +239,6 @@ public class GroupActivity extends AppCompatActivity {
 
     private void replaceWithDetailsFragment() {
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, GroupDetailsFragment.newInstance())
-                .commit();
+
     }
 }

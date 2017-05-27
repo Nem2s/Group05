@@ -184,7 +184,7 @@ public class ExpenseFragment extends Fragment {
 
     private void sortRecyclerViewBy(QueryParam.Possibilities param) {
 
-        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup()).orderByChild(param.getValue());
+        Query ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getmCurrentGroup().getId()).orderByChild(param.getValue());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase, ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense, ExpenseHolder.class, ref) {
             @Override
@@ -199,7 +199,7 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if (model == null) return;
-                viewHolder.setData(model, getContext(), ei);
+                viewHolder.setData(model, getContext());
 
             }
         };

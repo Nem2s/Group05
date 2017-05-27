@@ -137,8 +137,7 @@ public class Singleton {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            Map<String, UserContact> result = new HashMap<>();
-            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            /*Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
             String[] projection =
                     new String[]{
@@ -155,7 +154,48 @@ public class Singleton {
 
             int indexNumber = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             int indexName = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-            query.moveToFirst();
+            int indexPhoto = query.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+*/
+            Cursor phones = currContext.getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+                    null, null);
+            if(phones.getCount() > 0) {
+                while (phones.moveToNext()) {
+
+                    String Name = phones
+                            .getString(phones
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String Number = phones
+                            .getString(phones
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    if (Number.startsWith("+"))
+                        Number = Number.substring(3);
+                    Number = Number.replace(" ", "");
+
+                    Number = Number.replace("-", "");
+
+                    String image_uri = phones
+                            .getString(phones
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+                    UserContact user = new UserContact();
+                    user.setName(Name);
+                    user.setTelNumber(Number);
+                    user.setiProfile(image_uri);
+
+                    localList.put(Number, user);
+                }
+            }else
+                ((Activity) currContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(currContext, "No contacts stored", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            return null;
+
+            /* query.moveToFirst();
             if (query.getCount() > 0) {
                 do {
                     UserContact user = new UserContact();
@@ -170,19 +210,13 @@ public class Singleton {
                         String name = query.getString(indexName);
                         user.setName(name);
                         user.setTelNumber(number);
+                        if(query.getString(indexPhoto) != null)
+                            user.setiProfile(query.getString(indexPhoto));
                         localList.put(number, user);
                     }
                 } while (query.moveToNext());
 
-            } else
-                ((Activity) currContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(currContext, "No contacts stored", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            return null;
+            }*/
         }
 
         @Override
