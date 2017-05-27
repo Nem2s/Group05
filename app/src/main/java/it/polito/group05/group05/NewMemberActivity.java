@@ -110,7 +110,7 @@ public class NewMemberActivity extends AppCompatActivity {
             REQUEST_FROM_NEW_GROUP = -1;
         }
         else {
-            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.network));
+            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.group_placeholder));
         }
 
     }

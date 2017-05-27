@@ -48,5 +48,10 @@
         <item name="android:colorButtonNormal">@color/blue_400</item>
     </style>
 
+    <style name="AccentButton" parent="AppTheme.NoActionBar">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+    </style>
+
 
 </resources>

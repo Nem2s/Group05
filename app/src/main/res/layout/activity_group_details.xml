@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_view"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,7 +39,7 @@
                     android:id="@+id/cv_backimage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/network"
+                    android:src="@drawable/group_placeholder"
                     android:transitionName="@string/transition_group_image"
 
                     />
@@ -47,10 +48,9 @@
                     android:id="@+id/iv_header_group_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/network"
                     android:visibility="invisible"
                     android:background="?android:attr/selectableItemBackground"
-
+                    android:src="@drawable/group_placeholder"
                     />
             </io.codetail.widget.RevealFrameLayout>
             <android.support.v7.widget.Toolbar
@@ -74,5 +74,9 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         />
-
+    <io.codetail.widget.RevealFrameLayout
+        android:id="@+id/reveal_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </io.codetail.widget.RevealFrameLayout>
 </android.support.design.widget.CoordinatorLayout>
