@@ -79,44 +79,50 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                 public void afterTextChanged(Editable s) {
                                     if (s.length() > 0) {
                                         double actualPrice = 0.0;
-                                        actualPrice = Double.valueOf(s.toString().replace(',', '.'));
-                                        double round = new BigDecimal(actualPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                                        if (actualPrice > total) {
-                                            Toast.makeText(context, "Invalid nino Price", Toast.LENGTH_SHORT).show();
-                                            holder.costo_person.setText("");
-                                        } else {
-                                            ue.setCustomValue(actualPrice);
-                                            ue.setRoundValue(round);
-                                            if (ue.isSelected()) {
-                                                Double tmp = total;
-                                                int count = 0;
-                                                for (User_expense e : users) {
-                                                    if (e.isSelected()) {
-                                                        count++;
-                                                        tmp -= e.getCustomValue();
-                                                    }
-                                                }
-                                                for (int e = 0; e < users.size(); e++) {
-                                                    if (!users.get(e).isSelected()) {
-                                                        Double tmpD = Double.parseDouble(Integer.toString(users.size() - count));
-                                                        if (tmpD < 0.9) return;
-                                                        double round2 = new BigDecimal(tmp / tmpD)
-                                                                .setScale(2, RoundingMode.HALF_UP)
-                                                                .doubleValue();
+                                      try {
+                                          actualPrice = Double.valueOf(s.toString().replace(',', '.'));
+                                          double round = new BigDecimal(actualPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                                          if (actualPrice > total) {
+                                              Toast.makeText(context, "Invalid nino Price", Toast.LENGTH_SHORT).show();
+                                              holder.costo_person.setText("");
+                                          } else {
+                                              ue.setCustomValue(actualPrice);
+                                              ue.setRoundValue(round);
+                                              if (ue.isSelected()) {
+                                                  Double tmp = total;
+                                                  int count = 0;
+                                                  for (User_expense e : users) {
+                                                      if (e.isSelected()) {
+                                                          count++;
+                                                          tmp -= e.getCustomValue();
+                                                      }
+                                                  }
+                                                  for (int e = 0; e < users.size(); e++) {
+                                                      if (!users.get(e).isSelected()) {
+                                                          Double tmpD = Double.parseDouble(Integer.toString(users.size() - count));
+                                                          if (tmpD < 0.9) return;
+                                                          double round2 = new BigDecimal(tmp / tmpD)
+                                                                  .setScale(2, RoundingMode.HALF_UP)
+                                                                  .doubleValue();
 
-                                                        if (round2 > 0) {
-                                                            users.get(e).setRoundValue(round2);
-                                                            users.get(e).setCustomValue(tmp/tmpD);
-                                                            notifyItemChanged(e);
-                                                        } else {
-                                                            Toast.makeText(context, "Invalid ANNA Price", Toast.LENGTH_SHORT).show();
-                                                            holder.costo_person.setText("");
-                                                        }
-                                                    }
-                                                }
+                                                          if (round2 > 0) {
+                                                              users.get(e).setRoundValue(round2);
+                                                              users.get(e).setCustomValue(tmp / tmpD);
+                                                              notifyItemChanged(e);
+                                                          } else {
+                                                              Toast.makeText(context, "Invalid ANNA Price", Toast.LENGTH_SHORT).show();
+                                                              holder.costo_person.setText("");
+                                                          }
+                                                      }
+                                                  }
 
-                                            }
-                                        }
+                                              }
+                                          }
+                                      }
+                                      catch (Exception e){
+                                          Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show();
+                                      }
+                                        //qui
                                     }
                                 }
                             });
