@@ -209,7 +209,7 @@ public class Expense_activity extends AppCompatActivity {
 
                         }
                     if (clicked_calendar) {
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY);
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                         Date date = null;
                         try {
                             date = dateFormat.parse(data);
