@@ -144,6 +144,7 @@ public class GroupDetailsFragment extends Fragment {
             }
         };
         rv.setAdapter(personAdapter);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("History");
         return rootView;
     }

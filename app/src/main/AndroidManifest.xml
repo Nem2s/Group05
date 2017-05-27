@@ -4,14 +4,15 @@
     package="it.polito.group05.group05">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -70,13 +71,13 @@
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
         <activity android:name=".NewMemberActivity" />
-        <!--
+
         <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        -->
+
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
@@ -91,11 +92,16 @@
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
+        <meta-data xmlns:tools="http://schemas.android.com/tools"
+            tools:replace="android:value"
+            android:name="io.fabric.ApiKey"
+            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
 
         <receiver
             android:name=".Utility.NotificationClass.MyReceiver"
@@ -111,10 +117,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="4ef5773036dfe9d1f65180c60108881fcfa257f6"
-            tools:replace="android:value" />
+
     </application>
 
 </manifest>

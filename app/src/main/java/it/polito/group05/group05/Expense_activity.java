@@ -222,14 +222,15 @@ public class Expense_activity extends AppCompatActivity {
                     } else {
                         expense.setTimestamp(timestamp);
                         }
-                        
+
                 if((totalPriceActual-expense.getPrice()) > 0.001 || (totalPriceActual -expense.getPrice()) < -0.001){
                     Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
                     memberAdapter.changeTotal(expense.getPrice());
                 }
                 else {
-                    FirebaseDatabase.getInstance().getReference("notifications").child(Singleton.getInstance().getmCurrentGroup().getId()).child("expenses").child(expense.getId()).setValue(expense);
+
                     fdb.setValue(expense);
+                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                     finish();
                 }
 

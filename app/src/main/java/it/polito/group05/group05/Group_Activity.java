@@ -35,7 +35,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
-public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener,GroupDetailsFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AppCompatActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -211,7 +211,6 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-        //getSupportFragmentManager().getFragments().get(1).onResume();
 
     }
 
@@ -244,7 +243,7 @@ public class Group_Activity extends AppCompatActivity implements  ChatFragment.O
                     fragment =ChatFragment.newInstance();
                     break;
                 case 2:
-                    fragment = GroupDetailsFragment.newInstance();
+
                 break;
             }
             return fragment;

@@ -74,15 +74,17 @@ public class SignUpActivity extends AppCompatActivity {
     public void currentUserReady(CurrentUserReadyEvent event) {
         String gid = (String) getIntent().getStringExtra("groupId");
         String eid = (String) getIntent().getStringExtra("expenseId");
+        String message = (String) getIntent().getStringExtra("message");
         Intent i = new Intent(this, MainActivity.class);
         //if(gid!=null) {
+        i.putExtra("message", message);
         i.putExtra("groupId", gid);
         i.putExtra("expenseId", eid);
         //}
         startActivity(i);
 
-        Intent intent = new Intent(getBaseContext(), MyService.class);
-        startService(intent);
+        //Intent intent = new Intent(getBaseContext(), MyService.class);
+        // startService(intent);
 
         finish();
     }
@@ -93,8 +95,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         dialogSignUp();
 
-
-        //// TODO: 08-May-17 SECONDA pARTE REGISTRAZIONE NUOVO UTENTE
 
 
     }

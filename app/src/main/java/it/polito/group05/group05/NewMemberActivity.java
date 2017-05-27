@@ -109,7 +109,7 @@ public class NewMemberActivity extends AppCompatActivity {
             REQUEST_FROM_NEW_GROUP = -1;
         }
         else {
-            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.network));
+            iv_new_group.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.group_placeholder));
         }
 
     }
@@ -356,6 +356,7 @@ public class NewMemberActivity extends AppCompatActivity {
                 if(u.isSelected()) {
                     Singleton.getInstance().getmCurrentGroup().members.put(u.getId(), u);
                     DB_Manager.getInstance().addUserToGroup(u.getId(),Singleton.getInstance().getmCurrentGroup().getId());
+                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), u);
                     u.setSelected(false);
                 }
 

@@ -98,8 +98,11 @@ public class GroupActivity extends AppCompatActivity {
                                 animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
                                 break;
                             case R.id.navigation_history:
-                                Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
-                                changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
+                                replaceWithHistoryFragment();
+                                //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
+                                //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
+                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+
                                 break;
                         }
                     }
@@ -137,6 +140,13 @@ public class GroupActivity extends AppCompatActivity {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ChatFragment.newInstance())
+                .commit();
+    }
+
+    private void replaceWithHistoryFragment() {
+        fab.hide();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, HistoryFragment.newInstance())
                 .commit();
     }
 
@@ -229,8 +239,6 @@ public class GroupActivity extends AppCompatActivity {
 
     private void replaceWithDetailsFragment() {
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, GroupDetailsFragment.newInstance())
-                .commit();
+
     }
 }

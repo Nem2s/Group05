@@ -1,33 +1,26 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.util.Log;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.firebase.ui.auth.ui.User;
-import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
-import com.google.firebase.database.ChildEventListener;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -47,6 +40,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
     private Button button_notify;
     private ProgressBar pb;
     private double value = 0;
+    private Context context;
 
     public MemberGroupDetailsHolder(View itemView) {
         super(itemView);
@@ -61,7 +55,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
     @Override
     public void setData(Object c, final Context context) {
         if (!(c instanceof UserDatabase)) return;
-
+        this.context = context;
         final UserDatabase user = (UserDatabase) c;
         ImageUtils.LoadUserImageProfile(cv_userImage, context, user);
         tv_userName.setText(user.getName());
@@ -121,10 +115,13 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             }
         });
     }
+
+
     private void payDebit(final UserDatabase user) {
+
         final String s = Singleton.getInstance().getCurrentUser().getId();
-        final ProgressBar pb = (ProgressBar) itemView.findViewById(R.id.pb_loading_actions);
         AnimUtils.exitReveal(button_pay);
+        final ProgressBar pb = (ProgressBar) itemView.findViewById(R.id.pb_loading_actions);
         AnimUtils.enterRevealAnimation(pb);
         //Azzero tutti i valori per cui sono in debito in tutte le spese.
         FirebaseDatabase.getInstance().getReference("expenses")
@@ -133,10 +130,15 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Double tmp = 0.0;
+                        MaterialDialog dialog;
+                        final List<ExpenseDatabase> expenseList = new ArrayList<ExpenseDatabase>();
+                        List<String> expenseViewList = new ArrayList<String>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
                             if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId())) {
-                                FirebaseDatabase.getInstance().getReference("expenses")
+                                expenseList.add(expense);
+                                expenseViewList.add(expense.getName() + " " + expense.getPrice() + " €");
+                               /* FirebaseDatabase.getInstance().getReference("expenses")
                                         .child(Singleton.getInstance().getmCurrentGroup().getId())
                                         .child(expense.getId())
                                         .child("members")
@@ -150,9 +152,44 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         .child(expense.getOwner())
                                         .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
                                 //DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
-
+*/
                             }
                         }
+                        Integer [] res;
+                        dialog = new MaterialDialog.Builder(context)
+                                .cancelable(true)
+                                .title("Choose to Pay")
+                                .content("Are you paying for?")
+                                .items(expenseViewList)
+                                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                        for(int i = 0; i < which.length; i++) {
+                                            //ExpenseDatabase e = expenseList.remove(which[i]);
+                                            //Toast.makeText(context,()
+                                        }
+                                        return true;
+                                    }
+                                })
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        int var = 0;
+                                        for(int i = 0; i < expenseList.size(); i++)
+                                            var+=expenseList.get(i).getPrice();
+                                        Toast.makeText(context, "I will pay " + expenseList.size() + " expenses for a total of " +
+                                                var + " euros", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .positiveText("Ok")
+                                .negativeText("Cancel")
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
                         DB_Manager.getInstance().updateGroupFlow(s, tmp);
                         DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * tmp);
                         AnimUtils.exitRevealAndShowSecond(pb, itemView.findViewById(R.id.iv_loading_end));

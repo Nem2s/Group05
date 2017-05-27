@@ -29,16 +29,21 @@ exports.sendNewGroupNotification = functions.database.ref('/users/{uId}/userGrou
   const uid = event.params.uId;
   const gid = event.params.gId;
   // If un-follow we exit the function.	
-  if (!event.data.val()) {
-    return console.log('User ', uid, 'does not belong to', gid);
-  }
+  console.log(event.data.previous.exists());
+   if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
  // console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
 
   // Get the list of device notification tokens.
   const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/fcmToken').once('value');
 
   // Get the follower profile.
-  const getFollowerProfilePromise = admin.database().ref('/groups/'+gid+'/name').once('value');
+  const getFollowerProfilePromise = admin.database().ref('/groups/'+gid).once('value');
  console.log('UID: ','/users/'+uid+'/fcmToken');
  console.log('GID: ',gid);
 
@@ -46,24 +51,28 @@ exports.sendNewGroupNotification = functions.database.ref('/users/{uId}/userGrou
  
   return Promise.all([getDeviceTokensPromise, getFollowerProfilePromise]).then(results => {
     const tokensSnapshot = results[0].val();
-	const groupName   = results[1].val();
-
+	const group   = results[1].val();
+	const groupName = group.name
     // Check if there are any device tokens.
-   
-    console.log('There are ', tokensSnapshot, 'tokens to send notifications to.',groupName);
+ if(uid==group.creator){
+	   console.log('Creator: ',uid);
+	   return;
+   }
     //console.log('Fetched follower profile', follower);
 
     // Notification details.
     const payload = {
-      notification: {
+  /*    notification: {
         title: groupName +' is created',
-        body: 'You have added to a new group',
+        body: 'You have added been to a new group',
 		sound: 'default',
 		badge: '1',
 		collapse_key : 'newGroup'
-      },
+      },*/
 	  data: { 
-		  groupId:gid
+		groupName:groupName,
+		type:"newGroup",
+		groupId:gid
 	  }
 	  
     };
@@ -87,7 +96,7 @@ exports.sendNewGroupNotification = functions.database.ref('/users/{uId}/userGrou
   });
 });
 
-
+/*
 
 
 exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eId}/members/{uId}').onWrite(event => {
@@ -103,7 +112,7 @@ exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eI
   if(event.previous.val()){
 	  return;
   }
-  */
+  
  // console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
 
   // Get the list of device notification tokens.
@@ -163,88 +172,164 @@ exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eI
   });
 });
 
+*/
 
 
-/*
 exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').onWrite(event => {
   
   const gid = event.params.gId;
   const message = event.data.val();
+  const uid = message.messageUserId;
   
   // If un-follow we exit the function.	
-  if (!event.data.val()) {
-    return console.log('User ', uid, 'does not belong to', gid);
-  }
-  
-  const message_content = event.data.val();
- */ /*
-  if(event.previous.val()){
-	  return;
-  }
-  */
- // console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
-
-  // Get the list of device notification tokens.
-  
-  //var obj = Object.values(expense);
-  /*
-  console.log(uid,'       ', gid,'     ', eid);
-  
-  
-  
-  
-  
-  
+  if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
   
   const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
-  
-  
- 
   return Promise.all([ getGroupProfilePromise]).then(results => {
     const group = results[0].val();
 	
 	
     // Check if there are any device tokens.
    
-    console.log('There are ', tokensSnapshot, 'tokens to send notifications to.',groupName);
+    console.log('There are ', 'tokens to send notifications to.',group.name);
     //console.log('Fetched follower profile', follower);
 
     // Notification details.
     const payload = {
-      notification: {
+      /*notification: {
         title: group.name,
+		icon:'chat_message_arrow',
         body: message.messageUser+': '+message.messageText,
 		sound: 'default',
 		badge: '1',
 		collapse_key : 'newMessage'
-      },
-	  data: { 
+      },*/
+	  data: {
+		  type:"newMessage",
+		  message:message.messageText,
+		  messageUser:message.messageUser,
+		  groupName:group.name,
 		  groupId:gid
 		  
 	  }
 	};
 	  const tokens = Object.keys(group.members);
-	  var promise = new Array();
+	  const promise = new Array();
 	  tokens.forEach(function(t){
-		  promise.push(admin.database().ref('/users/'+t+'/fcmToken').once('value'));
+		  promise.push(admin.database().ref('/users/'+t).once('value'));
 	  });
-	  return Promise.all([promise]).then(results => {
-		 const token;
+	  return Promise.all(promise).then(results => {
+		
+		 const token= new Array();
 		 results.forEach(function(f){
-			 token.push(f.val());
+			 const userrr= f.val();
+			 const map = userrr.userInfo;
+			 console.log(map["id"]!=uid,map["name"],uid,map["id"]);
+			 const map_group=userrr.userGroups;
+			 if(map["id"]!=uid && map_group[gid])
+				token.push(userrr.fcmToken);
 			
 		 });
 		 
-		  return admin.messaging().sendToDevice(tokensSnapshot, payload).then(response => {
+		  return admin.messaging().sendToDevice(token, payload).then(response => {
       const tokensToRemove = [];
       response.results.forEach((result, index) => {
         const error = result.error;
         if (error) {
-          console.error('Failure sending notification to', tokensSnapshot, error);
+          console.error('Failure sending notification to', token[index], error);
         }
       });
       return Promise.all(tokensToRemove);
     });
   });
 });
-*/
+});
+
+
+
+exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eId}').onWrite(event => {
+  
+  const gid = event.params.gId;
+  const eid = event.params.eId;
+  
+  // If un-follow we exit the function.	
+ if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
+  
+  const expense_content = event.data.val();
+const map_debit = expense_content.members;
+
+  //console.log(uid,'       ', gid,'     ', eid);
+  const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
+  const getOwnerPromise = admin.database().ref('/users/'+expense_content.owner+'/userInfo').once('value');
+  return Promise.all([ getGroupProfilePromise,getOwnerPromise]).then(results => {
+    const group = results[0].val();
+	const owner = results[1].val();
+    // Check if there are any device tokens.
+   
+    //console.log('There are ', 'tokens to send notifications to.',group.name);
+    //console.log('Fetched follower profile', follower);
+
+    // Notification details.
+ 
+	  const tokens = Object.keys(group.members);
+	  const promise = new Array();
+	  
+	  tokens.forEach(function(t){
+		  if(t!=expense_content.owner) 
+		  promise.push(admin.database().ref('/users/'+t).once('value'));
+	 // console.log(t,group.members)
+	  });
+	  return Promise.all(promise).then(results => {
+		// const token= new Array();
+		 results.forEach(function(f){
+			 const user_tmp = f.val();
+			 const map = user_tmp.userGroups;
+			 //console.log(group.name,',',expense_content.name,',',map,user_tmp.userInfo.name);
+			 if(map[gid]){
+			const token=user_tmp.fcmToken;
+			const debit = map_debit[user_tmp.userInfo.id];
+			   const payload = {
+									data: { 
+											groupId:gid,
+											expense_owner:owner.name,
+											expense_name:expense_content.name,
+											groupName:group.name,
+											expenseId:eid,
+											type:"newExpense",
+											expense_debit:debit.toString()
+							
+										}
+								};
+						 admin.messaging().sendToDevice(token, payload);
+					}
+		 });
+		// console.log(token);
+		/* return admin.messaging().sendToDevice(token, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', token[index], error);
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+	*/
+  });
+});
+});
+
+
+

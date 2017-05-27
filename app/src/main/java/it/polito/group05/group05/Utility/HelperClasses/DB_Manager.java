@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -31,19 +32,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -321,6 +328,7 @@ public class DB_Manager {
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
+        newhistory(groupDatabase.getId(),  groupDatabase);
         return groupDatabase.getId();
     }
 
@@ -565,6 +573,46 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
+
+    public void newhistory(String GroupID, Object o)
+    {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
+        HistoryClass h;
+        String data = null;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
+        Date date = new Date();
+        if(o instanceof ExpenseDatabase){
+            ExpenseDatabase e = (ExpenseDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
+                    e.getTimestamp(),
+                    0);
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+
+        }
+        else if(o instanceof GroupDatabase){
+            GroupDatabase g = (GroupDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "created " + g.getName(),
+                    date.getTime(),
+                    1);
+        }
+        else if(o instanceof UserDatabase)
+        {
+            UserDatabase u = (UserDatabase) o;
+            h = new HistoryClass(
+                    Singleton.getInstance().getCurrentUser().getName(),
+                    "added " + u.getName(),
+                    date.getTime(),
+                    2);
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+
+        }
+        else return;
+        ref.setValue(h);
+    }
 
 
 
