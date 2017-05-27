@@ -65,7 +65,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                     switch (v.getId()) {
                         case R.id.et_ins:
                             ue.setSelected(true);
-
                             holder.costo_person.setEnabled(true);
                             holder.costo_person.addTextChangedListener(new TextWatcher() {
                                 @Override
