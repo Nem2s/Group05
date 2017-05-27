@@ -2,11 +2,14 @@ package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -128,12 +131,13 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Double tmp = 0.0;
                         MaterialDialog dialog;
-                        List<ExpenseDatabase> expenseList = new ArrayList<ExpenseDatabase>();
+                        final List<ExpenseDatabase> expenseList = new ArrayList<ExpenseDatabase>();
                         List<String> expenseViewList = new ArrayList<String>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
                             if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId())) {
                                 expenseList.add(expense);
+                                expenseViewList.add(expense.getName() + " " + expense.getPrice() + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
                                         .child(Singleton.getInstance().getmCurrentGroup().getId())
                                         .child(expense.getId())
@@ -153,15 +157,36 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         }
                         Integer[] res;
                         dialog = new MaterialDialog.Builder(context)
-                                .cancelable(false)
+                                .cancelable(true)
                                 .title("Choose to Pay")
                                 .content("Are you paying for?")
-                                .items(expenseList)
+                                .items(expenseViewList)
                                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                                     @Override
                                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                        //res = which;
-                                        return false;
+                                        for(int i = 0; i < which.length; i++) {
+                                            //ExpenseDatabase e = expenseList.remove(which[i]);
+                                            //Toast.makeText(context,()
+                                        }
+                                        return true;
+                                    }
+                                })
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        int var = 0;
+                                        for(int i = 0; i < expenseList.size(); i++)
+                                            var+=expenseList.get(i).getPrice();
+                                        Toast.makeText(context, "I will pay " + expenseList.size() + " expenses for a total of " +
+                                                var + " euros", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .positiveText("Ok")
+                                .negativeText("Cancel")
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
                                     }
                                 })
                                 .show();
