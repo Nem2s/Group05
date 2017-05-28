@@ -188,38 +188,14 @@
                                     android:layout_centerHorizontal="true" />
                             </RelativeLayout>
                         </RelativeLayout>
-                        <RelativeLayout
-                            android:id="@+id/moreLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="43dp"
-                            android:background="@color/light_gray"
-                            android:layout_marginTop="20dp">
 
-                            <TextView
-                                android:id="@+id/more"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:text="More"
-                                android:layout_marginTop="6dp"
-                                android:textColor="@color/dark_gray" />
-                            <ImageView
-                                android:id="@+id/plus"
-                                android:layout_width="20dp"
-                                android:layout_below="@+id/more"
-                                android:layout_height="20dp"
-                                android:layout_marginBottom="3dp"
-                                android:layout_centerHorizontal="true"
-                                android:src="@drawable/ic_expand_more" />
-                        </RelativeLayout>
-                    </LinearLayout>
+
 
                         <RelativeLayout
                             android:id="@+id/relative_file"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
-                            android:visibility="gone"
                             android:layout_below="@+id/layout1">
 
                             <CheckBox
@@ -247,14 +223,25 @@
 
                         </RelativeLayout>
 
-                        <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recyclerView_members"
-                        android:layout_width="match_parent"
-                            android:layout_below="@id/relative_file"
-                        android:visibility="visible"
-                        android:layout_height="wrap_content">
+                        <RelativeLayout
+                            android:id="@+id/moreLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="43dp"
+                            android:background="@color/light_gray"
+                            android:layout_marginTop="20dp">
 
-                    </android.support.v7.widget.RecyclerView>
+                            <TextView
+                                android:id="@+id/more"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="Set Prices"
+                                android:layout_marginTop="6dp"
+                                android:textColor="@color/dark_gray" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>

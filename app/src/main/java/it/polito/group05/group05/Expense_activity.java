@@ -2,6 +2,8 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,8 +24,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -55,6 +60,7 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
@@ -72,6 +78,7 @@ public class Expense_activity extends AppCompatActivity {
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network;
+    private Button confirm, reset;
     private CardView card_recycler;
     private ImageView plus, calendar1;
     private TextView nomeFile, nomedata, more;
@@ -94,6 +101,9 @@ public class Expense_activity extends AppCompatActivity {
     private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
+    private LinearLayoutManager lin_members;
+    private DividerItemDecoration dividerItemDecoration;
+    private CustomDialogFragment cdf;
 
     @Override
     protected void onStart() {
@@ -114,6 +124,7 @@ public class Expense_activity extends AppCompatActivity {
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         timestamp = 0;
+
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
@@ -131,11 +142,11 @@ public class Expense_activity extends AppCompatActivity {
         nomeFile = (TextView) findViewById(R.id.nomeFile);
         cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
-        recyclerView.setVisibility(View.GONE);
+
+       // recyclerView.setVisibility(View.GONE);
         moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
-        plus = (ImageView) findViewById(R.id.plus);
+       // plus = (ImageView) findViewById(R.id.plus);
         more = (TextView) findViewById(R.id.more);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
@@ -149,16 +160,12 @@ public class Expense_activity extends AppCompatActivity {
             ue.setExpense(expense);
             partecipants.add(ue);
         }
-        memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
-        LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(lin_members);
-        recyclerView.setAdapter(memberAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        final FragmentManager fm = getFragmentManager();
+        cdf = new CustomDialogFragment(partecipants, expense);
 
         Calendar calendar = Calendar.getInstance();
-        java.util.Date now = calendar.getTime();
+        final java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
 
 
@@ -259,8 +266,8 @@ public class Expense_activity extends AppCompatActivity {
                 if (s.length() > 0) {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                    memberAdapter.changeTotal(expense_price);
-                    memberAdapter.notifyDataSetChanged();
+              //      memberAdapter.changeTotal(expense_price);
+              //      memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -268,7 +275,6 @@ public class Expense_activity extends AppCompatActivity {
         calendar1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get Current Date
                 clicked_calendar = true;
                 final Calendar c = Calendar.getInstance();
                 mYear = c.get(Calendar.YEAR);
@@ -311,21 +317,7 @@ public class Expense_activity extends AppCompatActivity {
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0) {
-                    Snackbar.make(v, "Set a Valid price", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    if (recyclerView.getVisibility() == View.GONE) {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        rel_file.setVisibility(View.VISIBLE);
-                        plus.setImageResource(R.drawable.ic_expand_less);
-                        more.setText("Less");
-                    } else {
-                        recyclerView.setVisibility(View.GONE);
-                        rel_file.setVisibility(View.GONE);
-                        plus.setImageResource(R.drawable.ic_expand_more);
-                        more.setText("More");
-                    }
-                }
+                cdf.show(fm,"TV_tag");
             }
         });
 
