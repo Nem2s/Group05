@@ -10,7 +10,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 public class MyService extends IntentService {
-    String b, eid, gid, uid;
+    String b, eid, gid, uid, debit;
 
     public MyService() {
         super("Myservice");
@@ -23,6 +23,8 @@ public class MyService extends IntentService {
         eid = intent.getStringExtra("expenseId");
         uid = intent.getStringExtra("requestFromId");
         gid = intent.getStringExtra("groupId");
+        debit = intent.getStringExtra("expenseDebit");
+
         if (b.equals("true"))
             DB_Manager.getInstance().payDone(gid, eid, uid);
         else

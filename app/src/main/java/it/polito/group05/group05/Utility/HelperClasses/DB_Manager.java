@@ -610,10 +610,12 @@ public class DB_Manager {
 
     public void notifyPayment(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("notify").child(id).setValue(true);
+
     }
 
     public void payDone(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(true);
+        FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("notify").child(id).removeValue();
     }
 
     public void payUnDone(String gid, String eid, String id) {

@@ -72,7 +72,8 @@ exports.sendNewGroupNotification = functions.database.ref('/users/{uId}/userGrou
 	  data: { 
 		groupName:groupName,
 		type:"newGroup",
-		groupId:gid
+		groupId:gid,
+		icon:'/groups/'+gid+'/'+group.pictureUrl
 	  }
 	  
     };
@@ -126,6 +127,7 @@ exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eI
   
   
   
+  const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/fcmToken').once('value');
   const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/fcmToken').once('value');
   const getGroupProfilePromise = admin.database().ref('/groups/'+gid+'/name').once('value');
   const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
@@ -189,10 +191,11 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
       if (!event.data.exists()) {
         return;
       }
-  
+  const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/userInfo').once('value');
   const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
-  return Promise.all([ getGroupProfilePromise]).then(results => {
+  return Promise.all([ getGroupProfilePromise,getDeviceTokensPromise]).then(results => {
     const group = results[0].val();
+    const sender = results[1].val();
 	
 	
     // Check if there are any device tokens.
@@ -214,6 +217,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
 		  type:"newMessage",
 		  message:message.messageText,
 		  messageUser:message.messageUser,
+		  icon:'/users/'+uid+'/'+sender.iProfile,
 		  groupName:group.name,
 		  groupId:gid
 		  
@@ -304,6 +308,7 @@ const map_debit = expense_content.members;
 									data: { 
 											groupId:gid,
 											expense_owner:owner.name,
+											icon:'/users/'+owner.id+'/'+owner.iProfile,
 											expense_name:expense_content.name,
 											groupName:group.name,
 											expenseId:eid,
@@ -336,6 +341,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
   const gid = event.params.gId;
   const uid =  event.params.uId;
   const eid =  event.params.eId;
+  const notified =  event.data.val();
   
   // If un-follow we exit the function.	
  /* if (event.data.previous.exists()) {
@@ -343,7 +349,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
       }*/
 	  
       // Exit when the data is deleted.
-      if (!event.data.exists()) {
+      if (!event.data.exists() || !notified) {
         return;
       }
   
@@ -381,6 +387,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
 		  expenseDebit:expense.members[uid].toString(),
 		  expenseName:expense.name,
 		  requestFrom:user.userInfo.name,
+		  icon:'/users/'+uid+'/'+user.userInfo.iProfile,
 		  expenseId:eid,
 		  requestFromId:uid,
 		  groupId:gid
@@ -388,7 +395,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
 	  }
 	};
 	  const promise =admin.database().ref('/users/'+expense.owner).once('value');
-	admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).remove();
+	admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).set(false);
 	  return Promise.all([promise]).then(results => {
 		
 		 const result= results[0].val();
