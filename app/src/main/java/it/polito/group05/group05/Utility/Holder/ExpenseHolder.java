@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.Holder;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,23 +30,35 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.ExpenseDetailsActivity;
+import it.polito.group05.group05.ExpenseFragment;
+import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 
 /**
@@ -52,38 +67,36 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 public class ExpenseHolder extends GeneralHolder{
     ImageView expense_image;
+    CircleImageView cv_owner;
+    ImageView iv_bookmark;
     TextView name;
     TextView price;
-    TextView owner, timestamp, nf;
-    RecyclerView rv;
-    RelativeLayout rel;
-    TextView description;
-    ImageView clip,expand;
+    TextView owner, timestamp;
     CardView cv;
     Query ref;
-    TextView menu;
     ImageView calendar;
-    boolean filePresent;
-    String nomeF;
+    Context context;
+    List<UserDatabase> members = new ArrayList<>();
 
+    private int LEFT_OFFSET;
+    private int TOP_OFFSET;
+    private int WIDTH;
+    private int HEIGHT;
 
     public ExpenseHolder(View itemView) {
         super(itemView);
-        this.expense_image = (ImageView) itemView.findViewById(R.id.expense_image);
+        this.expense_image = (ImageView) itemView.findViewById(R.id.cart_image);
         this.name= (TextView) itemView.findViewById(R.id.expense_name);
         this.price= (TextView) itemView.findViewById(R.id.expense_price);
         this.owner = (TextView) itemView.findViewById(R.id.owner);
         this.timestamp = (TextView) itemView.findViewById(R.id.timestamp);
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
-        this.rv = (RecyclerView) itemView.findViewById(R.id.expense_rv);
-        this.menu = (TextView) itemView.findViewById(R.id.textViewOptions);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
-        this.rel = (RelativeLayout) itemView.findViewById(R.id.rel_file);
-        this.rel.setVisibility(View.GONE);
-        this.nf = (TextView) itemView.findViewById(R.id.name_File);
-        this.expand = (ImageView) itemView.findViewById(R.id.expand);
-        this.clip = (ImageView) itemView.findViewById(R.id.clip);
-        filePresent = false;
+        this.cv_owner = (CircleImageView)itemView.findViewById(R.id.cv_ownerimage);
+
+
+
+
     }
     public void setData(Object c, final Context context){
         setData(c, context, View.GONE);
@@ -91,17 +104,14 @@ public class ExpenseHolder extends GeneralHolder{
 
     public void setData(Object c, final Context context, int type) {
         if(!(c instanceof ExpenseDatabase)) return;
+        this.context = context;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
-        expense_image.setImageResource(R.drawable.idea);
+        loadOwnerImage(expenseDatabase.getOwner());
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
         Date date = new Date(expenseDatabase.getTimestamp());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         this.timestamp.setText(sdf.format(date));
-
-        if(expenseDatabase.getFile() != null){
-            this.nf.setText(expenseDatabase.getFile());}
-        else nf.setText("");
 
         String id = Singleton.getInstance().getCurrentUser().getId();
         for (String i : expenseDatabase.getMembers().keySet()){
@@ -119,14 +129,31 @@ public class ExpenseHolder extends GeneralHolder{
                 x.setExpense(expenseDatabase);
             if (x.getId().compareTo(expenseDatabase.getOwner()) == 0) {
                 owner.setText(x.getId().compareTo(id) == 0 ? "You" : x.getName());
+                //iv_bookmark.setVisibility(x.getId().compareTo(id) == 0 ? View.VISIBLE : View.INVISIBLE);
             }
             expenseDatabase.getUsersExpense().add(x);
         }
 
         setupListener(cv, price, context, expenseDatabase);
-        setupRecyclerViewExpense(rv, expenseDatabase, context, type);
 
 
+
+    }
+
+
+
+    private void loadOwnerImage(String owner) {
+        FirebaseDatabase.getInstance().getReference("users").child(owner).child("userInfo").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ImageUtils.LoadUserImageProfile(cv_owner, context, dataSnapshot.getValue(UserDatabase.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void setData(Object c, final Context context, String eid) {
@@ -140,7 +167,7 @@ public class ExpenseHolder extends GeneralHolder{
                 setData(c, context, View.GONE);
     }
 
-    private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context, int visibility) {
+    /*private void setupRecyclerViewExpense(RecyclerView rv, final Expense expenseDatabase, final Context context, int visibility) {
     RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -163,10 +190,10 @@ public class ExpenseHolder extends GeneralHolder{
     rv.setAdapter(adapter);
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
         rv.setVisibility(visibility);
-}
-private void setupListener(CardView cv, final TextView price, final Context context, final Expense expense){
+}*/
+private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
 
-    int cnt=0;
+   /* int cnt=0;
     try {
         final PopupMenu popup = new PopupMenu(context, menu);
 
@@ -275,37 +302,42 @@ private void setupListener(CardView cv, final TextView price, final Context cont
     }
     catch(Exception c ){
        // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
-    }
+    }*/
         cv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            if (rv.getVisibility() == View.GONE) {
-                rv.setVisibility(View.VISIBLE);
-                expand.setImageResource(R.drawable.ic_expand_less);
-                if(expense.getFile() != null) {
-                    rel.setVisibility(View.VISIBLE);
-                }
-            }
-            else {
-                expand.setImageResource(R.drawable.ic_expand_more);
-                rv.setVisibility(View.GONE);
-                rel.setVisibility(View.GONE);
-            }
-
+            Intent i = new Intent((Activity)context, ExpenseDetailsActivity.class);
+            Bundle extras = new Bundle();
+            extras.putSerializable("map", (Serializable) expense.getMembers());
+            extras.putString("title", expense.getName());
+            extras.putString("owner", expense.getOwner());
+            extras.putString("price", expense.getPrice().toString());
+            extras.putLong("timestamp", expense.getTimestamp());
+            int location[] = new int[2];
+            cv.getLocationInWindow(location);
+            LEFT_OFFSET = location[0];
+            TOP_OFFSET = location[1];
+            WIDTH = cv.getWidth();
+            HEIGHT = cv.getHeight();
+            extras.putInt("left_offset", LEFT_OFFSET);
+            extras.putInt("top_offset", TOP_OFFSET);
+            extras.putInt("width", WIDTH);
+            extras.putInt("height", HEIGHT);
+            i.putExtras(extras);
+            context.startActivity(i);
 
         }
     });
 
-    rel.setOnClickListener(new View.OnClickListener() {
+   /* rel.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
                 DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
                 File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(f),"*/*");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.setDataAndType(Uri.fromFile(f),"**///*");
+              /*  intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
             } catch (FileNotFoundException e) {
                 Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
@@ -313,7 +345,7 @@ private void setupListener(CardView cv, final TextView price, final Context cont
             }
 
         }
-    });
+    });*/
 
 }
 
