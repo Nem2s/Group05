@@ -626,6 +626,13 @@ public class DB_Manager {
     }
 
 
+    public void payDone(String gid, String eid, String id, double debit) {
+        payDone(gid, eid, id);
+        updateGroupFlow(id, debit);
+        updateGroupFlow(Singleton.getInstance().getCurrentUser().getId(), (-1.00) * debit);
+
+
+    }
     public void payDone(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(true);
         expenseRef.child(gid).child(eid).child("payed").child(id).setValue(true);
@@ -633,6 +640,7 @@ public class DB_Manager {
     }
 
     public void payUnDone(String gid, String eid, String id) {
+        expenseRef.child(gid).child(eid).child("payed").child(id).setValue(false);
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(false);
     }
 }

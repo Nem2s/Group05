@@ -364,9 +364,9 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
 	const expense = results[1].val();
     const user = results[2].val();
    // const history = results[3].val();
-	console.log(history);
-	if(expense.payment!=null){
-					const map_history= expense.payment;
+	//console.log(history);
+	if(expense.payed!=null){
+					const map_history= expense.payed;
 						if(map_history[uid]!=null)
 							if(map_history[uid])
 							{admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).remove();

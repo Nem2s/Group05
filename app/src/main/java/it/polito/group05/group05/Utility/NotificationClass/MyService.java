@@ -26,7 +26,7 @@ public class MyService extends IntentService {
         debit = intent.getStringExtra("expenseDebit");
 
         if (b.equals("true"))
-            DB_Manager.getInstance().payDone(gid, eid, uid);
+            DB_Manager.getInstance().payDone(gid, eid, uid, Double.parseDouble(debit));
         else
             DB_Manager.getInstance().payUnDone(gid, eid, uid);
 

@@ -104,7 +104,7 @@ public class NotificationService extends FirebaseMessagingService {
                 ticker = title + "\n" + body + "\n";
                 break;
             case "newExpense":
-                notificationId = 2;
+                notificationId = NotificationId.getID();
                 title = map.get("expense_name") + " is created by " + map.get("expense_owner") + " @ " + map.get("groupName");
                 body = "You have to pay € " + String.format("%.2f", Double.parseDouble(map.get("expense_debit").substring(1)));
                 ticker = title + "\n" + body + "\n";
@@ -117,7 +117,7 @@ public class NotificationService extends FirebaseMessagingService {
                 ticker = "New message" + " @ " + title + "\n" + map.get("messageUser") + ":" + map.get("message");
                 break;
             case "paymentRequest":
-                notificationId = 4;
+                notificationId = NotificationId.getID();
                 double d = Double.parseDouble(map.get("expenseDebit").substring(1));
                 body = "Have you received € " + String.format("%.2f", d) + " for " + map.get("expenseName") + "?";
                 title = map.get("groupName");
@@ -142,11 +142,11 @@ public class NotificationService extends FirebaseMessagingService {
             i.putExtra(s, map.get(s));
         }
 
-        nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, i, FLAG_ONE_SHOT));
+        nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), NotificationId.getID(), i, FLAG_ONE_SHOT));
         nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
 
-        nm.notify(map.get("groupId"), NotificationId.getID(), nb.build());
+        nm.notify(map.get("groupId"), notificationId, nb.build());
 
     }
 
