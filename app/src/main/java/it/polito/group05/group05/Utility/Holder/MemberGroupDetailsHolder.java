@@ -81,25 +81,26 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
-                                else if (user.getId().equals(expense.getOwner()))
+                                else if (user.getId().equals(expense.getOwner()) &&
+                                        !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
-                                if (value > 0) {
-                                    tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.VISIBLE);
-                                } else if (value < 0) {
-                                    tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
-                                    button_pay.setVisibility(View.VISIBLE);
-                                    button_notify.setVisibility(View.GONE);
+                            }
+                            if (value > 0) {
+                                tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.VISIBLE);
+                            } else if (value < 0) {
+                                tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
+                                button_pay.setVisibility(View.VISIBLE);
+                                button_notify.setVisibility(View.GONE);
 
-                                } else {
-                                    tv_userBalance.setText("Already Payed!");
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.GONE);
-                                }
+                            } else {
+                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.GONE);
                             }
                         }
                     }
