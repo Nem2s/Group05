@@ -79,30 +79,30 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             }
                             if (!expense.getMembers().containsKey(user.getId()))
                                 continue;
-                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) &&
-                                    !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId())) {
+                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
-                                else if (user.getId().equals(expense.getOwner()))
+                                else if (user.getId().equals(expense.getOwner()) &&
+                                        !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
-                                if (value > 0) {
-                                    tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.VISIBLE);
-                                } else if (value < 0) {
-                                    tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
-                                    button_pay.setVisibility(View.VISIBLE);
-                                    button_notify.setVisibility(View.GONE);
+                            }
+                            if (value > 0) {
+                                tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.VISIBLE);
+                            } else if (value < 0) {
+                                tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
+                                button_pay.setVisibility(View.VISIBLE);
+                                button_notify.setVisibility(View.GONE);
 
-                                } else {
-                                    tv_userBalance.setText("Already Payed!");
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.GONE);
-                                }
+                            } else {
+                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -141,7 +141,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
                                 expenseList.add(expense);
                                 expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s)* -1 + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
@@ -179,8 +179,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         }
                                         Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
                                                 var + " euros", Toast.LENGTH_SHORT).show();
-                                        DB_Manager.getInstance().updateGroupFlow(s, var);
-                                        DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
                                         DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
