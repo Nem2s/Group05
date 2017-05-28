@@ -79,8 +79,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             }
                             if (!expense.getMembers().containsKey(user.getId()))
                                 continue;
-                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) &&
-                                    !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId())) {
+                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) ) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
@@ -141,7 +140,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
                                 expenseList.add(expense);
                                 expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s)* -1 + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
@@ -179,8 +178,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         }
                                         Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
                                                 var + " euros", Toast.LENGTH_SHORT).show();
-                                        DB_Manager.getInstance().updateGroupFlow(s, var);
-                                        DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
                                         DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
