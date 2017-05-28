@@ -77,7 +77,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             }
                             if (!expense.getMembers().containsKey(user.getId()))
                                 continue;
-                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) ) {
+                            if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
@@ -138,7 +138,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean) expense.getPayed().get(s)) {
                                 expenseList.add(expense);
                                 expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
