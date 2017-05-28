@@ -357,16 +357,16 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
   const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
   //const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid).once('value');
   const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
-  const getHistoryProfilePromise = admin.database().ref('/history/'+gid+'/'+eid).once('value');
+  const getHistoryProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
   
   return Promise.all([ getGroupProfilePromise,getExpenseProfilePromise,getUserProfilePromise,getHistoryProfilePromise]).then(results => {
     const group = results[0].val();
 	const expense = results[1].val();
     const user = results[2].val();
-    const history = results[3].val();
+   // const history = results[3].val();
 	console.log(history);
-	if(history.payment!=null){
-					const map_history= history.payment;
+	if(expense.payment!=null){
+					const map_history= expense.payment;
 						if(map_history[uid]!=null)
 							if(map_history[uid])
 							{admin.database().ref('/history/'+gid+'/'+eid+'/notify/'+uid).remove();
