@@ -177,7 +177,7 @@ public class DB_Manager {
     public void checkContacts() {
         Map<String, UserContact> lmap = Singleton.getInstance().getLocalContactsList();
         for (String number : lmap.keySet()) {
-            if (number.contains("#") || number.contains("\\.") || number.contains("$")) continue;
+            if (number.contains("\\.") || number.contains("#")) continue;
             usernumberRef.child(number).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -324,7 +324,8 @@ public class DB_Manager {
             if(s==null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-        FirebaseDatabase.getInstance().getReference("notifications").child(groupDatabase.getId()).child("members").setValue(groupDatabase.getMembers());
+
+
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
@@ -430,6 +431,7 @@ public class DB_Manager {
         fdb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if(!dataSnapshot.exists()) return;
                 Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
 
@@ -574,9 +576,10 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
-
-    public void newhistory(String GroupID, Object o) {
+    public void newhistory(String GroupID, Object o)
+    {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
+
         HistoryClass h;
         String data = null;
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
@@ -589,27 +592,41 @@ public class DB_Manager {
                     "added " + e.getName() + " of " + e.getPrice().toString() + "€",
                     e.getTimestamp(),
                     0);
-        } else if (o instanceof GroupDatabase) {
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+        }
+        else if(o instanceof GroupDatabase){
             GroupDatabase g = (GroupDatabase) o;
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
                     "created " + g.getName(),
                     date.getTime(),
                     1);
-        } else if (o instanceof UserDatabase) {
+            groupRef.child(g.getId()).child("lmTime").setValue(date.getTime());
+        }
+        else if(o instanceof UserDatabase)
+        {
             UserDatabase u = (UserDatabase) o;
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
                     "added " + u.getName(),
                     date.getTime(),
                     2);
-        } else return;
-        groupRef.child(GroupID).child("lmTime").setValue(date.getTime());
+            groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
+        }
+        else return;
+
         ref.setValue(h);
     }
 
     public void notifyPayment(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("notify").child(id).setValue(true);
+    public void expensesPayment(String userId, String groupID, List<ExpenseDatabase> expensePayed)
+    {
+        for(ExpenseDatabase e : expensePayed)
+        {
+            expenseRef.child(groupID).child(e.getId()).child("payed").child(userId).setValue(true);
+        }
+    }
 
     }
 

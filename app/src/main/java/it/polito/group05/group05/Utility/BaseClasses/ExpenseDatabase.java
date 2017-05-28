@@ -14,10 +14,12 @@ public class ExpenseDatabase implements Namable{
     private String file;
     private long timestamp;
     private Map<String,Double> members;
+    private Map<String,Object> payed;
 
 
     public ExpenseDatabase() {
         members= new HashMap<>();
+        payed= new HashMap<>();
         id="";
         owner="";
         name="";
@@ -33,6 +35,7 @@ public class ExpenseDatabase implements Namable{
         this.price = edb.price;
         this.timestamp=edb.timestamp;
         if(edb.members== null) members = new HashMap<>();
+        if(edb.payed== null) payed = new HashMap<>();
         else  members = edb.members;
     }
 
@@ -72,11 +75,17 @@ public class ExpenseDatabase implements Namable{
     public Map<String, Double> getMembers() {
         return members;
     }
+
     public  void setMembers(Map<String, Double> map) {
         this.members = map;
+    }
 
+        public Map<String, Object> getPayed() {
+        return payed;
+    }
 
-
+    public void setPayed(Map<String, Object> payed) {
+        this.payed = payed;
     }
 
 }

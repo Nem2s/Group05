@@ -60,7 +60,7 @@ public class GroupHolder extends GeneralHolder {
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         Date date = new Date(g.getLmTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:", Locale.ITALY);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
         String time_s = sdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
