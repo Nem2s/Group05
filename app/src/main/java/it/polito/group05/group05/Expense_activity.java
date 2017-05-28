@@ -49,8 +49,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -228,6 +231,11 @@ public class Expense_activity extends AppCompatActivity {
                     memberAdapter.changeTotal(expense.getPrice());
                 }
                 else {
+
+                    Map<String, Object> tmp = new HashMap<>();
+                    for (String iduser : expense.getMembers().keySet())
+                        if(!iduser.equals(expense.getOwner())) tmp.put(iduser, false);
+                    expense.setPayed(tmp);
                     fdb.setValue(expense);
                     DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                     finish();

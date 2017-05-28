@@ -431,6 +431,7 @@ public class DB_Manager {
         fdb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if(!dataSnapshot.exists()) return;
                 Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
 
@@ -615,6 +616,14 @@ public class DB_Manager {
         else return;
 
         ref.setValue(h);
+    }
+
+    public void expensesPayment(String userId, String groupID, List<ExpenseDatabase> expensePayed)
+    {
+        for(ExpenseDatabase e : expensePayed)
+        {
+            expenseRef.child(groupID).child(e.getId()).child("payed").child(userId).setValue(true);
+        }
     }
 
 
