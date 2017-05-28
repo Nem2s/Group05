@@ -22,6 +22,7 @@ import java.util.Random;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.SignUpActivity;
+import it.polito.group05.group05.Utility.HelperClasses.NotificationId;
 
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 
@@ -130,9 +131,9 @@ public class NotificationService extends FirebaseMessagingService {
                 intent.putExtra("action", "true");
                 nb.setPriority(Notification.PRIORITY_MAX);
 
-                nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, m.nextInt(), intent, PendingIntent.FLAG_ONE_SHOT));
+                nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, NotificationId.getID(), intent, PendingIntent.FLAG_ONE_SHOT));
                 intent2.putExtra("action", "false");
-                nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, m.nextInt(), intent2, PendingIntent.FLAG_ONE_SHOT));
+                nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, NotificationId.getID(), intent2, PendingIntent.FLAG_ONE_SHOT));
                 break;
 
         }
@@ -145,7 +146,8 @@ public class NotificationService extends FirebaseMessagingService {
         nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
 
-        nm.notify(map.get("groupId"), m.nextInt(), nb.build());
+        nm.notify(map.get("groupId"), NotificationId.getID(), nb.build());
 
     }
+
 }

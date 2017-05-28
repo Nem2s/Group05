@@ -210,6 +210,7 @@ public class DB_Manager {
     public void retriveExpenses() {
         final List<DataSnapshot> snapshots = new ArrayList<>();
         expenseRef.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren())
@@ -576,8 +577,7 @@ public class DB_Manager {
         Singleton.getInstance().setCurrentUser(currentUser);
     }
 
-    public void newhistory(String GroupID, Object o)
-    {
+    public void newhistory(String GroupID, Object o) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).push();
 
         HistoryClass h;
@@ -593,8 +593,7 @@ public class DB_Manager {
                     e.getTimestamp(),
                     0);
             groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
-        }
-        else if(o instanceof GroupDatabase){
+        } else if (o instanceof GroupDatabase) {
             GroupDatabase g = (GroupDatabase) o;
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
@@ -602,9 +601,7 @@ public class DB_Manager {
                     date.getTime(),
                     1);
             groupRef.child(g.getId()).child("lmTime").setValue(date.getTime());
-        }
-        else if(o instanceof UserDatabase)
-        {
+        } else if (o instanceof UserDatabase) {
             UserDatabase u = (UserDatabase) o;
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
@@ -612,26 +609,26 @@ public class DB_Manager {
                     date.getTime(),
                     2);
             groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
-        }
-        else return;
+        } else return;
 
         ref.setValue(h);
     }
 
     public void notifyPayment(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("notify").child(id).setValue(true);
-    public void expensesPayment(String userId, String groupID, List<ExpenseDatabase> expensePayed)
-    {
-        for(ExpenseDatabase e : expensePayed)
-        {
-            expenseRef.child(groupID).child(e.getId()).child("payed").child(userId).setValue(true);
+
+    }
+
+    public void expensesPayment(String userId, String groupID, List<ExpenseDatabase> expensePayed) {
+        for (ExpenseDatabase e : expensePayed) {
+            payDone(groupID, e.getId(), userId);
         }
     }
 
-    }
 
     public void payDone(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(true);
+        expenseRef.child(gid).child(eid).child("payed").child(id).setValue(true);
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("notify").child(id).removeValue();
     }
 

@@ -1,7 +1,6 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -80,7 +78,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             if (!expense.getMembers().containsKey(user.getId()))
                                 continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId()) &&
-                                    !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId())) {
+                                    !(boolean) expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
@@ -141,9 +139,9 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
+                            if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean) expense.getPayed().get(s)) {
                                 expenseList.add(expense);
-                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s)* -1 + " €");
+                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
                                         .child(Singleton.getInstance().getmCurrentGroup().getId())
                                         .child(expense.getId())
@@ -173,7 +171,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         double var = 0;
                                         for(int i = 0; i < which.length; i++) {
                                             expensePayed.add(expenseList.get(which[i]));
-                                            var+=expensePayed.get(i).getMembers().get(s);
+                                            var += expensePayed.get(i).getMembers().get(s);
                                             DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
                                             DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }
@@ -181,7 +179,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                                 var + " euros", Toast.LENGTH_SHORT).show();
                                         DB_Manager.getInstance().updateGroupFlow(s, var);
                                         DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
-                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
+                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(), expensePayed);
                                         return true;
                                     }
                                 })
