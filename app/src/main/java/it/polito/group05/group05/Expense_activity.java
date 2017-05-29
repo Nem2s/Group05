@@ -64,6 +64,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.CustomDialogFragment;
+import it.polito.group05.group05.Utility.CustomIncludedDialog;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
@@ -107,7 +108,8 @@ public class Expense_activity extends AppCompatActivity {
     private SwitchButton sw_file, sw_prices;
     private LinearLayoutManager lin_members;
     private DividerItemDecoration dividerItemDecoration;
-    private CustomDialogFragment cdf;
+  //  private CustomDialogFragment cdf;
+    private CustomIncludedDialog cid;
     private boolean clickedDetails ;
 
     @Override
@@ -170,86 +172,24 @@ public class Expense_activity extends AppCompatActivity {
         }
 
         final FragmentManager fm = getFragmentManager();
-        cdf = new CustomDialogFragment(partecipants, expense);
+      //  cdf = new CustomDialogFragment(partecipants, expense);
+        cid = new CustomIncludedDialog(partecipants, expense);
 
         Calendar calendar = Calendar.getInstance();
         final java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
 
 
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clicked_calendar) {
-                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                    Date date = null;
-                    try {
-                        date = dateFormat.parse(data);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    long timeLong = date.getTime();
-                    expense.setTimestamp(timeLong);
-                    clicked_calendar = false;
-                } else {
-                    expense.setTimestamp(timestamp);
-                }
-
-
-                cdf.show(fm,"TV_tag");
-            }
-        });
-
-/*
-        fab.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
                 if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
-                    Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v,"Set a name",Snackbar.LENGTH_SHORT).show();
                 }
                 else {
                     if (expense.getPrice().toString().length() > 6)
-                        Snackbar.make(view, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(v, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
                     else {
-                        fdb = FirebaseDatabase.getInstance()
-                                .getReference("expenses")
-                                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .push();
-                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .child("lmTime");
-                        expense.setId(fdb.getKey());
-                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-
-                        if (nameFILE != null) {
-                            expense.setFile(nameFILE);
-                            upLoadFile(uri);
-                        }
-                        double price;
-                        double toSubtractOwner = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
-                                toSubtractOwner += partecipants.get(i).getCustomValue();
-                            }
-                        }
-                        totalPriceActual = 0.0;
-                        Map<String, Object> map_payed = new HashMap<>();
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            price = partecipants.get(i).getCustomValue();
-                            totalPriceActual += partecipants.get(i).getCustomValue();
-                            String id = partecipants.get(i).getId();
-
-                            if (partecipants.get(i).getId().equals(expense.getOwner())) {
-                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                                map_payed.put(id, true);
-                            } else {
-                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                                map_payed.put(id, false);
-                            }
-                            DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-
-                        }
                         if (clicked_calendar) {
                             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                             Date date = null;
@@ -265,24 +205,16 @@ public class Expense_activity extends AppCompatActivity {
                             expense.setTimestamp(timestamp);
                         }
 
-                        if (!clickedDetails){
-                            totalPriceActual = expense.getPrice();
+                        for(User_expense e : partecipants){
+                            e.setIncluded(false);
                         }
-                        if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
-                            Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                            memberAdapter.changeTotal(expense.getPrice());
-                        } else {
-                            expense.setPayed(map_payed);
-                            DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
-                            fdb.setValue(expense);
-                            finish();
-                        }
-
+                        cid.show(fm,"TV_tag");
                     }
+                    }
+
                 }
-            }
         });
-*/
+
         et_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -335,10 +267,10 @@ public class Expense_activity extends AppCompatActivity {
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                    nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                           //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                    nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                            //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
                         }, mYear, mMonth, mDay);
