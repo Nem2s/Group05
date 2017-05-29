@@ -136,6 +136,90 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        supportFinishAfterTransition();
+    }
+
+    private void initializeUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+                    transition.removeTarget(R.id.toolbar);
+                    transition.removeTarget(R.id.navigation);
+                    ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+                    tv_groupname.setText(currentGroup.getName());
+                    fab.hide();
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    fab.show();
+
+                    fillNameMembersList();
+
+
+
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+        }
+        scheduleStartPostponedTransition(cv_group);
+    }
+
+    private void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public boolean onPreDraw() {
+                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+                        return true;
+                    }
+                });
+    }
+
+    private void fillNameMembersList() {
+        tv_members.setText("");
+        for(String s : currentGroup.getMembers().keySet()) {
+            FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                    if(tv_members.getText().toString().equals(""))
+                        tv_members.setText(u.getName());
+                    else
+                        tv_members.append(", " +u.getName());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
+
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())

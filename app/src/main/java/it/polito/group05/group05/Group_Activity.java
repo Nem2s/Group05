@@ -20,6 +20,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.NavigationViewMode;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
@@ -35,7 +38,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
-public class Group_Activity extends AppCompatActivity implements ChatFragment.OnFragmentInteractionListener, ExpenseFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AestheticActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -67,7 +70,18 @@ public class Group_Activity extends AppCompatActivity implements ChatFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_);
-
+        if (Aesthetic.isFirstTime()) {
+            int[] colors = Singleton.getInstance().getColors();
+            Aesthetic.get()
+                    .colorPrimary(colors[1])
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(colors[0])
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .apply();
+        }
         context = this;
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);
         Glide.with(context)

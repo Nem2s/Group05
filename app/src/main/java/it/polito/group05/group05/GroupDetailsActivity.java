@@ -28,6 +28,9 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.NavigationViewMode;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.ui.User;
@@ -82,11 +85,37 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Aesthetic.attach(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
+        toolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                editDialog.show();
+                return false;
+            }
+        });
+
+        if (Aesthetic.isFirstTime()) {
+            int[] colors = Singleton.getInstance().getColors();
+            Aesthetic.get()
+                    .colorPrimary(colors[1])
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(colors[0])
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .apply();
+        }
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
         iv_header.setVisibility(View.INVISIBLE);
@@ -111,15 +140,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
-        toolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                editDialog.show();
-                return false;
-            }
-        });
+
+
         users.add(Singleton.getInstance().getCurrentUser());
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
         mAdapter = new GroupDetailsAdapter(this, users);

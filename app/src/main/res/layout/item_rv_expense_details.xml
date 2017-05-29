@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/item_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <io.codetail.widget.RevealFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        >
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cv_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/default_avatar"
+
+        />
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VeryLongOwnerName"
+        android:layout_gravity="start|center"
+        android:layout_marginStart="64dp"
+        android:ellipsize="end"
+        android:lines="1"
+        />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="20,000,000€"
+            android:layout_gravity="end|center"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(To pay)"
+            android:layout_gravity="end|bottom"
+            android:alpha="0.4"
+            android:textSize="8sp"
+            />
+    </io.codetail.widget.RevealFrameLayout>
+</LinearLayout>
