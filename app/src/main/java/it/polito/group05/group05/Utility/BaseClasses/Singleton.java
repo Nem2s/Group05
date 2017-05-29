@@ -8,10 +8,16 @@ import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.ui.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
@@ -26,11 +32,22 @@ public class Singleton {
     private CurrentUser currentUser;
     String currentGroupId;
     private String userId;
-    private Map<String, UserContact> localContactsList;
+    private List<UserContact> localContactsList;
     private Map<String, UserContact> regContactsList;
     private Context currContext;
     private Map<String, Double> usersBalance;
+    private int THRESHOLD = 10;
+    private LinkedHashMap<String, UserContact> localContactsMap;
 
+    private int[] colors;
+
+    public int[] getColors() {
+        return colors;
+    }
+
+    public void setColors(int[] colors) {
+        this.colors = colors;
+    }
 
     private Singleton() {
         regContactsList = new HashMap<>();
@@ -74,12 +91,20 @@ public class Singleton {
 
     private Double price_expense;
 
-    public Map<String, UserContact> getLocalContactsList() {
-        return localContactsList;
+    public List<UserContact> getLocalContactsList(int from) {
+        List<UserContact> res = new ArrayList<>();
+        for(int i = from; i < from + THRESHOLD && i< localContactsList.size(); i++) {
+            res.add(localContactsList.get(i));
+        }
+        return res;
     }
 
-    public void setLocalContactsList(Map<String, UserContact> localContactsList) {
-        this.localContactsList = localContactsList;
+    public LinkedHashMap<String, UserContact> getLocalContactsList() {
+        return localContactsMap;
+    }
+
+    public void setLocalContactsList(LinkedHashMap<String, UserContact> localContactsList) {
+        this.localContactsMap = localContactsList;
     }
 
     public Double getPrice_expense() {
@@ -128,7 +153,7 @@ public class Singleton {
     class getRegContactsTask extends AsyncTask<Void, Void, Void> {
 
 
-        Map<String, UserContact> localList = new HashMap<>();
+        Map<String, UserContact> localList = new LinkedHashMap<>();
         private DatabaseReference usernumberRef;
         private FirebaseDatabase database;
         private DatabaseReference userRef;
@@ -227,7 +252,14 @@ public class Singleton {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            localContactsList = new HashMap<>(localList);
+            localContactsMap = new LinkedHashMap<>(localList);
+            localContactsList = new ArrayList<>(localContactsMap.values());
+            Collections.sort(localContactsList, new Comparator<UserContact>() {
+                @Override
+                public int compare(UserContact userContact, UserContact t1) {
+                    return userContact.getName().compareTo(t1.getName());
+                }
+            });
             DB_Manager.getInstance().checkContacts();
         }
     }

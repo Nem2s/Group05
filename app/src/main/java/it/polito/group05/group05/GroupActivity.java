@@ -197,25 +197,26 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void fillNameMembersList() {
-        FirebaseDatabase.getInstance().getReference("users").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tv_members.setText("");
-                for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    UserDatabase u = data.child("userInfo").getValue(UserDatabase.class);
-                    if(Singleton.getInstance().getmCurrentGroup().getMembers().containsKey(u.getId()))
-                        if(tv_members.getText().toString().equals(""))
-                            tv_members.setText(u.getName());
-                        else
-                            tv_members.append(", " +u.getName());
+        tv_members.setText("");
+        for(String s : currentGroup.getMembers().keySet()) {
+            FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                    if(tv_members.getText().toString().equals(""))
+                        tv_members.setText(u.getName());
+                    else
+                        tv_members.append(", " +u.getName());
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
+
     }
 
     private void replaceWithExpenseFragment() {
