@@ -254,7 +254,9 @@ public class NewGroupActivity extends AppCompatActivity {
                 });
             }
         };
+
         rv_contacts.addOnScrollListener(scrollListener);
+
 
     }
 
@@ -658,45 +660,41 @@ public class NewGroupActivity extends AppCompatActivity {
 
 
             contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
-            invitedAdapter = new MemberInvitedAdapter(contacts, context);
             Collections.sort(contacts, new Comparator<UserContact>() {
                 @Override
                 public int compare(UserContact u1, UserContact u2) {
                     return u1.getName().compareTo(u2.getName());
                 }
             });
-
+            invitedAdapter = new MemberInvitedAdapter(contacts, context);
             return null;
         }
 
         @Override
         protected void onPreExecute() {
             dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
-
             rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
             rv_invited.setNestedScrollingEnabled(false);
-        }
+            LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
 
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(),
 
-        private void loadNextData(int page) {
+                    invitedManager.getOrientation());
 
-
+            rv_invited.setLayoutManager(invitedManager);
+            rv_invited.addItemDecoration(dividerItemDecoration);
         }
 
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
             CURRENT_POSITION = contactsAdapter.getItemCount();
-            LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
-            rv_invited.setAdapter(invitedAdapter);
-            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(),
-
-                    invitedManager.getOrientation());
-            rv_invited.setHasFixedSize(true);
-            rv_invited.setLayoutManager(invitedManager);
-            rv_invited.addItemDecoration(dividerItemDecoration);
+            try {
+                rv_invited.setAdapter(invitedAdapter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if(invitedAdapter.getItemCount() == 0) {
 
                 Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
@@ -736,8 +734,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 iv_new_group.setEnabled(false);
 
-                if(contactsAdapter.getItemCount() == 0)
-                    no_people.setVisibility(View.VISIBLE);
+
 
             }
 
@@ -745,12 +742,8 @@ public class NewGroupActivity extends AppCompatActivity {
 
 
 
-            rv_invited.post(new Runnable() {
-                @Override
-                public void run() {
-                    dialog.dismiss();
-                }
-            });
+
+            dialog.dismiss();
             fab.setOnClickListener(new View.OnClickListener() {
 
                 @Override
