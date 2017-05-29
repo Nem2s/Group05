@@ -11,7 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.transition.Transition;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
@@ -19,14 +21,25 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
+import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -36,7 +49,10 @@ public class GroupActivity extends AppCompatActivity {
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
-
+    GroupDatabase currentGroup = Singleton.getInstance().getmCurrentGroup();
+    CircleImageView cv_group;
+    TextView tv_groupname;
+    TextView tv_members;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,8 +194,14 @@ public class GroupActivity extends AppCompatActivity {
 
                 }
             });
+            scheduleStartPostponedTransition(cv_group);
+        } else {
+            fab.show();
+
+            fillNameMembersList();
         }
-        scheduleStartPostponedTransition(cv_group);
+
+
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {

@@ -204,7 +204,7 @@ public class NewGroupActivity extends AppCompatActivity {
         no_people = (TextView)findViewById(R.id.no_people);
 
         context = this;
-        tv_contacts = (TextView)findViewById(R.id.tv_contacts);
+        tv_contacts = (TextView) findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -216,7 +216,7 @@ public class NewGroupActivity extends AppCompatActivity {
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
 
 
-        rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
+        rv_contacts = (RecyclerView) findViewById(R.id.contacts_people_list);
 
         final LinearLayoutManager contactsManager = new LinearLayoutManager(this);
 
@@ -244,12 +244,12 @@ public class NewGroupActivity extends AppCompatActivity {
                 // Add whatever code is needed to append new items to the bottom of the list
                 final int curSize = contactsAdapter.getItemCount();
                 //Toast.makeText(context, "Page: " + page, Toast.LENGTH_SHORT).show();
-                local_contacts.addAll(Singleton.getInstance().getLocalContactsList(page*THRESHOLD));
+                local_contacts.addAll(Singleton.getInstance().getLocalContactsList(page * THRESHOLD));
                 //Toast.makeText(context, "Elements: " + contactsManager.getItemCount(), Toast.LENGTH_SHORT).show();
                 view.post(new Runnable() {
                     @Override
                     public void run() {
-                        contactsAdapter.notifyItemRangeInserted(curSize, local_contacts.size() -1);
+                        contactsAdapter.notifyItemRangeInserted(curSize, local_contacts.size() - 1);
                     }
                 });
             }
@@ -260,8 +260,6 @@ public class NewGroupActivity extends AppCompatActivity {
 
     }
 
-
- 
 
     @Override
 
@@ -308,7 +306,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 scrollListener.resetState();
                 dialog.show();
-                if ( TextUtils.isEmpty ( newText ) ) {
+                if (TextUtils.isEmpty(newText)) {
 
                     invitedAdapter.getFilter().filter("");
                     //contactsAdapter.replaceAll(filterLocal(""));
@@ -319,11 +317,11 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 } else {
 
-                    invitedAdapter.getFilter().filter(newText );
+                    invitedAdapter.getFilter().filter(newText);
                     //contactsAdapter.replaceAll(filterLocal(newText));
                     contactsAdapter.getFilter().filter(newText);
-                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
-                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0) {
+                    if (((MemberInvitedAdapter) rv_invited.getAdapter()).getItemCount() == 0 &&
+                            ((MemberContactsAdapter) rv_contacts.getAdapter()).getItemCount() == 0) {
                         no_people.setVisibility(View.VISIBLE);
                         tv_partecipants.setVisibility(View.GONE);
                         tv_contacts.setVisibility(View.GONE);
@@ -354,8 +352,8 @@ public class NewGroupActivity extends AppCompatActivity {
             private List<UserContact> filterLocal(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : local_contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : local_contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
@@ -365,8 +363,8 @@ public class NewGroupActivity extends AppCompatActivity {
             private List<UserContact> filterRegistered(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
@@ -673,7 +671,7 @@ public class NewGroupActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
-            rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
+            rv_invited = (RecyclerView) findViewById(R.id.invited_people_list);
             rv_invited.setNestedScrollingEnabled(false);
             LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
 
@@ -695,7 +693,7 @@ public class NewGroupActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(invitedAdapter.getItemCount() == 0) {
+            if (invitedAdapter.getItemCount() == 0) {
 
                 Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
 
@@ -735,12 +733,9 @@ public class NewGroupActivity extends AppCompatActivity {
                 iv_new_group.setEnabled(false);
 
 
-
             }
 
             //
-
-
 
 
             dialog.dismiss();
@@ -808,7 +803,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 @Override
 
-                public void afterTextChanged(Editable editable){
+                public void afterTextChanged(Editable editable) {
 
 
                 }

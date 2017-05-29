@@ -356,7 +356,7 @@ public class MainActivity extends AestheticActivity
 
         } else if (id == R.id.nav_themes) {
 
-            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
+            if (CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
                 MaterialDialog dialog = new MaterialDialog.Builder(context)
                         .title("Theming Options")
                         .positiveText("Predefined Themes")

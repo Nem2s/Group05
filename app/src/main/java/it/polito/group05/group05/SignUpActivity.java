@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private View user_info;
     private CircleImageView user_img;
-    private CurrentUser ud = new CurrentUser();;
+    private CurrentUser ud;//= new CurrentUser();
 
     private EditText et_user_phone;
 
@@ -102,8 +102,9 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
 
+        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+        ud = new CurrentUser();
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
