@@ -32,7 +32,10 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:text="Leave"
-        android:theme="@style/RedButton" />
+        android:theme="@style/RedButton"
+        android:tag=":aesthetic_ignore"
+
+        />
 
     <TextView
         android:id="@+id/tv_user_name"

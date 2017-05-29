@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -58,7 +59,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
  * Created by Marco on 05/05/2017.
  */
 
-public class NewMemberActivity extends AppCompatActivity {
+public class NewMemberActivity extends AestheticActivity {
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
 
     private static final String TAG = "Error";

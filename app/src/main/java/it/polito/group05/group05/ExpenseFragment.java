@@ -60,6 +60,7 @@ public class ExpenseFragment extends Fragment {
         MenuItem subMenu = menu.findItem(R.id.sort_action);
         inflater.inflate(R.menu.sort_menu, subMenu.getSubMenu());
         super.onCreateOptionsMenu(menu, inflater);
+
     }
 
     @Override
@@ -181,7 +182,6 @@ public class ExpenseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
     }
     @Override
     public void onStart() {super.onStart();}

@@ -21,7 +21,6 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 android:elevation="4dp">
 
                 <LinearLayout
@@ -48,8 +47,6 @@
                         android:orientation="vertical"
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginRight="16dp"
-
                         >
                     <TextView
                         android:id="@+id/tv_group_name"
@@ -70,10 +67,12 @@
                             android:text="Member1, Member2, Member3, Member 4, Member 5"
                             android:ellipsize="marquee"
                             android:marqueeRepeatLimit ="marquee_forever"
+                            android:singleLine="true"
                             android:focusable="true"
                             android:focusableInTouchMode="true"
                             android:scrollHorizontally="true"
                             android:textSize="11sp"
+
                             />
                     </LinearLayout>
                 </LinearLayout>

@@ -30,6 +30,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -57,7 +59,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
-public class GroupActivity extends AppCompatActivity {
+public class GroupActivity extends AestheticActivity {
 
 
     FragmentManager mFragmentManager;
@@ -112,9 +114,11 @@ public class GroupActivity extends AppCompatActivity {
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
+                        tv_members.setSelected(true);
                         switch (i) {
                             case R.id.navigation_expenses:
                                 replaceWithExpenseFragment();
+
                                 //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                                 break;
                             case R.id.navigation_chat:
@@ -128,7 +132,9 @@ public class GroupActivity extends AppCompatActivity {
                                 //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                                 break;
+
                         }
+
                     }
                 });
             }
@@ -208,6 +214,7 @@ public class GroupActivity extends AppCompatActivity {
                         tv_members.setText(u.getName());
                     else
                         tv_members.append(", " +u.getName());
+
                 }
 
                 @Override
@@ -216,6 +223,7 @@ public class GroupActivity extends AppCompatActivity {
                 }
             });
         }
+
 
     }
 

@@ -390,6 +390,12 @@ implements NavigationView.OnNavigationItemSelectedListener {
                         .title("Select one Theme")
                         .titleColor(getResources().getColor(R.color.colorAccent))
                         .adapter(adapter, new LinearLayoutManager(context))
+                        .dismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                PREDEFINED_THEME_OPTION = 0;
+                            }
+                        })
                         .show();
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
@@ -411,12 +417,14 @@ implements NavigationView.OnNavigationItemSelectedListener {
                     .lightnessSliderOnly()
                     .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                     .density(12)
+
                     .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
                             if(THEME_HELPER.equals(PRIMARY)) {
                                 THEME_HELPER = ACCENT;
                                 colors[1] = selectedColor;
+                                CUSTOM_THEME_OPTION = 1;
                                 onNavigationItemSelected(item);
                             } else {
                                 colors[0] = selectedColor;
@@ -436,7 +444,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
                     })
                     .build()
                     .show();
-
+                    CUSTOM_THEME_OPTION = 0;
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
             i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));

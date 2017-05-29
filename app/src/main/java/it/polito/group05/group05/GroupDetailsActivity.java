@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.AppBarStateChangeListener;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
-public class GroupDetailsActivity extends AppCompatActivity {
+public class GroupDetailsActivity extends AestheticActivity {
 
     private static int EXTRA_COLOR = -1;
     private int DEFAULT_COLOR = -1;
@@ -85,9 +86,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Aesthetic.attach(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,8 +103,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 return false;
             }
         });
+        setupColors();
 
-        if (Aesthetic.isFirstTime()) {
+        /*if (Aesthetic.isFirstTime()) {
             int[] colors = Singleton.getInstance().getColors();
             Aesthetic.get()
                     .colorPrimary(colors[1])
@@ -114,7 +116,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                             NavigationViewMode.SELECTED_ACCENT
                     )
                     .apply();
-        }
+        }*/
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
@@ -148,6 +150,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
         rv_members.setAdapter(mAdapter);
 
 
+
+    }
+
+    private void setupColors() {
 
     }
 

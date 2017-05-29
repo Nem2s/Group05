@@ -30,25 +30,6 @@
         android:padding="8dp"
         android:layout_gravity="end"
         >
-    <View
-        android:id="@+id/primary_color"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
-        android:background="@drawable/circle"
-        android:layout_toLeftOf="@id/accent_color"
-        android:layout_marginEnd="40dp"
-
-        />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Primary Color"
-            android:layout_below="@id/primary_color"
-            android:textSize="9sp"
-            android:layout_toLeftOf="@id/accent_color"
-            android:layout_marginEnd="32dp"
-
-            />
         <View
             android:id="@+id/accent_color"
             android:layout_width="38dp"
@@ -58,6 +39,26 @@
             android:layout_marginEnd="8dp"
 
             />
+    <View
+        android:id="@+id/primary_color"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@drawable/circle"
+        android:layout_toLeftOf="@id/accent_color"
+        android:layout_marginEnd="32dp"
+
+        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Primary Color"
+            android:layout_below="@id/primary_color"
+            android:textSize="9sp"
+            android:layout_toLeftOf="@id/accent_color"
+            android:layout_marginEnd="20dp"
+
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

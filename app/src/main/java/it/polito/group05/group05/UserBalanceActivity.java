@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -79,7 +80,7 @@ import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
-public class UserBalanceActivity extends AppCompatActivity {
+public class UserBalanceActivity extends AestheticActivity {
 
     PieChart pchart;
     LineChart lchart;
