@@ -66,7 +66,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
                 if (constraint != null) {
                     if (orig != null & orig.size() > 0) {
                         for (final UserContact u : orig) {
-                            if (((Namable)u).getName().toLowerCase().startsWith(constraint.toString().toLowerCase()))
+                            if (((Namable) u).getName().toLowerCase().startsWith(constraint.toString().toLowerCase()))
                                 results.add(u);
                         }
                     }
@@ -77,7 +77,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                contacts = (ArrayList<UserContact>)filterResults.values;
+                contacts = (ArrayList<UserContact>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

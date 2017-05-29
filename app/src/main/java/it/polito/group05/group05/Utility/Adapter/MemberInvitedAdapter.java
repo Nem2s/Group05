@@ -92,7 +92,7 @@ public class MemberInvitedAdapter extends RecyclerView.Adapter<MemberInvitedHold
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                invited = (ArrayList<UserContact>)filterResults.values;
+                invited = (ArrayList<UserContact>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

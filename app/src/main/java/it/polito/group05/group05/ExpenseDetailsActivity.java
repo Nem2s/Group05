@@ -66,24 +66,24 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         HEIGHT = b.getInt("height");
         expandFromPoints(LEFT_OFFSET, TOP_OFFSET, WIDTH, HEIGHT);
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-        cv = (CircleImageView)findViewById(R.id.cv_owner_image);
-        tv_date = (TextView)findViewById(R.id.tv_day_month);
-        tv_price = (TextView)findViewById(R.id.tv_price);
-        tv_name = (TextView)findViewById(R.id.tv_owner_name);
-        tv_expense = (TextView)findViewById(R.id.tv_expense_name);
-        rv = (RecyclerView)findViewById(R.id.rv_expense_members);
-        button_notify = (Button)findViewById(R.id.button_notify);
-        button_pay = (Button)findViewById(R.id.button_pay);
+        cv = (CircleImageView) findViewById(R.id.cv_owner_image);
+        tv_date = (TextView) findViewById(R.id.tv_day_month);
+        tv_price = (TextView) findViewById(R.id.tv_price);
+        tv_name = (TextView) findViewById(R.id.tv_owner_name);
+        tv_expense = (TextView) findViewById(R.id.tv_expense_name);
+        rv = (RecyclerView) findViewById(R.id.rv_expense_members);
+        button_notify = (Button) findViewById(R.id.button_notify);
+        button_pay = (Button) findViewById(R.id.button_pay);
 
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setItemAnimator(new DefaultItemAnimator());
-        tv_price.setText( b.getString("price") + " €");
+        tv_price.setText(b.getString("price") + " €");
         tv_expense.setText(b.getString("title"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(b.getLong("timestamp"));
         tv_date.setText(format.format(calendar.getTime()));
-        retriveUsersExpense((HashMap<String, Double>)b.getSerializable("map"));
+        retriveUsersExpense((HashMap<String, Double>) b.getSerializable("map"));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
     private void retriveUsersExpense(final HashMap<String, Double> map) {
         final List<UserDatabase> users = new ArrayList<>();
-        if(!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
+        if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
             users.add(Singleton.getInstance().getCurrentUser());
             button_pay.setVisibility(View.VISIBLE);
             button_notify.setVisibility(View.GONE);
@@ -102,22 +102,23 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             button_pay.setVisibility(View.GONE);
             button_notify.setVisibility(View.VISIBLE);
         }
-        final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map);;
-        for(final String s : map.keySet()) {
+        final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map);
+        ;
+        for (final String s : map.keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if(u.getId().equals(b.getString("owner"))) {
-                        ImageUtils.LoadUserImageProfile(cv,getApplicationContext(), u);
+                    if (u.getId().equals(b.getString("owner"))) {
+                        ImageUtils.LoadUserImageProfile(cv, getApplicationContext(), u);
                         tv_name.setText(u.getName());
 
                     } else {
-                        if(u.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
+                        if (u.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
                             return;
                         users.add(u);
                         adapter.notifyItemChanged(users.size());
-                        }
+                    }
 
 
                 }
@@ -130,8 +131,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         }
 
         rv.setAdapter(adapter);
-
-
 
 
     }

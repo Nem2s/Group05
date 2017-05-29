@@ -34,9 +34,9 @@ public class MemberExpenseHolder extends GeneralHolder {
 
     public MemberExpenseHolder(View itemView) {
         super(itemView);
-        this.cv = (CircleImageView)itemView.findViewById(R.id.cv_image);
-        this.name = (TextView)itemView.findViewById(R.id.tv_name);
-        this.price = (TextView)itemView.findViewById(R.id.tv_price);
+        this.cv = (CircleImageView) itemView.findViewById(R.id.cv_image);
+        this.name = (TextView) itemView.findViewById(R.id.tv_name);
+        this.price = (TextView) itemView.findViewById(R.id.tv_price);
 
     }
 
@@ -47,17 +47,16 @@ public class MemberExpenseHolder extends GeneralHolder {
 
 
     public void setData(Object c, Context context, Map<String, Double> e) {
-        user = (UserDatabase)c;
+        user = (UserDatabase) c;
         this.context = context;
         ImageUtils.LoadUserImageProfile(cv, context, user);
-        if(user.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+        if (user.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
             name.setText("You");
-        }
-        else
+        } else
             name.setText(user.getName());
         double d = Math.abs(e.get(user.getId()));
         d = Math.round(d);
-        this.price.setText( d + " €");
+        this.price.setText(d + " €");
 
     }
 }

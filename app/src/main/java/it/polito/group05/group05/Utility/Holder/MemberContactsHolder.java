@@ -35,9 +35,9 @@ public class MemberContactsHolder extends GeneralHolder {
 
     public MemberContactsHolder(View itemView) {
         super(itemView);
-        this.img_profile = (CircleImageView)itemView.findViewById(R.id.cv_invited_image);
-        this.name = (TextView)itemView.findViewById(R.id.tv_invited_name);
-        this.number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
+        this.img_profile = (CircleImageView) itemView.findViewById(R.id.cv_invited_image);
+        this.name = (TextView) itemView.findViewById(R.id.tv_invited_name);
+        this.number = (TextView) itemView.findViewById(R.id.tv_invited_pnumber);
         this.button = (Button) itemView.findViewById(R.id.button_invite);
 
     }
@@ -45,7 +45,7 @@ public class MemberContactsHolder extends GeneralHolder {
     @Override
     public void setData(final Object c, final Context context) {
         final UserContact user = ((UserContact) c);
-        if(user.getiProfile() != null)
+        if (user.getiProfile() != null)
             this.img_profile.setImageURI(Uri.parse(user.getiProfile()));
         else
             img_profile.setImageDrawable(context.getResources().getDrawable(R.drawable.user_placeholder));
@@ -56,8 +56,8 @@ public class MemberContactsHolder extends GeneralHolder {
             @Override
             public void onClick(View view) {
                 Intent sendIntent = new Intent("android.intent.action.MAIN");
-                sendIntent.setComponent(new ComponentName("com.whatsapp","com.whatsapp.Conversation"));
-                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" +user.getTelNumber())+"@s.whatsapp.net");//phone number without "+" prefix
+                sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.Conversation"));
+                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" + user.getTelNumber()) + "@s.whatsapp.net");//phone number without "+" prefix
 
                 context.startActivity(sendIntent);
             }

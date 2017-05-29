@@ -141,7 +141,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         });
 
 
-
         users.add(Singleton.getInstance().getCurrentUser());
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
         mAdapter = new GroupDetailsAdapter(this, users);

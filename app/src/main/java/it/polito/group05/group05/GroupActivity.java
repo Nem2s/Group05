@@ -161,8 +161,6 @@ public class GroupActivity extends AppCompatActivity {
                     fillNameMembersList();
 
 
-
-
                 }
 
                 @Override
@@ -199,16 +197,16 @@ public class GroupActivity extends AppCompatActivity {
 
     private void fillNameMembersList() {
         tv_members.setText("");
-        for(String s : currentGroup.getMembers().keySet()) {
+        for (String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if(tv_members.getText().toString().equals(""))
+                    if (tv_members.getText().toString().equals(""))
                         tv_members.setText(u.getName());
                     else
-                        tv_members.append(", " +u.getName());
+                        tv_members.append(", " + u.getName());
                 }
 
                 @Override

@@ -74,11 +74,10 @@ public class ColorItem extends AbstractItem<ColorItem, ColorItem.ViewHolder> {
     public void bindView(ViewHolder holder, List<Object> payloads) {
         super.bindView(holder, payloads);
 
-        ((GradientDrawable)holder.color_accent.getBackground()).setColor(accentColor);
-        ((GradientDrawable)holder.color_primary.getBackground()).setColor(primaryColor);
+        ((GradientDrawable) holder.color_accent.getBackground()).setColor(accentColor);
+        ((GradientDrawable) holder.color_primary.getBackground()).setColor(primaryColor);
         holder.theme_name.setText(themeName);
     }
-
 
 
     //The viewHolder used for this item. This viewHolder is always reused by the RecyclerView so scrolling is blazing fast
@@ -89,9 +88,9 @@ public class ColorItem extends AbstractItem<ColorItem, ColorItem.ViewHolder> {
 
         public ViewHolder(View view) {
             super(view);
-            this.theme_name = (TextView)view.findViewById(R.id.theme_name);
-            this.color_primary = (View)view.findViewById(R.id.primary_color);
-            this.color_accent = (View)view.findViewById(R.id.accent_color);
+            this.theme_name = (TextView) view.findViewById(R.id.theme_name);
+            this.color_primary = (View) view.findViewById(R.id.primary_color);
+            this.color_accent = (View) view.findViewById(R.id.accent_color);
 
         }
     }
