@@ -137,25 +137,25 @@ public class Expense_activity extends AppCompatActivity {
         toolbar= (Toolbar) findViewById(R.id.toolbar);
         iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
-    //    image_network = (ImageView) findViewById(R.id.image_network);
+        image_network = (ImageView) findViewById(R.id.image_network);
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_name.setSingleLine();
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
         et_cost.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost.setSingleLine();
-        nomedata = (TextView) findViewById(R.id.name_date);
-        nomeFile = (TextView) findViewById(R.id.nomeFile);
+     //   nomedata = (TextView) findViewById(R.id.name_date);
+     //   nomeFile = (TextView) findViewById(R.id.nomeFile);
        // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
-        rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-        sw_file = (SwitchButton) findViewById(R.id.switch_file);
-        sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
+     //   rel_file = (RelativeLayout) findViewById(R.id.relative_file);
+     //   sw_file = (SwitchButton) findViewById(R.id.switch_file);
+     //   sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
 
        // recyclerView.setVisibility(View.GONE);
-        moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
+     //   moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
        // plus = (ImageView) findViewById(R.id.plus);
-        more = (TextView) findViewById(R.id.more);
+     //   more = (TextView) findViewById(R.id.more);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -177,6 +177,32 @@ public class Expense_activity extends AppCompatActivity {
         timestamp = now.getTime();
 
 
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clicked_calendar) {
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    Date date = null;
+                    try {
+                        date = dateFormat.parse(data);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long timeLong = date.getTime();
+                    expense.setTimestamp(timeLong);
+                    clicked_calendar = false;
+                } else {
+                    expense.setTimestamp(timestamp);
+                }
+
+
+                cdf.show(fm,"TV_tag");
+            }
+        });
+
+/*
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -256,7 +282,7 @@ public class Expense_activity extends AppCompatActivity {
                 }
             }
         });
-
+*/
         et_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -320,18 +346,6 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-        sw_file.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!newFile) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("*/*");
-                    startActivityForResult(intent,0);
-                }
-            }
-        });
-
      /*   cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
@@ -345,14 +359,6 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
        */
-        sw_prices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                clickedDetails = true;
-                cdf.show(fm,"TV_tag");
-
-            }
-        });
    /*     moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -404,7 +410,7 @@ public class Expense_activity extends AppCompatActivity {
                 try {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                        nomeFile.setText(nameFILE);
+        //                nomeFile.setText(nameFILE);
                     }
                 } finally {
                     cursor.close();
