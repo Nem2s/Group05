@@ -5,25 +5,57 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.RequiresApi;
+import android.support.design.internal.TextScale;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.transition.AutoTransition;
+import android.support.transition.TransitionManager;
+import android.support.transition.TransitionSet;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.TranslateAnimation;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
+import it.polito.group05.group05.Utility.Adapter.ViewPagerAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -33,6 +65,11 @@ public class GroupActivity extends AppCompatActivity {
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
+    GroupDatabase currentGroup = Singleton.getInstance().getmCurrentGroup();
+    CircleImageView cv_group;
+    TextView tv_groupname;
+    TextView tv_members;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,43 +87,35 @@ public class GroupActivity extends AppCompatActivity {
             }
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            navigation = (BottomBar) findViewById(R.id.navigation);
-            if (getIntent().getStringExtra("message") == null) {
-                mFragmentManager = getSupportFragmentManager();
-                navigation.setDefaultTab(R.id.navigation_expenses);
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
-                transaction.commit();
-
-            } else {
-                navigation.setDefaultTab(R.id.navigation_chat);
-                mFragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.add(R.id.fragment_container, ChatFragment.newInstance());
-                transaction.commit();
-
-            }
-
 
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
+            navigation = (BottomBar) findViewById(R.id.navigation);
             fab = (FloatingActionButton) findViewById(R.id.fab);
+            cv_group = (CircleImageView)findViewById(R.id.cv_groupImage);
+            tv_groupname = (TextView)findViewById(R.id.tv_group_name);
+            tv_members = (TextView)findViewById(R.id.tv_members);
             setSupportActionBar(mToolbar);
-            mToolbar.setBackgroundColor(getResources().getColor(R.color.expenseTabColor));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            mFragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
+            transaction.commit();
+            initializeUI();
+
         }
         mToolbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 mToolbar.removeOnLayoutChangeListener(this);
-
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
                         switch (i) {
                             case R.id.navigation_expenses:
                                 replaceWithExpenseFragment();
-                                //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                                 break;
                             case R.id.navigation_chat:
                                 replaceWithChatFragment();
@@ -96,7 +125,7 @@ public class GroupActivity extends AppCompatActivity {
                                 replaceWithHistoryFragment();
                                 //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
                                 //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
-                                //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                                 break;
                         }
@@ -104,6 +133,90 @@ public class GroupActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        supportFinishAfterTransition();
+    }
+
+    private void initializeUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+                    transition.removeTarget(R.id.toolbar);
+                    transition.removeTarget(R.id.navigation);
+                    ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+                    tv_groupname.setText(currentGroup.getName());
+                    fab.hide();
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    fab.show();
+
+                    fillNameMembersList();
+
+
+
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+        }
+        scheduleStartPostponedTransition(cv_group);
+    }
+
+    private void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public boolean onPreDraw() {
+                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+                        return true;
+                    }
+                });
+    }
+
+    private void fillNameMembersList() {
+        tv_members.setText("");
+        for(String s : currentGroup.getMembers().keySet()) {
+            FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                    if(tv_members.getText().toString().equals(""))
+                        tv_members.setText(u.getName());
+                    else
+                        tv_members.append(", " +u.getName());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
     }
 
     private void replaceWithExpenseFragment() {
@@ -128,6 +241,8 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
 

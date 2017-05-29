@@ -74,7 +74,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
-                .fitCenter()
+                .centerCrop()
                 .into(cv);
     }
 

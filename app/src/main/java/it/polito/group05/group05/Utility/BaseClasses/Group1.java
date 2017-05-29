@@ -2,8 +2,6 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import java.util.HashMap;
 
-import cn.nekocode.badge.BadgeDrawable;
-
 /**
  * Created by andre on 01-Apr-17.
  */
