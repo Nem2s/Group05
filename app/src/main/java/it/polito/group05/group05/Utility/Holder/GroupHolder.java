@@ -95,13 +95,13 @@ public class GroupHolder extends GeneralHolder {
                         }
                     });
         }
-
+        final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
         groupProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
-                Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
+
                 AnimUtils.startActivityWithAnimation((Activity) context, new Intent(context, GroupDetailsActivity.class), p1);
             }
         });
@@ -113,7 +113,7 @@ public class GroupHolder extends GeneralHolder {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
                 Intent i = new Intent(context, GroupActivity.class);
-                   context.startActivity(i);
+                AnimUtils.startActivityWithAnimation(((Activity)context), new Intent(context, GroupActivity.class), p1);
             }
         });
 

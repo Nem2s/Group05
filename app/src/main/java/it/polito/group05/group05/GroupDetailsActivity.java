@@ -382,7 +382,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
 
     private void initializeUI() {
-        ImageUtils.LoadImageGroup(cv_back, this, currGroup);
+
         ImageUtils.LoadImageGroup(iv_header, this, currGroup);
 
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
@@ -399,7 +399,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                     @Override
                     public void onTransitionStart(Transition transition) {
-
+                        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
                     }
 
                     @Override
