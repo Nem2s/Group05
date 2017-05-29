@@ -105,6 +105,7 @@ public class Expense_activity extends AppCompatActivity {
     private LinearLayoutManager lin_members;
     private DividerItemDecoration dividerItemDecoration;
     private CustomDialogFragment cdf;
+    private boolean clickedDetails ;
 
     @Override
     protected void onStart() {
@@ -125,6 +126,7 @@ public class Expense_activity extends AppCompatActivity {
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         timestamp = 0;
+        clickedDetails = false;
 
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
@@ -232,6 +234,9 @@ public class Expense_activity extends AppCompatActivity {
                             expense.setTimestamp(timestamp);
                         }
 
+                        if (!clickedDetails){
+                            totalPriceActual = expense.getPrice();
+                        }
                         if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
                             Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
                             memberAdapter.changeTotal(expense.getPrice());
@@ -325,6 +330,7 @@ public class Expense_activity extends AppCompatActivity {
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clickedDetails = true;
                 cdf.show(fm,"TV_tag");
             }
         });

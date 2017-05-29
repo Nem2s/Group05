@@ -95,8 +95,6 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv_owner = (CircleImageView)itemView.findViewById(R.id.cv_ownerimage);
 
 
-
-
     }
     public void setData(Object c, final Context context){
         setData(c, context, View.GONE);
