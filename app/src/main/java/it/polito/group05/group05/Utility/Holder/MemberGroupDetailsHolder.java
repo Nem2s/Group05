@@ -68,7 +68,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
-                        tv_userBalance.setText("Already Payed!");
+                        tv_userBalance.setText("Break even!");
                         tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
@@ -101,7 +101,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 button_notify.setVisibility(View.GONE);
 
                             } else {
-                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setText("Break even!");
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
