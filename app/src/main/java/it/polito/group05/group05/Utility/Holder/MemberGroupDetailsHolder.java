@@ -177,8 +177,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         }
                                         Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
                                                 var + " euros", Toast.LENGTH_SHORT).show();
-                                        DB_Manager.getInstance().updateGroupFlow(s, var);
-                                        DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
+                                        //DB_Manager.getInstance().updateGroupFlow(s, var);
+                                        //DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
                                         DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(), expensePayed);
                                         return true;
                                     }
