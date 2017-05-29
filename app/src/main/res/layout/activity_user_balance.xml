@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.codetail.widget.RevealFrameLayout
-    android:id="@+id/reveal_parent"
+<io.codetail.widget.RevealFrameLayout android:id="@+id/reveal_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
-<RelativeLayout
-    android:id="@+id/parent_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <RelativeLayout android:id="@+id/parent_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,30 +19,25 @@
             android:layout_height="112dp"
             android:fitsSystemWindows="true"
             android:background="@color/colorPrimary"
-            android:transitionName="@string/transition_toolbar"
-            >
-        </android.support.v7.widget.Toolbar>
+            android:transitionName="@string/transition_toolbar"></android.support.v7.widget.Toolbar>
 
     <ProgressBar
         android:id="@+id/pb_loading_pchart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:layout_centerInParent="true"
-        />
+        android:layout_centerInParent="true" />
     <android.support.v7.widget.CardView
         android:id="@+id/header_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="16dp"
-        >
+        android:layout_marginStart="16dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,28 +51,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_centerVertical="true">
-            <TextView
-                android:id="@+id/tv_hello"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello, "
 
-                android:textSize="@dimen/material_component_lists_two_line_text_size"
-                android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                />
-                <TextView
-                    android:id="@+id/tv_userName_balance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/material_component_lists_two_line_text_size"
-                    android:textStyle="italic"
-                    android:textColor="@color/colorAccent"
-                    android:text="VeryLongUsername"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:layout_marginEnd="82dp"
-                    />
+                    <TextView
+                        android:id="@+id/tv_hello"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hello, "
+
+                        android:textSize="@dimen/material_component_lists_two_line_text_size"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent" />
+
+                    <TextView
+                        android:id="@+id/tv_userName_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/material_component_lists_two_line_text_size"
+                        android:textStyle="italic"
+                        android:textColor="@color/colorAccent"
+                        android:text="VeryLongUsername"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:layout_marginEnd="82dp" />
                 </LinearLayout>
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cv_userimage"
@@ -87,16 +81,16 @@
                     android:src="@drawable/user_placeholder"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="32dp"
-                    android:transitionName="@string/transition_group_image"
-                    />
+                    android:transitionName="@string/transition_group_image" />
             </RelativeLayout>
-        <View
-            android:layout_width="fill_parent"
-            android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
-            android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
-            android:background="@android:color/darker_gray"
-            android:alpha="0.4"
-            android:layout_height="1dp"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
+                android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.4"
+                android:layout_height="1dp" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -114,8 +108,7 @@
             android:layout_height="256dp"
             android:layout_gravity="center"
             android:src="@drawable/smartphones"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
@@ -124,8 +117,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="8dp"
-                >
+                android:padding="8dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -133,20 +126,19 @@
                     android:textColor="@color/colorSecondaryText"
                     android:textStyle="italic"
                     android:alpha="0.6"
-                    android:layout_marginBottom="8dp"
-                    />
+                    android:layout_marginBottom="8dp" />
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_legend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
                     ></android.support.v7.widget.RecyclerView>
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/user_piechart"
-            android:layout_width="match_parent"
-            android:layout_height="350dp"
-            >
-        </com.github.mikephil.charting.charts.PieChart>
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/user_piechart"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"></com.github.mikephil.charting.charts.PieChart>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
@@ -166,11 +158,11 @@
         </android.support.v4.widget.NestedScrollView>
     </android.support.v7.widget.CardView>
 </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/toggle_reveal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        ></LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
 </io.codetail.widget.RevealFrameLayout>

@@ -77,6 +77,7 @@ public class InternalHistoryHolder extends GeneralHolder {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time = sdf.format(date);
         history_time.setText(time);
+
         if (last) divider_history.setVisibility(View.GONE);
     }
 }

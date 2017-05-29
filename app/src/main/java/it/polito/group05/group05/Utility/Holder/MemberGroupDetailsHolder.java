@@ -1,7 +1,6 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -68,6 +66,10 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
+                        tv_userBalance.setText("Already Payed!");
+                        tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                        button_pay.setVisibility(View.GONE);
+                        button_notify.setVisibility(View.GONE);
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = dsp.getValue(ExpenseDatabase.class);
                             if (expense == null) {
@@ -79,25 +81,26 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
                                         expense.getMembers().containsKey(user.getId()))
                                     value -= expense.getMembers().get(user.getId());
-                                else if (user.getId().equals(expense.getOwner()))
+                                else if (user.getId().equals(expense.getOwner()) &&
+                                        !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
-                                if (value > 0) {
-                                    tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.VISIBLE);
-                                } else if (value < 0) {
-                                    tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
-                                    button_pay.setVisibility(View.VISIBLE);
-                                    button_notify.setVisibility(View.GONE);
+                            }
+                            if (value > 0) {
+                                tv_userBalance.setText("You will receive " + String.format("%.2f €", value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.green_400));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.VISIBLE);
+                            } else if (value < 0) {
+                                tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
+                                button_pay.setVisibility(View.VISIBLE);
+                                button_notify.setVisibility(View.GONE);
 
-                                } else {
-                                    tv_userBalance.setText("Already Payed!");
-                                    tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
-                                    button_pay.setVisibility(View.GONE);
-                                    button_notify.setVisibility(View.GONE);
-                                }
+                            } else {
+                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                                button_pay.setVisibility(View.GONE);
+                                button_notify.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -120,9 +123,9 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
     private void payDebit(final UserDatabase user) {
 
         final String s = Singleton.getInstance().getCurrentUser().getId();
-        AnimUtils.exitReveal(button_pay);
+        //AnimUtils.exitReveal(button_pay);
         final ProgressBar pb = (ProgressBar) itemView.findViewById(R.id.pb_loading_actions);
-        AnimUtils.enterRevealAnimation(pb);
+        //AnimUtils.enterRevealAnimation(pb);
         //Azzero tutti i valori per cui sono in debito in tutte le spese.
         FirebaseDatabase.getInstance().getReference("expenses")
                 .child(Singleton.getInstance().getmCurrentGroup().getId())
@@ -133,11 +136,12 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         MaterialDialog dialog;
                         final List<ExpenseDatabase> expenseList = new ArrayList<ExpenseDatabase>();
                         List<String> expenseViewList = new ArrayList<String>();
+                        final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getMembers().containsKey(s) && expense.getOwner().equals(user.getId())) {
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean) expense.getPayed().get(s)) {
                                 expenseList.add(expense);
-                                expenseViewList.add(expense.getName() + " " + expense.getPrice() + " €");
+                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
                                /* FirebaseDatabase.getInstance().getReference("expenses")
                                         .child(Singleton.getInstance().getmCurrentGroup().getId())
                                         .child(expense.getId())
@@ -155,7 +159,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 */
                             }
                         }
-                        Integer [] res;
+                        Integer[] res;
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(true)
                                 .title("Choose to Pay")
@@ -164,21 +168,24 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                                     @Override
                                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                        double var = 0;
                                         for(int i = 0; i < which.length; i++) {
-                                            //ExpenseDatabase e = expenseList.remove(which[i]);
-                                            //Toast.makeText(context,()
+                                            expensePayed.add(expenseList.get(which[i]));
+                                            var += expensePayed.get(i).getMembers().get(s);
+                                            DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
+                                            DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }
+                                        Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
+                                                var + " euros", Toast.LENGTH_SHORT).show();
+                                        //DB_Manager.getInstance().updateGroupFlow(s, var);
+                                        //DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
+                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(), expensePayed);
                                         return true;
                                     }
                                 })
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        int var = 0;
-                                        for(int i = 0; i < expenseList.size(); i++)
-                                            var+=expenseList.get(i).getPrice();
-                                        Toast.makeText(context, "I will pay " + expenseList.size() + " expenses for a total of " +
-                                                var + " euros", Toast.LENGTH_SHORT).show();
                                     }
                                 })
                                 .positiveText("Ok")
@@ -190,9 +197,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                     }
                                 })
                                 .show();
-                        DB_Manager.getInstance().updateGroupFlow(s, tmp);
-                        DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * tmp);
-                        AnimUtils.exitRevealAndShowSecond(pb, itemView.findViewById(R.id.iv_loading_end));
+                        //AnimUtils.exitRevealAndShowSecond(pb, itemView.findViewById(R.id.iv_loading_end));
 
                     }
 

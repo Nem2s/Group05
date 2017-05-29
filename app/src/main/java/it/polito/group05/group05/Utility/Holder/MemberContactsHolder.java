@@ -31,9 +31,9 @@ public class MemberContactsHolder extends GeneralHolder {
 
     public MemberContactsHolder(View itemView) {
         super(itemView);
-        this.img_profile = (CircleImageView)itemView.findViewById(R.id.cv_invited_image);
-        this.name = (TextView)itemView.findViewById(R.id.tv_invited_name);
-        this.number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
+        this.img_profile = (CircleImageView) itemView.findViewById(R.id.cv_invited_image);
+        this.name = (TextView) itemView.findViewById(R.id.tv_invited_name);
+        this.number = (TextView) itemView.findViewById(R.id.tv_invited_pnumber);
 
 
     }
@@ -41,7 +41,7 @@ public class MemberContactsHolder extends GeneralHolder {
     @Override
     public void setData(Object c, Context context) {
         final UserContact user = ((UserContact) c);
-        if(user.getiProfile() != null)
+        if (user.getiProfile() != null)
             this.img_profile.setImageURI(Uri.parse(user.getiProfile()));
         else
             img_profile.setImageDrawable(context.getResources().getDrawable(R.drawable.user_placeholder));
