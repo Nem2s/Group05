@@ -427,7 +427,12 @@ public class DB_Manager {
         });
     }
     public void updateGroupFlow(String s ,final Double d){
-        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(s);
+
+        updateGroupFlow(Singleton.getInstance().getmCurrentGroup().getId(), s, d);
+    }
+
+    public void updateGroupFlow(String gid, String s, final Double d) {
+        final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(gid).child("members").child(s);
 
         fdb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -629,8 +634,8 @@ public class DB_Manager {
 
     public void payDone(String gid, String eid, String id, double debit) {
         payDone(gid, eid, id);
-        updateGroupFlow(id, debit);
-        updateGroupFlow(Singleton.getInstance().getCurrentUser().getId(), (-1.00) * debit);
+        updateGroupFlow(gid, id, debit);
+        updateGroupFlow(gid, Singleton.getInstance().getCurrentUser().getId(), (-1.00) * debit);
 
 
     }

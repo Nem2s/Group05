@@ -24,6 +24,7 @@ public class MyService extends IntentService {
         uid = intent.getStringExtra("requestFromId");
         gid = intent.getStringExtra("groupId");
         debit = intent.getStringExtra("expenseDebit");
+
         int notification = intent.getIntExtra("notification", 0);
 
 
