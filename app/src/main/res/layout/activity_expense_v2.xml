@@ -7,6 +7,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="it.polito.group05.group05.Expense_activity">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="14dp"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_tick"
+        app:layout_anchorGravity="bottom|right|end" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,43 +40,42 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:fitsSystemWindows="true"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
+                android:fitsSystemWindows="true"
                 android:transitionName="@string/transition_toolbar"
 
                 >
+
                 <LinearLayout
                     android:id="@+id/cv_header_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:orientation="horizontal"
-                    android:transitionName="@string/transition_group_image"
-                    >
+                    android:transitionName="@string/transition_group_image">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_group_image"
-                        android:layout_height="48dp"
                         android:layout_width="48dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="48dp"
                         android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
                         android:focusableInTouchMode="true"
-                        android:transitionName="@string/transition_group_image"
-                        />
+                        android:transitionName="@string/transition_group_image" />
 
 
                     <TextView
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add an Expense"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
                         android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Add an Expense"
+                        android:textSize="20sp"
                         android:textStyle="bold"
-                        android:transitionName="@string/transition_text"
-                        android:textSize="20sp" />
+                        android:transitionName="@string/transition_text" />
 
                 </LinearLayout>
 
@@ -73,40 +87,36 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/layout_totale"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+<!--
                 <android.support.v7.widget.CardView
                     android:id="@+id/mainCard"
                     android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="@color/cardview_light_background"
+                    android:layout_marginTop="8dp"
                     android:elevation="4dp"
+                    app:cardBackgroundColor="@color/cardview_light_background"
                     app:cardCornerRadius="4dp">
-
+-->
                     <RelativeLayout
                         android:id="@+id/relNino"
+                        android:padding="12dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/card_background"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent">
 
 
                         <TextView
                             android:id="@+id/exp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="false"
                             android:layout_margin="16dp"
-                            android:text="Add an Expense"
-                            android:layout_centerHorizontal="true"
+                            android:text="New Expense"
                             android:textSize="18sp"
                             android:textStyle="bold" />
+                        <!--
                         <ImageView
                             android:id="@+id/image_network"
                             android:layout_width="64dp"
@@ -114,153 +124,182 @@
                             android:layout_centerHorizontal="true"
                             android:layout_below="@+id/exp"
                             android:src="@drawable/idea" />
+-->
 
 
-
-                    <LinearLayout
-                        android:id="@+id/layout1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_below="@+id/image_network"
-                        android:orientation="vertical">
-
-
-                        <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/et_name_expense"
+                        <LinearLayout
+                            android:id="@+id/layout1"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="16dp"
-                            android:hint="Description"
-                            android:textSize="18sp"
-                            android:textStyle="normal"
-                            app:met_baseColor="#000000"
-                            app:met_errorColor="#646464"
-                            app:met_floatingLabel="highlight"
-                            android:imeOptions="actionDone" />
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_below="@+id/exp"
+                            android:orientation="vertical">
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="16dp">
 
-                        <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/et_cost_expense"
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            android:digits="0123456789.,"
-                            android:hint="Cost"
-                            android:inputType="numberDecimal"
-                            android:textSize="15sp"
-                            android:textStyle="normal"
-                            android:imeOptions="actionDone"
-                            app:met_baseColor="@color/colorPrimary"
-                            app:met_errorColor="#646464"
-                            app:met_floatingLabel="highlight"
-                            app:met_iconRight="@drawable/euro" />
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/et_name_expense"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="80dp"
+                                android:hint="Description"
+                                android:imeOptions="actionDone"
+                                android:textSize="18sp"
+                                android:textStyle="normal"
+                                app:met_baseColor="#000000"
+                                app:met_errorColor="#646464"
+                                app:met_floatingLabel="highlight" />
 
                             <RelativeLayout
-                                android:id="@+id/date"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_toRightOf="@+id/et_cost_expense"
-                                android:layout_alignParentEnd="true">
+                                android:layout_margin="16dp">
 
-                                <ImageView
-                                android:id="@+id/calendar"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:padding="2dp"
-                                    android:layout_margin="4dp"
-                                android:layout_alignParentEnd="true"
-                                    android:src="@drawable/calendar" />
+                                <com.rengwuxian.materialedittext.MaterialEditText
+                                    android:id="@+id/et_cost_expense"
+                                    android:layout_width="120dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginLeft="4dp"
+                                    android:layout_marginRight="4dp"
+                                    android:digits="0123456789.,"
+                                    android:hint="Cost"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
+                                    android:textSize="15sp"
+                                    android:textStyle="normal"
+                                    app:met_baseColor="@color/colorPrimary"
+                                    app:met_errorColor="#646464"
+                                    app:met_floatingLabel="highlight"
+                                    app:met_iconRight="@drawable/euro" />
 
-                                <TextView
-                                    android:id="@+id/name_date"
+                                <RelativeLayout
+                                    android:id="@+id/date"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_toLeftOf="@+id/calendar"
+                                    android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
-                                    android:text="today"
-                                    android:layout_marginRight="4dp"
-                                    android:layout_centerHorizontal="true" />
+                                    android:layout_toRightOf="@+id/et_cost_expense">
+
+                                    <ImageView
+                                        android:id="@+id/calendar"
+                                        android:layout_width="32dp"
+                                        android:layout_height="32dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_margin="4dp"
+                                        android:padding="2dp"
+                                        android:src="@drawable/calendar" />
+
+                                    <TextView
+                                        android:id="@+id/name_date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginRight="4dp"
+                                        android:layout_toLeftOf="@+id/calendar"
+                                        android:text="today" />
+                                </RelativeLayout>
                             </RelativeLayout>
-                        </RelativeLayout>
 
-
-
-                        <RelativeLayout
-                            android:id="@+id/relative_file"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:layout_below="@+id/layout1">
-
-                            <CheckBox
-                                android:id="@+id/cb2_addfile"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:buttonTint="@color/quantum_grey_600"
-                                android:clickable="true"
-                                android:onClick="file_handler"
-                                android:text="File"
-                                android:textColor="@color/black"
-                                android:textStyle="normal" />
-
-                            <TextView
-                                android:id="@+id/nomeFile"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                            <View
+                                android:layout_width="fill_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+                                android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
                                 android:alpha="0.6"
-                                android:layout_toRightOf="@+id/cb2_addfile"
-                                android:layout_centerVertical="true"
-                                android:textStyle="italic"
-                                android:layout_marginLeft="8dp" />
+                                android:background="@android:color/darker_gray" />
 
-                        </RelativeLayout>
+                            <RelativeLayout
+                                android:id="@+id/moreLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="43dp"
+                                android:layout_margin="8dp">
 
-                        <RelativeLayout
-                            android:id="@+id/moreLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="43dp"
-                            android:background="@color/light_gray"
-                            android:layout_marginTop="20dp">
+                                <TextView
+                                    android:id="@+id/more"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_margin="8dp"
+                                    android:buttonTint="@color/quantum_grey_600"
+                                    android:text="Set Prices"
+                                    android:textColor="@color/dark_gray" />
 
-                            <TextView
-                                android:id="@+id/more"
-                                android:layout_width="wrap_content"
+                                <com.kyleduo.switchbutton.SwitchButton
+                                    android:id="@+id/switch_prices"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_margin="8dp"
+                                    app:kswBackRadius="2dp"
+                                    app:kswThumbHeight="15dp"
+                                    app:kswThumbRadius="2dp"
+                                    app:kswThumbWidth="18dp" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:id="@+id/relative_file"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:layout_centerVertical="true"
-                                android:text="Set Prices"
-                                android:layout_marginTop="6dp"
-                                android:textColor="@color/dark_gray" />
-                        </RelativeLayout>
+                                android:layout_below="@+id/layout1"
+                                android:layout_margin="8dp">
 
-                    </LinearLayout>
+                                <TextView
+                                    android:id="@+id/cb2_addfile"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:buttonTint="@color/quantum_grey_600"
+                                    android:clickable="true"
+                                    android:onClick="file_handler"
+                                    android:text="File"
+                                    android:layout_margin="8dp"
+                                    android:textColor="@color/dark_gray"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/nomeFile"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginLeft="8dp"
+                                    android:layout_toRightOf="@+id/cb2_addfile"
+                                    android:alpha="0.6"
+                                    android:textStyle="italic" />
+
+                                <com.kyleduo.switchbutton.SwitchButton
+                                    android:id="@+id/switch_file"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    app:kswBackRadius="2dp"
+                                    app:kswThumbRadius="2dp"
+                                    app:kswThumbHeight="15dp"
+                                    app:kswThumbWidth="18dp"
+                                    android:layout_margin="8dp"/>
+
+                            </RelativeLayout>
+                            <View
+                                android:layout_width="fill_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+                                android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
+                                android:alpha="0.6"
+                                android:background="@android:color/darker_gray" />
+
+
+
+                        </LinearLayout>
                     </RelativeLayout>
 
-                </android.support.v7.widget.CardView>
-
-            </RelativeLayout>
         </ScrollView>
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="14dp"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_action_tick"
-        app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>

@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -42,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.kyleduo.switchbutton.SwitchButton;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
@@ -102,6 +104,7 @@ public class Expense_activity extends AppCompatActivity {
     private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
+    private SwitchButton sw_file, sw_prices;
     private LinearLayoutManager lin_members;
     private DividerItemDecoration dividerItemDecoration;
     private CustomDialogFragment cdf;
@@ -134,7 +137,7 @@ public class Expense_activity extends AppCompatActivity {
         toolbar= (Toolbar) findViewById(R.id.toolbar);
         iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
-        image_network = (ImageView) findViewById(R.id.image_network);
+    //    image_network = (ImageView) findViewById(R.id.image_network);
         et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_name.setSingleLine();
@@ -143,8 +146,10 @@ public class Expense_activity extends AppCompatActivity {
         et_cost.setSingleLine();
         nomedata = (TextView) findViewById(R.id.name_date);
         nomeFile = (TextView) findViewById(R.id.nomeFile);
-        cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
+       // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
         rel_file = (RelativeLayout) findViewById(R.id.relative_file);
+        sw_file = (SwitchButton) findViewById(R.id.switch_file);
+        sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
 
        // recyclerView.setVisibility(View.GONE);
         moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
@@ -315,26 +320,47 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
+        sw_file.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!newFile) {
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("*/*");
+                    startActivityForResult(intent,0);
+                }
+            }
+        });
 
-        cb_addfile.setOnClickListener(new View.OnClickListener()
+     /*   cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
                 if (!newFile) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                startActivityForResult(intent,0);
+                intent.setType("*/
+     //*");
+        /*         startActivityForResult(intent,0);
                 }
             }
         });
-        moreLayout.setOnClickListener(new View.OnClickListener() {
+       */
+        sw_prices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                clickedDetails = true;
+                cdf.show(fm,"TV_tag");
+
+            }
+        });
+   /*     moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickedDetails = true;
                 cdf.show(fm,"TV_tag");
             }
         });
-
+*/
 
     }
 
