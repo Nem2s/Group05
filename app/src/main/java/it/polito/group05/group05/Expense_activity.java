@@ -395,7 +395,4 @@ public class Expense_activity extends AppCompatActivity {
             }
         }
     }
-
-
-
 }

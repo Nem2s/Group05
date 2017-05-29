@@ -103,10 +103,9 @@ public class MainActivity extends AppCompatActivity
         Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
-        getIntent().getStringExtra("message");
-        i.putExtra("message", getIntent().getStringExtra("message"));
-        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
-        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null)
+            i.putExtras(bundle);
         context.startActivity(i);
     }
 

@@ -46,7 +46,6 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.CurrentUserReadyEvent;
 import it.polito.group05.group05.Utility.Event.NewUserEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
-import it.polito.group05.group05.Utility.NotificationClass.MyService;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
 
@@ -72,15 +71,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Subscribe
     public void currentUserReady(CurrentUserReadyEvent event) {
-        String gid = (String) getIntent().getStringExtra("groupId");
-        String eid = (String) getIntent().getStringExtra("expenseId");
-        String message = (String) getIntent().getStringExtra("message");
+        // String gid = (String) getIntent().getStringExtra("groupId");
+        // String eid = (String) getIntent().getStringExtra("expenseId");
+        // String message = (String) getIntent().getStringExtra("message");
         Intent i = new Intent(this, MainActivity.class);
-        //if(gid!=null) {
-        i.putExtra("message", message);
-        i.putExtra("groupId", gid);
-        i.putExtra("expenseId", eid);
-        //}
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null)
+            i.putExtras(bundle);
+
         startActivity(i);
 
         //Intent intent = new Intent(getBaseContext(), MyService.class);

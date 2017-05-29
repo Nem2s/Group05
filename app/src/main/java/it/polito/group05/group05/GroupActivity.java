@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.lang.reflect.Field;
 
 import io.codetail.animation.ViewAnimationUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -66,8 +69,35 @@ public class GroupActivity extends AppCompatActivity {
                 transaction.commit();
 
             }
+            if (getIntent().getStringExtra("type") != null)
+                if (getIntent().getStringExtra("type").equals("paymentRequest")) {
+                    final String eid = getIntent().getStringExtra("expenseId");
+                    final String uid = getIntent().getStringExtra("requestFromId");
+                    final String gid = getIntent().getStringExtra("groupId");
+                    final String debit = getIntent().getStringExtra("expenseDebit");
+                    final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                    AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                            .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
 
+                                    DB_Manager.getInstance().payDone(gid, eid, uid, dd);
+                                    dialog.cancel();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DB_Manager.getInstance().payUnDone(gid, eid, uid);
+                                    dialog.cancel();
+                                }
+                            })
+                            .show();
+
+
+                }
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
