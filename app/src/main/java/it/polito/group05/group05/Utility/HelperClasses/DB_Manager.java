@@ -621,7 +621,8 @@ public class DB_Manager {
 
     public void expensesPayment(String userId, String groupID, List<ExpenseDatabase> expensePayed) {
         for (ExpenseDatabase e : expensePayed) {
-            payDone(groupID, e.getId(), userId, e.getMembers().get(userId));
+            //payDone(groupID, e.getId(), userId, e.getMembers().get(userId));
+            notifyPayment(groupID, e.getId(), userId);
         }
     }
 

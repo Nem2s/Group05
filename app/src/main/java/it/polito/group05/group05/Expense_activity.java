@@ -46,8 +46,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -168,66 +169,73 @@ public class Expense_activity extends AppCompatActivity {
                 if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
                     Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
                 }
-                else if(expense.getPrice().toString().length()>6) Snackbar.make(view,"Price on max 6 characters",Snackbar.LENGTH_SHORT).show();
                 else {
-                    fdb = FirebaseDatabase.getInstance()
-                            .getReference("expenses")
-                            .child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .push();
-                    DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                            .child("lmTime");
-                    expense.setId(fdb.getKey());
-                    expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+                    if (expense.getPrice().toString().length() > 6)
+                        Snackbar.make(view, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
+                    else {
+                        fdb = FirebaseDatabase.getInstance()
+                                .getReference("expenses")
+                                .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .push();
+                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .child("lmTime");
+                        expense.setId(fdb.getKey());
+                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
 
-                    if (nameFILE != null) {
-                        expense.setFile(nameFILE);
-                        upLoadFile(uri);
-                    }
-                    double price;
-                    double toSubtractOwner = 0.0;
-                    for (int i = 0; i < partecipants.size(); i++) {
-                        if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
-                            toSubtractOwner += partecipants.get(i).getCustomValue();
+                        if (nameFILE != null) {
+                            expense.setFile(nameFILE);
+                            upLoadFile(uri);
                         }
+                        double price;
+                        double toSubtractOwner = 0.0;
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
+                                toSubtractOwner += partecipants.get(i).getCustomValue();
+                            }
                         }
-                    totalPriceActual = 0.0;
-                    for (int i = 0; i < partecipants.size(); i++) {
-                        price = partecipants.get(i).getCustomValue();
-                        totalPriceActual += partecipants.get(i).getCustomValue();
-                        String id = partecipants.get(i).getId();
-                        if (partecipants.get(i).getId().equals(expense.getOwner())) {
-                            expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                            // expense.getMembers().put(partecipants.get(i).getId(), expense.getPrice() - price);
+                        totalPriceActual = 0.0;
+                        Map<String, Object> map_payed = new HashMap<>();
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            price = partecipants.get(i).getCustomValue();
+                            totalPriceActual += partecipants.get(i).getCustomValue();
+                            String id = partecipants.get(i).getId();
+
+                            if (partecipants.get(i).getId().equals(expense.getOwner())) {
+                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                                map_payed.put(id, true);
+                            } else {
+                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
+                                map_payed.put(id, false);
+                            }
+                            DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
+
+                        }
+                        if (clicked_calendar) {
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                            Date date = null;
+                            try {
+                                date = dateFormat.parse(data);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long timeLong = date.getTime();
+                            expense.setTimestamp(timeLong);
+                            clicked_calendar = false;
                         } else {
-                            expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                        }
-                        DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-
-                        }
-                    if (clicked_calendar) {
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                        Date date = null;
-                        try {
-                            date = dateFormat.parse(data);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        long timeLong = date.getTime();
-                        expense.setTimestamp(timeLong);
-                        clicked_calendar = false;
-                    } else {
-                        expense.setTimestamp(timestamp);
+                            expense.setTimestamp(timestamp);
                         }
 
-                    if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
-                        Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                        memberAdapter.changeTotal(expense.getPrice());
-                    } else {
-                        DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
-                        fdb.setValue(expense);
-                        finish();
-                }
+                        if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
+                            Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                            memberAdapter.changeTotal(expense.getPrice());
+                        } else {
+                            expense.setPayed(map_payed);
+                            DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
+                            fdb.setValue(expense);
+                            finish();
+                        }
 
+                    }
                 }
             }
         });

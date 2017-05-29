@@ -128,12 +128,17 @@ public class NotificationService extends FirebaseMessagingService {
                     intent.putExtra(s, map.get(s));
                     intent2.putExtra(s, map.get(s));
                 }
+                int int1 = NotificationId.getID();
                 intent.putExtra("action", "true");
+                intent.putExtra("notification", int1);
                 nb.setPriority(Notification.PRIORITY_MAX);
-
-                nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, NotificationId.getID(), intent, PendingIntent.FLAG_ONE_SHOT));
+                nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, int1, intent, PendingIntent.FLAG_ONE_SHOT));
+                int1 = NotificationId.getID();
                 intent2.putExtra("action", "false");
-                nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, NotificationId.getID(), intent2, PendingIntent.FLAG_ONE_SHOT));
+                intent.putExtra("notification", int1);
+
+
+                nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, int1, intent2, PendingIntent.FLAG_ONE_SHOT));
                 break;
 
         }

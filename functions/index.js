@@ -236,7 +236,7 @@ exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').o
 			 const map = userrr.userInfo;
 			 console.log(map["id"]!=uid,map["name"],uid,map["id"]);
 			 const map_group=userrr.userGroups;
-			 if(/*map["id"]!=uid && */map_group[gid])
+			 if(map["id"]!=uid && map_group[gid])
 				token.push(userrr.fcmToken);
 			
 		 });
