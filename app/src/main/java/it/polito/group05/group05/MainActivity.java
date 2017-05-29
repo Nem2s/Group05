@@ -98,7 +98,7 @@ public class MainActivity extends AestheticActivity
     FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
-
+    int colors[] = new int[2];
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -355,8 +355,8 @@ public class MainActivity extends AestheticActivity
 
 
         } else if (id == R.id.nav_themes) {
-            final int colors[] = new int[2];
-            if (CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
+
+            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
                 MaterialDialog dialog = new MaterialDialog.Builder(context)
                         .title("Theming Options")
                         .positiveText("Predefined Themes")
