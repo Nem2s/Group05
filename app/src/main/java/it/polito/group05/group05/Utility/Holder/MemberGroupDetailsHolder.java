@@ -81,8 +81,10 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
-                                        expense.getMembers().containsKey(user.getId()))
-                                    value -= expense.getMembers().get(user.getId());
+                                        expense.getMembers().containsKey(user.getId())) {
+                                    if(!(boolean) expense.getPayed().get(user.getId()))
+                                        value -= expense.getMembers().get(user.getId());
+                                }
                                 else if (user.getId().equals(expense.getOwner()) &&
                                         !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
@@ -141,24 +143,11 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean)expense.getPayed().get(s)) {
-                                expenseList.add(expense);
-                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s)* -1 + " €");
-                               /* FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(s).setValue(0.0);
-                                tmp += expense.getMembers().get(s);
-                                //DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
-                                FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(expense.getOwner())
-                                        .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                //DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
-*/
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId())) {
+                                if(!(boolean)expense.getPayed().get(s)) {
+                                    expenseList.add(expense);
+                                    expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
+                                }
                             }
                         }
                         Integer [] res;
