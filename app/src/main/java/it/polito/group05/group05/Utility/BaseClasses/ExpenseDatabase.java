@@ -1,12 +1,16 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
-public class ExpenseDatabase implements Namable{
+public class ExpenseDatabase implements Namable {
     private String id;
     private String owner;
     private String name;
@@ -14,12 +18,12 @@ public class ExpenseDatabase implements Namable{
     private String file;
     private long timestamp;
     private Map<String,Double> members;
-    private Map<String,Object> payed;
+    private Map<String, Object> payed;
 
 
     public ExpenseDatabase() {
         members= new HashMap<>();
-        payed= new HashMap<>();
+        payed = new HashMap<>();
         id="";
         owner="";
         name="";
@@ -35,7 +39,7 @@ public class ExpenseDatabase implements Namable{
         this.price = edb.price;
         this.timestamp=edb.timestamp;
         if(edb.members== null) members = new HashMap<>();
-        if(edb.payed== null) payed = new HashMap<>();
+        if (edb.payed == null) payed = new HashMap<>();
         else  members = edb.members;
     }
 
@@ -80,7 +84,7 @@ public class ExpenseDatabase implements Namable{
         this.members = map;
     }
 
-        public Map<String, Object> getPayed() {
+    public Map<String, Object> getPayed() {
         return payed;
     }
 

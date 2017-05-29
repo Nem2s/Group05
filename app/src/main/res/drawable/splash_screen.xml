@@ -3,7 +3,7 @@
 
     <item>
         <color android:color="@color/colorPrimary"></color>
-        </item>
+    </item>
     <item>
         <bitmap
             android:gravity="center"

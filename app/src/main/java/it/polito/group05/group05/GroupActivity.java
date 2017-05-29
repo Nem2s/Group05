@@ -5,36 +5,18 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.IdRes;
-import android.support.design.internal.TextScale;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
-import android.support.transition.TransitionSet;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -42,8 +24,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.lang.reflect.Field;
 
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.Adapter.ViewPagerAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -70,13 +50,27 @@ public class GroupActivity extends AppCompatActivity {
             }
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            mFragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
-            transaction.commit();
+            navigation = (BottomBar) findViewById(R.id.navigation);
+            if (getIntent().getStringExtra("message") == null) {
+                mFragmentManager = getSupportFragmentManager();
+                navigation.setDefaultTab(R.id.navigation_expenses);
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
+                transaction.commit();
+
+            } else {
+                navigation.setDefaultTab(R.id.navigation_chat);
+                mFragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                transaction.add(R.id.fragment_container, ChatFragment.newInstance());
+                transaction.commit();
+
+            }
+
+
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
-            navigation = (BottomBar) findViewById(R.id.navigation);
+
             fab = (FloatingActionButton) findViewById(R.id.fab);
             setSupportActionBar(mToolbar);
             mToolbar.setBackgroundColor(getResources().getColor(R.color.expenseTabColor));
@@ -85,23 +79,24 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 mToolbar.removeOnLayoutChangeListener(this);
+
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
                         switch (i) {
                             case R.id.navigation_expenses:
                                 replaceWithExpenseFragment();
-                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                                //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                                 break;
                             case R.id.navigation_chat:
                                 replaceWithChatFragment();
-                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
+                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
                                 break;
                             case R.id.navigation_history:
                                 replaceWithHistoryFragment();
                                 //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
                                 //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
-                                animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                                //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                                 break;
                         }

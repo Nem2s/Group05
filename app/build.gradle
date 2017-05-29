@@ -54,16 +54,19 @@ dependencies {
 
 
 
-    compile 'com.wdullaer:swipeactionadapter:2.0.0'
-    compile 'com.firebaseui:firebase-ui-database:1.2.0'
-    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
-    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
         transitive = true;
     }
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
+    compile 'com.wdullaer:swipeactionadapter:2.0.0'
+    compile 'com.firebaseui:firebase-ui-database:1.2.0'
+    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
+    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'com.wdullaer:swipeactionadapter:2.0.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
@@ -96,11 +99,17 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'com.dmitrymalkovich.android:material-design-dimens:1.4'
     compile 'com.github.aakira:expandable-layout:1.6.0@aar'
+    compile 'com.mikepenz:fastadapter-commons:2.5.2@aar'
+    compile 'com.kyleduo.switchbutton:library:1.4.6'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
-    testCompile 'junit:junit:4.12'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+    compile 'com.klinkerapps:sliding-activity:1.4.4'
+    compile('com.mikepenz:fastadapter:2.5.3@aar') {
+        transitive = true
     }
+    compile 'com.mikepenz:fastadapter-extensions:2.5.2@aar'
+//The tiny Materialize library used for its useful helper classes
+    compile 'com.mikepenz:materialize:1.0.1@aar'
+    testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

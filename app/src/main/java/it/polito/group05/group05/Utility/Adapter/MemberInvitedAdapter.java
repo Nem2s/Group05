@@ -115,7 +115,7 @@ public class MemberInvitedAdapter extends RecyclerView.Adapter<MemberInvitedHold
 
     public List<UserContact> retriveAll() {
         List<UserContact> list = new ArrayList<>();
-        for(int i = invited.size() -1 ; i >= 0 ; i--) {
+        for (int i = invited.size() - 1; i >= 0; i--) {
             UserContact u = invited.get(i);
             list.add(u);
         }

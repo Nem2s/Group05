@@ -40,6 +40,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mvc.imagepicker.ImagePicker;
@@ -50,7 +51,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.ReadyEvent;
@@ -133,9 +133,6 @@ public class MainActivity extends AppCompatActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
-        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
-            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
-                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -199,7 +196,7 @@ public class MainActivity extends AppCompatActivity
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
+        Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,

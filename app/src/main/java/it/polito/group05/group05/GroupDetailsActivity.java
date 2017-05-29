@@ -95,9 +95,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
         pb.setVisibility(View.INVISIBLE);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        root = (RevealFrameLayout)findViewById(R.id.reveal_root);
-        appbar = (AppBarLayout)findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        root = (RevealFrameLayout) findViewById(R.id.reveal_root);
+        appbar = (AppBarLayout) findViewById(R.id.app_bar);
         final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -126,14 +126,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
         rv_members.setAdapter(mAdapter);
 
 
-
     }
 
     private void onStartView(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             final Intent i = getIntent();
             final int color = i.getIntExtra("Color", getResources().getColor(R.color.colorPrimary));
-            if(!(color == getResources().getColor(R.color.colorPrimary))) {
+            if (!(color == getResources().getColor(R.color.colorPrimary))) {
 
                 MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                         .title("Group Informations")
@@ -167,7 +166,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                                 anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
+                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
                                     }
 
                                 });
@@ -229,7 +228,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                                 anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
+                                        findViewById(R.id.reveal_parent).setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
                                     }
                                 });
 
@@ -396,43 +395,43 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 });
         editDialog = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                    @Override
-                    public void onTransitionStart(Transition transition) {
+            getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
 
-                    }
+                }
 
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        fab.show();
-                        AnimUtils.enterRevealAnimation(iv_header);
-                        cv_back.setVisibility(View.INVISIBLE);
-                        retriveUsers();
-                    }
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    fab.show();
+                    AnimUtils.enterRevealAnimation(iv_header);
+                    cv_back.setVisibility(View.INVISIBLE);
+                    retriveUsers();
+                }
 
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
+                @Override
+                public void onTransitionCancel(Transition transition) {
 
-                    }
+                }
 
-                    @Override
-                    public void onTransitionPause(Transition transition) {
+                @Override
+                public void onTransitionPause(Transition transition) {
 
-                    }
+                }
 
-                    @Override
-                    public void onTransitionResume(Transition transition) {
+                @Override
+                public void onTransitionResume(Transition transition) {
 
-                    }
-                });
+                }
+            });
 
-                scheduleStartPostponedTransition(iv_header);
-            } else {
-                fab.show();
-                AnimUtils.enterRevealAnimation(iv_header);
-                cv_back.setVisibility(View.INVISIBLE);
-                retriveUsers();
-            }
+            scheduleStartPostponedTransition(iv_header);
+        } else {
+            fab.show();
+            AnimUtils.enterRevealAnimation(iv_header);
+            cv_back.setVisibility(View.INVISIBLE);
+            retriveUsers();
+        }
         }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {

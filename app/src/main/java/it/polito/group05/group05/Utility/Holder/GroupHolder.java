@@ -73,7 +73,7 @@ public class GroupHolder extends GeneralHolder {
 
         Double x = Double.valueOf(balance.getText().toString().replace(",", "."));
         if(x >0.001)
-        balance.setTextColor(Color.GREEN);
+            balance.setTextColor(Color.GREEN);
         else if(x <-0.001)
             balance.setTextColor(Color.RED);
         else{
@@ -119,7 +119,7 @@ public class GroupHolder extends GeneralHolder {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
                 Intent i = new Intent(context, GroupActivity.class);
-                   context.startActivity(i);
+                context.startActivity(i);
             }
         });
 
