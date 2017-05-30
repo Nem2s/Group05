@@ -144,7 +144,6 @@ public class GroupDetailsActivity extends AestheticActivity {
         });
 
 
-
         users.add(Singleton.getInstance().getCurrentUser());
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
         mAdapter = new GroupDetailsAdapter(this, users);

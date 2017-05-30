@@ -7,6 +7,11 @@
     android:id="@+id/root_layout"
     tools:context="it.polito.group05.group05.ExpenseDetailsActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scroll_view_to">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,8 +32,7 @@
                 android:text="VeryLongExpenseName"
                 android:textSize="21sp"
                 android:textStyle="bold"
-                android:textAlignment="center"
-                />
+                android:textAlignment="center" />
 
             <LinearLayout
                 android:id="@+id/ll_1"
@@ -38,8 +42,7 @@
                 android:layout_marginBottom="4dp"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:layout_marginStart="8dp"
-                >
+                android:layout_marginStart="8dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cv_owner_image"
@@ -141,6 +144,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="11sp"
                 android:textStyle="bold" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_expense_members"
                 android:layout_width="match_parent"
@@ -159,6 +163,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Pay"
                 android:theme="@style/GreenButton" />
+
             <Button
                 android:id="@+id/button_notify"
                 android:layout_width="wrap_content"
@@ -168,8 +173,8 @@
                 android:layout_marginTop="16dp"
                 android:text="Notify"
                 android:theme="@style/BlueButton"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

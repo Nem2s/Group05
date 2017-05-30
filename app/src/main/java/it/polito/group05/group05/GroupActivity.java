@@ -5,62 +5,27 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.IdRes;
-import android.support.annotation.RequiresApi;
-import android.support.design.internal.TextScale;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
-import android.support.transition.TransitionSet;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.transition.Transition;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.TranslateAnimation;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.aesthetic.Aesthetic;
-import com.afollestad.aesthetic.AestheticActivity;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.Adapter.ViewPagerAdapter;
-import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
-public class GroupActivity extends AestheticActivity {
+public class GroupActivity extends AppCompatActivity {
 
 
     FragmentManager mFragmentManager;
@@ -68,11 +33,6 @@ public class GroupActivity extends AestheticActivity {
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
-    GroupDatabase currentGroup = Singleton.getInstance().getmCurrentGroup();
-    CircleImageView cv_group;
-    TextView tv_groupname;
-    TextView tv_members;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,11 +72,55 @@ public class GroupActivity extends AestheticActivity {
             transaction.commit();
             initializeUI();
 
+            } else {
+                navigation.setDefaultTab(R.id.navigation_chat);
+                mFragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                transaction.add(R.id.fragment_container, ChatFragment.newInstance());
+                transaction.commit();
+
+            }
+            if (getIntent().getStringExtra("type") != null)
+                if (getIntent().getStringExtra("type").equals("paymentRequest")) {
+                    final String eid = getIntent().getStringExtra("expenseId");
+                    final String uid = getIntent().getStringExtra("requestFromId");
+                    final String gid = getIntent().getStringExtra("groupId");
+                    final String debit = getIntent().getStringExtra("expenseDebit");
+                    final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                    AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                            .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+
+                                    DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd);
+                                    dialog.cancel();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DB_Manager.getInstance().payUnDone(gid, eid, uid);
+                                    dialog.cancel();
+                                }
+                            })
+                            .show();
+
+
+                }
+
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+            fab = (FloatingActionButton) findViewById(R.id.fab);
+            setSupportActionBar(mToolbar);
+            mToolbar.setBackgroundColor(getResources().getColor(R.color.expenseTabColor));
         }
         mToolbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 mToolbar.removeOnLayoutChangeListener(this);
+
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
@@ -138,15 +142,15 @@ public class GroupActivity extends AestheticActivity {
                                 //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                                 break;
-
                         }
-
                     }
                 });
             }
         });
     }
 
+<<<<<<<<< Temporary merge branch 1
+=========
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -191,8 +195,14 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
+            scheduleStartPostponedTransition(cv_group);
+        } else {
+            fab.show();
+
+            fillNameMembersList();
         }
-        scheduleStartPostponedTransition(cv_group);
+
+
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {
@@ -220,7 +230,6 @@ public class GroupActivity extends AestheticActivity {
                         tv_members.setText(u.getName());
                     else
                         tv_members.append(", " +u.getName());
-
                 }
 
                 @Override
@@ -230,9 +239,9 @@ public class GroupActivity extends AestheticActivity {
             });
         }
 
-
     }
 
+>>>>>>>>> Temporary merge branch 2
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
@@ -255,8 +264,6 @@ public class GroupActivity extends AestheticActivity {
             }
         });
     }
-
-
 
 
 

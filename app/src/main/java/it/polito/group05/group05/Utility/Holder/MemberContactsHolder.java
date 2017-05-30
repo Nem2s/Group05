@@ -55,11 +55,18 @@ public class MemberContactsHolder extends GeneralHolder {
         this.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sendIntent = new Intent("android.intent.action.MAIN");
-                sendIntent.setComponent(new ComponentName("com.whatsapp","com.whatsapp.Conversation"));
-                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" +user.getTelNumber())+"@s.whatsapp.net");//phone number without "+" prefix
 
-                context.startActivity(sendIntent);
+                Intent sendIntent = new Intent("android.intent.action.MAIN");
+
+                sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.Conversation"));
+                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" + user.getTelNumber()) + "@s.whatsapp.net");//phone number without "+" prefix
+                try {
+                    context.startActivity(sendIntent);
+                } catch (Exception e) {
+                    Toast.makeText(context, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                            .show();
+                }
+
             }
         });
 
