@@ -408,3 +408,60 @@ exports.sendReminderPayment = functions.database.ref('/history/{gId}/{eId}/notif
 
 
 
+
+exports.sendReminderPaymentToOne = functions.database.ref('/history/{gId}/notifyTo/{ownerId}/{uId}').onWrite(event => {
+	
+	const gid = event.params.gId;	
+  const uid =  event.params.uId;
+  const ownerid =  event.params.ownerId;
+  const debit = event.data.val();
+  
+	
+	 if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
+	const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
+  
+	const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
+	const getOwnerProfilePromise = admin.database().ref('/users/'+ownerid).once('value');
+	return Promise.all([ getGroupProfilePromise,getUserProfilePromise,getOwnerProfilePromise]).then(results => {
+		const group = results[0].val();
+	const user = results[1].val();
+	
+    const owner = results[2].val();
+		 
+			const token=  user.fcmToken;
+			  console.log(user.userInfo.id);
+			   const payload = {
+	  data: {
+		  type:"rememberPaymentToOne",
+		  groupName:group.name,
+		  debit:debit.toString(),
+		  requestFrom:owner.userInfo.name,
+		  icon:'/users/'+ownerid+'/'+owner.userInfo.iProfile,
+		  requestFromId:owner.userInfo.id,
+		  groupId:gid
+		  
+	  }
+	};
+		  
+		  admin.database().ref('/history/'+gid+'/'+eid+'/notifyTo').remove();
+		    admin.messaging().sendToDevice(token, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', token[index], error);
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+		  });
+	  });
+
+
+

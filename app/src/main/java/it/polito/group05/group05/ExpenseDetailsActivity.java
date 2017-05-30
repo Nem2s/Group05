@@ -143,7 +143,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                 public void onClick(View v) {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
-                    DB_Manager.getInstance().reminder(gid, getIntent().getStringExtra("expenseId"), s);
+                    DB_Manager.getInstance().reminderToAll(gid, getIntent().getStringExtra("expenseId"), s);
                     Toast.makeText(context, "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
 
                     finish();
