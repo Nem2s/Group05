@@ -14,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -46,8 +43,6 @@ public class ExpenseFragment extends Fragment {
     List<Expense> expenses;
     LinearLayoutManager ll;
     String ei;
-    ImageView iv_noexpense;
-    TextView tv_noexpense;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -126,16 +121,13 @@ public class ExpenseFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         setHasOptionsMenu(true);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        iv_noexpense = (ImageView)rootView.findViewById(R.id.iv_no_expenses);
-        tv_noexpense = (TextView)rootView.findViewById(R.id.tv_no_expenses);
-        rv.setHasFixedSize(true);
+        rv.setHasFixedSize(false);
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
 
 
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getmCurrentGroup().getId());
         ea = new FirebaseRecyclerAdapter<ExpenseDatabase,ExpenseHolder>(ExpenseDatabase.class,
                 R.layout.item_expense,ExpenseHolder.class,ref.orderByChild("timestamp")) {
 
@@ -143,12 +135,8 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
                 super.onChildChanged(type, index, oldIndex);
-                tv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-                iv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-                if(type== ChangeEventListener.EventType.ADDED) {
+                if(type== ChangeEventListener.EventType.ADDED)
                     ll.smoothScrollToPosition(rv,null,this.getItemCount());
-                }
-
                 //aggiungere animazioni strane
 
             }
@@ -157,13 +145,6 @@ public class ExpenseFragment extends Fragment {
                 if(model==null) return;
                 viewHolder.setData(model,getContext());
 
-            }
-
-            @Override
-            protected void onDataChanged() {
-                super.onDataChanged();
-                tv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-                iv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
 

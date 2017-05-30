@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
-import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -60,7 +59,8 @@ public class NotificationService extends FirebaseMessagingService {
                 .using(new FirebaseImageLoader())
                     .load(FirebaseStorage.getInstance().getReference().child(map.get("icon")))
                 .asBitmap()
-                .into(48,48)
+                    .centerCrop()
+                    .into(64, 64)
                 .get();
             nb.setLargeIcon(bitmap);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class NotificationService extends FirebaseMessagingService {
             case "paymentRequest":
                 notificationId = NotificationId.getID();
                 double d = Double.parseDouble(map.get("expenseDebit").substring(1));
-                body = "Have you received € " + String.format("%.2f", d) + " for " + map.get("expenseName") + "?";
+                body = "Have you received € " + String.format("%.2f", d) + " for " + map.get("expenseName") + "by " + map.get("requestFrom") + " ?";
                 title = map.get("groupName");
                 ticker = "paymentRequest" + " from " + map.get("requestFrom") + "\n";
                 Intent intent = new Intent(this, MyService.class);

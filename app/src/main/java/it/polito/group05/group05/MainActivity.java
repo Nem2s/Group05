@@ -79,7 +79,7 @@ import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
-implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
@@ -127,10 +127,9 @@ implements NavigationView.OnNavigationItemSelectedListener {
         Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
-        getIntent().getStringExtra("message");
-        i.putExtra("message", getIntent().getStringExtra("message"));
-        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
-        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null)
+            i.putExtras(bundle);
         context.startActivity(i);
     }
 
@@ -357,7 +356,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
 
         } else if (id == R.id.nav_themes) {
 
-            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
+            if (CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
                 MaterialDialog dialog = new MaterialDialog.Builder(context)
                         .title("Theming Options")
                         .positiveText("Predefined Themes")
@@ -380,7 +379,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
                         })
                         .show();
             }
-            if(PREDEFINED_THEME_OPTION == 1) {
+            if (PREDEFINED_THEME_OPTION == 1) {
                 FastItemAdapter adapter = new FastItemAdapter<ColorItem>();
                 adapter.withSelectable(true);
                 adapter.add(generateThemes());
@@ -392,48 +391,48 @@ implements NavigationView.OnNavigationItemSelectedListener {
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
                     public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
-                        colors[0] = ((ColorItem)item).getAccentColor();
-                        colors[1] = ((ColorItem)item).getPrimaryColor();
+                        colors[0] = ((ColorItem) item).getAccentColor();
+                        colors[1] = ((ColorItem) item).getPrimaryColor();
                         dialog.dismiss();
                         setupTheme(colors);
                         return true;
                     }
                 });
-            } else if(CUSTOM_THEME_OPTION == 1)
-            ColorPickerDialogBuilder
-                    .with(context)
-                    .setTitle("Choose " + THEME_HELPER + " color")
-                    .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
-                                                                getResources().getColor(R.color.colorAccent))
-                    .showColorPreview(true)
-                    .lightnessSliderOnly()
-                    .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                    .density(12)
-                    .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                            if(THEME_HELPER.equals(PRIMARY)) {
-                                THEME_HELPER = ACCENT;
-                                colors[1] = selectedColor;
-                                onNavigationItemSelected(item);
-                            } else {
-                                colors[0] = selectedColor;
-                                THEME_HELPER = PRIMARY;
+            } else if (CUSTOM_THEME_OPTION == 1)
+                ColorPickerDialogBuilder
+                        .with(context)
+                        .setTitle("Choose " + THEME_HELPER + " color")
+                        .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
+                                getResources().getColor(R.color.colorAccent))
+                        .showColorPreview(true)
+                        .lightnessSliderOnly()
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(12)
+                        .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                                if (THEME_HELPER.equals(PRIMARY)) {
+                                    THEME_HELPER = ACCENT;
+                                    colors[1] = selectedColor;
+                                    onNavigationItemSelected(item);
+                                } else {
+                                    colors[0] = selectedColor;
+                                    THEME_HELPER = PRIMARY;
+                                    setupTheme(colors);
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                colors[1] = getResources().getColor(R.color.colorPrimary);
+                                colors[0] = getResources().getColor(R.color.colorAccent);
                                 setupTheme(colors);
                             }
-
-                        }
-                    })
-                    .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            colors[1] = getResources().getColor(R.color.colorPrimary);
-                            colors[0] = getResources().getColor(R.color.colorAccent);
-                            setupTheme(colors);
-                        }
-                    })
-                    .build()
-                    .show();
+                        })
+                        .build()
+                        .show();
 
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();

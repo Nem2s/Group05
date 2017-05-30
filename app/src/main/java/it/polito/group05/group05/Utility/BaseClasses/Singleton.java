@@ -93,7 +93,7 @@ public class Singleton {
 
     public List<UserContact> getLocalContactsList(int from) {
         List<UserContact> res = new ArrayList<>();
-        for(int i = from; i < from + THRESHOLD && i< localContactsList.size(); i++) {
+        for (int i = from; i < from + THRESHOLD && i < localContactsList.size(); i++) {
             res.add(localContactsList.get(i));
         }
         return res;

@@ -11,11 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.Holder.MemberExpenseHolder;
-import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
 
 /**
  * Created by Marco on 27/05/2017.

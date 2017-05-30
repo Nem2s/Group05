@@ -1,16 +1,12 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
-public class ExpenseDatabase implements Namable {
+public class ExpenseDatabase implements Namable{
     private String id;
     private String owner;
     private String name;
