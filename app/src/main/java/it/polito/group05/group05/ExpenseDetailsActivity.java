@@ -1,6 +1,9 @@
 package it.polito.group05.group05;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +13,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -57,6 +59,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         // scroller.setScroll(MultiShrinkScroller.FOCUS_DOWN);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void init(Bundle bundle) {
 
@@ -102,8 +105,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         supportFinishAfterTransition();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {
         final List<UserDatabase> users = new ArrayList<>();
+        final Context context = this;
 
         if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
             users.add(Singleton.getInstance().getCurrentUser());
@@ -119,6 +124,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
                     DB_Manager.getInstance().notifyPayment(gid, getIntent().getStringExtra("expenseId"), s);
+                    Toast.makeText(context, "Your request is sent, now the owner must confirm your payment", Toast.LENGTH_LONG);
                     finish();
                 }
             });
@@ -137,8 +143,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                 public void onClick(View v) {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
-                    DB_Manager.getInstance().reminder(gid, getIntent().getStringExtra("expenseId"), s);
-                    Toast.makeText(getApplicationContext(), "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+                    DB_Manager.getInstance().reminderToAll(gid, getIntent().getStringExtra("expenseId"), s);
+                    Toast.makeText(context, "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+
                     finish();
                 }
             });
