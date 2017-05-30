@@ -2,6 +2,8 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,9 +24,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -37,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.kyleduo.switchbutton.SwitchButton;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
@@ -56,6 +63,8 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.CustomDialogFragment;
+import it.polito.group05.group05.Utility.CustomIncludedDialog;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
@@ -73,6 +82,7 @@ public class Expense_activity extends AppCompatActivity {
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network;
+    private Button confirm, reset;
     private CardView card_recycler;
     private ImageView plus, calendar1;
     private TextView nomeFile, nomedata, more;
@@ -95,6 +105,12 @@ public class Expense_activity extends AppCompatActivity {
     private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
+    private SwitchButton sw_file, sw_prices;
+    private LinearLayoutManager lin_members;
+    private DividerItemDecoration dividerItemDecoration;
+  //  private CustomDialogFragment cdf;
+    private CustomIncludedDialog cid;
+    private boolean clickedDetails ;
 
     @Override
     protected void onStart() {
@@ -115,6 +131,8 @@ public class Expense_activity extends AppCompatActivity {
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         timestamp = 0;
+        clickedDetails = false;
+
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
@@ -128,16 +146,18 @@ public class Expense_activity extends AppCompatActivity {
         et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
         et_cost.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost.setSingleLine();
-        nomedata = (TextView) findViewById(R.id.name_date);
-        nomeFile = (TextView) findViewById(R.id.nomeFile);
-        cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
-        rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView_members);
-        recyclerView.setVisibility(View.GONE);
-        moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
+     //   nomedata = (TextView) findViewById(R.id.name_date);
+     //   nomeFile = (TextView) findViewById(R.id.nomeFile);
+       // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
+     //   rel_file = (RelativeLayout) findViewById(R.id.relative_file);
+     //   sw_file = (SwitchButton) findViewById(R.id.switch_file);
+     //   sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
+
+       // recyclerView.setVisibility(View.GONE);
+     //   moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
-        plus = (ImageView) findViewById(R.id.plus);
-        more = (TextView) findViewById(R.id.more);
+       // plus = (ImageView) findViewById(R.id.plus);
+     //   more = (TextView) findViewById(R.id.more);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -150,66 +170,26 @@ public class Expense_activity extends AppCompatActivity {
             ue.setExpense(expense);
             partecipants.add(ue);
         }
-        memberAdapter = new MemberExpandedAdapter(partecipants, this, expense.getPrice());
-        LinearLayoutManager lin_members = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(lin_members);
-        recyclerView.setAdapter(memberAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                lin_members.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        final FragmentManager fm = getFragmentManager();
+      //  cdf = new CustomDialogFragment(partecipants, expense);
+        cid = new CustomIncludedDialog(partecipants, expense);
 
         Calendar calendar = Calendar.getInstance();
-        java.util.Date now = calendar.getTime();
+        final java.util.Date now = calendar.getTime();
         timestamp = now.getTime();
 
 
-        fab.setOnClickListener(new View.OnClickListener(){
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
-                    Snackbar.make(view,"Invalid name",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v,"Set a name",Snackbar.LENGTH_SHORT).show();
                 }
                 else {
                     if (expense.getPrice().toString().length() > 6)
-                        Snackbar.make(view, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(v, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
                     else {
-                        fdb = FirebaseDatabase.getInstance()
-                                .getReference("expenses")
-                                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .push();
-                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .child("lmTime");
-                        expense.setId(fdb.getKey());
-                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-
-                        if (nameFILE != null) {
-                            expense.setFile(nameFILE);
-                            upLoadFile(uri);
-                        }
-                        double price;
-                        double toSubtractOwner = 0.0;
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
-                                toSubtractOwner += partecipants.get(i).getCustomValue();
-                            }
-                        }
-                        totalPriceActual = 0.0;
-                        Map<String, Object> map_payed = new HashMap<>();
-                        for (int i = 0; i < partecipants.size(); i++) {
-                            price = partecipants.get(i).getCustomValue();
-                            totalPriceActual += partecipants.get(i).getCustomValue();
-                            String id = partecipants.get(i).getId();
-
-                            if (partecipants.get(i).getId().equals(expense.getOwner())) {
-                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                                map_payed.put(id, true);
-                            } else {
-                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                                map_payed.put(id, false);
-                            }
-                            DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
-
-                        }
                         if (clicked_calendar) {
                             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                             Date date = null;
@@ -225,19 +205,14 @@ public class Expense_activity extends AppCompatActivity {
                             expense.setTimestamp(timestamp);
                         }
 
-                        if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
-                            Snackbar.make(view, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                            memberAdapter.changeTotal(expense.getPrice());
-                        } else {
-                            expense.setPayed(map_payed);
-                            DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
-                            fdb.setValue(expense);
-                            finish();
+                        for(User_expense e : partecipants){
+                            e.setIncluded(false);
                         }
-
+                        cid.show(fm,"TV_tag");
                     }
+                    }
+
                 }
-            }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -267,8 +242,8 @@ public class Expense_activity extends AppCompatActivity {
                 if (s.length() > 0) {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                    memberAdapter.changeTotal(expense_price);
-                    memberAdapter.notifyDataSetChanged();
+              //      memberAdapter.changeTotal(expense_price);
+              //      memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -276,7 +251,6 @@ public class Expense_activity extends AppCompatActivity {
         calendar1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get Current Date
                 clicked_calendar = true;
                 final Calendar c = Calendar.getInstance();
                 mYear = c.get(Calendar.YEAR);
@@ -293,10 +267,10 @@ public class Expense_activity extends AppCompatActivity {
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                    nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                           //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                    nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                            //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
                         }, mYear, mMonth, mDay);
@@ -304,39 +278,27 @@ public class Expense_activity extends AppCompatActivity {
             }
         });
 
-
-        cb_addfile.setOnClickListener(new View.OnClickListener()
+     /*   cb_addfile.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
                 if (!newFile) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                startActivityForResult(intent,0);
+                intent.setType("*/
+     //*");
+        /*         startActivityForResult(intent,0);
                 }
             }
         });
-        moreLayout.setOnClickListener(new View.OnClickListener() {
+       */
+   /*     moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (et_cost == null || expense.getPrice() == 0.0 || expense_price == 0.0) {
-                    Snackbar.make(v, "Set a Valid price", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    if (recyclerView.getVisibility() == View.GONE) {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        rel_file.setVisibility(View.VISIBLE);
-                        plus.setImageResource(R.drawable.ic_expand_less);
-                        more.setText("Less");
-                    } else {
-                        recyclerView.setVisibility(View.GONE);
-                        rel_file.setVisibility(View.GONE);
-                        plus.setImageResource(R.drawable.ic_expand_more);
-                        more.setText("More");
-                    }
-                }
+                clickedDetails = true;
+                cdf.show(fm,"TV_tag");
             }
         });
-
+*/
 
     }
 
@@ -380,7 +342,7 @@ public class Expense_activity extends AppCompatActivity {
                 try {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                        nomeFile.setText(nameFILE);
+        //                nomeFile.setText(nameFILE);
                     }
                 } finally {
                     cursor.close();
@@ -395,4 +357,7 @@ public class Expense_activity extends AppCompatActivity {
             }
         }
     }
+
+
+
 }

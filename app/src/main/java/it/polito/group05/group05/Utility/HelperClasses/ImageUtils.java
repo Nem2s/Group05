@@ -35,7 +35,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class ImageUtils {
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
-        Glide.with(context)
+        Glide.with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
                         .child(user.getId())
