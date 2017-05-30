@@ -48,24 +48,6 @@ public class NotificationService extends FirebaseMessagingService {
 
     }
 
-    private void buildNotification() {
-
-        RemoteViews notificationView = new RemoteViews(
-                this.getPackageName(),
-                R.layout.notification
-        );
-
-        NotificationCompat.Builder nb = new NotificationCompat.Builder(getBaseContext());
-        nb.setAutoCancel(true).setSmallIcon(R.drawable.logo)
-                .setDefaults(Notification.DEFAULT_ALL).setContent(notificationView).setContentTitle("ssuuuuuuuuuuu");
-        nb.addAction(R.drawable.ic_mail_white_24dp, "Pay", null)
-                .addAction(R.drawable.ic_mail_white_24dp, "Another Pay", null)
-        ;
-        NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
-        nm.notify(0, nb.build());
-
-
-    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     private void buildNotification(Map<String, String> map) {
         String type = map.get("type");

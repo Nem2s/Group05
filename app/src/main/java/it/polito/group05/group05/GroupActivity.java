@@ -112,6 +112,7 @@ public class GroupActivity extends AppCompatActivity {
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
+                        tv_members.setSelected(true);
                         switch (i) {
                             case R.id.navigation_expenses:
                                 replaceWithExpenseFragment();

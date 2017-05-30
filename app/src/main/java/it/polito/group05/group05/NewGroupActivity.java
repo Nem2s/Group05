@@ -38,7 +38,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.ui.User;
@@ -70,7 +69,6 @@ import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
-import it.polito.group05.group05.Utility.HelperClasses.EndlessRecyclerViewScrollListener;
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 
@@ -83,11 +81,9 @@ import it.polito.group05.group05.Utility.Interfaces.Namable;
 
 public class NewGroupActivity extends AppCompatActivity {
 
-    private static final int THRESHOLD = 10;
-    private static int CURRENT_POSITION = -1;
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
-    private EndlessRecyclerViewScrollListener scrollListener;
-    ProgressDialog dialog;
+
+
     private static final String TAG = "Error";
 
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
@@ -204,7 +200,7 @@ public class NewGroupActivity extends AppCompatActivity {
         no_people = (TextView)findViewById(R.id.no_people);
 
         context = this;
-        tv_contacts = (TextView)findViewById(R.id.tv_contacts);
+        tv_contacts = (TextView) findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -215,53 +211,94 @@ public class NewGroupActivity extends AppCompatActivity {
 
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
 
+/*
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-        rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
-
-        final LinearLayoutManager contactsManager = new LinearLayoutManager(this);
-
-
-        DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(this,
-
-                contactsManager.getOrientation());
-
-        rv_contacts.addItemDecoration(dividerItemDecoration2);
-
-
-        rv_contacts.setNestedScrollingEnabled(false);
-
-        local_contacts = new ArrayList<>();
-
-        local_contacts = new ArrayList<>(Singleton.getInstance().getLocalContactsList(0));
-        contactsAdapter = new MemberContactsAdapter(local_contacts, context);
-        rv_contacts.setAdapter(contactsAdapter);
-        rv_contacts.setLayoutManager(contactsManager);
-        // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(contactsManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                final int curSize = contactsAdapter.getItemCount();
-                //Toast.makeText(context, "Page: " + page, Toast.LENGTH_SHORT).show();
-                local_contacts.addAll(Singleton.getInstance().getLocalContactsList(page*THRESHOLD));
-                //Toast.makeText(context, "Elements: " + contactsManager.getItemCount(), Toast.LENGTH_SHORT).show();
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contactsAdapter.notifyItemRangeInserted(curSize, local_contacts.size() -1);
-                    }
-                });
-            }
-        };
 
-        rv_contacts.addOnScrollListener(scrollListener);
+            public void onRefresh() {
+
+                contacts.clear();
+
+                contacts.addAll(Singleton.getInstance().getRegContactsList().values());
+
+                invitedAdapter.notifyDataSetChanged();
+
+                mSwipeLayout.setRefreshing(false);
+
+            }
+
+
+        });*/
+
 
 
     }
 
 
- 
+    /*
+
+    @Subscribe
+
+    public void onTextChangedEvent(TextChangedEvent event) {
+
+        this.textIsValid = event.isValid();
+
+        if(textIsValid && selectionIsValid)
+
+            mConfirmItem.setVisible(true);
+
+        else
+
+            mConfirmItem.setVisible(false);
+
+    }
+
+
+
+    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
+
+        this.selectionIsValid = event.isValid();
+
+        if(textIsValid && selectionIsValid)
+
+            mConfirmItem.setVisible(true);
+
+        else
+
+            mConfirmItem.setVisible(false);
+
+    }
+
+
+
+
+
+    @Override
+
+    protected void onStop() {
+
+        EventBus.getDefault().unregister(this);
+
+        super.onStop();
+
+    }
+
+
+
+    @Override
+
+    protected void onStart() {
+
+        super.onStart();
+
+        if(!EventBus.getDefault().isRegistered(this))
+
+            EventBus.getDefault().register(this);
+
+    }
+
+*/
 
     @Override
 
@@ -294,7 +331,6 @@ public class NewGroupActivity extends AppCompatActivity {
             @Override
 
             public boolean onQueryTextSubmit(String query) {
-                scrollListener.resetState();
                 getWindow().setSoftInputMode(
                         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
                 );
@@ -306,24 +342,21 @@ public class NewGroupActivity extends AppCompatActivity {
 
             public boolean onQueryTextChange(String newText) {
 
-                scrollListener.resetState();
-                dialog.show();
-                if ( TextUtils.isEmpty ( newText ) ) {
 
-                    invitedAdapter.getFilter().filter("");
-                    //contactsAdapter.replaceAll(filterLocal(""));
-                    contactsAdapter.getFilter().filter("");
+                if (TextUtils.isEmpty(newText)) {
+
+                    invitedAdapter.replaceAll(filterRegistered(""));
+                    contactsAdapter.replaceAll(filterLocal(""));
                     tv_partecipants.setVisibility(View.VISIBLE);
                     tv_contacts.setVisibility(View.VISIBLE);
                     no_people.setVisibility(View.GONE);
 
                 } else {
 
-                    invitedAdapter.getFilter().filter(newText );
-                    //contactsAdapter.replaceAll(filterLocal(newText));
-                    contactsAdapter.getFilter().filter(newText);
-                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
-                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0) {
+                    invitedAdapter.replaceAll(filterRegistered(newText));
+                    contactsAdapter.replaceAll(filterLocal(newText));
+                    if (((MemberInvitedAdapter) rv_invited.getAdapter()).getItemCount() == 0 &&
+                            ((MemberContactsAdapter) rv_contacts.getAdapter()).getItemCount() == 0) {
                         no_people.setVisibility(View.VISIBLE);
                         tv_partecipants.setVisibility(View.GONE);
                         tv_contacts.setVisibility(View.GONE);
@@ -331,42 +364,33 @@ public class NewGroupActivity extends AppCompatActivity {
                         tv_partecipants.setVisibility(View.VISIBLE);
                         tv_contacts.setVisibility(View.VISIBLE);
                     }
-                    rv_contacts.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            dialog.dismiss();
-                        }
-                    });
+
                     return true;
                 }
 
                 rv_contacts.smoothScrollToPosition(0);
                 rv_invited.smoothScrollToPosition(0);
-                rv_contacts.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        dialog.dismiss();
-                    }
-                });
+
                 return false;
             }
 
             private List<UserContact> filterLocal(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : local_contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : local_contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
 
                 return res;
             }
+
             private List<UserContact> filterRegistered(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
@@ -528,12 +552,6 @@ public class NewGroupActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        scrollListener.resetState();
-        rv_contacts.removeOnScrollListener(scrollListener);
-    }
 
     public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
 
@@ -637,7 +655,6 @@ public class NewGroupActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         new InitializeViews().execute();
-        scrollListener.resetState();
     }
 
     @Override
@@ -653,49 +670,72 @@ public class NewGroupActivity extends AppCompatActivity {
 
     class InitializeViews extends AsyncTask<Void, Void, Void> {
 
-
+        ProgressDialog dialog;
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-
             contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
+            local_contacts = new ArrayList<>(Singleton.getInstance().getLocalContactsList().values());
+
+            invitedAdapter = new MemberInvitedAdapter(contacts, context);
+            contactsAdapter = new MemberContactsAdapter(local_contacts, context);
             Collections.sort(contacts, new Comparator<UserContact>() {
                 @Override
                 public int compare(UserContact u1, UserContact u2) {
                     return u1.getName().compareTo(u2.getName());
                 }
             });
-            invitedAdapter = new MemberInvitedAdapter(contacts, context);
+            Collections.sort(local_contacts, new Comparator<UserContact>() {
+                @Override
+                public int compare(UserContact u1, UserContact u2) {
+                    return u1.getName().compareTo(u2.getName());
+                }
+            });
+
+
             return null;
         }
 
         @Override
         protected void onPreExecute() {
+            rv_invited = (RecyclerView) findViewById(R.id.invited_people_list);
+            rv_contacts = (RecyclerView) findViewById(R.id.contacts_people_list);
             dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
-            rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-            rv_invited.setNestedScrollingEnabled(false);
-            LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
+            LinearLayoutManager contactsManager = new LinearLayoutManager(getApplicationContext());
+            contactsManager.setItemPrefetchEnabled(true);
+            contactsManager.setInitialPrefetchItemCount(25);
 
-            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(),
+            DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(rv_invited.getContext(),
+
+                    contactsManager.getOrientation());
+
+            rv_contacts.addItemDecoration(dividerItemDecoration2);
+
+            LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
 
                     invitedManager.getOrientation());
+
+            rv_contacts.setHasFixedSize(true);
+
+            rv_contacts.setLayoutManager(contactsManager);
+
+            rv_invited.setHasFixedSize(true);
 
             rv_invited.setLayoutManager(invitedManager);
             rv_invited.addItemDecoration(dividerItemDecoration);
         }
 
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            CURRENT_POSITION = contactsAdapter.getItemCount();
-            try {
-                rv_invited.setAdapter(invitedAdapter);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if(invitedAdapter.getItemCount() == 0) {
+
+            rv_contacts.setAdapter(contactsAdapter);
+
+            rv_invited.setAdapter(invitedAdapter);
+
+            if (invitedAdapter.getItemCount() == 0) {
 
                 Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
 
@@ -734,16 +774,21 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 iv_new_group.setEnabled(false);
 
-
+                if (contactsAdapter.getItemCount() == 0)
+                    no_people.setVisibility(View.VISIBLE);
 
             }
 
-            //
+            rv_contacts.setNestedScrollingEnabled(false);
+            rv_invited.setNestedScrollingEnabled(false);
 
 
-
-
-            dialog.dismiss();
+            rv_contacts.post(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                }
+            });
             fab.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -808,7 +853,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 @Override
 
-                public void afterTextChanged(Editable editable){
+                public void afterTextChanged(Editable editable) {
 
 
                 }
@@ -817,6 +862,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
         }
     }
+
 
 
 }
