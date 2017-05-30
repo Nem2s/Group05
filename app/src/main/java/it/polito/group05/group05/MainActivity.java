@@ -94,7 +94,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    FirebaseIndexRecyclerAdapter mAdapter;
+    public static FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];

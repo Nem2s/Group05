@@ -63,7 +63,6 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
-import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
