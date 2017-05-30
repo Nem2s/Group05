@@ -1,5 +1,6 @@
 package it.polito.group05.group05;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -104,6 +105,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
     private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {
         final List<UserDatabase> users = new ArrayList<>();
+        final Context context = this;
 
         if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
             users.add(Singleton.getInstance().getCurrentUser());
@@ -119,6 +121,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
                     DB_Manager.getInstance().notifyPayment(gid, getIntent().getStringExtra("expenseId"), s);
+                    Toast.makeText(context, "Your request is sent, now the owner must confirm your payment", Toast.LENGTH_LONG);
                     finish();
                 }
             });
@@ -138,7 +141,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
                     DB_Manager.getInstance().reminder(gid, getIntent().getStringExtra("expenseId"), s);
-                    Toast.makeText(getApplicationContext(), "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+                    Toast.makeText(context, "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+
                     finish();
                 }
             });
