@@ -10,16 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.storage.FirebaseStorage;
-
-import org.greenrobot.eventbus.EventBus;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 
 /**
  * Created by Marco on 25/05/2017.
@@ -55,11 +48,18 @@ public class MemberContactsHolder extends GeneralHolder {
         this.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent sendIntent = new Intent("android.intent.action.MAIN");
+
                 sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.Conversation"));
                 sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" + user.getTelNumber()) + "@s.whatsapp.net");//phone number without "+" prefix
+                try {
+                    context.startActivity(sendIntent);
+                } catch (Exception e) {
+                    Toast.makeText(context, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                            .show();
+                }
 
-                context.startActivity(sendIntent);
             }
         });
 

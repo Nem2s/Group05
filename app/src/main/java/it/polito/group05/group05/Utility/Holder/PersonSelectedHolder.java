@@ -20,13 +20,13 @@ import it.polito.group05.group05.Utility.BaseClasses.User_expense;
  * Created by user on 29/05/2017.
  */
 
-public class PersonSelectedHolder extends GeneralHolder{
+public class PersonSelectedHolder extends GeneralHolder {
     CircleImageView img_profile;
     TextView name;
     SwitchButton switchButton;
     Context context;
 
-    public PersonSelectedHolder(View itemView){
+    public PersonSelectedHolder(View itemView) {
         super(itemView);
         this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
         this.name = (TextView) itemView.findViewById(R.id.tv_name_member);
@@ -35,7 +35,7 @@ public class PersonSelectedHolder extends GeneralHolder{
 
     @Override
     public void setData(Object c, Context context) {
-     if(!(c instanceof User_expense)) return;
+        if (!(c instanceof User_expense)) return;
         final User_expense us = (User_expense) c;
         name.setText(us.getName());
         Glide.with(context)
@@ -49,7 +49,7 @@ public class PersonSelectedHolder extends GeneralHolder{
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     us.setIncluded(true);
                 }
             }
