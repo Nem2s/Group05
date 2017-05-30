@@ -38,7 +38,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.LeaveGroupEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
-public class Group_Activity extends AestheticActivity implements ChatFragment.OnFragmentInteractionListener, ExpenseFragment.OnFragmentInteractionListener {
+public class Group_Activity extends AestheticActivity implements  ChatFragment.OnFragmentInteractionListener,ExpenseFragment.OnFragmentInteractionListener {
 
 
     /**
@@ -258,7 +258,7 @@ public class Group_Activity extends AestheticActivity implements ChatFragment.On
                     break;
                 case 2:
 
-                    break;
+                break;
             }
             return fragment;
         }

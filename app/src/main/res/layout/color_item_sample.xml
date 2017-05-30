@@ -2,74 +2,72 @@
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:foreground="?attr/selectableItemBackground">
+    android:foreground="?attr/selectableItemBackground"
+    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/theme_name"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:padding="4dp">
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:text="VeryLongThemeName"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textStyle="bold" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_gravity="end"
+        >
+        <View
+            android:id="@+id/accent_color"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/circle"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+
+            />
+    <View
+        android:id="@+id/primary_color"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@drawable/circle"
+        android:layout_toLeftOf="@id/accent_color"
+        android:layout_marginEnd="32dp"
+
+        />
         <TextView
-            android:id="@+id/theme_name"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp"
-            android:text="VeryLongThemeName"
-            android:textSize="16sp"
-            android:ellipsize="end"
-            android:lines="1"
-            android:textStyle="bold" />
-
-        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_gravity="end">
+            android:text="Primary Color"
+            android:layout_below="@id/primary_color"
+            android:textSize="9sp"
+            android:layout_toLeftOf="@id/accent_color"
+            android:layout_marginEnd="20dp"
 
-            <View
-                android:id="@+id/primary_color"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:background="@drawable/circle"
-                android:layout_toLeftOf="@+id/accent_color"
-                android:layout_marginEnd="40dp"
+            />
 
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Primary Color"
-
-                android:layout_below="@+id/primary_color"
-                android:textSize="9sp"
-                android:layout_toLeftOf="@+id/accent_color"
-                android:layout_marginEnd="32dp"
-
-                />
-
-            <View
-                android:id="@+id/accent_color"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:background="@drawable/circle"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
-
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/accent_color"
-                android:text="Accent Color"
-                android:textSize="9sp"
-                android:layout_marginStart="26dp"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/accent_color"
+            android:text="Accent Color"
+            android:textSize="9sp"
+            android:layout_marginStart="26dp"
+            android:layout_alignParentEnd="true"
+            />
+</RelativeLayout>
+</LinearLayout>
 </FrameLayout>

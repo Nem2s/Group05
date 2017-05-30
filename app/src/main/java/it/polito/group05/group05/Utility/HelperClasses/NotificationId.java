@@ -1,11 +1,8 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
-import java.util.concurrent.atomic.AtomicInteger;
+/**
+ * Created by Marco on 30/05/2017.
+ */
 
 public class NotificationId {
-    private final static AtomicInteger c = new AtomicInteger(0);
-
-    public static int getID() {
-        return c.incrementAndGet();
-    }
 }

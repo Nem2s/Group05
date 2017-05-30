@@ -4,42 +4,26 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.transition.Transition;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
-import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
-import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -49,10 +33,7 @@ public class GroupActivity extends AppCompatActivity {
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
-    GroupDatabase currentGroup = Singleton.getInstance().getmCurrentGroup();
-    CircleImageView cv_group;
-    TextView tv_groupname;
-    TextView tv_members;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +50,27 @@ public class GroupActivity extends AppCompatActivity {
             }
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
+
+
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
             navigation = (BottomBar) findViewById(R.id.navigation);
-            if (getIntent().getStringExtra("message") == null) {
-                mFragmentManager = getSupportFragmentManager();
-                navigation.setDefaultTab(R.id.navigation_expenses);
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
-                transaction.commit();
+            navigation.setActiveTabColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+            navigation.setInActiveTabColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+            navigation.setInActiveTabAlpha(0.4f);
+
+            navigation.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            fab = (FloatingActionButton) findViewById(R.id.fab);
+            cv_group = (CircleImageView)findViewById(R.id.cv_groupImage);
+            tv_groupname = (TextView)findViewById(R.id.tv_group_name);
+            tv_members = (TextView)findViewById(R.id.tv_members);
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            mFragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
+            transaction.commit();
+            initializeUI();
 
             } else {
                 navigation.setDefaultTab(R.id.navigation_chat);
@@ -129,10 +124,12 @@ public class GroupActivity extends AppCompatActivity {
                 navigation.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelected(@IdRes int i) {
+                        tv_members.setSelected(true);
                         switch (i) {
                             case R.id.navigation_expenses:
                                 replaceWithExpenseFragment();
-                                //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+
+                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                                 break;
                             case R.id.navigation_chat:
                                 replaceWithChatFragment();
@@ -142,7 +139,7 @@ public class GroupActivity extends AppCompatActivity {
                                 replaceWithHistoryFragment();
                                 //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
                                 //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
-                                //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                                 break;
                         }
@@ -152,6 +149,8 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
+<<<<<<<<< Temporary merge branch 1
+=========
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -175,6 +174,8 @@ public class GroupActivity extends AppCompatActivity {
                     fab.show();
 
                     fillNameMembersList();
+
+
 
 
                 }
@@ -219,16 +220,16 @@ public class GroupActivity extends AppCompatActivity {
 
     private void fillNameMembersList() {
         tv_members.setText("");
-        for (String s : currentGroup.getMembers().keySet()) {
+        for(String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if (tv_members.getText().toString().equals(""))
+                    if(tv_members.getText().toString().equals(""))
                         tv_members.setText(u.getName());
                     else
-                        tv_members.append(", " + u.getName());
+                        tv_members.append(", " +u.getName());
                 }
 
                 @Override
@@ -240,6 +241,7 @@ public class GroupActivity extends AppCompatActivity {
 
     }
 
+>>>>>>>>> Temporary merge branch 2
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())

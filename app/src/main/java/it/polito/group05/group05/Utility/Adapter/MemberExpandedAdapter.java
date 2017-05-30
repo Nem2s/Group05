@@ -47,7 +47,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
-        ue.setIncluded(false);
         holder.name_person.setText(ue.getName());
         Glide.with(context)
                 .using(new FirebaseImageLoader())
@@ -58,8 +57,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(holder.image_person);
         holder.euro_person.setImageResource(R.drawable.euro);
-        holder.costo_person.setText(String.format("%.2f", ue.getCustomValue()));
-        // holder.costo_person.setText(String.valueOf(ue.getRoundValue()));
+        holder.costo_person.setText(String.valueOf(ue.getCustomValue()));
         holder.costo_person.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -81,18 +79,13 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                 public void afterTextChanged(Editable s) {
                                     if (s.length() > 0) {
                                         double actualPrice = 0.0;
-                                        try {
-                                            actualPrice = Double.valueOf(s.toString().replace(',', '.'));
-                                        } catch (Exception e) {
-                                            Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show();
-                                        }
+                                        actualPrice = Double.valueOf(s.toString().replace(',', '.'));
                                         double round = new BigDecimal(actualPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
                                         if (actualPrice > total) {
-                                            //     Toast.makeText(context, "Sum of Price Greater", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
                                             holder.costo_person.setText("");
                                         } else {
-                                            ue.setCustomValue(actualPrice);
-                                            //          ue.setRoundValue(round);
+                                            ue.setCustomValue(round);
                                             if (ue.isSelected()) {
                                                 Double tmp = total;
                                                 int count = 0;
@@ -110,12 +103,12 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                                                 .setScale(2, RoundingMode.HALF_UP)
                                                                 .doubleValue();
 
-                                                        if (round2 > 0) {
-                                                            //    users.get(e).setRoundValue(round2);
-                                                            users.get(e).setCustomValue(tmp / tmpD);
+                                                        if(round2 > 0){
+                                                            users.get(e).setCustomValue(round2);
                                                             notifyItemChanged(e);
-                                                        } else {
-                                                            //  Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        else {
+                                                            Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
                                                             holder.costo_person.setText("");
                                                         }
                                                     }
@@ -123,18 +116,14 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
 
                                             }
                                         }
-
-                                        //qui
                                     }
                                 }
                             });
                             break;
                     }
                 return false;
-
             }
         });
-
     }
 
     @Override
@@ -147,8 +136,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         for (int j = 0; j < users.size(); j++) {
             User_expense e = users.get(j);
             double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
-            //    e.setRoundValue(round3);
-            e.setCustomValue(total / (users.size()));
+            e.setCustomValue(round3);
         }
         notifyDataSetChanged();
     }

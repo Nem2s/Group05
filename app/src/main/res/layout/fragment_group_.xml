@@ -8,22 +8,24 @@
 
     >
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/expense_rv"
-        android:paddingBottom="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/expense_rv"
+            android:paddingBottom="8dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+        </android.support.v7.widget.RecyclerView>
 
     <ImageView
         android:id="@+id/iv_no_expenses"
         android:layout_width="128dp"
         android:layout_height="128dp"
-        android:src="@drawable/no_expense"
         android:layout_gravity="center"
         android:layout_marginBottom="64dp"
-        android:visibility="gone" />
-
+        android:visibility="gone"
+        android:src="@drawable/no_expense"
+        />
     <TextView
         android:id="@+id/tv_no_expenses"
         android:layout_width="wrap_content"
@@ -33,6 +35,8 @@
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:textStyle="italic|bold"
-        android:visibility="gone" />
+        android:visibility="gone"
+        />
 
-</FrameLayout>
+    </FrameLayout>
+

@@ -1,6 +1,10 @@
 package it.polito.group05.group05.Utility.BaseClasses;
 
 
+import android.graphics.Color;
+import android.text.SpannableString;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +21,18 @@ public class GroupDatabase implements Namable {
     public GroupColor groupColor;
     public String pictureUrl;
     public Map<String, Object> members;
+
+
     public GroupDatabase() {
         members = new HashMap<>();
     }
 
-    public GroupDatabase(String id, String name, Balance balance, Long lmTime, GroupColor groupColor) {
+    public GroupDatabase(String id, String name, Balance balance, String lmTime, GroupColor groupColor) {
         this.id = id;
         this.name = name;
         this.balance = balance;
         this.groupColor = groupColor;
+
        // setBadge(badgeCount);
     }
 
@@ -122,8 +129,8 @@ public class GroupDatabase implements Namable {
         return memb;
     }
 
-    /*public float getTotal() {
+    public float getTotal() {
         return (float) (this.balance.getCredit() - this.balance.getDebit());
     }
-*/
+
 }

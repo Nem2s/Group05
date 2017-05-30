@@ -3,6 +3,9 @@ package it.polito.group05.group05;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.ChangeEventListener;
@@ -89,6 +93,7 @@ public class ExpenseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
+
      * @return A new instance of fragment ExpenseFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -123,12 +128,13 @@ public class ExpenseFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_group_, container, false);
         setHasOptionsMenu(true);
         rv = (RecyclerView) rootView.findViewById(R.id.expense_rv);
-        iv_noexpense = (ImageView) rootView.findViewById(R.id.iv_no_expenses);
-        tv_noexpense = (TextView) rootView.findViewById(R.id.tv_no_expenses);
+        iv_noexpense = (ImageView)rootView.findViewById(R.id.iv_no_expenses);
+        tv_noexpense = (TextView)rootView.findViewById(R.id.tv_no_expenses);
         rv.setHasFixedSize(true);
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
+
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());
@@ -141,7 +147,7 @@ public class ExpenseFragment extends Fragment {
                 super.onChildChanged(type, index, oldIndex);
                 tv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
                 iv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-                if (type == ChangeEventListener.EventType.ADDED) {
+                if(type== ChangeEventListener.EventType.ADDED) {
                     ll.smoothScrollToPosition(rv,null,this.getItemCount());
                 }
 

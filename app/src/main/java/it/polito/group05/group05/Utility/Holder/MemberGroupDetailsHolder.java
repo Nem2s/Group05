@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -139,27 +141,14 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean) expense.getPayed().get(s)) {
-                                expenseList.add(expense);
-                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
-                               /* FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(s).setValue(0.0);
-                                tmp += expense.getMembers().get(s);
-                                //DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
-                                FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(expense.getOwner())
-                                        .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                //DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
-*/
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId())) {
+                                if(!(boolean)expense.getPayed().get(s)) {
+                                    expenseList.add(expense);
+                                    expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
+                                }
                             }
                         }
-                        Integer[] res;
+                        Integer [] res;
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(true)
                                 .title("Choose to Pay")
@@ -171,15 +160,13 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         double var = 0;
                                         for(int i = 0; i < which.length; i++) {
                                             expensePayed.add(expenseList.get(which[i]));
-                                            var += expensePayed.get(i).getMembers().get(s);
+                                            var+=expensePayed.get(i).getMembers().get(s);
                                             DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
                                             DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }
                                         Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
                                                 var + " euros", Toast.LENGTH_SHORT).show();
-                                        //DB_Manager.getInstance().updateGroupFlow(s, var);
-                                        //DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
-                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(), expensePayed);
+                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
                                 })
