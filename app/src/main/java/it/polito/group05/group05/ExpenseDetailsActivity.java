@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -59,7 +60,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
         b = getIntent().getExtras();
         setContent(R.layout.activity_expense_details);
-
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
         WIDTH = b.getInt("width");

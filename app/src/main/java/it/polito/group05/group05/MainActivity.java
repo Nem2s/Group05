@@ -11,6 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -34,6 +36,7 @@ import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.BottomNavIconTextMode;
 import com.afollestad.aesthetic.NavigationViewMode;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -466,18 +469,72 @@ implements NavigationView.OnNavigationItemSelectedListener {
     }
 
     public void setupTheme(int[] colors) { //0 accent, 1 primary
-        int accent = colors[0];
-        int primary = colors[1];
+        final int accent = colors[0]; /**Controllare se il color primary è scuro o no per settare i text colors **/
+        final int primary = colors[1];
+        int text_primary;
+        int text_secondary;
+        final boolean[] isdark = {false};
+        if(isColorDark(primary)) {
+            MaterialDialog dialog = new MaterialDialog.Builder(context)
+                    .title("Choose Dark or Light Theme")
+                    .positiveText("Light")
+                    .negativeText("Dark")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, false);
+                            dialog.dismiss();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, true);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } else {
+            initializeAesthetic(primary, accent, isdark[0]);
+        }
+    }
+
+    private void initializeAesthetic(int primary, int accent,boolean dark) {
         Singleton.getInstance().setColors(colors);
-        Aesthetic.get()
-                .colorPrimary(primary)
-                .colorStatusBarAuto()
-                .colorNavigationBarAuto()
-                .colorAccent(accent)
-                .navigationViewMode(
-                        NavigationViewMode.SELECTED_ACCENT
-                )
-                .apply();
+        if(dark) {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_NoActionBar)
+                    .isDark(true)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.SELECTED_ACCENT
+                    )
+                    .colorWindowBackground(Color.parseColor("#303030"))
+                    .apply();
+        }
+        else {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                    .isDark(false)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.SELECTED_ACCENT
+                    )
+                    .colorWindowBackground(Color.parseColor("#FAFAFA"))
+                    .apply();
+        }
         CUSTOM_THEME_OPTION = 0;
         PREDEFINED_THEME_OPTION = 0;
     }
@@ -488,5 +545,14 @@ implements NavigationView.OnNavigationItemSelectedListener {
         themes[1] = new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood");
         themes[2] = new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece");
         return themes;
+    }
+
+    public boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
     }
 }

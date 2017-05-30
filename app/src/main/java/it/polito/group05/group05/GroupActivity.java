@@ -40,6 +40,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -93,6 +94,11 @@ public class GroupActivity extends AestheticActivity {
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             navigation = (BottomBar) findViewById(R.id.navigation);
+            navigation.setActiveTabColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+            navigation.setInActiveTabColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+            navigation.setInActiveTabAlpha(0.4f);
+
+            navigation.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
             fab = (FloatingActionButton) findViewById(R.id.fab);
             cv_group = (CircleImageView)findViewById(R.id.cv_groupImage);
             tv_groupname = (TextView)findViewById(R.id.tv_group_name);

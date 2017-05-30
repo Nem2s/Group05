@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.BaseClasses;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,11 +10,11 @@ import java.util.List;
  */
 
 public class CurrentUser extends UserDatabase{ //This will be the CurrentUser class
-
+    private List<String> groups;
     private List<UserContact> userContactList;
     private Bitmap img_profile;
     private Balance balance;
-    private List<String> groups;
+
     public CurrentUser(UserDatabase u) {
 
         super(u);

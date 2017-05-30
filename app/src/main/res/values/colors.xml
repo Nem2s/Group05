@@ -9,6 +9,8 @@
     <color name="sabbia">#FFE1B0</color>
     <color name="grigioblu">#71B2CF</color>
     <color name="vaniglia">#feffce</color>
+    <color name="cardLight">#FAFAFA</color>
+    <color name="cardBlack">#303030</color>
     <color name="colorAccentLight">#ff927e</color>
         <color name="colorPrimaryText">#BFFFFFFF</color>
         <color name="colorSecondaryText">#8C000000</color>

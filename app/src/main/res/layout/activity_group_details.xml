@@ -68,7 +68,6 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 android:tag=":aesthetic_ignore"
-
                 />
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -83,6 +82,7 @@
         android:visibility="invisible"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_person_add_black_24dp"
         />
 
     <io.codetail.widget.RevealFrameLayout

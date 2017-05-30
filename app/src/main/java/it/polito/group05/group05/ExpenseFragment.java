@@ -3,7 +3,9 @@ package it.polito.group05.group05;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -71,7 +73,6 @@ public class ExpenseFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.sort_price)
             q = QueryParam.Possibilities.BYPRICE;
-
         else if (id == R.id.sort_owner)
             q = QueryParam.Possibilities.BYOWNER;
         else if (id == R.id.sort_date)
@@ -169,7 +170,6 @@ public class ExpenseFragment extends Fragment {
         };
 
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(Singleton.getInstance().getmCurrentGroup().getName());
         rv.setAdapter(ea);
 
 

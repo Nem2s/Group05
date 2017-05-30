@@ -1,16 +1,25 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
 
@@ -62,13 +71,13 @@ public class InternalHistoryHolder extends GeneralHolder {
         history_text_view.setText(Html.fromHtml(sourceString));
         switch (history.getType()) {
             case 0:
-                history_image.setImageResource(R.drawable.ic_add_shopping_cart_black_24dp);
+                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black_24dp));
                 break;
             case 1:
-                history_image.setImageResource(R.drawable.ic_fiber_new_black_24dp);
+                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_fiber_new_black_24dp));
                 break;
             case 2:
-                history_image.setImageResource(R.drawable.ic_person_add_black_24dp);
+                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_person_add_black_24dp));
                 break;
             default:
                 break;

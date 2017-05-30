@@ -127,13 +127,12 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
 
     public List<UserContact> retriveAll() {
         List<UserContact> list = new ArrayList<>();
-        for (int i = contacts.size() - 1; i >= 0; i--) {
+        for(int i = contacts.size() -1 ; i >= 0 ; i--) {
             UserContact u = contacts.get(i);
             list.add(u);
         }
         return list;
     }
-
     @Override
     public int getItemCount() {
         return contacts.size();
@@ -151,7 +150,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
                 if (constraint != null) {
                     if (orig != null & orig.size() > 0) {
                         for (final UserContact u : orig) {
-                            if (!((Namable) u).getName().toLowerCase().contains(constraint.toString().toLowerCase()))
+                            if (!((Namable)u).getName().toLowerCase().contains(constraint.toString().toLowerCase()))
                                 remove(u);
                         }
                     }
@@ -169,8 +168,8 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
     public List<UserContact> filter(String newText) {
         List<UserContact> res = new ArrayList<>();
 
-        for (UserContact u : retriveAll()) {
-            if (((Namable) u).getName().toLowerCase().contains(newText.toString().toLowerCase()))
+        for(UserContact u : retriveAll()) {
+            if (((Namable)u).getName().toLowerCase().contains(newText.toString().toLowerCase()))
                 res.add(u);
 
         }

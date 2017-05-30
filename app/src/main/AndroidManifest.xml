@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -71,6 +72,10 @@
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
         <activity android:name=".NewMemberActivity" />
+        <activity android:name=".ExpenseDetailsActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light"></activity>
 
         <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>
@@ -99,9 +104,9 @@
         </activity>
 
         <meta-data xmlns:tools="http://schemas.android.com/tools"
+            tools:replace="android:value"
             android:name="io.fabric.ApiKey"
-            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161"
-            tools:replace="android:value" />
+            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
 
         <receiver
             android:name=".Utility.NotificationClass.MyReceiver"
@@ -117,10 +122,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ExpenseDetailsActivity"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light"></activity>
+
     </application>
 
 </manifest>
