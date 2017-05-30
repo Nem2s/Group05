@@ -365,7 +365,7 @@ exports.sendReminderPayment = functions.database.ref('/history/{gId}/{eId}/notif
 	const tokens = Object.keys(expense.members);
 	  const promise = new Array();
 	  tokens.forEach(function(t){
-		 if(t!=uid)
+		 if(t!=uid && !expense.payed[t])
 		  promise.push(admin.database().ref('/users/'+t).once('value'));
 	  });
 	  return Promise.all(promise).then(results => {

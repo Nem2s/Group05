@@ -60,7 +60,7 @@ public class NotificationService extends FirebaseMessagingService {
                     .load(FirebaseStorage.getInstance().getReference().child(map.get("icon")))
                 .asBitmap()
                     .centerCrop()
-                    .into(64, 64)
+                    .into(128, 128)
                 .get();
             nb.setLargeIcon(bitmap);
         } catch (Exception e) {
@@ -122,9 +122,9 @@ public class NotificationService extends FirebaseMessagingService {
                 nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, int1, intent2, PendingIntent.FLAG_ONE_SHOT));
                 break;
             case "rememberPayment":
-                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expense_debit").substring(1))) + " for " + map.get("expense_name");
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expenseDebit").substring(1))) + " for " + map.get("expenseName");
                 title = map.get("requestFrom") + "@" + map.get("groupName");
-                
+
                 ticker = title + '\n' + body;
 
                 break;
