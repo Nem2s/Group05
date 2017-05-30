@@ -38,6 +38,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -99,7 +100,7 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     compile 'com.klinkerapps:sliding-activity:1.4.4'
     compile 'com.github.QuadFlask:colorpicker:0.0.13'
-    compile 'com.afollestad:aesthetic:0.4.7'
+    compile 'com.afollestad:aesthetic:0.4.6'
     compile('com.mikepenz:fastadapter:2.5.3@aar') {
         transitive = true
     }

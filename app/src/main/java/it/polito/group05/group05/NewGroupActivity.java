@@ -39,6 +39,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -79,7 +80,7 @@ import it.polito.group05.group05.Utility.Interfaces.Namable;
  */
 
 
-public class NewGroupActivity extends AppCompatActivity {
+public class NewGroupActivity extends AestheticActivity {
 
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
 

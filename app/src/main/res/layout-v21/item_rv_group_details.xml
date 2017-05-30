@@ -56,7 +56,9 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="Pay"
-            android:theme="@style/GreenButton" />
+            android:theme="@style/GreenButton"
+            android:tag=":aesthetic_ignore"
+            />
 
         <Button
             android:id="@+id/button_notify"
@@ -64,7 +66,10 @@
             android:layout_height="wrap_content"
             android:text="Notify"
             android:theme="@style/BlueButton"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:tag=":aesthetic_ignore"
+
+            />
         <ProgressBar
             android:id="@+id/pb_loading_actions"
             android:layout_width="wrap_content"

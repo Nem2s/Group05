@@ -21,7 +21,7 @@
         app:elevation="0dp"
         android:layout_marginStart="4dp"
         android:transitionName="@string/transition_group_image"
-
+        android:tag=":aesthetic_ignore"
         />
 
     <TextView

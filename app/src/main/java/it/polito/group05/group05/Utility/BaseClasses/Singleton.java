@@ -45,6 +45,8 @@ public class Singleton {
         return colors;
     }
 
+
+
     public void setColors(int[] colors) {
         this.colors = colors;
     }

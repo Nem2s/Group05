@@ -53,7 +53,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mikepenz.fastadapter.FastAdapter;
@@ -79,7 +78,7 @@ import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
@@ -95,7 +94,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    public static FirebaseIndexRecyclerAdapter mAdapter;
+    FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -127,9 +126,10 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null)
-            i.putExtras(bundle);
+        getIntent().getStringExtra("message");
+        i.putExtra("message", getIntent().getStringExtra("message"));
+        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
+        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
         context.startActivity(i);
     }
 
@@ -156,6 +156,9 @@ public class MainActivity extends AestheticActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
+            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
+                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -219,7 +222,7 @@ public class MainActivity extends AestheticActivity
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
-        Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
@@ -356,7 +359,7 @@ public class MainActivity extends AestheticActivity
 
         } else if (id == R.id.nav_themes) {
 
-            if (CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
+            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
                 MaterialDialog dialog = new MaterialDialog.Builder(context)
                         .title("Theming Options")
                         .positiveText("Predefined Themes")
@@ -379,7 +382,7 @@ public class MainActivity extends AestheticActivity
                         })
                         .show();
             }
-            if (PREDEFINED_THEME_OPTION == 1) {
+            if(PREDEFINED_THEME_OPTION == 1) {
                 FastItemAdapter adapter = new FastItemAdapter<ColorItem>();
                 adapter.withSelectable(true);
                 adapter.add(generateThemes());
@@ -387,53 +390,61 @@ public class MainActivity extends AestheticActivity
                         .title("Select one Theme")
                         .titleColor(getResources().getColor(R.color.colorAccent))
                         .adapter(adapter, new LinearLayoutManager(context))
+                        .dismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                PREDEFINED_THEME_OPTION = 0;
+                            }
+                        })
                         .show();
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
                     public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
-                        colors[0] = ((ColorItem) item).getAccentColor();
-                        colors[1] = ((ColorItem) item).getPrimaryColor();
+                        colors[0] = ((ColorItem)item).getAccentColor();
+                        colors[1] = ((ColorItem)item).getPrimaryColor();
                         dialog.dismiss();
                         setupTheme(colors);
                         return true;
                     }
                 });
-            } else if (CUSTOM_THEME_OPTION == 1)
-                ColorPickerDialogBuilder
-                        .with(context)
-                        .setTitle("Choose " + THEME_HELPER + " color")
-                        .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
-                                getResources().getColor(R.color.colorAccent))
-                        .showColorPreview(true)
-                        .lightnessSliderOnly()
-                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                        .density(12)
-                        .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                                if (THEME_HELPER.equals(PRIMARY)) {
-                                    THEME_HELPER = ACCENT;
-                                    colors[1] = selectedColor;
-                                    onNavigationItemSelected(item);
-                                } else {
-                                    colors[0] = selectedColor;
-                                    THEME_HELPER = PRIMARY;
-                                    setupTheme(colors);
-                                }
+            } else if(CUSTOM_THEME_OPTION == 1)
+            ColorPickerDialogBuilder
+                    .with(context)
+                    .setTitle("Choose " + THEME_HELPER + " color")
+                    .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
+                                                                getResources().getColor(R.color.colorAccent))
+                    .showColorPreview(true)
+                    .lightnessSliderOnly()
+                    .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                    .density(12)
 
-                            }
-                        })
-                        .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                colors[1] = getResources().getColor(R.color.colorPrimary);
-                                colors[0] = getResources().getColor(R.color.colorAccent);
+                    .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                            if(THEME_HELPER.equals(PRIMARY)) {
+                                THEME_HELPER = ACCENT;
+                                colors[1] = selectedColor;
+                                CUSTOM_THEME_OPTION = 1;
+                                onNavigationItemSelected(item);
+                            } else {
+                                colors[0] = selectedColor;
+                                THEME_HELPER = PRIMARY;
                                 setupTheme(colors);
                             }
-                        })
-                        .build()
-                        .show();
 
+                        }
+                    })
+                    .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            colors[1] = getResources().getColor(R.color.colorPrimary);
+                            colors[0] = getResources().getColor(R.color.colorAccent);
+                            setupTheme(colors);
+                        }
+                    })
+                    .build()
+                    .show();
+                    CUSTOM_THEME_OPTION = 0;
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
             i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));

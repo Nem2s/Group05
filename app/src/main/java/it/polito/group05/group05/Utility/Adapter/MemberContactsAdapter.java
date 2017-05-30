@@ -111,7 +111,9 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
 
     public void replaceAll(List<UserContact> models) {
         contacts.beginBatchedUpdates();
-
+        final ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setMessage("Loading...");
+        dialog.show();
         for (int i = contacts.size() - 1; i >= 0; i--) {
             final UserContact model = contacts.get(i);
             if (!models.contains(model)) {
@@ -120,7 +122,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
         }
         contacts.addAll(models);
         contacts.endBatchedUpdates();
-
+        dialog.dismiss();
     }
 
     public List<UserContact> retriveAll() {
