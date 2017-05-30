@@ -10,7 +10,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +20,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -46,7 +49,7 @@ public class GroupActivity extends AestheticActivity {
 
 
     FragmentManager mFragmentManager;
-    BottomBar navigation;
+    BottomNavigationView bottomView;
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
@@ -75,12 +78,8 @@ public class GroupActivity extends AestheticActivity {
 
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
-            navigation = (BottomBar) findViewById(R.id.navigation);
-            navigation.setActiveTabColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
-            navigation.setInActiveTabColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
-            navigation.setInActiveTabAlpha(0.4f);
-
-            navigation.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            bottomView = (BottomNavigationView) findViewById(R.id.navigation);
+            bottomView.setSelectedItemId(R.id.navigation_expenses);
             fab = (FloatingActionButton) findViewById(R.id.fab);
             cv_group = (CircleImageView) findViewById(R.id.cv_groupImage);
             tv_groupname = (TextView) findViewById(R.id.tv_group_name);
@@ -95,7 +94,7 @@ public class GroupActivity extends AestheticActivity {
             initializeUI();
 
         } else {
-            navigation.setDefaultTab(R.id.navigation_chat);
+            bottomView.setSelectedItemId(R.id.navigation_chat);
             mFragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ChatFragment.newInstance());
@@ -109,36 +108,31 @@ public class GroupActivity extends AestheticActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(mToolbar);
 
-        mToolbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+
+        bottomView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                mToolbar.removeOnLayoutChangeListener(this);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                tv_members.setSelected(true);
+                switch (item.getItemId()) {
+                    case R.id.navigation_expenses:
+                        replaceWithExpenseFragment();
+                        //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
+                        break;
+                    case R.id.navigation_chat:
+                        replaceWithChatFragment();
+                        //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
+                        break;
+                    case R.id.navigation_history:
+                        replaceWithHistoryFragment();
+                        //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
+                        //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
+                        //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
-                navigation.setOnTabSelectListener(new OnTabSelectListener() {
-                    @Override
-                    public void onTabSelected(@IdRes int i) {
-                        tv_members.setSelected(true);
-                        switch (i) {
-                            case R.id.navigation_expenses:
-                                replaceWithExpenseFragment();
-                                //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
-                                break;
-                            case R.id.navigation_chat:
-                                replaceWithChatFragment();
-                                //animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.colorPrimaryLight), mToolbar.getWidth() / 2, mToolbar.getHeight());
-                                break;
-                            case R.id.navigation_history:
-                                replaceWithHistoryFragment();
-                                //Toast.makeText(getApplicationContext(), "To be implmented...", Toast.LENGTH_SHORT).show();
-                                //changeToolbarColor(getBackgroundColor(mToolbar), getResources().getColor(R.color.historyTabColor));
-                                //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
-
-                                break;
-                        }
-                    }
-                });
+                        break;
+                }
+                return true;
             }
-        });
+    });
     }
 
     @Override
