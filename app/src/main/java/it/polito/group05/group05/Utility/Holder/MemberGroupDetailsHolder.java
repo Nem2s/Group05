@@ -66,7 +66,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
-                        tv_userBalance.setText("Already Payed!");
+                        tv_userBalance.setText("Break even!");
                         tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
@@ -79,8 +79,10 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
-                                        expense.getMembers().containsKey(user.getId()))
-                                    value -= expense.getMembers().get(user.getId());
+                                        expense.getMembers().containsKey(user.getId())) {
+                                    if(!(boolean) expense.getPayed().get(user.getId()))
+                                        value -= expense.getMembers().get(user.getId());
+                                }
                                 else if (user.getId().equals(expense.getOwner()) &&
                                         !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
@@ -97,7 +99,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 button_notify.setVisibility(View.GONE);
 
                             } else {
-                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setText("Break even!");
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
@@ -139,27 +141,14 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                         final List<ExpenseDatabase> expensePayed = new ArrayList<ExpenseDatabase>();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ExpenseDatabase expense = data.getValue(ExpenseDatabase.class);
-                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId()) && !(boolean) expense.getPayed().get(s)) {
-                                expenseList.add(expense);
-                                expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
-                               /* FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(s).setValue(0.0);
-                                tmp += expense.getMembers().get(s);
-                                //DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
-                                FirebaseDatabase.getInstance().getReference("expenses")
-                                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                        .child(expense.getId())
-                                        .child("members")
-                                        .child(expense.getOwner())
-                                        .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                //DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
-*/
+                            if (expense.getPayed().containsKey(s) && expense.getOwner().equals(user.getId())) {
+                                if(!(boolean)expense.getPayed().get(s)) {
+                                    expenseList.add(expense);
+                                    expenseViewList.add(expense.getName() + " " + expense.getMembers().get(s) * -1 + " €");
+                                }
                             }
                         }
-                        Integer[] res;
+                        Integer [] res;
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(true)
                                 .title("Choose to Pay")
@@ -171,7 +160,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         double var = 0;
                                         for(int i = 0; i < which.length; i++) {
                                             expensePayed.add(expenseList.get(which[i]));
-                                            var += expensePayed.get(i).getMembers().get(s);
+                                            var+=expensePayed.get(i).getMembers().get(s);
                                             DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
                                             DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }

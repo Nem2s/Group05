@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -341,7 +342,7 @@ public class DB_Manager {
         ref.setValue(expenseDatabase);
     }
 
-    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
+    public  void imageProfileUpload(final int type, String Id, String name, Bitmap bitmap){
 
         StorageReference ref;
         switch(type) {
@@ -394,6 +395,7 @@ public class DB_Manager {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                if(type == 2) MainActivity.mAdapter.notifyItemChanged(MainActivity.mAdapter.getItemCount()-1);
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
             }
