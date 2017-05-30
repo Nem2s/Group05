@@ -649,4 +649,8 @@ public class DB_Manager {
         expenseRef.child(gid).child(eid).child("payed").child(id).setValue(false);
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(false);
     }
+
+    public void reminder(String gid, String expenseId, String s) {
+        FirebaseDatabase.getInstance().getReference("history").child(gid).child(expenseId).child("notifyToAll").child(s).setValue(true);
+    }
 }

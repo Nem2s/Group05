@@ -72,6 +72,11 @@
                 android:value="it.polito.group05.group05.MainActivity" />
         </activity>
         <activity android:name=".NewMemberActivity" />
+        <activity
+            android:name=".ExpenseDetailsActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light"></activity>
 
         <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>

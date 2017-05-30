@@ -121,6 +121,13 @@ public class NotificationService extends FirebaseMessagingService {
                 intent2.putExtra("action", "false");
                 nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, int1, intent2, PendingIntent.FLAG_ONE_SHOT));
                 break;
+            case "rememberPayment":
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expense_debit").substring(1))) + " for " + map.get("expense_name");
+                title = map.get("requestFrom") + "@" + map.get("groupName");
+                
+                ticker = title + '\n' + body;
+
+                break;
 
         }
         Intent i = new Intent(this, SignUpActivity.class);

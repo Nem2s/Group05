@@ -99,7 +99,7 @@ public class GroupActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
 
 
-                                    DB_Manager.getInstance().payDone(gid, eid, uid, dd);
+                                    DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd);
                                     dialog.cancel();
                                 }
                             })
