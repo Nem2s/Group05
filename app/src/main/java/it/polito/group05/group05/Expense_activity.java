@@ -205,7 +205,7 @@ public class Expense_activity extends AppCompatActivity {
                         }
 
                         for(User_expense e : partecipants){
-                            e.setIncluded(false);
+                            e.setExcluded(false);
                         }
                         cid.show(fm,"TV_tag");
                     }

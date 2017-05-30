@@ -68,28 +68,21 @@ public class CustomIncludedDialog extends DialogFragment {
                 dismiss();
             }
         });
-        this.getDialog().setTitle("Include Friends");
+        this.getDialog().setTitle("Choose Friends");
         return rootView;
 
     }
     private void searchSelection() {
         for(int i = 0; i< list.size(); i++){
             User_expense e = list.get(i);
-            if(e.isIncluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))){
+            if(!e.isExcluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))){
                 if(!newList.contains(e))
                 {
                     newList.add(e);
             }}
         }
     }
-    private  void removeSelection(){
-        for(int i = 0; i< list.size(); i++){
-            User_expense e = list.get(i);
-            if(e.isIncluded()){
-                e.setIncluded(false);
-                }
-            }
-        }
+
 
     @Override
     public void onResume() {

@@ -47,7 +47,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
-        ue.setIncluded(false);
+        ue.setExcluded(false);
             holder.name_person.setText(ue.getName());
             Glide.with(context)
                     .using(new FirebaseImageLoader())

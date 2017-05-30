@@ -1,9 +1,11 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -14,6 +16,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 /**
@@ -46,11 +49,21 @@ public class PersonSelectedHolder extends GeneralHolder{
                 .asBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(img_profile);
+
+        switchButton.setChecked(true);
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    us.setIncluded(true);
+                if(buttonView.isChecked()){
+                    us.setExcluded(false);
+                }
+                else {
+                    if (!(us.getId().equals(Singleton.getInstance().getCurrentUser().getId())))
+                        us.setExcluded(true);
+                    else {
+                        Snackbar.make(itemView,  "You have already payed", Toast.LENGTH_SHORT).show();
+                        switchButton.setChecked(true);
+                    }
                 }
             }
         });
