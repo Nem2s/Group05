@@ -1,6 +1,8 @@
 package it.polito.group05.group05.Utility.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

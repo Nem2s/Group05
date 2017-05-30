@@ -98,7 +98,7 @@
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.group05.group05.MainActivity" />
