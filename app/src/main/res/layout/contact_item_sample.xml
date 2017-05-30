@@ -1,4 +1,3 @@
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_marginTop="8dp"
@@ -14,8 +13,8 @@
         android:id="@+id/cv_invited_image"
         android:layout_height="48dp"
         android:layout_width="48dp"
-        android:layout_centerVertical="true"
-        />
+        android:layout_centerVertical="true" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +22,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
         android:layout_toEndOf="@+id/cv_invited_image">
+
         <TextView
             android:id="@+id/tv_invited_name"
             android:layout_width="wrap_content"
@@ -33,8 +33,8 @@
             android:textSize="16sp"
             android:ellipsize="end"
             android:lines="1"
-            android:layout_marginEnd="85dp"
-            />
+            android:layout_marginEnd="85dp" />
+
         <TextView
             android:id="@+id/tv_invited_pnumber"
             android:layout_width="wrap_content"
@@ -42,10 +42,10 @@
             android:text="3351671175"
             android:textStyle="italic"
             android:layout_marginTop="8dp"
-            android:alpha="0.8"
-            />
+            android:alpha="0.8" />
 
     </LinearLayout>
+
     <Button
         android:id="@+id/button_invite"
         android:layout_width="80dp"
@@ -53,6 +53,5 @@
         android:text="Invite"
         android:theme="@style/AccentButton"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        />
+        android:layout_centerVertical="true" />
 </RelativeLayout>

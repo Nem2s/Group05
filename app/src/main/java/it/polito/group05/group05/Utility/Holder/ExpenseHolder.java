@@ -95,8 +95,6 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv_owner = (CircleImageView)itemView.findViewById(R.id.cv_ownerimage);
 
 
-
-
     }
     public void setData(Object c, final Context context){
         setData(c, context, View.GONE);
@@ -125,8 +123,8 @@ public class ExpenseHolder extends GeneralHolder{
 
             if(!(Singleton.getInstance().getmCurrentGroup().getMembers().get(i)instanceof UserDatabase)) continue;
             User_expense x = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(i));
-                x.setCustomValue(expenseDatabase.getMembers().get(i));
-                x.setExpense(expenseDatabase);
+            x.setCustomValue(expenseDatabase.getMembers().get(i));
+            x.setExpense(expenseDatabase);
             if (x.getId().compareTo(expenseDatabase.getOwner()) == 0) {
                 owner.setText(x.getId().compareTo(id) == 0 ? "You" : x.getName());
                 //iv_bookmark.setVisibility(x.getId().compareTo(id) == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -174,12 +172,9 @@ public class ExpenseHolder extends GeneralHolder{
             View rootView = LayoutInflater.from(context).inflate(R.layout.expense_card_expansion,parent,false);
              GeneralHolder holder = new ExpenseCardHolder(rootView);
             return holder;
-
         }
-
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
             ((GeneralHolder)holder).setData(expenseDatabase.getUsersExpense().get(position),context);
         }
         @Override
@@ -191,12 +186,11 @@ public class ExpenseHolder extends GeneralHolder{
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
         rv.setVisibility(visibility);
 }*/
-private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
+    private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
 
    /* int cnt=0;
     try {
         final PopupMenu popup = new PopupMenu(context, menu);
-
     popup.inflate(R.menu.expense_card_menu);
     //adding click listener
     Menu popupMenu = popup.getMenu();
@@ -207,7 +201,6 @@ private void setupListener(final CardView cv, final TextView price, final Contex
         subscribe.setVisible(false);
     if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
         delete.setVisible(false);
-
     } else {
         delete.setVisible(true);
     }
@@ -216,13 +209,11 @@ private void setupListener(final CardView cv, final TextView price, final Contex
         } else {
             pay.setVisible(true);
         }
-
         if (expense.getFile() == null) {
         download.setVisible(false);
         } else {
             download.setVisible(true);
     }
-
     menu.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -237,7 +228,6 @@ private void setupListener(final CardView cv, final TextView price, final Contex
                                     .child(Singleton.getInstance().getmCurrentGroup().getId())
                                     .child(expense.getId()).removeValue();
                                 DB_Manager.getInstance().updateGroupFlow(new HashMap<String, Double>(expense.getMembers()));
-
                                 break;
                             case R.id.action_pay:
                             //handle menu2 click
@@ -304,30 +294,30 @@ private void setupListener(final CardView cv, final TextView price, final Contex
        // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
     }*/
         cv.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i = new Intent((Activity)context, ExpenseDetailsActivity.class);
-            Bundle extras = new Bundle();
-            extras.putSerializable("map", (Serializable) expense.getMembers());
-            extras.putString("title", expense.getName());
-            extras.putString("owner", expense.getOwner());
-            extras.putString("price", expense.getPrice().toString());
-            extras.putLong("timestamp", expense.getTimestamp());
-            int location[] = new int[2];
-            cv.getLocationInWindow(location);
-            LEFT_OFFSET = location[0];
-            TOP_OFFSET = location[1];
-            WIDTH = cv.getWidth();
-            HEIGHT = cv.getHeight();
-            extras.putInt("left_offset", LEFT_OFFSET);
-            extras.putInt("top_offset", TOP_OFFSET);
-            extras.putInt("width", WIDTH);
-            extras.putInt("height", HEIGHT);
-            i.putExtras(extras);
-            context.startActivity(i);
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent((Activity)context, ExpenseDetailsActivity.class);
+                Bundle extras = new Bundle();
+                extras.putSerializable("map", (Serializable) expense.getMembers());
+                extras.putString("title", expense.getName());
+                extras.putString("owner", expense.getOwner());
+                extras.putString("price", expense.getPrice().toString());
+                extras.putLong("timestamp", expense.getTimestamp());
+                int location[] = new int[2];
+                cv.getLocationInWindow(location);
+                LEFT_OFFSET = location[0];
+                TOP_OFFSET = location[1];
+                WIDTH = cv.getWidth();
+                HEIGHT = cv.getHeight();
+                extras.putInt("left_offset", LEFT_OFFSET);
+                extras.putInt("top_offset", TOP_OFFSET);
+                extras.putInt("width", WIDTH);
+                extras.putInt("height", HEIGHT);
+                i.putExtras(extras);
+                context.startActivity(i);
 
-        }
-    });
+            }
+        });
 
    /* rel.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -343,10 +333,9 @@ private void setupListener(final CardView cv, final TextView price, final Contex
                 Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
-
         }
     });*/
 
-}
+    }
 
 }

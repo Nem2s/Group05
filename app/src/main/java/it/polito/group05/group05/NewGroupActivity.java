@@ -201,7 +201,7 @@ public class NewGroupActivity extends AestheticActivity {
         no_people = (TextView)findViewById(R.id.no_people);
 
         context = this;
-        tv_contacts = (TextView)findViewById(R.id.tv_contacts);
+        tv_contacts = (TextView) findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -344,8 +344,7 @@ public class NewGroupActivity extends AestheticActivity {
             public boolean onQueryTextChange(String newText) {
 
 
-
-                if ( TextUtils.isEmpty ( newText ) ) {
+                if (TextUtils.isEmpty(newText)) {
 
                     invitedAdapter.replaceAll(filterRegistered(""));
                     contactsAdapter.replaceAll(filterLocal(""));
@@ -357,8 +356,8 @@ public class NewGroupActivity extends AestheticActivity {
 
                     invitedAdapter.replaceAll(filterRegistered(newText));
                     contactsAdapter.replaceAll(filterLocal(newText));
-                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
-                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0) {
+                    if (((MemberInvitedAdapter) rv_invited.getAdapter()).getItemCount() == 0 &&
+                            ((MemberContactsAdapter) rv_contacts.getAdapter()).getItemCount() == 0) {
                         no_people.setVisibility(View.VISIBLE);
                         tv_partecipants.setVisibility(View.GONE);
                         tv_contacts.setVisibility(View.GONE);
@@ -379,19 +378,20 @@ public class NewGroupActivity extends AestheticActivity {
             private List<UserContact> filterLocal(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : local_contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : local_contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
 
                 return res;
             }
+
             private List<UserContact> filterRegistered(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for(UserContact u : contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for (UserContact u : contacts) {
+                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
@@ -695,15 +695,13 @@ public class NewGroupActivity extends AestheticActivity {
             });
 
 
-
-
             return null;
         }
 
         @Override
         protected void onPreExecute() {
-            rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-            rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
+            rv_invited = (RecyclerView) findViewById(R.id.invited_people_list);
+            rv_contacts = (RecyclerView) findViewById(R.id.contacts_people_list);
             dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
             LinearLayoutManager contactsManager = new LinearLayoutManager(getApplicationContext());
             contactsManager.setItemPrefetchEnabled(true);
@@ -738,7 +736,7 @@ public class NewGroupActivity extends AestheticActivity {
 
             rv_invited.setAdapter(invitedAdapter);
 
-            if(invitedAdapter.getItemCount() == 0) {
+            if (invitedAdapter.getItemCount() == 0) {
 
                 Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
 
@@ -777,7 +775,7 @@ public class NewGroupActivity extends AestheticActivity {
 
                 iv_new_group.setEnabled(false);
 
-                if(contactsAdapter.getItemCount() == 0)
+                if (contactsAdapter.getItemCount() == 0)
                     no_people.setVisibility(View.VISIBLE);
 
             }
@@ -856,7 +854,7 @@ public class NewGroupActivity extends AestheticActivity {
 
                 @Override
 
-                public void afterTextChanged(Editable editable){
+                public void afterTextChanged(Editable editable) {
 
 
                 }

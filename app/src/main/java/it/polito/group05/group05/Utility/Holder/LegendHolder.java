@@ -36,9 +36,9 @@ public class LegendHolder extends GeneralHolder {
 
     public LegendHolder(View itemView) {
         super(itemView);
-        fab_group_color = (FloatingActionButton)itemView. findViewById(R.id.fab_group_color);
-        tv_groupName = (TextView)itemView.findViewById(R.id.tv_group_name);
-        tv_groupBalance = (TextView)itemView.findViewById(R.id.tv_group_balance);
+        fab_group_color = (FloatingActionButton) itemView.findViewById(R.id.fab_group_color);
+        tv_groupName = (TextView) itemView.findViewById(R.id.tv_group_name);
+        tv_groupBalance = (TextView) itemView.findViewById(R.id.tv_group_balance);
         detector = new GestureDetector(context, new GestureTap());
     }
 
@@ -49,12 +49,12 @@ public class LegendHolder extends GeneralHolder {
     }
 
     public View getFab() {
-        return (View)fab_group_color;
+        return (View) fab_group_color;
     }
 
     public void setData(Object groupDatabase, Integer integer, Context context) {
-        g = (GroupDatabase)groupDatabase;
-        color  = integer;
+        g = (GroupDatabase) groupDatabase;
+        color = integer;
         this.context = context;
         fab_group_color.setBackgroundTintList(ColorStateList.valueOf(color));
         tv_groupName.setText(g.getName());
@@ -66,9 +66,7 @@ public class LegendHolder extends GeneralHolder {
             res = "+" + s + " €";
             tv_groupBalance.setText(res);
             tv_groupBalance.setTextColor(context.getResources().getColor(R.color.green_400));
-        }
-
-        else {
+        } else {
             res = s + " €";
             tv_groupBalance.setText(res);
             tv_groupBalance.setTextColor(context.getResources().getColor(R.color.red_400));
@@ -78,7 +76,7 @@ public class LegendHolder extends GeneralHolder {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-              detector.onTouchEvent(motionEvent);
+                detector.onTouchEvent(motionEvent);
                 return true;
             }
 
@@ -95,15 +93,15 @@ public class LegendHolder extends GeneralHolder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
 
-                    ((Activity)context).findViewById(R.id.toggle_reveal),
-                    (int)cx,
-                    (int)cy, 0,
+                    ((Activity) context).findViewById(R.id.toggle_reveal),
+                    (int) cx,
+                    (int) cy, 0,
                     finalRadius
             );
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ((Activity)context).findViewById(R.id.toggle_reveal).setBackgroundColor(color);
+                    ((Activity) context).findViewById(R.id.toggle_reveal).setBackgroundColor(color);
                 }
 
                 @Override
@@ -117,14 +115,14 @@ public class LegendHolder extends GeneralHolder {
             animator.start();
         } else {
             Animator animator = ViewAnimationUtils.createCircularReveal(
-                    ((Activity)context).findViewById(R.id.toggle_reveal),
+                    ((Activity) context).findViewById(R.id.toggle_reveal),
                     (int) cx,
                     (int) cy, 0,
                     finalRadius);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ((Activity)context).findViewById(R.id.toggle_reveal).setBackgroundColor(color);
+                    ((Activity) context).findViewById(R.id.toggle_reveal).setBackgroundColor(color);
                 }
 
                 @Override
@@ -135,6 +133,7 @@ public class LegendHolder extends GeneralHolder {
             });
         }
     }
+
     class GestureTap extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
@@ -147,7 +146,7 @@ public class LegendHolder extends GeneralHolder {
             float cx = e.getRawX();
             float cy = e.getRawY();
 
-            animateAndLaunchActivity((int)cx, (int)cy, color);
+            animateAndLaunchActivity((int) cx, (int) cy, color);
             return true;
         }
     }
