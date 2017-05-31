@@ -209,9 +209,9 @@ public class CustomDialogFragment extends DialogFragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Activity activity = getActivity();
-                if(activity!=null)
-                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();
-                    expense.setFile("");
+                if(activity!=null){
+                    expense.setFile("fail");
+                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();}
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override

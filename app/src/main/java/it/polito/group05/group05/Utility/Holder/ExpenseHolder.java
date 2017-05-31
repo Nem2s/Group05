@@ -278,6 +278,10 @@ public class ExpenseHolder extends GeneralHolder{
                 extras.putLong("timestamp", expense.getTimestamp());
                 if(expense.getFile()!= null){
                     extras.putString("file", expense.getFile());
+                    if(expense.getFile().equals("fail")){
+                        extras.putBoolean("correct_download", false);
+                    }
+                    else extras.putBoolean("correct_download", true);
                 }
                 int location[] = new int[2];
                 cv.getLocationInWindow(location);
@@ -297,22 +301,6 @@ public class ExpenseHolder extends GeneralHolder{
             }
         });
 
-   /* rel.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            try {
-                DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
-                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(f),"**///*");
-              /*  intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                context.startActivity(intent);
-            } catch (FileNotFoundException e) {
-                Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        }
-    });*/
 
     }
 

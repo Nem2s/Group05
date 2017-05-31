@@ -1,8 +1,12 @@
 package it.polito.group05.group05;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,10 +23,12 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.klinker.android.sliding.MultiShrinkScroller;
 import com.klinker.android.sliding.SlidingActivity;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +36,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpenseAdapter;
@@ -60,8 +68,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     Bundle b;
     RecyclerView rv;
     ScrollView sv;
-    String nomeF;
+    String nomeF, idFile;
+    Boolean correct_download;
 
+    private long fileSize = 0;
     @Override
     protected void configureScroller(MultiShrinkScroller scroller) {
         super.configureScroller(scroller);
@@ -72,8 +82,12 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     @Override
     public void init(Bundle bundle) {
 
+
         b = getIntent().getExtras();
         nomeF = b.getString("file");
+        idFile= b.getString("id");
+        correct_download = b.getBoolean("correct_download");
+
         setContent(R.layout.activity_expense_details);
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
@@ -95,7 +109,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rel_lay.setVisibility(View.GONE);
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
-        if(nomeF != null){
+
+        if(nomeF != null && correct_download){
             if (rel_lay.getVisibility() == View.GONE){
                 rel_lay.setVisibility(View.VISIBLE);
                 nameFile.setText(b.getString("file"));
@@ -106,16 +121,32 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String idFile= b.getString("id");
-                String nf = b.getString("file");
                 try{
-                DB_Manager.getInstance().fileDownload(idFile,nf);
+                DB_Manager.getInstance().fileDownload(idFile,nomeF);
                 }
                 catch (FileNotFoundException fnfe){
                   //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
+
+        nameFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    DB_Manager.getInstance().fileDownload(idFile,nomeF);
+                    File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ nomeF);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(f),"*/*");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(intent);
+                } catch (FileNotFoundException e) {
+                    Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
+
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
