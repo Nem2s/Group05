@@ -118,7 +118,9 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     Double d = Double.parseDouble(tv_userBalance.getText().toString());
                     String myId = Singleton.getInstance().getCurrentUser().getId();
                     DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
+                    Toast.makeText(context, "Ciao", Toast.LENGTH_LONG);
                 } catch (Exception c) {
+
                 }
             }
         });

@@ -92,7 +92,7 @@ public class GroupActivity extends AestheticActivity {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
             transaction.commit();
-            initializeUI();
+
 
         } else {
             navigation.setDefaultTab(R.id.navigation_chat);
@@ -100,6 +100,7 @@ public class GroupActivity extends AestheticActivity {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ChatFragment.newInstance());
             transaction.commit();
+
 
         }
         if (getIntent().getStringExtra("type") != null) {
@@ -133,6 +134,7 @@ public class GroupActivity extends AestheticActivity {
             }
 
         }
+        initializeUI();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);

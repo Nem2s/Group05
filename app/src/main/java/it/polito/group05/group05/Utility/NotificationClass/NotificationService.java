@@ -113,7 +113,6 @@ public class NotificationService extends FirebaseMessagingService {
                 int int1 = NotificationId.getID();
                 intent.putExtra("action", "true");
                 intent.putExtra("notification", notificationId);
-
                 nb.setPriority(Notification.PRIORITY_MAX);
                 nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, int1, intent, PendingIntent.FLAG_ONE_SHOT));
                 int1 = NotificationId.getID();
@@ -124,7 +123,6 @@ public class NotificationService extends FirebaseMessagingService {
             case "rememberPayment":
                 body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expenseDebit").substring(1))) + " for " + map.get("expenseName");
                 title = map.get("requestFrom") + "@" + map.get("groupName");
-
                 ticker = title + '\n' + body;
 
                 break;
