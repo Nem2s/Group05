@@ -79,7 +79,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:palette-v7:25.3.1'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
-    compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.github.Mariovc:ImagePicker:1.0.5'
     compile 'com.roughike:bottom-bar:2.3.1'
 
@@ -95,7 +94,6 @@ dependencies {
     compile 'com.dmitrymalkovich.android:material-design-dimens:1.4'
 
     compile 'com.mikepenz:fastadapter-commons:2.5.2@aar'
-    compile 'com.kyleduo.switchbutton:library:1.4.6'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     compile 'com.klinkerapps:sliding-activity:1.4.4'
     compile 'com.github.QuadFlask:colorpicker:0.0.13'

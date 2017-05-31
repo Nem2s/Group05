@@ -100,10 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Group Name"
-                        app:met_baseColor="@color/colorPrimary"
-                        app:met_floatingLabel="highlight"
-                        app:met_floatingLabelAnimating="true"
-                        app:met_singleLineEllipsis="true"
+
                         />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>

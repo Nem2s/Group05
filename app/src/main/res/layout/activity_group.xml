@@ -85,16 +85,13 @@
             android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?android:attr/actionBarSize"></FrameLayout>
-    <com.roughike.bottombar.BottomBar
+    <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
         android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"
-        app:bb_tabXmlResource="@xml/tabs"
-        app:bb_inActiveTabColor="?colorPrimary"
-        app:bb_activeTabColor="?colorAccent"
-        />
+        ></android.support.design.widget.BottomNavigationView>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

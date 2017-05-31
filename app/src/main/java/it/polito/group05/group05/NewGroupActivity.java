@@ -48,7 +48,6 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mvc.imagepicker.ImagePicker;
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

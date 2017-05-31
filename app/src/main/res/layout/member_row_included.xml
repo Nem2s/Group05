@@ -31,15 +31,11 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <com.kyleduo.switchbutton.SwitchButton
+    <Switch
         android:id="@+id/switch_button"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_margin="16dp"
-        app:kswThumbRadius="2dp"
-        app:kswThumbWidth="17dp"
-        app:kswThumbHeight="11dp"
-        app:kswBackRadius="2dp" />
+        android:layout_margin="16dp" />
 </RelativeLayout>

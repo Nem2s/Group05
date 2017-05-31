@@ -14,10 +14,12 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,9 +30,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.BottomNavBgMode;
 import com.afollestad.aesthetic.BottomNavIconTextMode;
 import com.afollestad.aesthetic.NavigationViewMode;
 import com.afollestad.materialdialogs.DialogAction;
@@ -39,6 +43,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -65,6 +70,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -87,6 +93,7 @@ public class MainActivity extends AestheticActivity
     private static final String PRIMARY = "Primary";
     private static final String ACCENT = "Accent";
     DrawerLayout drawer;
+    NavigationView navigationView;
     CircleImageView cv_user_drawer;
     Activity activity;
     Context context;
@@ -214,7 +221,7 @@ public class MainActivity extends AestheticActivity
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -327,8 +334,8 @@ public class MainActivity extends AestheticActivity
         int id = item.getItemId();
         if (id == R.id.nav_balance) {
             Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));
+            item.setChecked(false);
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
-
         } else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
@@ -338,12 +345,13 @@ public class MainActivity extends AestheticActivity
                         }
                     })
                     .show();
-
+            item.setChecked(false);
         } else if (id == R.id.nav_share) {
-            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
-                    .setMessage("ciao ciao ciao")
+            Intent intent = new AppInviteInvitation.IntentBuilder("Share")
+                    .setMessage("Let's try out Share Cash! It's awesome!")
                     .build();
             startActivityForResult(intent, 1);
+            item.setChecked(false);
         } else if (id == R.id.nav_logout) {
             AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -353,7 +361,7 @@ public class MainActivity extends AestheticActivity
                 }
             });
 
-
+            item.setChecked(false);
         } else if (id == R.id.nav_themes) {
 
             if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
@@ -442,6 +450,7 @@ public class MainActivity extends AestheticActivity
                     .build()
                     .show();
                     CUSTOM_THEME_OPTION = 0;
+            item.setChecked(false);
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
             i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));
@@ -449,11 +458,14 @@ public class MainActivity extends AestheticActivity
             i.addCategory("android.intent.category.LAUNCHER");
             i.addCategory("android.intent.category.DEFAULT");
             startActivity(i);
+            item.setChecked(false);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+
     }
 
     @Override
@@ -507,7 +519,10 @@ public class MainActivity extends AestheticActivity
                             NavigationViewMode.SELECTED_ACCENT
                     )
                     .bottomNavigationIconTextMode(
-                            BottomNavIconTextMode.SELECTED_ACCENT
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
                     )
                     .colorWindowBackground(Color.parseColor("#303030"))
                     .apply();
@@ -524,7 +539,10 @@ public class MainActivity extends AestheticActivity
                             NavigationViewMode.SELECTED_ACCENT
                     )
                     .bottomNavigationIconTextMode(
-                            BottomNavIconTextMode.SELECTED_ACCENT
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
                     )
                     .colorWindowBackground(Color.parseColor("#FAFAFA"))
                     .apply();
