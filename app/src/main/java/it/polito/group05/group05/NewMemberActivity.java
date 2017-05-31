@@ -133,7 +133,7 @@ public class NewMemberActivity extends AestheticActivity {
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
         contacts = new ArrayList<>();
-        invitedAdapter = new MemberInvitedAdapter(contacts, context);
+
         for(UserContact i : Singleton.getInstance().getRegContactsList().values())
             if(!Singleton.getInstance().getmCurrentGroup().getMembers().containsKey(i.getId()))
                 contacts.add(i);
@@ -150,6 +150,7 @@ public class NewMemberActivity extends AestheticActivity {
 
         });
         */
+        invitedAdapter = new MemberInvitedAdapter(contacts, context);
         if(invitedAdapter.getItemCount() == 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {

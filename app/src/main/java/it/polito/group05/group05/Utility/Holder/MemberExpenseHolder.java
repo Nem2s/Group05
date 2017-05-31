@@ -47,7 +47,6 @@ public class MemberExpenseHolder extends GeneralHolder {
         } else
             name.setText(user.getName());
         double d = Math.abs(e.get(user.getId()));
-        d = Math.round(d);
         this.price.setText(String.format("%.2f", d) + " €");
 
     }

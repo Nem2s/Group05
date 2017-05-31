@@ -197,9 +197,9 @@ public class Expense_activity extends AestheticActivity {
                         cid = new CustomIncludedDialog(partecipants, expense, uri);
                         cid.show(fm, "TV_tag");
                     }
-                }
+                    }
 
-            }
+                }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -252,10 +252,10 @@ public class Expense_activity extends AestheticActivity {
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                    //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                           //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                    //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                            //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
                             }
                         }, mYear, mMonth, mDay);
@@ -267,9 +267,9 @@ public class Expense_activity extends AestheticActivity {
         {
             public void onClick(View v){
                 if (!newFile) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("*/*");
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
                     startActivityForResult(intent,0);
                 }else{
                     veroNF.setText("FileName");

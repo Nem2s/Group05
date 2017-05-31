@@ -9,12 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,8 +47,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_date;
     TextView tv_name;
     TextView tv_expense;
-    TextView tv_members;
-    ImageView iv_arrow;
     Button button_pay;
     Button button_notify;
     Bundle b;
@@ -84,13 +80,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_price = (TextView) findViewById(R.id.tv_price);
         tv_name = (TextView) findViewById(R.id.tv_owner_name);
         tv_expense = (TextView) findViewById(R.id.tv_expense_name);
-        tv_members = (TextView)findViewById(R.id.tv_static_members);
-        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);
-        iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
-        tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -158,7 +151,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             });
         }
         final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map);
-        ;
+
         for (final String s : map.keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

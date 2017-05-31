@@ -9,6 +9,20 @@
     tools:context="it.polito.group05.group05.Expense_activity">
 
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="14dp"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_navigate_next_black_24dp"
+        app:layout_anchorGravity="bottom|right|end" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,7 +73,6 @@
                         android:layout_marginRight="16dp"
                         android:layout_marginTop="16dp"
                         android:text="Add an Expense"
-                        android:textColor="?android:textColorSecondary"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:transitionName="@string/transition_text" />
@@ -120,8 +133,9 @@
 
 
                 <android.support.design.widget.TextInputLayout
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/et_name_expense"
                         android:layout_width="match_parent"
@@ -131,62 +145,62 @@
                         android:hint="Description"
                         android:imeOptions="actionDone"
                         android:textSize="18sp"
-                        android:textStyle="normal"
-                     />
+                        android:textStyle="normal" />
                 </android.support.design.widget.TextInputLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp">
 
-                        <android.support.design.widget.TextInputLayout
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/et_cost_expense"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:layout_width="match_parent">
-                            <android.support.design.widget.TextInputEditText
-                                android:id="@+id/et_cost_expense"
-                                android:layout_width="120dp"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="4dp"
-                                android:layout_marginRight="4dp"
-                                android:digits="0123456789.,"
-                                android:hint="Cost"
-                                android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
-                                android:textSize="15sp"
-                                android:textStyle="normal"
-                                android:drawableRight="@drawable/euro"
-                            />
-                        </android.support.design.widget.TextInputLayout>
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:digits="0123456789.,"
+                            android:drawableRight="@drawable/euro"
+                            android:hint="Cost"
+                            android:imeOptions="actionDone"
+                            android:inputType="numberDecimal"
+                            android:textSize="15sp"
+                            android:textStyle="normal" />
+                    </android.support.design.widget.TextInputLayout>
+
                     <RelativeLayout
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        >
+                        android:layout_centerVertical="true">
 
                         <ImageView
-                                android:id="@+id/calendar"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_alignParentEnd="true"
+                            android:id="@+id/calendar"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_alignParentEnd="true"
                             android:layout_margin="4dp"
                             android:padding="2dp"
                             android:src="@drawable/calendar" />
 
-                            <TextView
-                                android:id="@+id/name_date"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginRight="4dp"
-                                android:layout_toLeftOf="@+id/calendar"
-                                android:text="today" />
-                        </RelativeLayout>
+                        <TextView
+                            android:id="@+id/name_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="4dp"
+                            android:layout_toLeftOf="@+id/calendar"
+                            android:text="today" />
                     </RelativeLayout>
+                </RelativeLayout>
 
                 <View
                     android:layout_width="fill_parent"
@@ -228,7 +242,7 @@
                         android:id="@+id/button_upload"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
+                       android:layout_alignParentEnd="true"
                         android:layout_below="@+id/tv_name_fil"
                         android:text="UPLOAD"
                         android:theme="@style/GreenButton" />
@@ -244,24 +258,9 @@
                         android:layout_alignParentStart="true" />
 
                 </RelativeLayout>
-
             </LinearLayout>
-            </RelativeLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="14dp"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/ic_navigate_next_black_24dp"
-        app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>
