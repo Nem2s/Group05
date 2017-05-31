@@ -24,9 +24,9 @@ public class MemberIncludedAdapter extends RecyclerView.Adapter<PersonSelectedHo
     private List<User_expense> users;
     Context context;
 
-    public MemberIncludedAdapter(List<User_expense> users, Context context){
-        this.users= users;
-        this.context=context;
+    public MemberIncludedAdapter(List<User_expense> users, Context context) {
+        this.users = users;
+        this.context = context;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class MemberIncludedAdapter extends RecyclerView.Adapter<PersonSelectedHo
 
     @Override
     public void onBindViewHolder(PersonSelectedHolder holder, int position) {
-       holder.setData(users.get(position),context);
+        holder.setData(users.get(position), context);
     }
 
     @Override

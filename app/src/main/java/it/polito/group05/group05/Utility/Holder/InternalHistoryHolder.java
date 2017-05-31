@@ -43,13 +43,14 @@ public class InternalHistoryHolder extends GeneralHolder {
         history_text_view.setText(Html.fromHtml(sourceString));
         switch (history.getType()) {
             case 0:
-                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black_24dp));
+                history_image.setImageResource(R.drawable.ic_add_shopping_cart_black_24dp);
                 break;
             case 1:
-                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_fiber_new_black_24dp));
+                history_image.setImageResource(R.drawable.ic_fiber_new_black_24dp);
+
                 break;
             case 2:
-                history_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_person_add_black_24dp));
+                history_image.setImageResource(R.drawable.ic_person_add_black_24dp);
                 break;
             default:
                 break;
@@ -66,6 +67,7 @@ public class InternalHistoryHolder extends GeneralHolder {
                 break;
             case 1:
                 history_image.setImageResource(R.drawable.ic_fiber_new_black_24dp);
+
                 break;
             case 2:
                 history_image.setImageResource(R.drawable.ic_person_add_black_24dp);

@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
-import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -48,24 +47,6 @@ public class NotificationService extends FirebaseMessagingService {
 
     }
 
-    private void buildNotification() {
-
-        RemoteViews notificationView = new RemoteViews(
-                this.getPackageName(),
-                R.layout.notification
-        );
-
-        NotificationCompat.Builder nb = new NotificationCompat.Builder(getBaseContext());
-        nb.setAutoCancel(true).setSmallIcon(R.drawable.logo)
-                .setDefaults(Notification.DEFAULT_ALL).setContent(notificationView).setContentTitle("ssuuuuuuuuuuu");
-        nb.addAction(R.drawable.ic_mail_white_24dp, "Pay", null)
-                .addAction(R.drawable.ic_mail_white_24dp, "Another Pay", null)
-        ;
-        NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
-        nm.notify(0, nb.build());
-
-
-    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     private void buildNotification(Map<String, String> map) {
         String type = map.get("type");
@@ -78,7 +59,8 @@ public class NotificationService extends FirebaseMessagingService {
                 .using(new FirebaseImageLoader())
                     .load(FirebaseStorage.getInstance().getReference().child(map.get("icon")))
                 .asBitmap()
-                .into(48,48)
+                    .centerCrop()
+                    .into(128, 128)
                 .get();
             nb.setLargeIcon(bitmap);
         } catch (Exception e) {
@@ -119,7 +101,7 @@ public class NotificationService extends FirebaseMessagingService {
             case "paymentRequest":
                 notificationId = NotificationId.getID();
                 double d = Double.parseDouble(map.get("expenseDebit").substring(1));
-                body = "Have you received € " + String.format("%.2f", d) + " for " + map.get("expenseName") + "?";
+                body = "Have you received € " + String.format("%.2f", d) + " for " + map.get("expenseName") + "by " + map.get("requestFrom") + " ?";
                 title = map.get("groupName");
                 ticker = "paymentRequest" + " from " + map.get("requestFrom") + "\n";
                 Intent intent = new Intent(this, MyService.class);
@@ -131,16 +113,26 @@ public class NotificationService extends FirebaseMessagingService {
                 int int1 = NotificationId.getID();
                 intent.putExtra("action", "true");
                 intent.putExtra("notification", notificationId);
+
                 nb.setPriority(Notification.PRIORITY_MAX);
                 nb.addAction(R.drawable.ic_action_tick_white, "Yes", PendingIntent.getService(this, int1, intent, PendingIntent.FLAG_ONE_SHOT));
                 int1 = NotificationId.getID();
+                intent2.putExtra("notification", notificationId);
                 intent2.putExtra("action", "false");
-                intent.putExtra("notification", notificationId);
-
-
                 nb.addAction(R.drawable.ic_action_decline_white, "No", PendingIntent.getService(this, int1, intent2, PendingIntent.FLAG_ONE_SHOT));
                 break;
+            case "rememberPayment":
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expenseDebit").substring(1))) + " for " + map.get("expenseName");
+                title = map.get("requestFrom") + "@" + map.get("groupName");
 
+                ticker = title + '\n' + body;
+
+                break;
+            case "rememberPaymentToOne":
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("debit"))) + " for to be balanced";
+                title = map.get("requestFrom") + "@" + map.get("groupName");
+                ticker = title + '\n' + body;
+                break;
         }
         Intent i = new Intent(this, SignUpActivity.class);
         for (String s : map.keySet()) {

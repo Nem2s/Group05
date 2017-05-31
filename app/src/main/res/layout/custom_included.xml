@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <ScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:padding="24dp"
+            android:text="Select who you want to include:"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="8dp"
             android:padding="8dp"
             android:visibility="visible">
 
@@ -27,11 +35,11 @@
             android:id="@+id/view"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
+            android:layout_below="@+id/recyclerView_members"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
             android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
             android:layout_marginTop="8dp"
-            android:layout_below="@+id/recyclerView_members"
             android:alpha="0.6"
             android:background="@android:color/darker_gray" />
 
@@ -42,7 +50,6 @@
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/view"
             android:layout_margin="20dp"
-            android:src="@drawable/next_step" />
+            app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
     </RelativeLayout>
-    </ScrollView>
 </LinearLayout>

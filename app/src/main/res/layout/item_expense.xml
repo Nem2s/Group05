@@ -22,17 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            >
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:id="@+id/cart_image"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-
+                android:src="@drawable/shopping_cart"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                />
+                android:layout_alignParentStart="true" />
 
             <TextView
                 android:id="@+id/expense_name"
@@ -45,8 +43,7 @@
                 android:textStyle="bold"
                 android:text="VeryLongExpenseName"
                 android:ellipsize="end"
-                android:lines="1"
-                />
+                android:lines="1" />
             <TextView
                 android:id="@+id/expense_price"
                 android:layout_width="wrap_content"
@@ -56,8 +53,7 @@
                 android:textStyle="bold"
                 android:text="2000,00 €"
                 android:ellipsize="end"
-                android:lines="1"
-                />
+                android:lines="1" />
 
         </RelativeLayout>
 
@@ -67,7 +63,7 @@
             android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
             android:background="@android:color/darker_gray"
             android:alpha="0.4"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -77,53 +73,55 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:visibility="visible">
+
             <FrameLayout
                 android:id="@+id/ownerLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cv_ownerimage"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/user_placeholder"
-                    />
+                    android:src="@drawable/user_placeholder" />
+
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="end|bottom"
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="16dp"
-                    />
+                    android:src="@drawable/owner_tag" />
             </FrameLayout>
-                <TextView
-                    android:id="@+id/owner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="VeryLongUserName"
-                    android:layout_toRightOf="@id/ownerLayout"
-                    android:textSize="13sp"
-                    android:textStyle="italic"
-                    />
-                <TextView
-                    android:id="@+id/timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="01/01/1970"
-                    android:layout_toLeftOf="@id/calendar"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginTop="4dp"
-                    android:textSize="13sp" />
+            <TextView
+                android:id="@+id/owner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="VeryLongUserName"
+                android:layout_toRightOf="@id/ownerLayout"
+                android:textSize="13sp"
+                android:textStyle="italic" />
 
-                <ImageView
-                    android:id="@+id/calendar"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/01/1970"
+                android:layout_toLeftOf="@id/calendar"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="4dp"
+                android:textSize="13sp" />
 
-                    android:src="@drawable/calendar" />
+            <ImageView
+                android:id="@+id/calendar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
 
-            </RelativeLayout>
+                android:src="@drawable/calendar" />
+
+        </RelativeLayout>
     </LinearLayout>
 
 

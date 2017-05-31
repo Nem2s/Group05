@@ -97,84 +97,6 @@ exports.sendNewGroupNotification = functions.database.ref('/users/{uId}/userGrou
   });
 });
 
-/*
-
-
-exports.sendNewExpenseNotification = functions.database.ref('/expenses/{gId}/{eId}/members/{uId}').onWrite(event => {
-  const eid = event.params.eId;
-  const gid = event.params.gId;
-  const uid = event.params.uId;
-  
-  // If un-follow we exit the function.	
-  if (!event.data.val()) {
-    return console.log('User ', uid, 'does not belong to', gid);
-  }
-  /*
-  if(event.previous.val()){
-	  return;
-  }
-  
- // console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
-
-  // Get the list of device notification tokens.
-  
-  //var obj = Object.values(expense);
-  console.log(uid,'       ', gid,'     ', eid);
-  
-  
-  
-  
-  
-  
-  
-  const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/fcmToken').once('value');
-  const getDeviceTokensPromise = admin.database().ref('/users/'+uid+'/fcmToken').once('value');
-  const getGroupProfilePromise = admin.database().ref('/groups/'+gid+'/name').once('value');
-  const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
-  
- 
-  return Promise.all([getDeviceTokensPromise, getGroupProfilePromise,getExpenseProfilePromise]).then(results => {
-    const tokensSnapshot = results[0].val();
-	const groupName   = results[1].val();
-	const expense = results[2].val();
-    // Check if there are any device tokens.
-   
-    console.log('There are ', tokensSnapshot, 'tokens to send notifications to.',groupName);
-    //console.log('Fetched follower profile', follower);
-
-    // Notification details.
-    const payload = {
-      notification: {
-        title:expense.name+' is created ' +'in ' +groupName +' by '+expense.owner,
-        body: 'Debit: '+ expense.members[uid],
-		sound: 'default',
-		badge: '1',
-		collapse_key : 'newExpense',
-		icon:'idea.png'
-		
-		
-      },
-	  data: { 
-		  groupId:gid,
-		  expenseId:expense.id
-		  
-		  
-	  }
-    };
-    return admin.messaging().sendToDevice(tokensSnapshot, payload).then(response => {
-      const tokensToRemove = [];
-      response.results.forEach((result, index) => {
-        const error = result.error;
-        if (error) {
-          console.error('Failure sending notification to', tokensSnapshot, error);
-        }
-      });
-      return Promise.all(tokensToRemove);
-    });
-  });
-});
-
-*/
 
 
 exports.sendMessageNotification = functions.database.ref('/chats/{gId}/{mId}').onWrite(event => {
@@ -415,6 +337,131 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
   });
 });
 });
+
+exports.sendReminderPayment = functions.database.ref('/history/{gId}/{eId}/notifyToAll/{uId}').onWrite(event => {
+	
+	  const gid = event.params.gId;
+  const uid =  event.params.uId;
+  const eid =  event.params.eId;
+  
+	
+	 if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
+	const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
+	const getExpenseProfilePromise = admin.database().ref('/expenses/'+gid+'/'+eid).once('value');
+  
+	const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
+	return Promise.all([ getGroupProfilePromise,getExpenseProfilePromise,getUserProfilePromise]).then(results => {
+		const group = results[0].val();
+	const expense = results[1].val();
+	
+    const user = results[2].val();
+	
+	const tokens = Object.keys(expense.members);
+	  const promise = new Array();
+	  tokens.forEach(function(t){
+		 if(t!=uid && !expense.payed[t])
+		  promise.push(admin.database().ref('/users/'+t).once('value'));
+	  });
+	  return Promise.all(promise).then(results => {
+		  
+		   results.forEach(function(f){
+			   const userrr= f.val();
+			const token=  userrr.fcmToken;
+			  console.log(userrr.userInfo.id);
+			   const payload = {
+	  data: {
+		  type:"rememberPayment",
+		  groupName:group.name,
+		  expenseDebit:expense.members[userrr.userInfo.id].toString(),
+		  expenseName:expense.name,
+		  requestFrom:user.userInfo.name,
+		  icon:'/users/'+uid+'/'+user.userInfo.iProfile,
+		  expenseId:eid,
+		  requestFromId:uid,
+		  groupId:gid
+		  
+	  }
+	};
+		  
+		  admin.database().ref('/history/'+gid+'/'+eid+'/notifyToAll/'+uid).remove();
+		    admin.messaging().sendToDevice(token, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', token[index], error);
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+		  });
+	  });
+	
+	});
+});
+
+
+
+
+exports.sendReminderPaymentToOne = functions.database.ref('/history/{gId}/notifyTo/{ownerId}/{uId}').onWrite(event => {
+	
+	const gid = event.params.gId;	
+  const uid =  event.params.uId;
+  const ownerid =  event.params.ownerId;
+  const debit = event.data.val();
+  
+	
+	 if (event.data.previous.exists()) {
+        return;
+      }
+      // Exit when the data is deleted.
+      if (!event.data.exists()) {
+        return;
+      }
+	const getGroupProfilePromise = admin.database().ref('/groups/'+gid).once('value');
+  
+	const getUserProfilePromise = admin.database().ref('/users/'+uid).once('value');
+	const getOwnerProfilePromise = admin.database().ref('/users/'+ownerid).once('value');
+	return Promise.all([ getGroupProfilePromise,getUserProfilePromise,getOwnerProfilePromise]).then(results => {
+		const group = results[0].val();
+	const user = results[1].val();
+	
+    const owner = results[2].val();
+		 
+			const token=  user.fcmToken;
+			  console.log(user.userInfo.id);
+			   const payload = {
+	  data: {
+		  type:"rememberPaymentToOne",
+		  groupName:group.name,
+		  debit:debit.toString(),
+		  requestFrom:owner.userInfo.name,
+		  icon:'/users/'+ownerid+'/'+owner.userInfo.iProfile,
+		  requestFromId:owner.userInfo.id,
+		  groupId:gid
+		  
+	  }
+	};
+		  
+		  admin.database().ref('/history/'+gid+'/'+eid+'/notifyTo').remove();
+		    admin.messaging().sendToDevice(token, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', token[index], error);
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+		  });
+	  });
 
 
 

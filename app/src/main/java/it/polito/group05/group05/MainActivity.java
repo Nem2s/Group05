@@ -3,8 +3,10 @@ package it.polito.group05.group05;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,10 +30,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.BottomNavBgMode;
+import com.afollestad.aesthetic.BottomNavIconTextMode;
+import com.afollestad.aesthetic.NavigationViewMode;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,6 +58,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mvc.imagepicker.ImagePicker;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,6 +70,9 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
+import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.Event.ReadyEvent;
@@ -59,13 +81,19 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AestheticActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
+    private static int CUSTOM_THEME_OPTION = 0;
+    private static int PREDEFINED_THEME_OPTION = 0;
     public  static int REQUEST_FROM_NEW_USER;
+    private static String THEME_HELPER = "Primary";
+    private static final String PRIMARY = "Primary";
+    private static final String ACCENT = "Accent";
     DrawerLayout drawer;
+    NavigationView navigationView;
     CircleImageView cv_user_drawer;
     Activity activity;
     Context context;
@@ -74,7 +102,7 @@ public class MainActivity extends AppCompatActivity
     FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
-
+    int colors[] = new int[2];
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,10 +131,9 @@ public class MainActivity extends AppCompatActivity
         Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
-        getIntent().getStringExtra("message");
-        i.putExtra("message", getIntent().getStringExtra("message"));
-        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
-        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null)
+            i.putExtras(bundle);
         context.startActivity(i);
     }
 
@@ -133,6 +160,9 @@ public class MainActivity extends AppCompatActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
+            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
+                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -191,7 +221,7 @@ public class MainActivity extends AppCompatActivity
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -298,14 +328,14 @@ public class MainActivity extends AppCompatActivity
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(final MenuItem item) {
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
         if (id == R.id.nav_balance) {
             Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));
+            item.setChecked(false);
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
-
         } else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
@@ -315,12 +345,13 @@ public class MainActivity extends AppCompatActivity
                         }
                     })
                     .show();
-
+            item.setChecked(false);
         } else if (id == R.id.nav_share) {
-            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
-                    .setMessage("ciao ciao ciao")
+            Intent intent = new AppInviteInvitation.IntentBuilder("Share")
+                    .setMessage("Let's try out Share Cash! It's awesome!")
                     .build();
             startActivityForResult(intent, 1);
+            item.setChecked(false);
         } else if (id == R.id.nav_logout) {
             AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -330,7 +361,96 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
+            item.setChecked(false);
+        } else if (id == R.id.nav_themes) {
 
+            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
+                MaterialDialog dialog = new MaterialDialog.Builder(context)
+                        .title("Theming Options")
+                        .positiveText("Predefined Themes")
+                        .negativeText("Custom Themes")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                PREDEFINED_THEME_OPTION = 1;
+                                CUSTOM_THEME_OPTION = 0;
+                                onNavigationItemSelected(item);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                CUSTOM_THEME_OPTION = 1;
+                                PREDEFINED_THEME_OPTION = 0;
+                                onNavigationItemSelected(item);
+                            }
+                        })
+                        .show();
+            }
+            if(PREDEFINED_THEME_OPTION == 1) {
+                FastItemAdapter adapter = new FastItemAdapter<ColorItem>();
+                adapter.withSelectable(true);
+                adapter.add(generateThemes());
+                final MaterialDialog dialog = new MaterialDialog.Builder(context)
+                        .title("Select one Theme")
+                        .titleColor(getResources().getColor(R.color.colorAccent))
+                        .adapter(adapter, new LinearLayoutManager(context))
+                        .dismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                PREDEFINED_THEME_OPTION = 0;
+                            }
+                        })
+                        .show();
+                adapter.withOnClickListener(new FastAdapter.OnClickListener() {
+                    @Override
+                    public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
+                        colors[0] = ((ColorItem)item).getAccentColor();
+                        colors[1] = ((ColorItem)item).getPrimaryColor();
+                        dialog.dismiss();
+                        setupTheme(colors);
+                        return true;
+                    }
+                });
+            } else if(CUSTOM_THEME_OPTION == 1)
+            ColorPickerDialogBuilder
+                    .with(context)
+                    .setTitle("Choose " + THEME_HELPER + " color")
+                    .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
+                                                                getResources().getColor(R.color.colorAccent))
+                    .showColorPreview(true)
+                    .lightnessSliderOnly()
+                    .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                    .density(12)
+
+                    .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                            if(THEME_HELPER.equals(PRIMARY)) {
+                                THEME_HELPER = ACCENT;
+                                colors[1] = selectedColor;
+                                CUSTOM_THEME_OPTION = 1;
+                                onNavigationItemSelected(item);
+                            } else {
+                                colors[0] = selectedColor;
+                                THEME_HELPER = PRIMARY;
+                                setupTheme(colors);
+                            }
+
+                        }
+                    })
+                    .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            colors[1] = getResources().getColor(R.color.colorPrimary);
+                            colors[0] = getResources().getColor(R.color.colorAccent);
+                            setupTheme(colors);
+                        }
+                    })
+                    .build()
+                    .show();
+                    CUSTOM_THEME_OPTION = 0;
+            item.setChecked(false);
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
             i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));
@@ -338,16 +458,113 @@ public class MainActivity extends AppCompatActivity
             i.addCategory("android.intent.category.LAUNCHER");
             i.addCategory("android.intent.category.DEFAULT");
             startActivity(i);
+            item.setChecked(false);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
 
+    }
+
+    public void setupTheme(int[] colors) { //0 accent, 1 primary
+        final int accent = colors[0]; /**Controllare se il color primary è scuro o no per settare i text colors **/
+        final int primary = colors[1];
+        int text_primary;
+        int text_secondary;
+        final boolean[] isdark = {false};
+        if(isColorDark(primary)) {
+            MaterialDialog dialog = new MaterialDialog.Builder(context)
+                    .title("Choose Dark or Light Theme")
+                    .positiveText("Light")
+                    .negativeText("Dark")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, false);
+                            dialog.dismiss();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, true);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } else {
+            initializeAesthetic(primary, accent, isdark[0]);
+        }
+    }
+
+    private void initializeAesthetic(int primary, int accent,boolean dark) {
+        Singleton.getInstance().setColors(colors);
+        if(dark) {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_NoActionBar)
+                    .isDark(true)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
+                    )
+                    .colorWindowBackground(Color.parseColor("#303030"))
+                    .apply();
+        }
+        else {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                    .isDark(false)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
+                    )
+                    .colorWindowBackground(Color.parseColor("#FAFAFA"))
+                    .apply();
+        }
+        CUSTOM_THEME_OPTION = 0;
+        PREDEFINED_THEME_OPTION = 0;
+    }
+
+    private ColorItem[] generateThemes() {
+        ColorItem themes[] = new ColorItem[3];
+        themes[0] = new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme");
+        themes[1] = new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood");
+        themes[2] = new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece");
+        return themes;
+    }
+
+    public boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
     }
 }

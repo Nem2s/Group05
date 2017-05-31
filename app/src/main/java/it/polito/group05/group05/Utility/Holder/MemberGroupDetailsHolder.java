@@ -1,7 +1,6 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -62,13 +60,14 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
         tv_userBalance.setText("No debits/credits");
         button_pay.setVisibility(View.GONE);
 
+
         FirebaseDatabase.getInstance().getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
-                        tv_userBalance.setText("Break even!");
+                        tv_userBalance.setText("Already Payed!");
                         tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
@@ -81,10 +80,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
-                                        expense.getMembers().containsKey(user.getId())) {
-                                    if(!(boolean) expense.getPayed().get(user.getId()))
-                                        value -= expense.getMembers().get(user.getId());
-                                }
+                                        expense.getMembers().containsKey(user.getId()))
+                                    value -= expense.getMembers().get(user.getId());
                                 else if (user.getId().equals(expense.getOwner()) &&
                                         !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
@@ -97,11 +94,12 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             } else if (value < 0) {
                                 tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
+
                                 button_pay.setVisibility(View.VISIBLE);
                                 button_notify.setVisibility(View.GONE);
 
                             } else {
-                                tv_userBalance.setText("Break even!");
+                                tv_userBalance.setText("Already Payed!");
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
@@ -113,7 +111,17 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 
                     }
                 });
-
+        button_notify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
+                    String myId = Singleton.getInstance().getCurrentUser().getId();
+                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
+                } catch (Exception c) {
+                }
+            }
+        });
         button_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -19,6 +19,7 @@ import android.widget.Button;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -30,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
@@ -76,6 +79,10 @@ public class CustomDialogFragment extends DialogFragment {
 
         memberAdapter = new MemberExpandedAdapter(partecipants, this.getActivity(), expense.getPrice());
         recyclerView.setAdapter(memberAdapter);
+
+
+
+
         if(expense.getPrice()!= 0.0) {
             memberAdapter.changeTotal(expense.getPrice());
         }
@@ -130,8 +137,9 @@ public class CustomDialogFragment extends DialogFragment {
                             DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                             fdb.setValue(expense);
                             getActivity().finish();
+                            dismiss();
                         }
-                dismiss();
+
             }
         });
         reset = (FloatingActionButton) rootView.findViewById(R.id.reset);

@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,13 +31,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mvc.imagepicker.ImagePicker;
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,14 +59,14 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
  * Created by Marco on 05/05/2017.
  */
 
-public class NewMemberActivity extends AppCompatActivity {
+public class NewMemberActivity extends AestheticActivity {
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
 
     private static final String TAG = "Error";
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
     FloatingActionButton fab;
     CircleImageView iv_new_group;
-    MaterialEditText et_group_name;
+    EditText et_group_name;
     RecyclerView rv_invited;
     List<UserContact> contacts;
     SwipeRefreshLayout mSwipeLayout;
@@ -121,7 +121,7 @@ public class NewMemberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_group);
         isNameEmpty = false;
         rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-        et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
+        et_group_name = (EditText) findViewById(R.id.group_name_add);
         iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
         et_group_name.setVisibility(View.GONE);
         iv_new_group.setVisibility(View.GONE);
@@ -257,7 +257,6 @@ public class NewMemberActivity extends AppCompatActivity {
                 EventBus.getDefault().register(this);
         }
     */
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);

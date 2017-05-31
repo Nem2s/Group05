@@ -24,10 +24,7 @@ public class MyService extends IntentService {
         uid = intent.getStringExtra("requestFromId");
         gid = intent.getStringExtra("groupId");
         debit = intent.getStringExtra("expenseDebit");
-
         int notification = intent.getIntExtra("notification", 0);
-
-
         if (b.equals("true"))
             DB_Manager.getInstance().payDone(gid, eid, uid, Double.parseDouble(debit));
         else

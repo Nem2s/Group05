@@ -31,11 +31,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.AestheticActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -43,8 +46,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kyleduo.switchbutton.SwitchButton;
-import com.rengwuxian.materialedittext.MaterialEditText;
+//import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -68,11 +70,11 @@ import it.polito.group05.group05.Utility.CustomIncludedDialog;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
-public class Expense_activity extends AppCompatActivity {
+public class Expense_activity extends AestheticActivity {
 
     private CoordinatorLayout parent;
     private RelativeLayout rel_file, moreLayout;
-    private MaterialEditText et_name, et_cost;
+    private EditText et_name, et_cost;
     private CheckBox cb_addfile;
     private RecyclerView recyclerView;
     private AppBarLayout appbar;
@@ -102,15 +104,10 @@ public class Expense_activity extends AppCompatActivity {
     private Uri uri;
     private boolean newFile = false;
     private String nameFILE= null;
-    private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
-    private SwitchButton sw_file, sw_prices;
-    private LinearLayoutManager lin_members;
-    private DividerItemDecoration dividerItemDecoration;
-  //  private CustomDialogFragment cdf;
     private CustomIncludedDialog cid;
-    private boolean clickedDetails ;
+    private boolean clickedDetails;
 
     @Override
     protected void onStart() {
@@ -140,25 +137,25 @@ public class Expense_activity extends AppCompatActivity {
         iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
         image_network = (ImageView) findViewById(R.id.image_network);
-        et_name = (MaterialEditText) findViewById(R.id.et_name_expense);
+        et_name = (EditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_name.setSingleLine();
-        et_cost = (MaterialEditText) findViewById(R.id.et_cost_expense);
+        et_cost = (EditText) findViewById(R.id.et_cost_expense);
         et_cost.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost.setSingleLine();
-     //   nomedata = (TextView) findViewById(R.id.name_date);
-     //   nomeFile = (TextView) findViewById(R.id.nomeFile);
-       // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
-     //   rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-     //   sw_file = (SwitchButton) findViewById(R.id.switch_file);
-     //   sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
+        //   nomedata = (TextView) findViewById(R.id.name_date);
+        //   nomeFile = (TextView) findViewById(R.id.nomeFile);
+        // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
+        //   rel_file = (RelativeLayout) findViewById(R.id.relative_file);
+        //   sw_file = (SwitchButton) findViewById(R.id.switch_file);
+        //   sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
 
-       // recyclerView.setVisibility(View.GONE);
-     //   moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
+        // recyclerView.setVisibility(View.GONE);
+        //   moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
-       // plus = (ImageView) findViewById(R.id.plus);
-     //   more = (TextView) findViewById(R.id.more);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        // plus = (ImageView) findViewById(R.id.plus);
+        //   more = (TextView) findViewById(R.id.more);
+        fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
@@ -171,9 +168,7 @@ public class Expense_activity extends AppCompatActivity {
             partecipants.add(ue);
         }
 
-        final FragmentManager fm = getFragmentManager();
-      //  cdf = new CustomDialogFragment(partecipants, expense);
-        cid = new CustomIncludedDialog(partecipants, expense);
+
 
         Calendar calendar = Calendar.getInstance();
         final java.util.Date now = calendar.getTime();
@@ -184,7 +179,7 @@ public class Expense_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
-                    Snackbar.make(v,"Set a name",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Set a valid Description", Snackbar.LENGTH_SHORT).show();
                 }
                 else {
                     if (expense.getPrice().toString().length() > 6)
@@ -208,7 +203,9 @@ public class Expense_activity extends AppCompatActivity {
                         for(User_expense e : partecipants){
                             e.setExcluded(false);
                         }
-                        cid.show(fm,"TV_tag");
+                        final FragmentManager fm = getFragmentManager();
+                        cid = new CustomIncludedDialog(partecipants, expense);
+                        cid.show(fm, "TV_tag");
                     }
                     }
 
@@ -242,8 +239,6 @@ public class Expense_activity extends AppCompatActivity {
                 if (s.length() > 0) {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-              //      memberAdapter.changeTotal(expense_price);
-              //      memberAdapter.notifyDataSetChanged();
                 }
             }
         });
