@@ -23,12 +23,12 @@
         android:title="Leave the group"
         app:showAsAction="never" />
     <item
-        android:id="@+id/changeBackground"
+        android:id="@+id/change_background"
         android:orderInCategory="100"
         android:title="Set Chat Background"
         app:showAsAction="never" />
     <item
-        android:id="@+id/groupDetail"
+        android:id="@+id/group_detail"
         android:orderInCategory="100"
         android:title="Group Detail"
         app:showAsAction="never" />

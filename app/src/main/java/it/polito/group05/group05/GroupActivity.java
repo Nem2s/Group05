@@ -4,12 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.content.Intent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -17,7 +17,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.view.MenuItem;
@@ -25,25 +25,25 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
-import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
-
-import static it.polito.group05.group05.R.id.view;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 public class GroupActivity extends AestheticActivity {
 
@@ -58,11 +58,21 @@ public class GroupActivity extends AestheticActivity {
     TextView tv_groupname;
     TextView tv_members;
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+        //overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -100,8 +110,19 @@ public class GroupActivity extends AestheticActivity {
             transaction.add(R.id.fragment_container, ChatFragment.newInstance());
             transaction.commit();
 
-
         }
+        if (getIntent().getStringExtra("type") != null) {
+            if (getIntent().getStringExtra("type").equals("paymentRequest")) {
+                final String eid = getIntent().getStringExtra("expenseId");
+                final String uid = getIntent().getStringExtra("requestFromId");
+                final String gid = getIntent().getStringExtra("groupId");
+                final String debit = getIntent().getStringExtra("expenseDebit");
+                final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
 
                                 DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd);
@@ -121,7 +142,15 @@ public class GroupActivity extends AestheticActivity {
             }
 
         }
-        initializeUI();
+        try {
+            initializeUI();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -149,9 +178,10 @@ public class GroupActivity extends AestheticActivity {
 
                         break;
                 }
+
                 return true;
             }
-    });
+        });
     }
 
     @Override
@@ -160,27 +190,22 @@ public class GroupActivity extends AestheticActivity {
         supportFinishAfterTransition();
     }
 
-    private void initializeUI() {
+    private void initializeUI() throws ExecutionException, InterruptedException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
                     transition.removeTarget(R.id.toolbar);
                     transition.removeTarget(R.id.navigation);
-                    ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
-                    tv_groupname.setText(currentGroup.getName());
+                    //ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+                    //tv_groupname.setText(currentGroup.getName());
                     fab.hide();
                 }
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     fab.show();
-
                     fillNameMembersList();
-
-
-
-
                 }
 
                 @Override
@@ -198,8 +223,45 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
+            scheduleStartPostponedTransition(cv_group);
+        } else {
+
+
+            final Context context = this;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    GroupDatabase currGroup = Singleton.getInstance().getmCurrentGroup();
+
+                    GlideDrawable bmp = null;
+                    try {
+                        bmp = Glide.with(context)
+                                .using(new FirebaseImageLoader())
+                                .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId())
+                                        .child(currGroup.getPictureUrl()))
+                                .centerCrop()
+                                .into(128, 128)
+                                .get()
+                        ;
+                        mToolbar.setLogo(bmp);
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            });
+
+
+            // ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+            mToolbar.setTitle(currentGroup.getName());
+            fab.show();
+            fillNameMembersList();
         }
-        scheduleStartPostponedTransition(cv_group);
+
+
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {
@@ -216,17 +278,21 @@ public class GroupActivity extends AestheticActivity {
     }
 
     private void fillNameMembersList() {
-        tv_members.setText("");
+
+        mToolbar.setSubtitle("");
         for(String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if(tv_members.getText().toString().equals(""))
-                        tv_members.setText(u.getName());
+                    if (mToolbar.getSubtitle().toString().equals(""))
+                        mToolbar.setSubtitle(u.getName());
+
                     else
-                        tv_members.append(", " +u.getName());
+                        mToolbar.setSubtitle(mToolbar.getSubtitle() + "," + u.getName());
+
+
                 }
 
                 @Override
@@ -243,26 +309,8 @@ public class GroupActivity extends AestheticActivity {
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
                 .commit();
         fab.show();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
-                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
-
-                startActivity(i);
-                //startActivity(i, options.toBundle());
-            }
-        });
     }
-
-
-
 
 
     private void replaceWithChatFragment() {

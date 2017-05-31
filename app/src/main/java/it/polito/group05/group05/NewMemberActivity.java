@@ -18,7 +18,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -133,7 +132,7 @@ public class NewMemberActivity extends AestheticActivity {
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
         contacts = new ArrayList<>();
-        invitedAdapter = new MemberInvitedAdapter(contacts, context);
+
         for(UserContact i : Singleton.getInstance().getRegContactsList().values())
             if(!Singleton.getInstance().getmCurrentGroup().getMembers().containsKey(i.getId()))
                 contacts.add(i);
@@ -150,6 +149,7 @@ public class NewMemberActivity extends AestheticActivity {
 
         });
         */
+        invitedAdapter = new MemberInvitedAdapter(contacts, context);
         if(invitedAdapter.getItemCount() == 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
@@ -362,10 +362,10 @@ public class NewMemberActivity extends AestheticActivity {
                 }
 
             }
-                invitedAdapter.notifyDataSetChanged();
-                finish();
-                return true;
-            }
+            invitedAdapter.notifyDataSetChanged();
+            finish();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

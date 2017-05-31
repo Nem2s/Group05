@@ -1,11 +1,9 @@
 package it.polito.group05.group05;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.ChangeEventListener;
@@ -31,6 +28,7 @@ import java.util.List;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
 import static it.polito.group05.group05.Group_Activity.toolbar;
@@ -77,9 +75,24 @@ public class ExpenseFragment extends Fragment {
             q = QueryParam.Possibilities.BYOWNER;
         else if (id == R.id.sort_date)
             q = QueryParam.Possibilities.BYDATE;
-        if (q != null)
+        if (q != null) {
             sortRecyclerViewBy(q);
-        item.setChecked(true);
+            item.setChecked(true);
+            return
+                    super.onOptionsItemSelected(item);
+        }
+        if (id == R.id.add_member) {
+            startActivity(new Intent(getContext(), NewMemberActivity.class));
+        }
+        if (id == R.id.leave_group) {
+            DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(), getContext());
+        }
+        if (id == R.id.group_detail) {
+            // final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
+            startActivity(new Intent(getContext(), GroupDetailsActivity.class));
+            // AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
+
+        }
         return super.onOptionsItemSelected(item);
     }
 
