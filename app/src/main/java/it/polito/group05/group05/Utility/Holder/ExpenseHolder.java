@@ -272,9 +272,13 @@ public class ExpenseHolder extends GeneralHolder{
                 Bundle extras = new Bundle();
                 extras.putSerializable("map", (Serializable) expense.getMembers());
                 extras.putString("title", expense.getName());
+                extras.putString("id", expense.getId());
                 extras.putString("owner", expense.getOwner());
                 extras.putString("price", expense.getPrice().toString());
                 extras.putLong("timestamp", expense.getTimestamp());
+                if(expense.getFile()!= null){
+                    extras.putString("file", expense.getFile());
+                }
                 int location[] = new int[2];
                 cv.getLocationInWindow(location);
                 LEFT_OFFSET = location[0];

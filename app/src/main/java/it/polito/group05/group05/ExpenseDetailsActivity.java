@@ -4,11 +4,14 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.klinker.android.sliding.MultiShrinkScroller;
 import com.klinker.android.sliding.SlidingActivity;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,10 +52,15 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_name;
     TextView tv_expense;
     Button button_pay;
+    Button download;
     Button button_notify;
+    RelativeLayout rel_lay;
+    TextView nameFile;
+    ImageView imageFile;
     Bundle b;
     RecyclerView rv;
     ScrollView sv;
+    String nomeF;
 
     @Override
     protected void configureScroller(MultiShrinkScroller scroller) {
@@ -64,8 +73,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     public void init(Bundle bundle) {
 
         b = getIntent().getExtras();
-
-
+        nomeF = b.getString("file");
         setContent(R.layout.activity_expense_details);
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
@@ -83,7 +91,31 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);
+        rel_lay = (RelativeLayout) findViewById(R.id.relative_file);
+        rel_lay.setVisibility(View.GONE);
+        nameFile = (TextView) findViewById(R.id.nome_file);
+        download = (Button) findViewById(R.id.download);
+        if(nomeF != null){
+            if (rel_lay.getVisibility() == View.GONE){
+                rel_lay.setVisibility(View.VISIBLE);
+                nameFile.setText(b.getString("file"));
+            }
+        }else{
+            rel_lay.setVisibility(View.GONE);}
 
+        download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String idFile= b.getString("id");
+                String nf = b.getString("file");
+                try{
+                DB_Manager.getInstance().fileDownload(idFile,nf);
+                }
+                catch (FileNotFoundException fnfe){
+                  //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -94,7 +126,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         calendar.setTimeInMillis(b.getLong("timestamp"));
         tv_date.setText(format.format(calendar.getTime()));
         retriveUsersExpense((HashMap<String, Double>) b.getSerializable("map"), (HashMap<String, Object>) b.getSerializable("payed"));
-
         sv.fullScroll(ScrollView.FOCUS_DOWN);
 
     }

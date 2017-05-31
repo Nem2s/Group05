@@ -275,7 +275,6 @@ public class Expense_activity extends AestheticActivity {
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
                     newFile = false;
-                    // upLoadFile(uri);
                 }
             }
         });
