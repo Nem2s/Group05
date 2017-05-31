@@ -66,8 +66,12 @@ public class GroupHolder extends GeneralHolder {
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         Date date = new Date(g.getLmTime());
+        Date today = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        String time_s = sdf.format(date);
+        SimpleDateFormat daysdf = new SimpleDateFormat("dd/MM", Locale.ITALY);
+        String time_s;
+        if(daysdf.format(date).equals(daysdf.format(today))) time_s = sdf.format(date);
+        else time_s = daysdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
 
@@ -77,7 +81,7 @@ public class GroupHolder extends GeneralHolder {
         else if(x <-0.001)
             balance.setTextColor(Color.RED);
         else{
-            balance.setText("Saldato");
+            balance.setText("Break even!");
 
         }
 
