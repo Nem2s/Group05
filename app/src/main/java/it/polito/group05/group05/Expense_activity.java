@@ -84,7 +84,7 @@ public class Expense_activity extends AestheticActivity {
     private FloatingActionButton fab;
     private ImageView image_network;
     private ImageView calendar1, graffetta;
-    private TextView nomeFile, veroNF;
+    private TextView nomeFile, veroNF, nameDate;
     private Button buttonUPLOAD;
     private String data = null;
     private String time = null;
@@ -106,6 +106,7 @@ public class Expense_activity extends AestheticActivity {
     private Context context;
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     protected void onStart() {
@@ -143,20 +144,17 @@ public class Expense_activity extends AestheticActivity {
         et_cost.setSingleLine();
         veroNF = (TextView) findViewById(R.id.nome_file);
         nomeFile = (TextView) findViewById(R.id.tv_name_fil);
+        nameDate= (TextView) findViewById(R.id.name_date);
         buttonUPLOAD =(Button) findViewById(R.id.button_upload);
-
         calendar1 = (ImageView) findViewById(R.id.calendar);
-
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
-       // iv_group_image.setImageResource(R.drawable.network);
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance()
                         .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
                         .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
                 .centerCrop()
-                //.placeholder(R.drawable.group_profile)
                 .crossFade()
                 .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
@@ -256,24 +254,31 @@ public class Expense_activity extends AestheticActivity {
                 mHour = c.get(Calendar.HOUR);
                 mMinute = c.get(Calendar.MINUTE);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                if (dayOfMonth > mDay && month >= mMonth) {
+                                    Toast.makeText(context, "Select a smaller date", Toast.LENGTH_SHORT).show();
+                                }
+                            else{
                                 int month1 = month + 1;
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                           //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                            //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
+                            }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
+    
+
 
         buttonUPLOAD.setOnClickListener(new View.OnClickListener()
         {

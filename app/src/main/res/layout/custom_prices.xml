@@ -73,7 +73,7 @@
                         android:layout_weight="1"
                         app:fabSize="mini"
                         app:srcCompat="@drawable/ic_done_black_24dp" />
-                    
+
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
