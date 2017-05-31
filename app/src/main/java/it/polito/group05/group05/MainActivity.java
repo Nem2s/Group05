@@ -501,7 +501,7 @@ public class MainActivity extends AestheticActivity
                     })
                     .show();
         } else {
-            initializeAesthetic(primary, accent, isdark[0]);
+            initializeAesthetic(primary, accent, false);
         }
     }
 

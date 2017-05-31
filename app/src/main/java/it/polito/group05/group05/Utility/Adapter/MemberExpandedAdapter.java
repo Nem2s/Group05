@@ -106,7 +106,9 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
 
                                                         if(round2 > 0){
                                                             users.get(e).setCustomValue(round2);
-                                                            notifyItemChanged(e);
+                                                            try {
+                                                                notifyItemChanged(e);
+                                                            } catch (Exception ee) {}
                                                         }
                                                         else {
                                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();

@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.afollestad.aesthetic.Aesthetic;
@@ -76,7 +77,7 @@ public class GroupDetailsActivity extends AestheticActivity {
     ProgressBar pb;
     Toolbar toolbar;
     AppBarLayout appbar;
-    RevealFrameLayout root;
+    LinearLayout root;
     private List<Object> users = new ArrayList<>();
 
     @Override
@@ -95,9 +96,14 @@ public class GroupDetailsActivity extends AestheticActivity {
         final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
-        toolbarLayout.setExpandedTitleColor(Aesthetic.get().textColorPrimary().take(1).blockingFirst());
-        toolbarLayout.setCollapsedTitleTextColor(Aesthetic.get().textColorSecondary().take(1).blockingFirst());
+        toolbarLayout.setExpandedTitleColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        toolbarLayout.setCollapsedTitleTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
         toolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -128,7 +134,7 @@ public class GroupDetailsActivity extends AestheticActivity {
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
         pb.setVisibility(View.INVISIBLE);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
-        root = (RevealFrameLayout)findViewById(R.id.reveal_root);
+        root = (LinearLayout) findViewById(R.id.reveal_root);
         appbar = (AppBarLayout)findViewById(R.id.app_bar);
         final LinearLayoutManager ll = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rv_members.setLayoutManager(ll);
@@ -427,7 +433,7 @@ public class GroupDetailsActivity extends AestheticActivity {
     private void initializeUI() {
 
 
-        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
+        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .title("Group Informations")
                 .content("To be implemented...")
@@ -448,7 +454,7 @@ public class GroupDetailsActivity extends AestheticActivity {
                     @Override
                     public void onTransitionEnd(Transition transition) {
                         fab.show();
-                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
+
                         AnimUtils.enterRevealAnimation(iv_header);
                         cv_back.setVisibility(View.INVISIBLE);
                         retriveUsers();

@@ -28,5 +28,9 @@
         android:title="Set Chat Background"
         app:showAsAction="never" />
 
-
+    <item
+        android:id="@+id/group_detail"
+        android:orderInCategory="100"
+        android:title="Group Detail"
+        app:showAsAction="never" />
 </menu>

@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
@@ -143,13 +144,12 @@ public class GroupActivity extends AestheticActivity {
 
                 return true;
             }
-    });
+        });
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        fab.show();
         supportFinishAfterTransition();
     }
 
@@ -184,32 +184,32 @@ public class GroupActivity extends AestheticActivity {
                 }
             });
 
-           getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
-               @Override
-               public void onTransitionStart(Transition transition) {
+            getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
 
-               }
+                }
 
-               @Override
-               public void onTransitionEnd(Transition transition) {
+                @Override
+                public void onTransitionEnd(Transition transition) {
 
-               }
+                }
 
-               @Override
-               public void onTransitionCancel(Transition transition) {
+                @Override
+                public void onTransitionCancel(Transition transition) {
 
-               }
+                }
 
-               @Override
-               public void onTransitionPause(Transition transition) {
+                @Override
+                public void onTransitionPause(Transition transition) {
 
-               }
+                }
 
-               @Override
-               public void onTransitionResume(Transition transition) {
+                @Override
+                public void onTransitionResume(Transition transition) {
 
-               }
-           });
+                }
+            });
             scheduleStartPostponedTransition(cv_group);
 
         } else {
@@ -220,7 +220,9 @@ public class GroupActivity extends AestheticActivity {
         }
         fillNameMembersList();
         tv_groupname.setText(currentGroup.getName());
-
+        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -264,6 +266,14 @@ public class GroupActivity extends AestheticActivity {
                         tv_members.setText(u.getName());
                     else
                         tv_members.append(", " +u.getName());
+
+                    tv_members.setSingleLine(true);
+                    tv_members.setMarqueeRepeatLimit(-1);
+                    tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    tv_members.setSelected(true);
+                    tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                            Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                            Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
                 }
 
                 @Override
@@ -271,7 +281,7 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
-            tv_members.setSelected(true);
+
         }
 
     }

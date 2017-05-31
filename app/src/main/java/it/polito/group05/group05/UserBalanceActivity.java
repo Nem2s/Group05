@@ -389,6 +389,9 @@ public class UserBalanceActivity extends AestheticActivity {
 
                 }
             });
+            animator.setStartDelay(200);
+            animator.setDuration(250);
+            animator.start();
         }
     }
 

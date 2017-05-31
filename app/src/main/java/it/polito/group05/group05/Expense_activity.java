@@ -2,6 +2,7 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -22,10 +24,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,9 +42,11 @@ import com.afollestad.aesthetic.AestheticActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+//import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -49,7 +55,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -57,7 +65,9 @@ import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 
 public class Expense_activity extends AestheticActivity {
@@ -65,19 +75,15 @@ public class Expense_activity extends AestheticActivity {
     private CoordinatorLayout parent;
     private RelativeLayout rel_file, moreLayout;
     private EditText et_name, et_cost;
-    private CheckBox cb_addfile;
-    private RecyclerView recyclerView;
     private AppBarLayout appbar;
     private Toolbar toolbar;
     private CircleImageView iv_group_image;
-    private CardView cardView;
     private TextView tv_group_name;
     private FloatingActionButton fab;
     private ImageView image_network;
-    private Button confirm, reset;
-    private CardView card_recycler;
-    private ImageView plus, calendar1;
-    private TextView nomeFile, nomedata, more;
+    private ImageView calendar1, graffetta;
+    private TextView nomeFile, veroNF;
+    private Button buttonUPLOAD;
     private String data = null;
     private String time = null;
     private String tmsp = null;
@@ -94,13 +100,8 @@ public class Expense_activity extends AestheticActivity {
     private Uri uri;
     private boolean newFile = false;
     private String nameFILE= null;
-    private MemberExpandedAdapter memberAdapter;
     private File fileUploaded;
     private Context context;
-    private Switch sw_file, sw_prices;
-    private LinearLayoutManager lin_members;
-    private DividerItemDecoration dividerItemDecoration;
-    //  private CustomDialogFragment cdf;
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
 
@@ -138,18 +139,12 @@ public class Expense_activity extends AestheticActivity {
         et_cost = (EditText) findViewById(R.id.et_cost_expense);
         et_cost.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_cost.setSingleLine();
-        //   nomedata = (TextView) findViewById(R.id.name_date);
-        //   nomeFile = (TextView) findViewById(R.id.nomeFile);
-        // cb_addfile = (CheckBox) findViewById(R.id.cb2_addfile);
-        //   rel_file = (RelativeLayout) findViewById(R.id.relative_file);
-        //   sw_file = (SwitchButton) findViewById(R.id.switch_file);
-        //   sw_prices= (SwitchButton) findViewById(R.id.switch_prices);
+        veroNF = (TextView) findViewById(R.id.nome_file);
+        nomeFile = (TextView) findViewById(R.id.tv_name_fil);
+        buttonUPLOAD =(Button) findViewById(R.id.button_upload);
 
-        // recyclerView.setVisibility(View.GONE);
-        //   moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
         calendar1 = (ImageView) findViewById(R.id.calendar);
-        // plus = (ImageView) findViewById(R.id.plus);
-        //   more = (TextView) findViewById(R.id.more);
+
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
         iv_group_image.setImageResource(R.drawable.network);
@@ -163,9 +158,7 @@ public class Expense_activity extends AestheticActivity {
             partecipants.add(ue);
         }
 
-        final FragmentManager fm = getFragmentManager();
-        //  cdf = new CustomDialogFragment(partecipants, expense);
-        cid = new CustomIncludedDialog(partecipants, expense);
+
 
         Calendar calendar = Calendar.getInstance();
         final java.util.Date now = calendar.getTime();
@@ -197,14 +190,16 @@ public class Expense_activity extends AestheticActivity {
                             expense.setTimestamp(timestamp);
                         }
 
-                        for (User_expense e : partecipants) {
+                        for(User_expense e : partecipants){
                             e.setExcluded(false);
                         }
+                        final FragmentManager fm = getFragmentManager();
+                        cid = new CustomIncludedDialog(partecipants, expense, uri);
                         cid.show(fm, "TV_tag");
                     }
                 }
 
-                }
+            }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -234,8 +229,6 @@ public class Expense_activity extends AestheticActivity {
                 if (s.length() > 0) {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
-                    //      memberAdapter.changeTotal(expense_price);
-                    //      memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -270,19 +263,23 @@ public class Expense_activity extends AestheticActivity {
             }
         });
 
-     /*   cb_addfile.setOnClickListener(new View.OnClickListener()
+        buttonUPLOAD.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
                 if (!newFile) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/
-        //*");
-        /*         startActivityForResult(intent,0);
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("*/*");
+                    startActivityForResult(intent,0);
+                }else{
+                    veroNF.setText("FileName");
+                    buttonUPLOAD.setText("UPLOAD");
+                    newFile = false;
+                    // upLoadFile(uri);
                 }
             }
         });
-       */
+
    /*     moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -294,25 +291,7 @@ public class Expense_activity extends AestheticActivity {
 
     }
 
-    private void upLoadFile(Uri uri){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
-                                            .child("expenses")
-                                            .child(expense.getId())
-                                            .child(nameFILE);
-        UploadTask uploadTask = storageRef.putFile(uri);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Expense_activity.this, "Uploading FAIL", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(Expense_activity.this, "Uploading Done!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -334,7 +313,16 @@ public class Expense_activity extends AestheticActivity {
                 try {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                        //                nomeFile.setText(nameFILE);
+                        if(nameFILE != null){
+                            veroNF.setText(nameFILE);
+                            buttonUPLOAD.setText("DELETE");
+                            expense.setFile(nameFILE);
+                        }
+
+                      /*  if (nameFILE != null) {
+                            expense.setFile(nameFILE);
+                            upLoadFile(uri);
+                       } */
                     }
                 } finally {
                     cursor.close();
@@ -347,8 +335,11 @@ public class Expense_activity extends AestheticActivity {
                     nameFILE= nameFILE.substring(cut + 1);
                 }
             }
+
+
         }
     }
+
 
 
 }
