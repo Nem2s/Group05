@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -166,9 +168,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                         }
                                         Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
                                                 var + " euros", Toast.LENGTH_SHORT).show();
-                                        //DB_Manager.getInstance().updateGroupFlow(s, var);
-                                        //DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * var);
-                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(), expensePayed);
+                                        DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
                                 })

@@ -1,11 +1,9 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -16,20 +14,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 
 /**
  * Created by user on 29/05/2017.
  */
 
-public class PersonSelectedHolder extends GeneralHolder{
+public class PersonSelectedHolder extends GeneralHolder {
     CircleImageView img_profile;
     TextView name;
     SwitchButton switchButton;
     Context context;
 
-    public PersonSelectedHolder(View itemView){
+    public PersonSelectedHolder(View itemView) {
         super(itemView);
         this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
         this.name = (TextView) itemView.findViewById(R.id.tv_name_member);
@@ -38,7 +35,7 @@ public class PersonSelectedHolder extends GeneralHolder{
 
     @Override
     public void setData(Object c, Context context) {
-     if(!(c instanceof User_expense)) return;
+        if (!(c instanceof User_expense)) return;
         final User_expense us = (User_expense) c;
         name.setText(us.getName());
         Glide.with(context)
@@ -49,21 +46,11 @@ public class PersonSelectedHolder extends GeneralHolder{
                 .asBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(img_profile);
-
-        switchButton.setChecked(true);
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(buttonView.isChecked()){
-                    us.setExcluded(false);
-                }
-                else {
-                    if (!(us.getId().equals(Singleton.getInstance().getCurrentUser().getId())))
-                        us.setExcluded(true);
-                    else {
-                        Snackbar.make(itemView,  "You have already payed", Toast.LENGTH_SHORT).show();
-                        switchButton.setChecked(true);
-                    }
+                if (isChecked) {
+                    us.setIncluded(true);
                 }
             }
         });

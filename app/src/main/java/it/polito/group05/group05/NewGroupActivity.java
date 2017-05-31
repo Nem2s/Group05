@@ -37,8 +37,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.auth.ui.User;
@@ -93,7 +95,7 @@ public class NewGroupActivity extends AestheticActivity {
 
     CircleImageView iv_new_group;
 
-    MaterialEditText et_group_name;
+    EditText et_group_name;
     TextView tv_contacts;
     RecyclerView rv_invited;
     RecyclerView rv_contacts;
@@ -194,14 +196,14 @@ public class NewGroupActivity extends AestheticActivity {
         isNameEmpty = true;
 
 
-        et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
+        et_group_name = (EditText) findViewById(R.id.group_name_add);
 
         iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
 
         no_people = (TextView)findViewById(R.id.no_people);
 
         context = this;
-        tv_contacts = (TextView) findViewById(R.id.tv_contacts);
+        tv_contacts = (TextView)findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -344,7 +346,8 @@ public class NewGroupActivity extends AestheticActivity {
             public boolean onQueryTextChange(String newText) {
 
 
-                if (TextUtils.isEmpty(newText)) {
+
+                if ( TextUtils.isEmpty ( newText ) ) {
 
                     invitedAdapter.replaceAll(filterRegistered(""));
                     contactsAdapter.replaceAll(filterLocal(""));
@@ -356,8 +359,8 @@ public class NewGroupActivity extends AestheticActivity {
 
                     invitedAdapter.replaceAll(filterRegistered(newText));
                     contactsAdapter.replaceAll(filterLocal(newText));
-                    if (((MemberInvitedAdapter) rv_invited.getAdapter()).getItemCount() == 0 &&
-                            ((MemberContactsAdapter) rv_contacts.getAdapter()).getItemCount() == 0) {
+                    if(((MemberInvitedAdapter)rv_invited.getAdapter()).getItemCount() == 0 &&
+                            ((MemberContactsAdapter)rv_contacts.getAdapter()).getItemCount() == 0) {
                         no_people.setVisibility(View.VISIBLE);
                         tv_partecipants.setVisibility(View.GONE);
                         tv_contacts.setVisibility(View.GONE);
@@ -378,20 +381,19 @@ public class NewGroupActivity extends AestheticActivity {
             private List<UserContact> filterLocal(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for (UserContact u : local_contacts) {
-                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for(UserContact u : local_contacts) {
+                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
 
                 return res;
             }
-
             private List<UserContact> filterRegistered(String s) {
                 List<UserContact> res = new ArrayList<>();
 
-                for (UserContact u : contacts) {
-                    if (((Namable) u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
+                for(UserContact u : contacts) {
+                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
                         res.add(u);
 
                 }
@@ -557,11 +559,11 @@ public class NewGroupActivity extends AestheticActivity {
     public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
 
 
-        mToolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        mToolbar.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.quantum_grey_600));
+            getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
 
         }
 
@@ -606,11 +608,11 @@ public class NewGroupActivity extends AestheticActivity {
 
                     super.onAnimationEnd(animation);
 
-                    mToolbar.setBackgroundColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimary));
+                    mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                        getWindow().setStatusBarColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimaryDark));
+                        getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
 
                     }
 
@@ -622,7 +624,7 @@ public class NewGroupActivity extends AestheticActivity {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                getWindow().setStatusBarColor(getThemeColor(NewGroupActivity.this, R.attr.colorPrimaryDark));
+                getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
 
             }
 
@@ -695,13 +697,15 @@ public class NewGroupActivity extends AestheticActivity {
             });
 
 
+
+
             return null;
         }
 
         @Override
         protected void onPreExecute() {
-            rv_invited = (RecyclerView) findViewById(R.id.invited_people_list);
-            rv_contacts = (RecyclerView) findViewById(R.id.contacts_people_list);
+            rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
+            rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
             dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
             LinearLayoutManager contactsManager = new LinearLayoutManager(getApplicationContext());
             contactsManager.setItemPrefetchEnabled(true);
@@ -736,7 +740,7 @@ public class NewGroupActivity extends AestheticActivity {
 
             rv_invited.setAdapter(invitedAdapter);
 
-            if (invitedAdapter.getItemCount() == 0) {
+            if(invitedAdapter.getItemCount() == 0) {
 
                 Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts have ShareCash installed, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
 
@@ -775,7 +779,7 @@ public class NewGroupActivity extends AestheticActivity {
 
                 iv_new_group.setEnabled(false);
 
-                if (contactsAdapter.getItemCount() == 0)
+                if(contactsAdapter.getItemCount() == 0)
                     no_people.setVisibility(View.VISIBLE);
 
             }
@@ -854,7 +858,7 @@ public class NewGroupActivity extends AestheticActivity {
 
                 @Override
 
-                public void afterTextChanged(Editable editable) {
+                public void afterTextChanged(Editable editable){
 
 
                 }

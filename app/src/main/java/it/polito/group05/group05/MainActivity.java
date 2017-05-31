@@ -53,6 +53,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mikepenz.fastadapter.FastAdapter;
@@ -67,6 +68,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+<<<<<<<<< Temporary merge branch 1
+=========
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -222,7 +225,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("groups");
+        Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
         mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
@@ -466,18 +469,72 @@ implements NavigationView.OnNavigationItemSelectedListener {
     }
 
     public void setupTheme(int[] colors) { //0 accent, 1 primary
-        int accent = colors[0];
-        int primary = colors[1];
+        final int accent = colors[0]; /**Controllare se il color primary è scuro o no per settare i text colors **/
+        final int primary = colors[1];
+        int text_primary;
+        int text_secondary;
+        final boolean[] isdark = {false};
+        if(isColorDark(primary)) {
+            MaterialDialog dialog = new MaterialDialog.Builder(context)
+                    .title("Choose Dark or Light Theme")
+                    .positiveText("Light")
+                    .negativeText("Dark")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, false);
+                            dialog.dismiss();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            initializeAesthetic(primary, accent, true);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } else {
+            initializeAesthetic(primary, accent, isdark[0]);
+        }
+    }
+
+    private void initializeAesthetic(int primary, int accent,boolean dark) {
         Singleton.getInstance().setColors(colors);
-        Aesthetic.get()
-                .colorPrimary(primary)
-                .colorStatusBarAuto()
-                .colorNavigationBarAuto()
-                .colorAccent(accent)
-                .navigationViewMode(
-                        NavigationViewMode.SELECTED_ACCENT
-                )
-                .apply();
+        if(dark) {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_NoActionBar)
+                    .isDark(true)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.SELECTED_ACCENT
+                    )
+                    .colorWindowBackground(Color.parseColor("#303030"))
+                    .apply();
+        }
+        else {
+            Aesthetic.get()
+                    .activityTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                    .isDark(false)
+                    .colorPrimary(primary)
+                    .colorStatusBarAuto()
+                    .colorNavigationBarAuto()
+                    .colorAccent(accent)
+                    .navigationViewMode(
+                            NavigationViewMode.SELECTED_ACCENT
+                    )
+                    .bottomNavigationIconTextMode(
+                            BottomNavIconTextMode.SELECTED_ACCENT
+                    )
+                    .colorWindowBackground(Color.parseColor("#FAFAFA"))
+                    .apply();
+        }
         CUSTOM_THEME_OPTION = 0;
         PREDEFINED_THEME_OPTION = 0;
     }
@@ -488,5 +545,14 @@ implements NavigationView.OnNavigationItemSelectedListener {
         themes[1] = new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood");
         themes[2] = new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece");
         return themes;
+    }
+
+    public boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
     }
 }

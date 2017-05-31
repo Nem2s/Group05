@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import it.polito.group05.group05.R;
@@ -115,7 +113,7 @@ public class MemberInvitedAdapter extends RecyclerView.Adapter<MemberInvitedHold
 
     public List<UserContact> retriveAll() {
         List<UserContact> list = new ArrayList<>();
-        for (int i = invited.size() - 1; i >= 0; i--) {
+        for(int i = invited.size() -1 ; i >= 0 ; i--) {
             UserContact u = invited.get(i);
             list.add(u);
         }

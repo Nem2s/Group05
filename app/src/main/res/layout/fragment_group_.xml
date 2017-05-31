@@ -1,5 +1,5 @@
-<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/expense_ll"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -7,6 +7,7 @@
     android:layout_marginEnd="4dp"
 
     >
+
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -15,5 +16,27 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
         </android.support.v7.widget.RecyclerView>
-    </android.support.design.widget.CoordinatorLayout>
+
+    <ImageView
+        android:id="@+id/iv_no_expenses"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="64dp"
+        android:visibility="gone"
+        android:src="@drawable/no_expense"
+        />
+    <TextView
+        android:id="@+id/tv_no_expenses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No expenses! Let's create one!"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:textStyle="italic|bold"
+        android:visibility="gone"
+        />
+
+    </FrameLayout>
 

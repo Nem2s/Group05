@@ -14,8 +14,8 @@ public class User_expense extends UserDatabase {
     Double debt=0.0;
     TYPE_EXPENSE typeExpense;
     boolean isSelected;
-    boolean isExcluded;
- //   Double roundValue;
+    boolean isIncluded;
+    //   Double roundValue;
     private double customValue;
 
 
@@ -30,16 +30,16 @@ public class User_expense extends UserDatabase {
         this.balance = userDatabase.getBalance();
         this.customValue = 0.0;
         isSelected = false;
-        isExcluded= false;
-   //     roundValue = 0.0;
+        isIncluded = false;
+        //     roundValue = 0.0;
     }
 
-    public boolean isExcluded() {
-        return isExcluded;
+    public boolean isIncluded() {
+        return isIncluded;
     }
 
-    public void setExcluded(boolean included) {
-        isExcluded = included;
+    public void setIncluded(boolean included) {
+        isIncluded = included;
     }
 
     public boolean hasCustomValue() {

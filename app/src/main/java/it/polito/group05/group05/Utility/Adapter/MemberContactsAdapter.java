@@ -1,8 +1,6 @@
 package it.polito.group05.group05.Utility.Adapter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
-import com.firebase.ui.auth.ui.User;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import it.polito.group05.group05.R;
@@ -127,13 +122,12 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
 
     public List<UserContact> retriveAll() {
         List<UserContact> list = new ArrayList<>();
-        for (int i = contacts.size() - 1; i >= 0; i--) {
+        for(int i = contacts.size() -1 ; i >= 0 ; i--) {
             UserContact u = contacts.get(i);
             list.add(u);
         }
         return list;
     }
-
     @Override
     public int getItemCount() {
         return contacts.size();
@@ -151,7 +145,7 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
                 if (constraint != null) {
                     if (orig != null & orig.size() > 0) {
                         for (final UserContact u : orig) {
-                            if (!((Namable) u).getName().toLowerCase().contains(constraint.toString().toLowerCase()))
+                            if (!((Namable)u).getName().toLowerCase().contains(constraint.toString().toLowerCase()))
                                 remove(u);
                         }
                     }
@@ -169,8 +163,8 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
     public List<UserContact> filter(String newText) {
         List<UserContact> res = new ArrayList<>();
 
-        for (UserContact u : retriveAll()) {
-            if (((Namable) u).getName().toLowerCase().contains(newText.toString().toLowerCase()))
+        for(UserContact u : retriveAll()) {
+            if (((Namable)u).getName().toLowerCase().contains(newText.toString().toLowerCase()))
                 res.add(u);
 
         }

@@ -24,7 +24,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseHold
     Context context;
     Map<String, Double> expenseDatabase;
 
-    public MemberExpenseAdapter(List<UserDatabase> users, Context context, HashMap<String, Double> e) {
+    public MemberExpenseAdapter(List<UserDatabase> users, Context context, Map<String, Double> e) {
         this.users = users;
         this.context = context;
         this.expenseDatabase = e;
@@ -39,6 +39,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseHold
     @Override
     public void onBindViewHolder(MemberExpenseHolder holder, int position) {
         holder.setData(users.get(position), context, expenseDatabase);
+
     }
 
     @Override

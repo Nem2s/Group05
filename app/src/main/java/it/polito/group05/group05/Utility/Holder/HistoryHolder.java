@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -87,7 +89,7 @@ public class HistoryHolder extends GeneralHolder {
         } else {
             when_text_view.setText(time);
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
-            bgShape.setColor(Color.parseColor("#ffffff"));
+            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
         }
     }
 }

@@ -4,13 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/root_layout"
     tools:context="it.polito.group05.group05.ExpenseDetailsActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scroll_view_to">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:transitionName="card_transition">
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -170,4 +176,5 @@
                 android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>
