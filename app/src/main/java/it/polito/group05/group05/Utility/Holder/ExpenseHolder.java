@@ -312,4 +312,27 @@ public class ExpenseHolder extends GeneralHolder{
 
     }
 
+    public void displayDetails(ExpenseDatabase expense) {
+        Intent i = new Intent((Activity) context, ExpenseDetailsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("map", (Serializable) expense.getMembers());
+        extras.putString("title", expense.getName());
+        extras.putString("owner", expense.getOwner());
+        extras.putString("price", expense.getPrice().toString());
+        extras.putLong("timestamp", expense.getTimestamp());
+        int location[] = new int[2];
+        cv.getLocationInWindow(location);
+        LEFT_OFFSET = location[0];
+        TOP_OFFSET = location[1];
+        WIDTH = cv.getWidth();
+        HEIGHT = cv.getHeight();
+        extras.putInt("left_offset", LEFT_OFFSET);
+        extras.putString("expenseId", expense.getId());
+        extras.putInt("top_offset", TOP_OFFSET);
+        extras.putInt("width", WIDTH);
+        extras.putInt("height", HEIGHT);
+        extras.putSerializable("payed", (Serializable) expense.getPayed());
+        i.putExtras(extras);
+        context.startActivity(i);
+    }
 }

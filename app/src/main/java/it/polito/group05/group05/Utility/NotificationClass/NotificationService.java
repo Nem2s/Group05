@@ -54,6 +54,7 @@ public class NotificationService extends FirebaseMessagingService {
 
         NotificationCompat.Builder nb = new NotificationCompat.Builder(getBaseContext());
         Bitmap bitmap = null;
+        android.support.v4.app.NotificationCompat.InboxStyle inboxStyle = new android.support.v4.app.NotificationCompat.InboxStyle();
         try {
             bitmap = Glide.with(this)
                 .using(new FirebaseImageLoader())
@@ -84,20 +85,23 @@ public class NotificationService extends FirebaseMessagingService {
                 title = map.get("groupName") + " is created";
                 notificationId = 1;
                 ticker = title + "\n" + body + "\n";
+                nb.setStyle(inboxStyle.setBigContentTitle(title).addLine(body));
                 break;
             case "newExpense":
                 notificationId = NotificationId.getID();
                 title = map.get("expense_name") + " is created by " + map.get("expense_owner") + " @ " + map.get("groupName");
                 body = "You have to pay € " + String.format("%.2f", Double.parseDouble(map.get("expense_debit").substring(1)));
                 ticker = title + "\n" + body + "\n";
-
+                nb.setStyle(inboxStyle.setBigContentTitle(title).addLine(body));
                 break;
             case "newMessage":
                 notificationId = 3;
                 body = map.get("messageUser") + ": " + map.get("message");
                 title = map.get("groupName");
                 ticker = "New message" + " @ " + title + "\n" + map.get("messageUser") + ":" + map.get("message");
+                nb.setStyle(inboxStyle.setBigContentTitle(title).addLine(body));
                 break;
+
             case "paymentRequest":
                 notificationId = NotificationId.getID();
                 double d = Double.parseDouble(map.get("expenseDebit").substring(1));
@@ -124,23 +128,23 @@ public class NotificationService extends FirebaseMessagingService {
                 body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("expenseDebit").substring(1))) + " for " + map.get("expenseName");
                 title = map.get("requestFrom") + "@" + map.get("groupName");
                 ticker = title + '\n' + body;
+                nb.setStyle(inboxStyle.setBigContentTitle(title).addLine(body));
 
                 break;
             case "rememberPaymentToOne":
-                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("debit"))) + " for to be balanced";
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("debit"))) + " to be balanced";
                 title = map.get("requestFrom") + "@" + map.get("groupName");
                 ticker = title + '\n' + body;
+                nb.setStyle(inboxStyle.setBigContentTitle(title).addLine(body));
                 break;
         }
         Intent i = new Intent(this, SignUpActivity.class);
         for (String s : map.keySet()) {
             i.putExtra(s, map.get(s));
         }
-
         nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), NotificationId.getID(), i, FLAG_ONE_SHOT));
         nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
-
         nm.notify(map.get("groupId"), notificationId, nb.build());
 
     }

@@ -108,7 +108,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                                                             users.get(e).setCustomValue(round2);
                                                             try {
                                                                 notifyItemChanged(e);
-                                                            } catch (Exception ee) {}
+                                                            } catch (Exception ee) {
+                                                            }
                                                         }
                                                         else {
                                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
@@ -138,12 +139,12 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         this.total = total;
         for (int j = 0; j < users.size(); j++) {
             User_expense e = users.get(j);
-          //  double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            //  double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             e.setCustomValue(total / (users.size()));
             e.setSelected(false);
             notifyItemChanged(j);
         }
-     //   notifyDataSetChanged();
+        //   notifyDataSetChanged();
     }
 
 }

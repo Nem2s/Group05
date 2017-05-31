@@ -11,13 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.Adapter.MemberIncludedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -79,11 +77,11 @@ public class CustomIncludedDialog extends DialogFragment {
     private void searchSelection() {
         for (int i = 0; i < list.size(); i++) {
             User_expense e = list.get(i);
-            if(!e.isExcluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))){
-                if(!newList.contains(e))
-                {
+            if (!e.isExcluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))) {
+                if (!newList.contains(e)) {
                     newList.add(e);
-                }}
+                }
+            }
         }
     }
 

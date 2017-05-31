@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -19,8 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -72,7 +69,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
-                        tv_userBalance.setText("Already Payed!");
+                        tv_userBalance.setText("Break even!");
                         tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
@@ -103,6 +100,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 button_pay.setVisibility(View.VISIBLE);
                                 button_notify.setVisibility(View.GONE);
 
+
                             } else {
                                 tv_userBalance.setText("Already Payed!");
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
@@ -120,10 +118,10 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             @Override
             public void onClick(View v) {
                 try {
-                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
+
                     String myId = Singleton.getInstance().getCurrentUser().getId();
-                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
-                    Toast.makeText(context, "Ciao", Toast.LENGTH_LONG);
+                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), value);
+
                 } catch (Exception c) {
 
                 }
@@ -141,8 +139,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(button_notify.getVisibility() == View.VISIBLE)
-                        AnimUtils.enterRevealAnimation(button_notify);
+                        if (button_notify.getVisibility() == View.VISIBLE)
+                            AnimUtils.enterRevealAnimation(button_notify);
                     }
                 }, 30000);
             }

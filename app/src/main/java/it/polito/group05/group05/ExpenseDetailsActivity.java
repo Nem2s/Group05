@@ -84,8 +84,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_price = (TextView) findViewById(R.id.tv_price);
         tv_name = (TextView) findViewById(R.id.tv_owner_name);
         tv_expense = (TextView) findViewById(R.id.tv_expense_name);
-        tv_members = (TextView)findViewById(R.id.tv_static_members);
-        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
+        tv_members = (TextView) findViewById(R.id.tv_static_members);
+        iv_arrow = (ImageView) findViewById(R.id.iv_arrow);
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);

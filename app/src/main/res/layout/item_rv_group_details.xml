@@ -61,7 +61,7 @@
         android:id="@+id/button_notify"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:text="Notify"
+        android:text="Remind"
         android:visibility="gone" />
 
         <ProgressBar

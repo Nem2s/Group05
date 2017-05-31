@@ -4,8 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -26,15 +28,12 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ExecutionException;
@@ -44,7 +43,9 @@ import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupActivity extends AestheticActivity {
 
@@ -112,37 +113,7 @@ public class GroupActivity extends AestheticActivity {
             transaction.commit();
 
         }
-        if (getIntent().getStringExtra("type") != null) {
-            if (getIntent().getStringExtra("type").equals("paymentRequest")) {
-                final String eid = getIntent().getStringExtra("expenseId");
-                final String uid = getIntent().getStringExtra("requestFromId");
-                final String gid = getIntent().getStringExtra("groupId");
-                final String debit = getIntent().getStringExtra("expenseDebit");
-                final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
-                AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
-                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-
-                                DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd);
-                                dialog.cancel();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DB_Manager.getInstance().payUnDone(gid, eid, uid);
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
-
-
-            }
-
-        }
         try {
             initializeUI();
         } catch (ExecutionException e) {
@@ -183,13 +154,58 @@ public class GroupActivity extends AestheticActivity {
                 return true;
             }
         });
+        checkBundle();
     }
+
+    private void checkBundle() {
+
+        String s = getIntent().getStringExtra("type");
+        if (s != null) {
+            if (s.equals("rememberPaymentToOne") || s.equals("rememberPayment")) {
+                return;
+            }
+            if (s.equals("newGroup")) {
+                final Pair<View, String> p1 = new Pair<View, String>((View) tv_groupname, getResources().getString(R.string.transition_group_image));
+                AnimUtils.startActivityWithAnimation((Activity) this, new Intent(this, GroupDetailsActivity.class), p1);
+
+            }
+            if (s.equals("paymentRequest")) {
+                final String eid = getIntent().getStringExtra("expenseId");
+                final String uid = getIntent().getStringExtra("requestFromId");
+                final String gid = getIntent().getStringExtra("groupId");
+                final String debit = getIntent().getStringExtra("expenseDebit");
+                final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd, Singleton.getInstance().getCurrentUser().getId());
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payUnDone(gid, eid, uid);
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+
+            }
+            getIntent().putExtra("type", "");
+        }
+
+    }
+
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         supportFinishAfterTransition();
     }
+
 
     private void initializeUI() throws ExecutionException, InterruptedException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -294,18 +310,18 @@ public class GroupActivity extends AestheticActivity {
 
     private void fillNameMembersList() {
 
-        mToolbar.setSubtitle("");
+        tv_members.setText("");
         for(String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if (mToolbar.getSubtitle().toString().equals(""))
-                        mToolbar.setSubtitle(u.getName());
+                    if (tv_members.getText().equals(""))
+                        tv_members.setText(u.getName());
 
                     else
-                        tv_members.append(", " +u.getName());
+                        tv_members.append(", " + u.getName());
 
                     tv_members.setSingleLine(true);
                     tv_members.setMarqueeRepeatLimit(-1);
@@ -439,5 +455,12 @@ public class GroupActivity extends AestheticActivity {
     private void replaceWithDetailsFragment() {
 
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        checkBundle();
+       
     }
 }

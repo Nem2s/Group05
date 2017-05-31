@@ -10,16 +10,17 @@
 
     <FrameLayout
         android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?android:attr/actionBarSize"></FrameLayout>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
-        android:layout_gravity="bottom"
-        ></android.support.design.widget.BottomNavigationView>
+        android:layout_gravity="bottom"></android.support.design.widget.BottomNavigationView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -48,8 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:elevation="4dp"
-                >
+                android:elevation="4dp">
 
                 <LinearLayout
                     android:id="@+id/cv_header_ll"
@@ -84,8 +84,7 @@
                             android:text="VeryLongGroupName"
                             android:textStyle="bold"
                             android:textSize="16sp"
-                            android:tag=":aesthetic_ignore"
-              />
+                            android:tag=":aesthetic_ignore" />
 
                         <TextView
                             android:tag=":aesthetic_ignore"

@@ -50,20 +50,17 @@
                         android:focusableInTouchMode="true"
                         android:transitionName="@string/transition_group_image" />
 
-
                     <TextView
                         android:id="@+id/tv_group_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="16dp"
-                        android:text="Add an Expense"
-                        android:textColor="?android:textColorSecondary"
-                        android:textSize="20sp"
+                        android:layout_marginEnd="60dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="VeryLongGroupName"
                         android:textStyle="bold"
-                        android:transitionName="@string/transition_text" />
-
+                        android:textSize="16sp"
+                        android:tag=":aesthetic_ignore" />
                 </LinearLayout>
 
             </android.support.v7.widget.Toolbar>
@@ -210,7 +207,7 @@
                         android:layout_marginLeft="8dp"
                         android:textSize="17sp"
                         android:text="Attachment"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/nome_file"

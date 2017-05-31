@@ -1,9 +1,11 @@
 package it.polito.group05.group05;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ import java.util.List;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
@@ -81,16 +84,16 @@ public class ExpenseFragment extends Fragment {
             return
                     super.onOptionsItemSelected(item);
         }
-        if (id == R.id.add_member){
-            startActivity( new Intent(getContext(), NewMemberActivity.class));
+        if (id == R.id.add_member) {
+            startActivity(new Intent(getContext(), NewMemberActivity.class));
         }
-        if (id == R.id.leave_group){
-            DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(),getContext());
+        if (id == R.id.leave_group) {
+            DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(), getContext());
         }
-        if (id == R.id.group_detail){
-            // final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
-            startActivity( new Intent(getContext(), GroupDetailsActivity.class));
-            // AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
+        if (id == R.id.group_detail) {
+            final Pair<View, String> p1 = new Pair<View, String>((View) iv_noexpense, getResources().getString(R.string.transition_group_image));
+
+            AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
 
         }
         return super.onOptionsItemSelected(item);
@@ -171,6 +174,13 @@ public class ExpenseFragment extends Fragment {
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if(model==null) return;
                 viewHolder.setData(model,getContext());
+                String s = getActivity().getIntent().getStringExtra("expenseId");
+                String s1 = getActivity().getIntent().getStringExtra("type");
+                if (s != null && s1 != null)
+                    if (s1.equals("newExpense") && model.getId().equals(s)) {
+                        getActivity().getIntent().putExtra("type", "");
+                        viewHolder.displayDetails(model);
+                    }
 
             }
 
@@ -197,7 +207,10 @@ public class ExpenseFragment extends Fragment {
         super.onResume();
     }
     @Override
-    public void onStart() {super.onStart();}
+    public void onStart() {
+        super.onStart();
+
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

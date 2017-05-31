@@ -81,7 +81,7 @@ public class InternalHistoryHolder extends GeneralHolder {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time = sdf.format(date);
         history_time.setText(time);
-        history_image. setColorFilter(
+        history_image.setColorFilter(
                 Aesthetic.get().textColorSecondary().take(1).blockingFirst()
         );
         if (last) divider_history.setVisibility(View.GONE);

@@ -308,6 +308,7 @@ exports.sendPaymentNotification = functions.database.ref('/history/{gId}/{eId}/n
 		  groupName:group.name,
 		  expenseDebit:expense.members[uid].toString(),
 		  expenseName:expense.name,
+		  userId:expense.owner,
 		  requestFrom:user.userInfo.name,
 		  icon:'/users/'+uid+'/'+user.userInfo.iProfile,
 		  expenseId:eid,
@@ -449,7 +450,7 @@ exports.sendReminderPaymentToOne = functions.database.ref('/history/{gId}/notify
 	  }
 	};
 		  
-		  admin.database().ref('/history/'+gid+'/'+eid+'/notifyTo').remove();
+		  admin.database().ref('/history/'+gid+'/notifyTo').remove();
 		    admin.messaging().sendToDevice(token, payload).then(response => {
       const tokensToRemove = [];
       response.results.forEach((result, index) => {

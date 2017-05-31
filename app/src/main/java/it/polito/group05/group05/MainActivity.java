@@ -127,9 +127,13 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null)
+        Intent i2 = getIntent();
+        i2.setAction(null);
+        setIntent(i2);
+
             i.putExtras(bundle);
         context.startActivity(i);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -256,15 +260,18 @@ public class MainActivity extends AestheticActivity
 
     @Override
     protected void onStop() {
-        super.onStop();
+
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onNewIntent(Intent intent) {
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+        setIntent(intent);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
 
@@ -277,7 +284,6 @@ public class MainActivity extends AestheticActivity
                     EventBus.getDefault().post(new ReadyEvent(g));
 
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -301,7 +307,7 @@ public class MainActivity extends AestheticActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -500,7 +506,7 @@ public class MainActivity extends AestheticActivity
         }
     }
 
-    private void initializeAesthetic(int primary, int accent ,boolean dark) {
+    private void initializeAesthetic(int primary, int accent, boolean dark) {
         Singleton.getInstance().setColors(colors);
         if(dark) {
             Aesthetic.get()
