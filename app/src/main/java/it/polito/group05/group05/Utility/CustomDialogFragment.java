@@ -4,11 +4,16 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +21,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.messaging.RemoteMessage;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -60,10 +72,12 @@ public class CustomDialogFragment extends DialogFragment {
     Double totalPriceActual;
     CustomIncludedDialog c;
     FragmentManager fm;
+    Uri uri;
 
-    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e){
+    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, Uri uri){
         this.listaCompleta= listOriginal;
         this.partecipants= list;
+        this.uri= uri;
         expense= e;
         totalPriceActual = 0.0;
     }
@@ -98,12 +112,10 @@ public class CustomDialogFragment extends DialogFragment {
                                 .child("lmTime");
                         expense.setId(fdb.getKey());
                         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
-/*
-                        if (nameFILE != null) {
-                            expense.setFile(nameFILE);
+                        if (expense.getFile() != null) {
                             upLoadFile(uri);
                         }
-  */                      double price;
+                        double price;
                         double toSubtractOwner = 0.0;
                         for (int i = 0; i < partecipants.size(); i++) {
                             if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
@@ -161,7 +173,7 @@ public class CustomDialogFragment extends DialogFragment {
                     listaCompleta.get(j).setExcluded(false);
                 }
                 fm= getFragmentManager();
-                c = new CustomIncludedDialog(listaCompleta, expense);
+                c = new CustomIncludedDialog(listaCompleta, expense, uri);
                 c.show(fm, "TAG");
                 dismiss();
             }
@@ -182,5 +194,32 @@ public class CustomDialogFragment extends DialogFragment {
         params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
         super.onResume();
+    }
+
+    private void upLoadFile(Uri uri){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                .child("expenses")
+                .child(expense.getId())
+                .child(expense.getFile());
+        UploadTask uploadTask = storageRef.putFile(uri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+           /*     NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
+                n.setSmallIcon(R.id.logo).setContentTitle("Upload Failed").setContentText("Retry").setAutoCancel(true);
+                NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                nm.notify(0,n.build());
+            */}
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+             /*   NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
+                n.setSmallIcon(R.id.logo).setContentTitle("Upload Success").setContentText("You have uploaded "+expense.getFile()).setAutoCancel(true);
+                NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                nm.notify(0,n.build());
+               // Snackbar.make(,"Uploading DONE", Snackbar.LENGTH_SHORT).show();
+            */}
+        });
     }
 }

@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -38,11 +39,13 @@ public class CustomIncludedDialog extends DialogFragment {
     FloatingActionButton next;
     FragmentManager fm;
     CustomDialogFragment cdf;
+    Uri uri;
 
 
-    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e) {
+    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e, Uri uri) {
         this.list = list;
         this.expense = e;
+        this.uri = uri;
         newList = new ArrayList<>();
 
     }
@@ -63,7 +66,7 @@ public class CustomIncludedDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 searchSelection();
-                cdf = new CustomDialogFragment(list, newList, expense);
+                cdf = new CustomDialogFragment(list, newList, expense, uri);
                 cdf.show(fm, "Tv-TAG");
                 dismiss();
             }

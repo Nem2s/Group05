@@ -151,7 +151,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             });
         }
         final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map);
-        ;
+
         for (final String s : map.keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

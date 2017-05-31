@@ -102,7 +102,6 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
 
                                     if (round2 > 0) {
                                         users.get(e).setCustomValue(tmp / tmpD);
-                                        //rimuovi il listener
                                         try {
                                             notifyItemChanged(e);
                                         } catch (Exception ex) {
