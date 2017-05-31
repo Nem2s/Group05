@@ -107,7 +107,7 @@ public class CustomDialogFragment extends DialogFragment {
                 totalPriceActual = 0.0;
                 Map<String, Object> map_payed = new HashMap<>();
                 for (int i = 0; i < partecipants.size(); i++) {
-                    partecipants.get(i).setIncluded(false);
+                    //partecipants.get(i).setIncluded(false);
                     price = partecipants.get(i).getCustomValue();
                     totalPriceActual += partecipants.get(i).getCustomValue();
                     String id = partecipants.get(i).getId();
@@ -131,8 +131,9 @@ public class CustomDialogFragment extends DialogFragment {
                     DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                     fdb.setValue(expense);
                     getActivity().finish();
+                    dismiss();
                 }
-                dismiss();
+
             }
         });
         reset = (FloatingActionButton) rootView.findViewById(R.id.reset);
@@ -149,6 +150,9 @@ public class CustomDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 for (int i = 0; i < partecipants.size(); i++) {
                     partecipants.remove(i);
+                }
+                for(int j= 0; j< listaCompleta.size(); j++){
+                                        listaCompleta.get(j).setExcluded(false);
                 }
                 fm = getFragmentManager();
                 c = new CustomIncludedDialog(listaCompleta, expense);

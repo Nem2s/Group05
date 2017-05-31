@@ -76,7 +76,7 @@
                             android:textStyle="italic|bold" />
 
                         <ImageView
-
+                            android:id="@+id/iv_arrow"
                             android:layout_width="12dp"
                             android:layout_height="12dp"
                             android:layout_gravity="center"
@@ -101,7 +101,9 @@
                         android:drawableRight="@drawable/ic_action_calendar_month"
                         android:text="01/01"
                         android:textSize="11sp"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+
+                        />
 
                 </RelativeLayout>
 

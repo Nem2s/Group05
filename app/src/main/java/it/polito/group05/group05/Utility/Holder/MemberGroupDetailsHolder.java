@@ -1,7 +1,9 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -17,12 +19,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -120,6 +125,24 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
                 } catch (Exception c) {
                 }
+                Snackbar.make(itemView, "Reminder sent to " + user.getName(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Ok", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        })
+                        .show();
+
+                final Handler handler = new Handler(context.getMainLooper());
+                AnimUtils.exitReveal(button_notify);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(button_notify.getVisibility() == View.VISIBLE)
+                        AnimUtils.enterRevealAnimation(button_notify);
+                    }
+                }, 30000);
             }
         });
         button_pay.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +181,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 }
                             }
                         }
-                        Integer [] res;
+
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(true)
                                 .title("Choose to Pay")
@@ -174,8 +197,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                             DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
                                             DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }
-                                        Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
-                                                var + " euros", Toast.LENGTH_SHORT).show();
+
                                         DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
@@ -183,6 +205,16 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        Snackbar.make(itemView, user.getName() + " need to convalidate the payment. Let's look back here later.", Snackbar.LENGTH_INDEFINITE)
+                                                .setAction("Ok", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                    }
+                                                })
+                                                .show();
+                                        AnimUtils.exitReveal(button_pay);
+                                        dialog.dismiss();
                                     }
                                 })
                                 .positiveText("Ok")

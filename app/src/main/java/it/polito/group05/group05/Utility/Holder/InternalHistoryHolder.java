@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -79,7 +81,9 @@ public class InternalHistoryHolder extends GeneralHolder {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time = sdf.format(date);
         history_time.setText(time);
-
+        history_image. setColorFilter(
+                Aesthetic.get().textColorSecondary().take(1).blockingFirst()
+        );
         if (last) divider_history.setVisibility(View.GONE);
     }
 }

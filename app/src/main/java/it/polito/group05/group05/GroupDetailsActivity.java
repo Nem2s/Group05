@@ -123,7 +123,7 @@ public class GroupDetailsActivity extends AestheticActivity {
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
         iv_header.setVisibility(View.INVISIBLE);
         cv_back = (CircleImageView) findViewById(R.id.cv_backimage);
-        cv_back.setVisibility(View.INVISIBLE);
+
         rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
         pb.setVisibility(View.INVISIBLE);
@@ -158,7 +158,7 @@ public class GroupDetailsActivity extends AestheticActivity {
             final Intent i = getIntent();
             final int color = i.getIntExtra("Color", getResources().getColor(R.color.colorPrimary));
             if(!(color == getResources().getColor(R.color.colorPrimary))) {
-
+                cv_back.setVisibility(View.INVISIBLE);
                 MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                         .title("Group Informations")
                         .content("To be implemented...")
@@ -179,33 +179,32 @@ public class GroupDetailsActivity extends AestheticActivity {
                             final int cy = (int) (appbar.getY() + (appbar.getHeight() / 2));
                             final float finalRadius = (float) Math.hypot(cx, cy);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                                Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
+                                /**Reveal Animator**/
+                                Animator revealAnimator = android.view.ViewAnimationUtils.createCircularReveal(
 
                                         root,
                                         (int) cx,
                                         (int) cy, finalRadius,
                                         0
                                 );
-                                final ValueAnimator anim = ValueAnimator.ofArgb(color, getResources().getColor(R.color.colorPrimary));
-                                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                /**ColorAnimator**/
+                                final ValueAnimator colorAnimator = ValueAnimator.ofArgb(color, Aesthetic.get().colorPrimary().take(1).blockingFirst());
+                                colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
                                         findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
                                     }
 
                                 });
-                                anim.addListener(new Animator.AnimatorListener() {
+                                colorAnimator.addListener(new Animator.AnimatorListener() {
                                     @Override
                                     public void onAnimationStart(Animator animator) {
-                                        iv_header.setVisibility(View.INVISIBLE);
-                                        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
-                                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
+
                                     }
 
                                     @Override
                                     public void onAnimationEnd(Animator animator) {
-
+                                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
                                         AnimUtils.enterRevealAnimation(iv_header);
                                     }
 
@@ -219,14 +218,12 @@ public class GroupDetailsActivity extends AestheticActivity {
 
                                     }
                                 });
-                                anim.setDuration(1000);
-                                animator.addListener(new AnimatorListenerAdapter() {
+                                colorAnimator.setDuration(1000);
+                                revealAnimator.addListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationStart(Animator animation) {
                                         root.setBackgroundColor(color);
 
-                                        anim.start();
-                                        cv_back.setVisibility(View.INVISIBLE);
                                     }
 
                                     @Override
@@ -238,33 +235,54 @@ public class GroupDetailsActivity extends AestheticActivity {
                                         //AnimUtils.enterRevealAnimation(iv_header);
                                     }
                                 });
-                                animator.setStartDelay(200);
-                                animator.setDuration(250);
-                                animator.start();
+                                revealAnimator.setStartDelay(200);
+                                revealAnimator.setDuration(250);
+                                revealAnimator.start();
+                                colorAnimator.start();
                             } else {
-                                Animator animator = ViewAnimationUtils.createCircularReveal(
+                                Animator revealAnimator = ViewAnimationUtils.createCircularReveal(
                                         root,
                                         (int) cx,
                                         (int) cy, 0,
                                         finalRadius);
-                                final ValueAnimator anim = new ValueAnimator();
-                                anim.setIntValues(color, getResources().getColor(R.color.colorPrimary));
-                                anim.setEvaluator(new ArgbEvaluator());
-                                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                final ValueAnimator colorAnimator = new ValueAnimator();
+                                colorAnimator.setIntValues(color, getResources().getColor(R.color.colorPrimary));
+                                colorAnimator.setEvaluator(new ArgbEvaluator());
+                                colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
                                         findViewById(R.id.reveal_parent).setBackgroundColor((Integer)valueAnimator.getAnimatedValue());
                                     }
                                 });
 
-                                anim.setDuration(1000);
-                                animator.addListener(new AnimatorListenerAdapter() {
+                                colorAnimator.setDuration(1000);
+                                colorAnimator.addListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
+                                        AnimUtils.enterRevealAnimation(iv_header);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
+                                revealAnimator.addListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationStart(Animator animation) {
-                                        anim.start();
-                                        iv_header.setVisibility(View.INVISIBLE);
+
                                         root.setBackgroundColor(color);
-                                        cv_back.setVisibility(View.INVISIBLE);
                                     }
 
                                     @Override
@@ -273,9 +291,10 @@ public class GroupDetailsActivity extends AestheticActivity {
                                         root.setVisibility(View.INVISIBLE);
                                         fab.show();
                                         cv_back.setVisibility(View.INVISIBLE);
-                                        AnimUtils.enterRevealAnimation(iv_header);
                                     }
                                 });
+                                revealAnimator.start();
+                                colorAnimator.start();
                             }
                             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                                 root.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -407,8 +426,8 @@ public class GroupDetailsActivity extends AestheticActivity {
 
     private void initializeUI() {
 
-        ImageUtils.LoadImageGroup(iv_header, this, currGroup);
 
+        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .title("Group Informations")
                 .content("To be implemented...")
@@ -423,12 +442,13 @@ public class GroupDetailsActivity extends AestheticActivity {
                 getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                     @Override
                     public void onTransitionStart(Transition transition) {
-                        ImageUtils.LoadImageGroup(cv_back, getApplicationContext(), currGroup);
+
                     }
 
                     @Override
                     public void onTransitionEnd(Transition transition) {
                         fab.show();
+                        ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
                         AnimUtils.enterRevealAnimation(iv_header);
                         cv_back.setVisibility(View.INVISIBLE);
                         retriveUsers();
@@ -450,7 +470,7 @@ public class GroupDetailsActivity extends AestheticActivity {
                     }
                 });
 
-                scheduleStartPostponedTransition(iv_header);
+                scheduleStartPostponedTransition(cv_back);
             } else {
                 fab.show();
                 AnimUtils.enterRevealAnimation(iv_header);
