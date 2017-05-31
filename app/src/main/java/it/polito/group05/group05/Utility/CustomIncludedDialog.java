@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,12 @@ public class CustomIncludedDialog extends DialogFragment {
         next = (FloatingActionButton) rootView.findViewById(R.id.next);
         LinearLayoutManager l = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(l);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int a =  (displaymetrics.heightPixels*40)/100;
+        recyclerView.getLayoutParams().height =a;
+
         memberAdapter = new MemberIncludedAdapter(list, this.getActivity());
         recyclerView.setAdapter(memberAdapter);
         fm = getFragmentManager();

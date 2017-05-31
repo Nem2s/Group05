@@ -18,6 +18,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,11 @@ public class CustomDialogFragment extends DialogFragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_members);
         LinearLayoutManager l = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(l);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int a =  (displaymetrics.heightPixels*40)/100;
+        recyclerView.getLayoutParams().height =a;
 
         memberAdapter = new MemberExpandedAdapter(partecipants, this.getActivity(), expense.getPrice());
         recyclerView.setAdapter(memberAdapter);
