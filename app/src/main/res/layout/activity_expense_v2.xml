@@ -28,7 +28,6 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/expenseTabColor"
                 android:fitsSystemWindows="true"
                 android:transitionName="@string/transition_toolbar"
 
@@ -60,6 +59,7 @@
                         android:layout_marginRight="16dp"
                         android:layout_marginTop="16dp"
                         android:text="Add an Expense"
+                        android:textColor="?android:textColorSecondary"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:transitionName="@string/transition_text" />
@@ -119,51 +119,53 @@
                 android:orientation="vertical">
 
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_name_expense"
+                <android.support.design.widget.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_name_expense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="80dp"
-                    android:hint="Description"
-                    android:imeOptions="actionDone"
-                    android:textSize="18sp"
-                    android:textStyle="normal"
-                    app:met_baseColor="#000000"
-                    app:met_errorColor="#646464"
-                    app:met_floatingLabel="highlight" />
-
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="80dp"
+                        android:hint="Description"
+                        android:imeOptions="actionDone"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                     />
+                </android.support.design.widget.TextInputLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp">
 
-                        <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/et_cost_expense"
-                            android:layout_width="120dp"
+                        <android.support.design.widget.TextInputLayout
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginLeft="4dp"
-                            android:layout_marginRight="4dp"
-                            android:digits="0123456789.,"
-                            android:hint="Cost"
-                            android:imeOptions="actionDone"
-                            android:inputType="numberDecimal"
-                            android:textSize="15sp"
-                            android:textStyle="normal"
-                            app:met_baseColor="@color/colorPrimary"
-                            app:met_errorColor="#646464"
-                            app:met_floatingLabel="highlight"
-                            app:met_iconRight="@drawable/euro" />
-
+                            android:layout_width="match_parent">
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/et_cost_expense"
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
+                                android:digits="0123456789.,"
+                                android:hint="Cost"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal"
+                                android:textSize="15sp"
+                                android:textStyle="normal"
+                                android:drawableRight="@drawable/euro"
+                            />
+                        </android.support.design.widget.TextInputLayout>
                     <RelativeLayout
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/et_cost_expense">
+                        >
 
                         <ImageView
                                 android:id="@+id/calendar"
@@ -196,6 +198,52 @@
                     android:alpha="0.6"
                     android:background="@android:color/darker_gray" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_name_fil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="8dp"
+                        android:textSize="17sp"
+                        android:text="Attachment"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/nome_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_name_fil"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.6"
+                        android:text="FileName"
+                        android:textStyle="italic" />
+
+                    <Button
+                        android:id="@+id/button_upload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/tv_name_fil"
+                        android:text="UPLOAD"
+                        android:theme="@style/GreenButton" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="16dp"
+                        android:alpha="0.6"
+                        android:layout_below="@+id/button_upload"
+                        android:background="@android:color/darker_gray"
+                        android:layout_alignParentStart="true" />
+
+                </RelativeLayout>
 
             </LinearLayout>
             </RelativeLayout>
@@ -214,6 +262,6 @@
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/ic_send_black_12dp"
+        app:srcCompat="@drawable/ic_navigate_next_black_24dp"
         app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>

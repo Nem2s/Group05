@@ -133,6 +133,9 @@ public class LegendHolder extends GeneralHolder {
 
                 }
             });
+            animator.setStartDelay(200);
+            animator.setDuration(250);
+            animator.start();
         }
     }
     class GestureTap extends GestureDetector.SimpleOnGestureListener {

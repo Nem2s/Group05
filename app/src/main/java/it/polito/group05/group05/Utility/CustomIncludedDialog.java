@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,11 +11,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.Adapter.MemberIncludedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
@@ -36,11 +39,13 @@ public class CustomIncludedDialog extends DialogFragment {
     FloatingActionButton next;
     FragmentManager fm;
     CustomDialogFragment cdf;
+    Uri uri;
 
 
-    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e) {
+    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e, Uri uri) {
         this.list = list;
         this.expense = e;
+        this.uri = uri;
         newList = new ArrayList<>();
 
     }
@@ -61,12 +66,12 @@ public class CustomIncludedDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 searchSelection();
-                cdf = new CustomDialogFragment(list, newList, expense);
+                cdf = new CustomDialogFragment(list, newList, expense, uri);
                 cdf.show(fm, "Tv-TAG");
                 dismiss();
             }
         });
-        this.getDialog().setTitle("Include Friends");
+        this.getDialog().setTitle("Choose Friends");
         return rootView;
 
     }
@@ -74,22 +79,14 @@ public class CustomIncludedDialog extends DialogFragment {
     private void searchSelection() {
         for (int i = 0; i < list.size(); i++) {
             User_expense e = list.get(i);
-            if (e.isIncluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))) {
-                if (!newList.contains(e)) {
+            if(!e.isExcluded() || (e.getId().equals(Singleton.getInstance().getCurrentUser().getId()))){
+                if(!newList.contains(e))
+                {
                     newList.add(e);
-                }
-            }
+                }}
         }
     }
 
-    private void removeSelection() {
-        for (int i = 0; i < list.size(); i++) {
-            User_expense e = list.get(i);
-            if (e.isIncluded()) {
-                e.setIncluded(false);
-            }
-        }
-    }
 
     @Override
     public void onResume() {

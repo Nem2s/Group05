@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.BottomNavBgMode;
 import com.afollestad.aesthetic.BottomNavIconTextMode;
 import com.afollestad.aesthetic.NavigationViewMode;
 import com.afollestad.materialdialogs.DialogAction;
@@ -69,6 +70,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -80,7 +82,7 @@ import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
-implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
@@ -91,12 +93,13 @@ implements NavigationView.OnNavigationItemSelectedListener {
     private static final String PRIMARY = "Primary";
     private static final String ACCENT = "Accent";
     DrawerLayout drawer;
+    NavigationView navigationView;
     CircleImageView cv_user_drawer;
     Activity activity;
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    public static FirebaseIndexRecyclerAdapter mAdapter;
+    FirebaseIndexRecyclerAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -128,10 +131,9 @@ implements NavigationView.OnNavigationItemSelectedListener {
         Singleton.getInstance().setmCurrentGroup(cu.getGroupDatabase());
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
-        getIntent().getStringExtra("message");
-        i.putExtra("message", getIntent().getStringExtra("message"));
-        i.putExtra("expenseId", getIntent().getStringExtra("expenseId"));
-        i.putExtra("groupId", getIntent().getStringExtra("groupId"));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null)
+            i.putExtras(bundle);
         context.startActivity(i);
     }
 
@@ -139,7 +141,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -219,7 +221,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -267,7 +269,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
     @Override
     protected void onStart() {
         super.onStart();
-
+        EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
 
@@ -332,8 +334,8 @@ implements NavigationView.OnNavigationItemSelectedListener {
         int id = item.getItemId();
         if (id == R.id.nav_balance) {
             Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));
+            item.setChecked(false);
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
-
         } else if (id == R.id.nav_manage) {
             Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Ok", new View.OnClickListener() {
@@ -343,12 +345,13 @@ implements NavigationView.OnNavigationItemSelectedListener {
                         }
                     })
                     .show();
-
+            item.setChecked(false);
         } else if (id == R.id.nav_share) {
-            Intent intent = new AppInviteInvitation.IntentBuilder("ciao")
-                    .setMessage("ciao ciao ciao")
+            Intent intent = new AppInviteInvitation.IntentBuilder("Share")
+                    .setMessage("Let's try out Share Cash! It's awesome!")
                     .build();
             startActivityForResult(intent, 1);
+            item.setChecked(false);
         } else if (id == R.id.nav_logout) {
             AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -358,7 +361,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
                 }
             });
 
-
+            item.setChecked(false);
         } else if (id == R.id.nav_themes) {
 
             if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
@@ -447,6 +450,7 @@ implements NavigationView.OnNavigationItemSelectedListener {
                     .build()
                     .show();
                     CUSTOM_THEME_OPTION = 0;
+            item.setChecked(false);
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
             i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.DialtactsContactsEntryActivity"));
@@ -454,11 +458,14 @@ implements NavigationView.OnNavigationItemSelectedListener {
             i.addCategory("android.intent.category.LAUNCHER");
             i.addCategory("android.intent.category.DEFAULT");
             startActivity(i);
+            item.setChecked(false);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+
     }
 
     @Override
@@ -494,11 +501,11 @@ implements NavigationView.OnNavigationItemSelectedListener {
                     })
                     .show();
         } else {
-            initializeAesthetic(primary, accent, isdark[0]);
+            initializeAesthetic(primary, accent, false);
         }
     }
 
-    private void initializeAesthetic(int primary, int accent,boolean dark) {
+    private void initializeAesthetic(int primary, int accent ,boolean dark) {
         Singleton.getInstance().setColors(colors);
         if(dark) {
             Aesthetic.get()
@@ -512,7 +519,10 @@ implements NavigationView.OnNavigationItemSelectedListener {
                             NavigationViewMode.SELECTED_ACCENT
                     )
                     .bottomNavigationIconTextMode(
-                            BottomNavIconTextMode.SELECTED_ACCENT
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
                     )
                     .colorWindowBackground(Color.parseColor("#303030"))
                     .apply();
@@ -529,7 +539,10 @@ implements NavigationView.OnNavigationItemSelectedListener {
                             NavigationViewMode.SELECTED_ACCENT
                     )
                     .bottomNavigationIconTextMode(
-                            BottomNavIconTextMode.SELECTED_ACCENT
+                            BottomNavIconTextMode.BLACK_WHITE_AUTO
+                    )
+                    .bottomNavigationBackgroundMode(
+                            BottomNavBgMode.BLACK_WHITE_AUTO
                     )
                     .colorWindowBackground(Color.parseColor("#FAFAFA"))
                     .apply();

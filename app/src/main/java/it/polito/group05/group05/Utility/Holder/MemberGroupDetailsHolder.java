@@ -1,8 +1,9 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -18,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -62,6 +65,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
         tv_userBalance.setText("No debits/credits");
         button_pay.setVisibility(View.GONE);
 
+
         FirebaseDatabase.getInstance().getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
                 .addValueEventListener(new ValueEventListener() {
@@ -97,6 +101,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                             } else if (value < 0) {
                                 tv_userBalance.setText("You must pay " + String.format("%.2f €", (-1) * value));
                                 tv_userBalance.setTextColor(context.getResources().getColor(R.color.red_400));
+
                                 button_pay.setVisibility(View.VISIBLE);
                                 button_notify.setVisibility(View.GONE);
 
@@ -113,7 +118,35 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 
                     }
                 });
+        button_notify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
+                    String myId = Singleton.getInstance().getCurrentUser().getId();
+                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
+                } catch (Exception c) {
+                }
+                Snackbar.make(itemView, "Reminder sent to " + user.getName(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Ok", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
+                            }
+                        })
+                        .show();
+
+                final Handler handler = new Handler(context.getMainLooper());
+                AnimUtils.exitReveal(button_notify);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(button_notify.getVisibility() == View.VISIBLE)
+                        AnimUtils.enterRevealAnimation(button_notify);
+                    }
+                }, 30000);
+            }
+        });
         button_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,7 +183,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 }
                             }
                         }
-                        Integer [] res;
+
                         dialog = new MaterialDialog.Builder(context)
                                 .cancelable(true)
                                 .title("Choose to Pay")
@@ -166,8 +199,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                             DB_Manager.getInstance().updateGroupFlow(s, expensePayed.get(i).getMembers().get(s));
                                             DB_Manager.getInstance().updateGroupFlow(user.getId(), (-1.00) * expensePayed.get(i).getMembers().get(s));
                                         }
-                                        Toast.makeText(context, "I will pay " + expensePayed.size() + " expenses for a total of " +
-                                                var + " euros", Toast.LENGTH_SHORT).show();
+
                                         DB_Manager.getInstance().expensesPayment(s, Singleton.getInstance().getmCurrentGroup().getId(),  expensePayed);
                                         return true;
                                     }
@@ -175,6 +207,16 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        Snackbar.make(itemView, user.getName() + " need to convalidate the payment. Let's look back here later.", Snackbar.LENGTH_INDEFINITE)
+                                                .setAction("Ok", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                    }
+                                                })
+                                                .show();
+                                        AnimUtils.exitReveal(button_pay);
+                                        dialog.dismiss();
                                     }
                                 })
                                 .positiveText("Ok")

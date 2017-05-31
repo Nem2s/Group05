@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
@@ -49,7 +51,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AestheticActivity {
 
     // [START declare_auth]
     private FirebaseAuth mAuth;

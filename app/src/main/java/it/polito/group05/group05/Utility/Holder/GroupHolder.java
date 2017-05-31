@@ -66,8 +66,12 @@ public class GroupHolder extends GeneralHolder {
         ImageUtils.LoadImageGroup(groupProfile, context, g);
         name.setText(g.getName());
         Date date = new Date(g.getLmTime());
+        Date today = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        String time_s = sdf.format(date);
+        SimpleDateFormat daysdf = new SimpleDateFormat("dd/MM", Locale.ITALY);
+        String time_s;
+        if(daysdf.format(date).equals(daysdf.format(today))) time_s = sdf.format(date);
+        else time_s = daysdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
 
@@ -116,10 +120,12 @@ public class GroupHolder extends GeneralHolder {
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Pair <View, String> p2 = new Pair<View, String>(((Activity)context).findViewById(R.id.fab),
+                        context.getString(R.string.transition_fab));
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
                 Intent i = new Intent(context, GroupActivity.class);
-                AnimUtils.startActivityWithAnimation(((Activity)context), new Intent(context, GroupActivity.class), p1);
+                AnimUtils.startActivityWithAnimation(((Activity)context), new Intent(context, GroupActivity.class), p1, p2);
             }
         });
 

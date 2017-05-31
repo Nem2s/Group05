@@ -1,11 +1,15 @@
 package it.polito.group05.group05;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +49,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_date;
     TextView tv_name;
     TextView tv_expense;
+    TextView tv_members;
+    ImageView iv_arrow;
     Button button_pay;
     Button button_notify;
     Bundle b;
@@ -57,6 +63,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         // scroller.setScroll(MultiShrinkScroller.FOCUS_DOWN);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void init(Bundle bundle) {
 
@@ -77,10 +84,13 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_price = (TextView) findViewById(R.id.tv_price);
         tv_name = (TextView) findViewById(R.id.tv_owner_name);
         tv_expense = (TextView) findViewById(R.id.tv_expense_name);
+        tv_members = (TextView)findViewById(R.id.tv_static_members);
+        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);
-
+        iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -102,8 +112,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         supportFinishAfterTransition();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {
         final List<UserDatabase> users = new ArrayList<>();
+        final Context context = this;
 
         if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
             users.add(Singleton.getInstance().getCurrentUser());
@@ -119,6 +131,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
                     DB_Manager.getInstance().notifyPayment(gid, getIntent().getStringExtra("expenseId"), s);
+                    Toast.makeText(context, "Your request is sent, now the owner must confirm your payment", Toast.LENGTH_LONG);
                     finish();
                 }
             });
@@ -137,8 +150,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                 public void onClick(View v) {
                     String s = Singleton.getInstance().getCurrentUser().getId();
                     String gid = Singleton.getInstance().getmCurrentGroup().getId();
-                    DB_Manager.getInstance().reminder(gid, getIntent().getStringExtra("expenseId"), s);
-                    Toast.makeText(getApplicationContext(), "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+                    DB_Manager.getInstance().reminderToAll(gid, getIntent().getStringExtra("expenseId"), s);
+                    Toast.makeText(context, "A Reminder is sent to all expense members", Toast.LENGTH_LONG);
+
                     finish();
                 }
             });
