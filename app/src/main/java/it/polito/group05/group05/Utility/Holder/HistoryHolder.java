@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Single;
 import it.polito.group05.group05.HistoryFragment;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.HistoryClass;
@@ -85,8 +86,13 @@ public class HistoryHolder extends GeneralHolder {
         if (time.equals(today_s)) {
             when_text_view.setText("Today");
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
-            bgShape.setColor(context.getResources().getColor(R.color.expenseTabColor));
-        } else {
+            bgShape.setColor(Aesthetic.get().isDark().take(1).blockingFirst() ? Aesthetic.get().colorPrimary().take(1).blockingFirst()
+                    : Aesthetic.get().colorAccent().take(1).blockingFirst());
+
+            bgShape.setAlpha(64);
+        }
+
+        else {
             when_text_view.setText(time);
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
             bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());

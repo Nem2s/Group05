@@ -65,14 +65,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Member1, Member2, Member3, Member 4, Member 5"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit ="marquee_forever"
-                            android:singleLine="true"
-                            android:focusable="true"
-                            android:textColor="?android:textColorSecondary"
-                            android:focusableInTouchMode="true"
-                            android:scrollHorizontally="true"
+
                             android:textSize="11sp"
+                            />
                             />
                     </LinearLayout>
                 </LinearLayout>
@@ -105,6 +100,6 @@
         app:layout_anchorGravity="bottom"
         android:layout_alignParentEnd="true"
         android:transitionName="@string/transition_fab"
-        app:srcCompat="@drawable/ic_action_add"
+        app:srcCompat="@drawable/ic_action_add_black"
         app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior" />
 </android.support.design.widget.CoordinatorLayout>

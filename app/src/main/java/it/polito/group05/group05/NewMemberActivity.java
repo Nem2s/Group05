@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -66,7 +67,7 @@ public class NewMemberActivity extends AestheticActivity {
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
     FloatingActionButton fab;
     CircleImageView iv_new_group;
-    MaterialEditText et_group_name;
+    TextInputEditText et_group_name;
     RecyclerView rv_invited;
     List<UserContact> contacts;
     SwipeRefreshLayout mSwipeLayout;
@@ -121,7 +122,7 @@ public class NewMemberActivity extends AestheticActivity {
         setContentView(R.layout.activity_new_group);
         isNameEmpty = false;
         rv_invited = (RecyclerView)findViewById(R.id.invited_people_list);
-        et_group_name = (MaterialEditText)findViewById(R.id.group_name_add);
+        et_group_name = (TextInputEditText)findViewById(R.id.group_name_add);
         iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
         et_group_name.setVisibility(View.GONE);
         iv_new_group.setVisibility(View.GONE);
