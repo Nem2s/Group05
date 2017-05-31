@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,7 +73,7 @@ public class GroupActivity extends AestheticActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
-        //overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -197,15 +198,39 @@ public class GroupActivity extends AestheticActivity {
                 public void onTransitionStart(Transition transition) {
                     transition.removeTarget(R.id.toolbar);
                     transition.removeTarget(R.id.navigation);
-                    //ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
-                    //tv_groupname.setText(currentGroup.getName());
-                    fab.hide();
+                    ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
                 }
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-                    fab.show();
-                    fillNameMembersList();
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+
+            getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+
                 }
 
                 @Override
@@ -224,44 +249,34 @@ public class GroupActivity extends AestheticActivity {
                 }
             });
             scheduleStartPostponedTransition(cv_group);
+
         } else {
-
-
-            final Context context = this;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    GroupDatabase currGroup = Singleton.getInstance().getmCurrentGroup();
-
-                    GlideDrawable bmp = null;
-                    try {
-                        bmp = Glide.with(context)
-                                .using(new FirebaseImageLoader())
-                                .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId())
-                                        .child(currGroup.getPictureUrl()))
-                                .centerCrop()
-                                .into(128, 128)
-                                .get()
-                        ;
-                        mToolbar.setLogo(bmp);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-            });
-
-
-            // ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
-            mToolbar.setTitle(currentGroup.getName());
             fab.show();
-            fillNameMembersList();
+            ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+
+
         }
+        fillNameMembersList();
+        tv_groupname.setText(currentGroup.getName());
+        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
+                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
 
+                startActivity(i);
+                //startActivity(i, options.toBundle());
+            }
+        });
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {
@@ -290,9 +305,15 @@ public class GroupActivity extends AestheticActivity {
                         mToolbar.setSubtitle(u.getName());
 
                     else
-                        mToolbar.setSubtitle(mToolbar.getSubtitle() + "," + u.getName());
+                        tv_members.append(", " +u.getName());
 
-
+                    tv_members.setSingleLine(true);
+                    tv_members.setMarqueeRepeatLimit(-1);
+                    tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    tv_members.setSelected(true);
+                    tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                            Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                            Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
                 }
 
                 @Override
@@ -300,6 +321,7 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
+
         }
 
     }

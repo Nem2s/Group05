@@ -136,7 +136,7 @@ public class MainActivity extends AestheticActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -264,7 +264,7 @@ public class MainActivity extends AestheticActivity
     @Override
     protected void onStart() {
         super.onStart();
-
+        EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
 
@@ -496,11 +496,11 @@ public class MainActivity extends AestheticActivity
                     })
                     .show();
         } else {
-            initializeAesthetic(primary, accent, isdark[0]);
+            initializeAesthetic(primary, accent, false);
         }
     }
 
-    private void initializeAesthetic(int primary, int accent,boolean dark) {
+    private void initializeAesthetic(int primary, int accent ,boolean dark) {
         Singleton.getInstance().setColors(colors);
         if(dark) {
             Aesthetic.get()

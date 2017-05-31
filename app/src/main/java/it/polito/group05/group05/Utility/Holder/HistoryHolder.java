@@ -85,7 +85,10 @@ public class HistoryHolder extends GeneralHolder {
         if (time.equals(today_s)) {
             when_text_view.setText("Today");
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
-            bgShape.setColor(context.getResources().getColor(R.color.expenseTabColor));
+            bgShape.setColor(Aesthetic.get().isDark().take(1).blockingFirst() ? Aesthetic.get().colorPrimary().take(1).blockingFirst()
+                                                                                    : Aesthetic.get().colorAccent().take(1).blockingFirst());
+
+            bgShape.setAlpha(64);
         } else {
             when_text_view.setText(time);
             GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();

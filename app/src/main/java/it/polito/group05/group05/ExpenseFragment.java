@@ -81,15 +81,15 @@ public class ExpenseFragment extends Fragment {
             return
                     super.onOptionsItemSelected(item);
         }
-        if (id == R.id.add_member) {
-            startActivity(new Intent(getContext(), NewMemberActivity.class));
+        if (id == R.id.add_member){
+            startActivity( new Intent(getContext(), NewMemberActivity.class));
         }
-        if (id == R.id.leave_group) {
-            DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(), getContext());
+        if (id == R.id.leave_group){
+            DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(),getContext());
         }
-        if (id == R.id.group_detail) {
+        if (id == R.id.group_detail){
             // final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
-            startActivity(new Intent(getContext(), GroupDetailsActivity.class));
+            startActivity( new Intent(getContext(), GroupDetailsActivity.class));
             // AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
 
         }

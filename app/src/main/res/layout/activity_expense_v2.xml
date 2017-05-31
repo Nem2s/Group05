@@ -59,6 +59,7 @@
                         android:layout_marginRight="16dp"
                         android:layout_marginTop="16dp"
                         android:text="Add an Expense"
+                        android:textColor="?android:textColorSecondary"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:transitionName="@string/transition_text" />
@@ -196,6 +197,52 @@
                     android:alpha="0.6"
                     android:background="@android:color/darker_gray" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_name_fil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="8dp"
+                        android:textSize="17sp"
+                        android:text="Attachment"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/nome_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_name_fil"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.6"
+                        android:text="FileName"
+                        android:textStyle="italic" />
+
+                    <Button
+                        android:id="@+id/button_upload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/tv_name_fil"
+                        android:text="UPLOAD"
+                        android:theme="@style/GreenButton" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="16dp"
+                        android:alpha="0.6"
+                        android:layout_below="@+id/button_upload"
+                        android:background="@android:color/darker_gray"
+                        android:layout_alignParentStart="true" />
+
+                </RelativeLayout>
 
             </LinearLayout>
             </RelativeLayout>

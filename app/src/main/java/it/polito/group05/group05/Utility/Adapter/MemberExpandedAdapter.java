@@ -47,6 +47,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
     public void onBindViewHolder(final MemberIncludedHolder holder, final int position) {
         final User_expense ue = users.get(position);
         final int pos = position;
+        ue.setExcluded(false);
         holder.name_person.setText(ue.getName());
         Glide.with(context)
                 .using(new FirebaseImageLoader())
@@ -57,7 +58,7 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(holder.image_person);
         holder.euro_person.setImageResource(R.drawable.euro);
-        holder.costo_person.setText(String.valueOf(ue.getCustomValue()));
+        holder.costo_person.setText(String.format("%.2f", ue.getCustomValue()));
         holder.costo_person.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -105,7 +106,9 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
 
                                                         if(round2 > 0){
                                                             users.get(e).setCustomValue(round2);
-                                                            notifyItemChanged(e);
+                                                            try {
+                                                                notifyItemChanged(e);
+                                                            } catch (Exception ee) {}
                                                         }
                                                         else {
                                                             Toast.makeText(context, "Invalid Price", Toast.LENGTH_SHORT).show();
@@ -135,10 +138,12 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         this.total = total;
         for (int j = 0; j < users.size(); j++) {
             User_expense e = users.get(j);
-            double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
-            e.setCustomValue(round3);
+          //  double round3 = new BigDecimal(total / (users.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            e.setCustomValue(total / (users.size()));
+            e.setSelected(false);
+            notifyItemChanged(j);
         }
-        notifyDataSetChanged();
+     //   notifyDataSetChanged();
     }
 
 }

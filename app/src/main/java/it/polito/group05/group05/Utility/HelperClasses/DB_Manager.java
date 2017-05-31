@@ -324,8 +324,8 @@ public class DB_Manager {
         groupDatabase.setId(ref.getKey());
         Map<String, Object> temp = new HashMap<String, Object>();
         temp.put(groupDatabase.getId(), true);
-        for(String s : groupDatabase.getMembers().keySet()){
-            if(s==null) continue;
+        for (String s : groupDatabase.getMembers().keySet()) {
+            if (s == null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
@@ -344,10 +344,10 @@ public class DB_Manager {
         ref.setValue(expenseDatabase);
     }
 
-    public  void imageProfileUpload(int type, String Id, String name, Bitmap bitmap){
+    public void imageProfileUpload(int type, String Id, String name, Bitmap bitmap) {
 
         StorageReference ref;
-        switch(type) {
+        switch (type) {
             case (1):
                 ref = storageUserRef;
                 break;
@@ -363,7 +363,7 @@ public class DB_Manager {
 
         final File localdir = new File(context.getFilesDir(), Id);
 
-        if(!localdir.exists())
+        if (!localdir.exists())
             localdir.mkdir();
 
         final File localFile = new File(context.getFilesDir(), Id + "/" + name);
@@ -420,16 +420,17 @@ public class DB_Manager {
         storageRef.getFile(filelocal).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,"Download failed. Try again!", LENGTH_SHORT).show();
+                Toast.makeText(context, "Download failed. Try again!", LENGTH_SHORT).show();
             }
         }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(context,"File downloaded",LENGTH_SHORT).show();
+                Toast.makeText(context, "File downloaded", LENGTH_SHORT).show();
             }
         });
     }
-    public void updateGroupFlow(String s ,final Double d){
+
+    public void updateGroupFlow(String s, final Double d) {
 
         updateGroupFlow(Singleton.getInstance().getmCurrentGroup().getId(), s, d);
     }
@@ -441,12 +442,13 @@ public class DB_Manager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(!dataSnapshot.exists()) return;
-                Double tmp=Double.parseDouble(dataSnapshot.getValue().toString());
+                if (!dataSnapshot.exists()) return;
+                Double tmp = Double.parseDouble(dataSnapshot.getValue().toString());
 
-                tmp =tmp+((-1.00)*d);
+                tmp = tmp + ((-1.00) * d);
                 fdb.setValue(tmp);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -454,15 +456,15 @@ public class DB_Manager {
         });
     }
 
-    public void updateGroupFlow(final Map<String,Double> map){
+    public void updateGroupFlow(final Map<String, Double> map) {
 
         final DatabaseReference fdb = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId()).child("members");
         fdb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()) return;
-                for(String s : map.keySet()){
-                    if(dataSnapshot.hasChild(s)) {
+                if (!dataSnapshot.exists()) return;
+                for (String s : map.keySet()) {
+                    if (dataSnapshot.hasChild(s)) {
                         Double tmp = Double.parseDouble(dataSnapshot.child(s).getValue().toString());
                         tmp -= map.get(s);
                         fdb.child(s).setValue(tmp);
@@ -735,6 +737,7 @@ public class DB_Manager {
 
 
     }
+
     public void payDone(String gid, String eid, String id) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(eid).child("payment").child(id).setValue(true);
         expenseRef.child(gid).child(eid).child("payed").child(id).setValue(true);
@@ -752,5 +755,97 @@ public class DB_Manager {
 
     public void reminderTo(String gid, String s, String uid, Double d) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child("notifyTo").child(s).child(uid).setValue(d);
+    }
+
+    public void leaveGroup(final UserDatabase user, final Context context) {
+        FirebaseDatabase.getInstance().getReference("expenses")
+                .child(Singleton.getInstance().getmCurrentGroup().getId())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        double value = 0;
+                        int n = 0;
+                        MaterialDialog.Builder builder;
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
+                            if (e.getMembers().containsKey(user.getId())) {
+                                n++;
+                                value += e.getMembers().get(user.getId());
+                            }
+                        }
+                        if (n > 0 && value != 0) {
+                            builder =
+                                    new MaterialDialog.Builder(context)
+                                            .title("Error")
+                                            .content("You cannot leave the group.\n" +
+                                                    "You have " + n + " pending " + (n > 1 ? "Expenses " : "Expense ") +
+                                                    "for a total of " + (value < 0 ? -value + " €'s debit" : value + " €'s credit"))
+                                            .negativeText("Cancel")
+                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).canceledOnTouchOutside(false);
+
+
+                        } else {
+                            builder =
+                                    new MaterialDialog.Builder(context)
+                                            .title("Leaving Group")
+                                            .content("Are you sure?")
+                                            .negativeText("Cancel")
+                                            .positiveColor(context.getResources().getColor(R.color.colorSecondaryText))
+                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    FirebaseDatabase.getInstance().getReference("expenses")
+                                                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                                                        ExpenseDatabase e = data.getValue(ExpenseDatabase.class);
+                                                                        if (e.getMembers().containsKey(user.getId())) {
+                                                                            data.child("members").child(user.getId()).getRef().removeValue();
+                                                                        }
+                                                                    }
+                                                                    ((Activity) context).onBackPressed();
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                                }
+                                                            });
+                                                    FirebaseDatabase.getInstance().getReference("groups")
+                                                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                                            .child("members")
+                                                            .child(user.getId())
+                                                            .removeValue();
+                                                    FirebaseDatabase.getInstance().getReference("users")
+                                                            .child(user.getId())
+                                                            .child("userGroups")
+                                                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                                            .removeValue();
+
+                                                }
+                                            })
+                                            .positiveText("Yes");
+                        }
+                        builder.show();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 }
