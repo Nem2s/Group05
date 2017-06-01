@@ -1,3 +1,4 @@
+/*
 package it.polito.group05.group05;
 
 import android.animation.Animator;
@@ -48,16 +49,18 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
-import it.polito.group05.group05.Utility.Adapter.MemberInvitedAdapter;
+
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
+*/
 /**
  * Created by Marco on 05/05/2017.
- */
+ *//*
+
 
 public class NewMemberActivity extends AestheticActivity {
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
@@ -80,7 +83,7 @@ public class NewMemberActivity extends AestheticActivity {
     private final UserDatabase currentUser = Singleton.getInstance().getCurrentUser();
     private Context context;
     private String[] ids;
-    MemberInvitedAdapter invitedAdapter;
+
     private boolean formIsValid = false;
 
 
@@ -133,11 +136,11 @@ public class NewMemberActivity extends AestheticActivity {
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
         contacts = new ArrayList<>();
-        invitedAdapter = new MemberInvitedAdapter(contacts, context);
         for(UserContact i : Singleton.getInstance().getRegContactsList().values())
             if(!Singleton.getInstance().getmCurrentGroup().getMembers().containsKey(i.getId()))
                 contacts.add(i);
-       /* mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+       */
+/* mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 contacts.clear();
@@ -149,7 +152,8 @@ public class NewMemberActivity extends AestheticActivity {
             }
 
         });
-        */
+        *//*
+
         if(invitedAdapter.getItemCount() == 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
@@ -203,7 +207,9 @@ public class NewMemberActivity extends AestheticActivity {
 
             }
         });
-        /**TROVARE METODO ALTERNATIVO **/
+        */
+/**TROVARE METODO ALTERNATIVO **//*
+
         //checkSelected();
 
         et_group_name.addTextChangedListener(new TextWatcher() {
@@ -225,7 +231,8 @@ public class NewMemberActivity extends AestheticActivity {
 
     }
 
-    /*
+    */
+/*
         @Subscribe
         public void onTextChangedEvent(TextChangedEvent event) {
             this.textIsValid = event.isValid();
@@ -256,7 +263,8 @@ public class NewMemberActivity extends AestheticActivity {
             if(!EventBus.getDefault().isRegistered(this))
                 EventBus.getDefault().register(this);
         }
-    */
+    *//*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -424,3 +432,4 @@ public class NewMemberActivity extends AestheticActivity {
 
 
 }
+*/

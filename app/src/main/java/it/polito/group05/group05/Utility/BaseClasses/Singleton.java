@@ -36,7 +36,7 @@ public class Singleton {
     private Map<String, UserContact> regContactsList;
     private Context currContext;
     private Map<String, Double> usersBalance;
-    private int THRESHOLD = 10;
+    private int THRESHOLD = 25;
     private LinkedHashMap<String, UserContact> localContactsMap;
 
     private int[] colors;
@@ -150,6 +150,10 @@ public class Singleton {
 
     public void setUsersBalance(Map<String, Double> usersBalance) {
         this.usersBalance = usersBalance;
+    }
+
+    public int getThreshold() {
+        return THRESHOLD;
     }
 
     class getRegContactsTask extends AsyncTask<Void, Void, Void> {

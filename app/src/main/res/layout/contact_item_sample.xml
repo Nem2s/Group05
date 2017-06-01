@@ -46,12 +46,12 @@
 
     </LinearLayout>
 
-    <Button
+    <com.afollestad.aesthetic.AestheticButton
         android:id="@+id/button_invite"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:text="Invite"
-        android:theme="@style/AccentButton"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        />
 </RelativeLayout>
