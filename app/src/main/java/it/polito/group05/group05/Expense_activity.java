@@ -23,11 +23,20 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
-import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+//import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -83,6 +92,7 @@ public class Expense_activity extends AestheticActivity {
     private Context context;
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     protected void onStart() {
@@ -120,13 +130,19 @@ public class Expense_activity extends AestheticActivity {
         et_cost.setSingleLine();
         veroNF = (TextView) findViewById(R.id.nome_file);
         nomeFile = (TextView) findViewById(R.id.tv_name_fil);
-        buttonUPLOAD = (Button) findViewById(R.id.button_upload);
-
+        nameDate= (TextView) findViewById(R.id.name_date);
+        buttonUPLOAD =(Button) findViewById(R.id.button_upload);
         calendar1 = (ImageView) findViewById(R.id.calendar);
-
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
-        iv_group_image.setImageResource(R.drawable.network);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance()
+                        .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                        .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .centerCrop()
+                .crossFade()
+                .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
                 Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
@@ -228,38 +244,44 @@ public class Expense_activity extends AestheticActivity {
                 mHour = c.get(Calendar.HOUR);
                 mMinute = c.get(Calendar.MINUTE);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                if (dayOfMonth > mDay && month >= mMonth) {
+                                    Toast.makeText(context, "Select a smaller date", Toast.LENGTH_SHORT).show();
+                                }
+                            else{
                                 int month1 = month + 1;
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                    //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                    //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
+                            }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
 
+
+
         buttonUPLOAD.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v){
                 if (!newFile) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("*/*");
-                    startActivityForResult(intent, 0);
-                } else {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                    startActivityForResult(intent,0);
+                }else{
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
                     newFile = false;
-                    // upLoadFile(uri);
                 }
             }
         });
@@ -274,6 +296,7 @@ public class Expense_activity extends AestheticActivity {
 */
 
     }
+
 
 
     @Override
@@ -296,7 +319,7 @@ public class Expense_activity extends AestheticActivity {
                 try {
                     if (cursor != null && cursor.moveToFirst()) {
                         nameFILE = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                        if (nameFILE != null) {
+                        if(nameFILE != null){
                             veroNF.setText(nameFILE);
                             buttonUPLOAD.setText("DELETE");
                             expense.setFile(nameFILE);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 

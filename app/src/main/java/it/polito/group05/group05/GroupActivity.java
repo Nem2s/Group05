@@ -351,6 +351,8 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
+
+
     private void replaceWithChatFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

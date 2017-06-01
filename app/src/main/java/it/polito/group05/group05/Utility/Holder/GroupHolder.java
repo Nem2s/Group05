@@ -81,7 +81,7 @@ public class GroupHolder extends GeneralHolder {
         else if(x <-0.001)
             balance.setTextColor(Color.RED);
         else{
-            balance.setText("Saldato");
+            balance.setText("Break even!");
 
         }
 
