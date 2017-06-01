@@ -283,9 +283,9 @@ public class GroupActivity extends AestheticActivity {
         }
         fillNameMembersList();
         tv_groupname.setText(currentGroup.getName());
-        //  tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
-        //          Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
-        //          Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

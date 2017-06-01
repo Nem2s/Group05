@@ -8,7 +8,10 @@ import android.support.design.widget.TextInputEditText;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.klinker.android.sliding.SlidingActivity;
 import com.mvc.imagepicker.ImagePicker;
 
@@ -59,6 +62,21 @@ public class SettingActivity extends SlidingActivity {
         phone.setText(Singleton.getInstance().getCurrentUser().getTelNumber());
         phone.setEnabled(false);
         name.setEnabled(false);
+        try {
+            setImage(Glide.with(this)
+                    .using(new FirebaseImageLoader())
+                    .load(FirebaseStorage.getInstance().getReference("users")
+                            .child(Singleton.getInstance().getCurrentUser().getId())
+                            .child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                    .asBitmap()
+                    .centerCrop()
+                    .into(128, 128)
+                    .get()
+            );
+        } catch (Exception e) {
+            ImageUtils.LoadMyImageProfile(cv, this);
+
+        }
         name.setText(Singleton.getInstance().getCurrentUser().getName());
         ImageUtils.LoadMyImageProfile(cv, this);
         final Activity c = this;

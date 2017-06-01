@@ -57,10 +57,11 @@
                         android:layout_marginEnd="60dp"
                         android:lines="1"
                         android:textStyle="bold"
-                        android:textColor="?android:textColorSecondary"
+                        android:tag=":aesthetic_ignore"
                         android:transitionName="@string/transition_text"
                         android:textSize="20sp" />
                         <TextView
+                            
                             android:id="@+id/tv_members"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

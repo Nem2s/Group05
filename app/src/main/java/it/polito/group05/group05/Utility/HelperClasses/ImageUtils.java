@@ -1,15 +1,9 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
@@ -36,6 +30,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class ImageUtils {
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
+        if (user != null)
         Glide.with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
