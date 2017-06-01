@@ -4,20 +4,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.Transition;
@@ -32,19 +34,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
-
-import static it.polito.group05.group05.R.id.view;
 
 public class GroupActivity extends AestheticActivity {
 
@@ -69,6 +70,7 @@ public class GroupActivity extends AestheticActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +89,6 @@ public class GroupActivity extends AestheticActivity {
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
 
-
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             bottomView = (BottomNavigationView) findViewById(R.id.navigation);
             bottomView.setSelectedItemId(R.id.navigation_expenses);
@@ -102,15 +103,16 @@ public class GroupActivity extends AestheticActivity {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
             transaction.commit();
-            initializeUI();
+        }
 
-        } else {
-            bottomView.setSelectedItemId(R.id.navigation_chat);
-            mFragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.add(R.id.fragment_container, ChatFragment.newInstance());
-            transaction.commit();
-
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                initializeUI();
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
 
@@ -124,9 +126,12 @@ public class GroupActivity extends AestheticActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 tv_members.setSelected(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                 switch (item.getItemId()) {
                     case R.id.navigation_expenses:
+
                         replaceWithExpenseFragment();
+
                         //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                         break;
                     case R.id.navigation_chat:
@@ -141,11 +146,66 @@ public class GroupActivity extends AestheticActivity {
 
                         break;
                 }
+                }
 
                 return true;
             }
         });
+        checkBundle();
     }
+
+    private void checkBundle() {
+
+        String s = getIntent().getStringExtra("type");
+        if (s != null) {
+            if (s.equals("rememberPaymentToOne") || s.equals("rememberPayment")) {
+                getIntent().putExtra("type", "");
+                return;
+            }
+            if (s.equals("newGroup")) {
+                final Pair<View, String> p1 = new Pair<View, String>((View) tv_groupname, getResources().getString(R.string.transition_group_image));
+                AnimUtils.startActivityWithAnimation((Activity) this, new Intent(this, GroupDetailsActivity.class), p1);
+                getIntent().putExtra("type", "");
+
+
+            }
+            if (s.equals("newMessage")) {
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.fragment_container, ChatFragment.newInstance());
+                tx.commit();
+                getIntent().putExtra("type", "");
+
+            }
+            if (s.equals("paymentRequest")) {
+                final String eid = getIntent().getStringExtra("expenseId");
+                final String uid = getIntent().getStringExtra("requestFromId");
+                final String gid = getIntent().getStringExtra("groupId");
+                final String debit = getIntent().getStringExtra("expenseDebit");
+                final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd, Singleton.getInstance().getCurrentUser().getId());
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payUnDone(gid, eid, uid);
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                getIntent().putExtra("type", "");
+            }
+
+        }
+
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -153,9 +213,12 @@ public class GroupActivity extends AestheticActivity {
         supportFinishAfterTransition();
     }
 
-    private void initializeUI() {
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    private void initializeUI() throws ExecutionException, InterruptedException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onTransitionStart(Transition transition) {
                     transition.removeTarget(R.id.toolbar);
@@ -255,6 +318,7 @@ public class GroupActivity extends AestheticActivity {
     }
 
     private void fillNameMembersList() {
+
         tv_members.setText("");
         for(String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -262,14 +326,18 @@ public class GroupActivity extends AestheticActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                    if(tv_members.getText().toString().equals(""))
+                    if (tv_members.getText().equals(""))
                         tv_members.setText(u.getName());
+
                     else
-                        tv_members.append(", " +u.getName());
+                        tv_members.append(", " + u.getName());
 
                     tv_members.setSingleLine(true);
-                    tv_members.setMarqueeRepeatLimit(-1);
-                    tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BASE_1_1) {
+                        tv_members.setMarqueeRepeatLimit(-1);
+                        tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    }
+
                     tv_members.setSelected(true);
                     tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
                             Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
@@ -286,6 +354,7 @@ public class GroupActivity extends AestheticActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
@@ -295,9 +364,7 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
-
-
-
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithChatFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -305,6 +372,7 @@ public class GroupActivity extends AestheticActivity {
                 .commit();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithHistoryFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -312,6 +380,8 @@ public class GroupActivity extends AestheticActivity {
                 .commit();
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void animateAppAndStatusBar(final int fromColor, final int toColor, float cx, float cy) {
         // get the final radius for the clipping circle
         findViewById(R.id.reveal).setBackgroundColor(fromColor);
@@ -341,19 +411,24 @@ public class GroupActivity extends AestheticActivity {
                     (int) cx,
                     (int) cy, 0,
                     finalRadius);
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    mToolbar.setBackgroundColor(toColor);
-                }
-            });
-            animator.setStartDelay(0);
-            animator.setDuration(250);
-            animator.start();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        mToolbar.setBackgroundColor(toColor);
+                    }
+                });
+                animator.setStartDelay(0);
+                animator.setDuration(250);
+                animator.start();
+            }
+
         }
 
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void changeToolbarColor(int from, int to) {
         ArgbEvaluator evaluator = new ArgbEvaluator();
         ValueAnimator animator = new ValueAnimator();
@@ -401,6 +476,13 @@ public class GroupActivity extends AestheticActivity {
 
     private void replaceWithDetailsFragment() {
 
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        checkBundle();
 
     }
 }

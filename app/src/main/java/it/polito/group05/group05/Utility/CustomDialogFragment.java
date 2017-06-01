@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -17,6 +18,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +93,11 @@ public class CustomDialogFragment extends DialogFragment {
         LinearLayoutManager l = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(l);
 
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int a =  (displaymetrics.heightPixels*40)/100;
+        recyclerView.getLayoutParams().height =a;
+
         memberAdapter = new MemberExpandedAdapter(partecipants, this.getActivity(), expense.getPrice());
         recyclerView.setAdapter(memberAdapter);
 
@@ -112,6 +119,7 @@ public class CustomDialogFragment extends DialogFragment {
                                 .child("lmTime");
                         expense.setId(fdb.getKey());
                         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+
                         if (expense.getFile() != null) {
                             upLoadFile(uri);
                         }
@@ -206,15 +214,19 @@ public class CustomDialogFragment extends DialogFragment {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-           /*     NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
-                n.setSmallIcon(R.id.logo).setContentTitle("Upload Failed").setContentText("Retry").setAutoCancel(true);
-                NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                nm.notify(0,n.build());
-            */}
+                Activity activity = getActivity();
+                if(activity!=null){
+                    expense.setFile("fail");
+                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();}
+            }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-             /*   NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
+                Activity activity = getActivity();
+                if(activity!=null)
+                    Toast.makeText(activity, "Upload Success", Toast.LENGTH_SHORT).show();
+
+                /*   NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
                 n.setSmallIcon(R.id.logo).setContentTitle("Upload Success").setContentText("You have uploaded "+expense.getFile()).setAutoCancel(true);
                 NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
                 nm.notify(0,n.build());

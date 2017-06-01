@@ -1,4 +1,5 @@
 package it.polito.group05.group05.Utility.Adapter;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;

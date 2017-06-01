@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".ShareCashApp"
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,31 +30,37 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_main"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Expense_activity"
             android:label="@string/title_activity_main"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".NewGroupActivity"
             android:label="New Group Activity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
         <activity
             android:name=".SignUpActivity"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -66,6 +72,7 @@
         <activity
             android:name=".UserBalanceActivity"
             android:label="UserBalanceActivity"
+            android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -75,8 +82,9 @@
         <activity
             android:name=".ExpenseDetailsActivity"
             android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light"></activity>
+            android:theme="@style/Theme.Sliding.Light" />
 
         <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>
@@ -87,6 +95,7 @@
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
+            android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -97,6 +106,7 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
+            android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -105,9 +115,9 @@
         </activity>
 
         <meta-data xmlns:tools="http://schemas.android.com/tools"
-            tools:replace="android:value"
             android:name="io.fabric.ApiKey"
-            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
+            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161"
+            tools:replace="android:value" />
 
         <receiver
             android:name=".Utility.NotificationClass.MyReceiver"
@@ -124,6 +134,11 @@
             android:exported="true" />
 
 
+        <activity
+            android:name=".SettingActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light" />
     </application>
 
 </manifest>

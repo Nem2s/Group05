@@ -1,15 +1,9 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
@@ -36,6 +30,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class ImageUtils {
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
+        if (user != null)
         Glide.with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
@@ -112,11 +107,11 @@ public class ImageUtils {
         return px;
     }
 
-    public static boolean isColorDark(int color){
-        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
-        if(darkness<0.5){
+    public static boolean isColorDark(int color) {
+        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
+        if (darkness < 0.5) {
             return false; // It's a light color
-        }else{
+        } else {
             return true; // It's a dark color
         }
     }

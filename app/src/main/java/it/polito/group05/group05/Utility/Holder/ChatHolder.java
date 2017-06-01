@@ -39,7 +39,7 @@ public class ChatHolder extends GeneralHolder {
         this.text = (TextView) v.findViewById(R.id.message_text);
         this.time = (TextView) v.findViewById(R.id.message_time);
         this.imageView = (CircleImageView) v.findViewById(R.id.image_person);
-        this.rl = (RelativeLayout)v.findViewById(R.id.message);
+        this.rl = (RelativeLayout) v.findViewById(R.id.message);
     }
 
     @Override

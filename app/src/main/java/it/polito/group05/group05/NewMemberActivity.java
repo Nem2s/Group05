@@ -18,7 +18,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -363,10 +362,10 @@ public class NewMemberActivity extends AestheticActivity {
                 }
 
             }
-                invitedAdapter.notifyDataSetChanged();
-                finish();
-                return true;
-            }
+            invitedAdapter.notifyDataSetChanged();
+            finish();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -2,7 +2,6 @@ package it.polito.group05.group05;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,43 +9,29 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-//import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -55,19 +40,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
-import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
-import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
+
+//import com.rengwuxian.materialedittext.MaterialEditText;
+
+//import com.rengwuxian.materialedittext.MaterialEditText;
 
 
 public class Expense_activity extends AestheticActivity {
@@ -104,6 +89,8 @@ public class Expense_activity extends AestheticActivity {
     private Context context;
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
+    private DatePickerDialog datePickerDialog;
+    private TextView nameDate;
 
     @Override
     protected void onStart() {
@@ -141,14 +128,26 @@ public class Expense_activity extends AestheticActivity {
         et_cost.setSingleLine();
         veroNF = (TextView) findViewById(R.id.nome_file);
         nomeFile = (TextView) findViewById(R.id.tv_name_fil);
+        nameDate= (TextView) findViewById(R.id.name_date);
         buttonUPLOAD =(Button) findViewById(R.id.button_upload);
-
         calendar1 = (ImageView) findViewById(R.id.calendar);
-
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
-        iv_group_image.setImageResource(R.drawable.network);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance()
+                        .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                        .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .centerCrop()
+                .crossFade()
+                .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
+        tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
+
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
@@ -190,16 +189,16 @@ public class Expense_activity extends AestheticActivity {
                             expense.setTimestamp(timestamp);
                         }
 
-                        for(User_expense e : partecipants){
+                        for (User_expense e : partecipants) {
                             e.setExcluded(false);
                         }
                         final FragmentManager fm = getFragmentManager();
                         cid = new CustomIncludedDialog(partecipants, expense, uri);
                         cid.show(fm, "TV_tag");
                     }
-                    }
-
                 }
+
+            }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -244,24 +243,31 @@ public class Expense_activity extends AestheticActivity {
                 mHour = c.get(Calendar.HOUR);
                 mMinute = c.get(Calendar.MINUTE);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                if (dayOfMonth > mDay && month >= mMonth) {
+                                    Toast.makeText(context, "Select a smaller date", Toast.LENGTH_SHORT).show();
+                                }
+                            else{
                                 int month1 = month + 1;
                                 if (month < 10) {
                                     String mese = "0" + (month1);
                                     data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                           //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
                                 } else {
                                     data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                            //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                                    nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
+                            }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
+
+
 
         buttonUPLOAD.setOnClickListener(new View.OnClickListener()
         {
@@ -275,7 +281,6 @@ public class Expense_activity extends AestheticActivity {
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
                     newFile = false;
-                    // upLoadFile(uri);
                 }
             }
         });
@@ -339,7 +344,6 @@ public class Expense_activity extends AestheticActivity {
 
         }
     }
-
 
 
 }

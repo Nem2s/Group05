@@ -17,7 +17,6 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -635,10 +634,10 @@ public class DB_Manager {
     }
 
 
-    public void payDone(String gid, String eid, String id, double debit) {
+    public void payDone(String gid, String eid, String id, double debit, String myId) {
         payDone(gid, eid, id);
         updateGroupFlow(gid, id, debit);
-        updateGroupFlow(gid, Singleton.getInstance().getCurrentUser().getId(), (-1.00) * debit);
+        updateGroupFlow(gid, myId, (-1.00) * debit);
 
 
     }

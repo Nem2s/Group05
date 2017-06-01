@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,9 +23,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.GroupDetailsActivity;
-import it.polito.group05.group05.Group_Activity;
 import it.polito.group05.group05.R;
-import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -70,7 +63,7 @@ public class GroupHolder extends GeneralHolder {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
         SimpleDateFormat daysdf = new SimpleDateFormat("dd/MM", Locale.ITALY);
         String time_s;
-        if(daysdf.format(date).equals(daysdf.format(today))) time_s = sdf.format(date);
+        if (daysdf.format(date).equals(daysdf.format(today))) time_s = sdf.format(date);
         else time_s = daysdf.format(date);
         time.setText(time_s);
         this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
@@ -81,7 +74,7 @@ public class GroupHolder extends GeneralHolder {
         else if(x <-0.001)
             balance.setTextColor(Color.RED);
         else{
-            balance.setText("Saldato");
+            balance.setText("Break even!");
 
         }
 
@@ -97,7 +90,7 @@ public class GroupHolder extends GeneralHolder {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.exists()) return;
                             UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-  //                          u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
+                            u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
                             g.getMembers().put(u.getId(), u);
                         }
                         @Override
@@ -120,12 +113,12 @@ public class GroupHolder extends GeneralHolder {
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Pair <View, String> p2 = new Pair<View, String>(((Activity)context).findViewById(R.id.fab),
+                Pair<View, String> p2 = new Pair<View, String>(((Activity) context).findViewById(R.id.fab),
                         context.getString(R.string.transition_fab));
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
                 Intent i = new Intent(context, GroupActivity.class);
-                AnimUtils.startActivityWithAnimation(((Activity)context), new Intent(context, GroupActivity.class), p1, p2);
+                AnimUtils.startActivityWithAnimation(((Activity) context), new Intent(context, GroupActivity.class), p1, p2);
             }
         });
 

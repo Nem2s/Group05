@@ -272,9 +272,17 @@ public class ExpenseHolder extends GeneralHolder{
                 Bundle extras = new Bundle();
                 extras.putSerializable("map", (Serializable) expense.getMembers());
                 extras.putString("title", expense.getName());
+                extras.putString("id", expense.getId());
                 extras.putString("owner", expense.getOwner());
                 extras.putString("price", expense.getPrice().toString());
                 extras.putLong("timestamp", expense.getTimestamp());
+                if(expense.getFile()!= null){
+                    extras.putString("file", expense.getFile());
+                    if(expense.getFile().equals("fail")){
+                        extras.putBoolean("correct_download", false);
+                    }
+                    else extras.putBoolean("correct_download", true);
+                }
                 int location[] = new int[2];
                 cv.getLocationInWindow(location);
                 LEFT_OFFSET = location[0];
@@ -293,23 +301,30 @@ public class ExpenseHolder extends GeneralHolder{
             }
         });
 
-   /* rel.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            try {
-                DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
-                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(f),"**///*");
-              /*  intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                context.startActivity(intent);
-            } catch (FileNotFoundException e) {
-                Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        }
-    });*/
 
     }
 
+    public void displayDetails(ExpenseDatabase expense) {
+        Intent i = new Intent((Activity) context, ExpenseDetailsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("map", (Serializable) expense.getMembers());
+        extras.putString("title", expense.getName());
+        extras.putString("owner", expense.getOwner());
+        extras.putString("price", expense.getPrice().toString());
+        extras.putLong("timestamp", expense.getTimestamp());
+        int location[] = new int[2];
+        cv.getLocationInWindow(location);
+        LEFT_OFFSET = location[0];
+        TOP_OFFSET = location[1];
+        WIDTH = cv.getWidth();
+        HEIGHT = cv.getHeight();
+        extras.putInt("left_offset", LEFT_OFFSET);
+        extras.putString("expenseId", expense.getId());
+        extras.putInt("top_offset", TOP_OFFSET);
+        extras.putInt("width", WIDTH);
+        extras.putInt("height", HEIGHT);
+        extras.putSerializable("payed", (Serializable) expense.getPayed());
+        i.putExtras(extras);
+        context.startActivity(i);
+    }
 }
