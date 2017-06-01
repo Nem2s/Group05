@@ -11,6 +11,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -74,16 +75,17 @@ public class CustomDialogFragment extends DialogFragment {
     RecyclerView recyclerView;
     FloatingActionButton back, confirm,reset;
     MemberExpandedAdapter memberAdapter;
-    private DatabaseReference fdb;
+
     Double totalPriceActual;
     CustomIncludedDialog c;
     FragmentManager fm;
-    Uri uri;
+    DatabaseReference fdb;
 
-    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, Uri uri){
+
+    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, DatabaseReference fdb){
         this.listaCompleta= listOriginal;
         this.partecipants= list;
-        this.uri= uri;
+        this.fdb = fdb;
         expense= e;
         eda = new ExpenseDetailsActivity();
         totalPriceActual = 0.0;
@@ -116,18 +118,7 @@ public class CustomDialogFragment extends DialogFragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        fdb = FirebaseDatabase.getInstance()
-                                .getReference("expenses")
-                                .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .push();
-                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                                .child("lmTime");
-                        expense.setId(fdb.getKey());
-                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
 
-                   //     if (expense.getFile() != null) {
-                     //       upLoadFile(uri);
-                       // }
                         double price;
                         double toSubtractOwner = 0.0;
                         for (int i = 0; i < partecipants.size(); i++) {
@@ -186,7 +177,7 @@ public class CustomDialogFragment extends DialogFragment {
                     listaCompleta.get(j).setExcluded(false);
                 }
                 fm= getFragmentManager();
-                c = new CustomIncludedDialog(listaCompleta, expense, uri);
+                c = new CustomIncludedDialog(listaCompleta, expense, fdb);
                 c.show(fm, "TAG");
                 dismiss();
             }

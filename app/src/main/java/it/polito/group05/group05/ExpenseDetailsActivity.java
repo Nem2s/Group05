@@ -27,8 +27,6 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.klinker.android.sliding.MultiShrinkScroller;
 import com.klinker.android.sliding.SlidingActivity;
-import com.mikepenz.fastadapter.FastAdapter;
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +58,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
+
+
+
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -88,10 +89,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         b = getIntent().getExtras();
         nomeF = b.getString("file");
         idFile= b.getString("id");
-        correct_download = b.getBoolean("correct_download");
+        //correct_download = b.getBoolean("correct_download");
 
         setContent(R.layout.activity_expense_details);
-
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
         WIDTH = b.getInt("width");
@@ -113,14 +113,40 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
 
-        if(nomeF != null && correct_download){
+        if(b.getString("file") != null){
+            if (!(b.getString("file").equals("Fail")))
+                {
+                    if (rel_lay.getVisibility() == View.GONE) {
+                        rel_lay.setVisibility(View.VISIBLE);
+                        nameFile.setText(b.getString("file"));
+                    }
+                }
+                else {
+                rel_lay.setVisibility(View.GONE);
+            }
+        }else {
+            rel_lay.setVisibility(View.GONE);
+        }
+
+        /*
+
+        if(nomeF.equals("Fail") || nomeF.equals(null)){
+            rel_lay.setVisibility(View.GONE);
+        }else {
+            if (rel_lay.getVisibility() == View.GONE) {
+                rel_lay.setVisibility(View.VISIBLE);
+                nameFile.setText(b.getString("file"));
+            }
+        }
+*/
+     /*   if(nomeF ){
             if (rel_lay.getVisibility() == View.GONE){
                 rel_lay.setVisibility(View.VISIBLE);
                 nameFile.setText(b.getString("file"));
             }
         }else{
             rel_lay.setVisibility(View.GONE);}
-
+*/
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +187,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_date.setText(format.format(calendar.getTime()));
         retriveUsersExpense((HashMap<String, Double>) b.getSerializable("map"), (HashMap<String, Object>) b.getSerializable("payed"));
         sv.fullScroll(ScrollView.FOCUS_DOWN);
-
     }
 
     @Override
@@ -170,11 +195,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         supportFinishAfterTransition();
     }
 
-
-    public void hideRelativeLayout() {
-    if(rel_lay.getVisibility() == View.VISIBLE)
-            rel_lay.setVisibility(View.GONE);
-    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -253,8 +273,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         }
 
         rv.setAdapter(adapter);
-
-
 
 
     }
