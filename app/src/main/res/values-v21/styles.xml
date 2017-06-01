@@ -38,7 +38,7 @@
     </style>
 
     <style name="GreenButton" parent="AppTheme.NoActionBar">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
         <item name="android:colorButtonNormal">@color/green_400</item>
     </style>
 

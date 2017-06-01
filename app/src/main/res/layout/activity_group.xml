@@ -85,6 +85,7 @@
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:tag=":aesthetic_ignore"
+                            android:transitionName="@string/transition_text"
               />
 
                         <TextView

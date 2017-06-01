@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
@@ -19,11 +20,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,7 +41,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -46,9 +53,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.adapters.HeaderAdapter;
+import com.mikepenz.fastadapter.adapters.ItemAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 //import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,17 +76,24 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.IconItem;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
+import it.polito.group05.group05.Utility.HelperClasses.AssetUriLoader;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 
 public class Expense_activity extends AestheticActivity {
 
+    private static final String[] headers = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
     private CoordinatorLayout parent;
+    private RecyclerView rv_icons;
+    private FastItemAdapter fastItemAdapter;
     private RelativeLayout rel_file, moreLayout;
     private EditText et_name, et_cost;
     private AppBarLayout appbar;
@@ -80,9 +101,9 @@ public class Expense_activity extends AestheticActivity {
     private CircleImageView iv_group_image;
     private TextView tv_group_name;
     private FloatingActionButton fab;
-    private ImageView image_network;
+    private ImageView image_expense;
     private ImageView calendar1, graffetta;
-    private TextView nomeFile, veroNF;
+    private TextView nomeFile, veroNF, nameDate;
     private Button buttonUPLOAD;
     private String data = null;
     private String time = null;
@@ -104,6 +125,7 @@ public class Expense_activity extends AestheticActivity {
     private Context context;
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     protected void onStart() {
@@ -130,9 +152,9 @@ public class Expense_activity extends AestheticActivity {
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
-        iv_group_image= (CircleImageView) findViewById(R.id.iv_group_image);
+        iv_group_image= (CircleImageView) findViewById(R.id.cv_groupImage);
         tv_group_name = (TextView) findViewById(R.id.tv_group_name);
-        image_network = (ImageView) findViewById(R.id.image_network);
+        image_expense = (ImageView) findViewById(R.id.image_expense);
         et_name = (EditText) findViewById(R.id.et_name_expense);
         et_name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         et_name.setSingleLine();
@@ -141,14 +163,23 @@ public class Expense_activity extends AestheticActivity {
         et_cost.setSingleLine();
         veroNF = (TextView) findViewById(R.id.nome_file);
         nomeFile = (TextView) findViewById(R.id.tv_name_fil);
+        nameDate= (TextView) findViewById(R.id.name_date);
         buttonUPLOAD =(Button) findViewById(R.id.button_upload);
-
         calendar1 = (ImageView) findViewById(R.id.calendar);
-
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
-        iv_group_image.setImageResource(R.drawable.network);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance()
+                        .getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                        .child(Singleton.getInstance().getmCurrentGroup().getPictureUrl()))
+                .centerCrop()
+                .crossFade()
+                .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
+        tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         for(String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()){
@@ -156,12 +187,42 @@ public class Expense_activity extends AestheticActivity {
             User_expense ue=new User_expense((UserDatabase)Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
             ue.setExpense(expense);
             partecipants.add(ue);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                        transition.removeTarget(android.R.id.statusBarBackground);
+
+                    }
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });
+            }
         }
 
 
 
         Calendar calendar = Calendar.getInstance();
-        final java.util.Date now = calendar.getTime();
+        final Date now = calendar.getTime();
         timestamp = now.getTime();
 
 
@@ -244,24 +305,31 @@ public class Expense_activity extends AestheticActivity {
                 mHour = c.get(Calendar.HOUR);
                 mMinute = c.get(Calendar.MINUTE);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                int month1 = month + 1;
-                                if (month < 10) {
-                                    String mese = "0" + (month1);
-                                    data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                    //         nomedata.setText(dayOfMonth + "/" + mese + "/" + year);
-                                } else {
-                                    data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                    //        nomedata.setText(dayOfMonth + "/" + month1 + "/" + year);
+                                if (dayOfMonth > mDay && month >= mMonth) {
+                                    Toast.makeText(context, "Select a smaller date", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    int month1 = month + 1;
+                                    if (month < 10) {
+                                        String mese = "0" + (month1);
+                                        data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
+                                        nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
+                                    } else {
+                                        data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
+                                        nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
+                                    }
                                 }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
+
+
 
         buttonUPLOAD.setOnClickListener(new View.OnClickListener()
         {
@@ -275,7 +343,6 @@ public class Expense_activity extends AestheticActivity {
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
                     newFile = false;
-                    // upLoadFile(uri);
                 }
             }
         });
@@ -288,9 +355,51 @@ public class Expense_activity extends AestheticActivity {
             }
         });
 */
+        fastItemAdapter = new FastItemAdapter<IconItem>();
 
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
+        fastItemAdapter.add(retriveIcons());
+        fastItemAdapter.setHasStableIds(true);
+        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title("Select an Icon")
+                .adapter(fastItemAdapter,gridLayoutManager)
+                .build();
+        fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener() {
+            @Override
+            public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
+                Glide.with(context)
+                        .using(new AssetUriLoader(context))
+                        .load(Uri.parse(((IconItem)item).getIconUri()))
+                        .into(image_expense);
+                dialog.dismiss();
+                return true;
+            }
+        });
+        image_expense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+            }
+        });
     }
 
+    private List retriveIcons() {
+        List<IconItem> list = new ArrayList<>();
+        String dir = "icons";
+        IconItem.setContext(this);
+        try {
+            for(String file : getAssets().list(dir)) {
+                if(file != null) {
+                    list.add(new IconItem(dir + "/" + file).withHeader(file.charAt(0)));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
 
     @Override

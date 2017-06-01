@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +44,8 @@ import io.codetail.animation.ViewAnimationUtils;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 import static it.polito.group05.group05.R.id.view;
@@ -232,10 +236,17 @@ public class GroupActivity extends AestheticActivity {
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
-
+                Pair<View, String> p1 =new Pair<View, String>(cv_group, getString(R.string.transition_group_image));
+                Pair<View, String> p2 = new Pair<View, String>(tv_groupname, getString(R.string.transition_text));
+                Pair<View, String> p3 = new Pair<View, String>(mToolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p4 = new Pair<View, String>(fab, getString(R.string.transition_fab));
                 Intent i = new Intent(GroupActivity.this, Expense_activity.class);
 
-                startActivity(i);
+                AnimUtils.startActivityWithAnimation(GroupActivity.this, i, p1,p2, p3, p4);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().setExitTransition(null);
+                }
                 //startActivity(i, options.toBundle());
             }
         });
@@ -299,9 +310,14 @@ public class GroupActivity extends AestheticActivity {
 
 
     private void replaceWithChatFragment() {
-        fab.hide();
+        ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, ChatFragment.newInstance())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            chat.setSharedElementEnterTransition(new DetailsTransition());
+            chat.setSharedElementReturnTransition(new DetailsTransition());
+        }
+        transaction.replace(R.id.fragment_container, chat)
+                .addSharedElement(fab, "fab_transition")
                 .commit();
     }
 

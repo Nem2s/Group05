@@ -41,6 +41,8 @@
             android:textSize="12sp"
             android:maxLines="1"
             android:textStyle="italic"
+
+            android:alpha="0.6"
             android:text="1234567 €" />
     </LinearLayout>
     <io.codetail.widget.RevealFrameLayout

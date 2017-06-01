@@ -558,7 +558,7 @@ public class NewGroupActivity extends AestheticActivity {
     public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
 
 
-        mToolbar.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+        mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
