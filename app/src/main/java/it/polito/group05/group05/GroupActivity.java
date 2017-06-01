@@ -461,6 +461,6 @@ public class GroupActivity extends AestheticActivity {
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         checkBundle();
-       
+
     }
 }
