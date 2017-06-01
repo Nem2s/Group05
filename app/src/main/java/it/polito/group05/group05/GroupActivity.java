@@ -216,7 +216,7 @@ public class GroupActivity extends AestheticActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void initializeUI() throws ExecutionException, InterruptedException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override

@@ -24,6 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.GroupDetailsActivity;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Balance;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
@@ -90,7 +91,7 @@ public class GroupHolder extends GeneralHolder {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.exists()) return;
                             UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                            u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
+//                            u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
                             g.getMembers().put(u.getId(), u);
                         }
                         @Override
