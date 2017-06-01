@@ -44,7 +44,8 @@ public class GroupDatabase implements Namable {
         this.groupColor= gd.getGroupColor();
         this.pictureUrl = gd.getPictureUrl();
         this.creator = gd.getCreator();
-        members = new HashMap<>();
+        if(gd.getMembers() != null) this.members = new HashMap<>(gd.getMembers());
+        else members = new HashMap<>();
     }
 
     public String getCreator() {

@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -322,18 +323,16 @@ public class DB_Manager {
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
+        String uuid = UUID.randomUUID().toString();
+        groupDatabase.setPictureUrl(uuid);
+        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
+        ref.setValue(groupDatabase);
         Map<String, Object> temp = new HashMap<String, Object>();
         temp.put(groupDatabase.getId(), true);
         for (String s : groupDatabase.getMembers().keySet()) {
             if (s == null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-
-
-        String uuid = UUID.randomUUID().toString();
-        groupDatabase.setPictureUrl(uuid);
-        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
-        ref.setValue(groupDatabase);
         newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
@@ -543,7 +542,6 @@ public class DB_Manager {
                         Singleton.getInstance().setCurrentUser(currentUser);
                         EventBus.getDefault().post(new CurrentUserReadyEvent());
                         userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
-                        /*DOWNLOAD DELL'IMMAGINE????*/
                     }
 
                     @Override

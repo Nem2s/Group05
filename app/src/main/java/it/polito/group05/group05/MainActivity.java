@@ -24,9 +24,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,6 +54,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,10 +71,18 @@ import com.mvc.imagepicker.ImagePicker;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import it.polito.group05.group05.Utility.Adapter.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -79,6 +91,7 @@ import it.polito.group05.group05.Utility.Event.ReadyEvent;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
+import it.polito.group05.group05.Utility.Holder.GeneralHolder;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
@@ -99,7 +112,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    FirebaseIndexRecyclerAdapter mAdapter;
+    GroupAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -142,7 +155,6 @@ public class MainActivity extends AestheticActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             startActivity(new Intent(MainActivity.this, SignUpActivity.class));
@@ -159,7 +171,7 @@ public class MainActivity extends AestheticActivity
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
-        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+        ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
         if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
             if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
                 pb.setVisibility(View.GONE);
@@ -228,7 +240,9 @@ public class MainActivity extends AestheticActivity
 
         Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
-        mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
+
+        mAdapter = new GroupAdapter(this, tv_no_groups, iv_no_groups, pb);
+        /*mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
                                                             GroupHolder.class, groupRef, ref){
 
@@ -253,8 +267,7 @@ public class MainActivity extends AestheticActivity
                 tv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
                 iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
-        };
-
+        };*/
         rv.setAdapter(mAdapter);
 
     }
