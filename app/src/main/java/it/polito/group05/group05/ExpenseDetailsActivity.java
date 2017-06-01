@@ -58,6 +58,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
+
+
+
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -166,6 +169,13 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         super.onBackPressed();
         supportFinishAfterTransition();
     }
+
+
+    public void hideRelativeLayout() {
+    if(rel_lay.getVisibility() == View.VISIBLE)
+            rel_lay.setVisibility(View.GONE);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {

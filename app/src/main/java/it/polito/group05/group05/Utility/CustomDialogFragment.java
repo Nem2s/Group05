@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+import it.polito.group05.group05.ExpenseDetailsActivity;
 import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -66,6 +67,7 @@ import static it.polito.group05.group05.R.layout.custom_prices;
 public class CustomDialogFragment extends DialogFragment {
 
     List<User_expense> partecipants, listaCompleta;
+    ExpenseDetailsActivity eda;
     ExpenseDatabase expense;
     RecyclerView recyclerView;
     FloatingActionButton back, confirm,reset;
@@ -81,6 +83,7 @@ public class CustomDialogFragment extends DialogFragment {
         this.partecipants= list;
         this.uri= uri;
         expense= e;
+        eda = new ExpenseDetailsActivity();
         totalPriceActual = 0.0;
     }
 
@@ -216,8 +219,9 @@ public class CustomDialogFragment extends DialogFragment {
             public void onFailure(@NonNull Exception e) {
                 Activity activity = getActivity();
                 if(activity!=null){
-                    expense.setFile("fail");
-                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();}
+               //     eda.hideRelativeLayout();
+                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();
+                }
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -225,13 +229,7 @@ public class CustomDialogFragment extends DialogFragment {
                 Activity activity = getActivity();
                 if(activity!=null)
                     Toast.makeText(activity, "Upload Success", Toast.LENGTH_SHORT).show();
-
-                /*   NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
-                n.setSmallIcon(R.id.logo).setContentTitle("Upload Success").setContentText("You have uploaded "+expense.getFile()).setAutoCancel(true);
-                NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                nm.notify(0,n.build());
-               // Snackbar.make(,"Uploading DONE", Snackbar.LENGTH_SHORT).show();
-            */}
+            }
         });
     }
 }

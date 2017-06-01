@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,11 +59,21 @@ public class GroupActivity extends AestheticActivity {
     TextView tv_groupname;
     TextView tv_members;
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -130,9 +141,10 @@ public class GroupActivity extends AestheticActivity {
 
                         break;
                 }
+
                 return true;
             }
-    });
+        });
     }
 
     @Override
@@ -146,19 +158,13 @@ public class GroupActivity extends AestheticActivity {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
+//                    transition.removeTarget(R.id.toolbar);
+  //                  transition.removeTarget(R.id.navigation);
                     ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
-                    tv_groupname.setText(currentGroup.getName());
-                    fab.hide();
                 }
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-                    fab.show();
-
-                    fillNameMembersList();
-
-
-
 
                 }
 
@@ -177,8 +183,62 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
+
+            getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+            scheduleStartPostponedTransition(cv_group);
+
+        } else {
+            fab.show();
+            ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+
+
         }
-        scheduleStartPostponedTransition(cv_group);
+        fillNameMembersList();
+        tv_groupname.setText(currentGroup.getName());
+        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
+
+                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
+
+                startActivity(i);
+                //startActivity(i, options.toBundle());
+            }
+        });
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {
@@ -206,6 +266,14 @@ public class GroupActivity extends AestheticActivity {
                         tv_members.setText(u.getName());
                     else
                         tv_members.append(", " +u.getName());
+
+                    tv_members.setSingleLine(true);
+                    tv_members.setMarqueeRepeatLimit(-1);
+                    tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    tv_members.setSelected(true);
+                    tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                            Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                            Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
                 }
 
                 @Override
@@ -213,6 +281,7 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
+
         }
 
     }
@@ -222,22 +291,7 @@ public class GroupActivity extends AestheticActivity {
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
                 .commit();
         fab.show();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
-                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
-                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
-                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
-                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
-
-                startActivity(i);
-                //startActivity(i, options.toBundle());
-            }
-        });
     }
 
 

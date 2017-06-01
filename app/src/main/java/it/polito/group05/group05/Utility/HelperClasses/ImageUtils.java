@@ -13,6 +13,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
@@ -109,6 +110,19 @@ public class ImageUtils {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return px;
+    }
+
+    public static boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
+    }
+
+    public static boolean isLightDarkActionBar() {
+        return Aesthetic.get().isDark().take(1).blockingFirst() == isColorDark(Aesthetic.get().colorPrimary().take(1).blockingFirst());
     }
 
     /**

@@ -66,8 +66,6 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv_owner = (CircleImageView) itemView.findViewById(R.id.cv_ownerimage);
 
 
-
-
     }
     public void setData(Object c, final Context context){
         setData(c, context, View.GONE);
@@ -160,111 +158,6 @@ public class ExpenseHolder extends GeneralHolder{
 }*/
     private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense) {
 
-   /* int cnt=0;
-    try {
-        final PopupMenu popup = new PopupMenu(context, menu);
-    popup.inflate(R.menu.expense_card_menu);
-    //adding click listener
-    Menu popupMenu = popup.getMenu();
-    MenuItem pay= popupMenu.findItem(R.id.action_pay);
-    MenuItem subscribe= popupMenu.findItem(R.id.action_subscribe);
-    MenuItem delete= popupMenu.findItem(R.id.action_delete);
-        MenuItem download = popupMenu.findItem(R.id.file_download);
-        subscribe.setVisible(false);
-    if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
-        delete.setVisible(false);
-    } else {
-        delete.setVisible(true);
-    }
-        if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
-        pay.setVisible(false);
-        } else {
-            pay.setVisible(true);
-        }
-        if (expense.getFile() == null) {
-        download.setVisible(false);
-        } else {
-            download.setVisible(true);
-    }
-    menu.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //creating a popup menu
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_delete:
-                            //handle menu1 click
-                                FirebaseDatabase.getInstance().getReference("expenses")
-                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                    .child(expense.getId()).removeValue();
-                                DB_Manager.getInstance().updateGroupFlow(new HashMap<String, Double>(expense.getMembers()));
-                                break;
-                            case R.id.action_pay:
-                            //handle menu2 click
-                                String s = Singleton.getInstance().getCurrentUser().getId();
-                            FirebaseDatabase.getInstance().getReference("expenses")
-                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                    .child(expense.getId())
-                                    .child("members")
-                                    .child(s).setValue(0.0);
-                                DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
-                            FirebaseDatabase.getInstance().getReference("expenses")
-                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                    .child(expense.getId())
-                                    .child("members")
-                                    .child(expense.getOwner())
-                                    .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
-                                DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
-                            break;
-                        case R.id.action_subscribe:
-                            final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                            View s1 = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
-                            dialog.setView(s1);
-                            dialog.setTitle("Choose your amount");
-                            dialog.setCanceledOnTouchOutside(true);
-                            dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
-                                    if(d > expense.getPrice())
-                                        d=expense.getPrice();
-                                    d = d * (-1.00);
-                                    FirebaseDatabase.getInstance().getReference("expenses")
-                                            .child(Singleton.getInstance().getmCurrentGroup().getId())
-                                            .child(expense.getId())
-                                            .child("members")
-                                            .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);
-                                }
-                            });
-                            dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialog.cancel();
-                                }
-                            });
-                            dialog.show();
-                            //handle menu3 click
-                            break;
-                            case R.id.file_download:
-                                try {
-                                    DB_Manager.getInstance().setContext(context).fileDownload(expense.getId(), expense.getFile());
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                    }
-                    return false;
-                }
-            });
-            popup.show();
-        }
-    });
-    }
-    catch(Exception c ){
-       // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
-    }*/
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
