@@ -6,9 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -175,7 +172,7 @@ public class ExpenseFragment extends Fragment {
             }
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
-                if(model==null) return;
+                if (model == null || viewHolder == null) return;
                 viewHolder.setData(model,getContext());
                 String s = getActivity().getIntent().getStringExtra("expenseId");
                 String s1 = getActivity().getIntent().getStringExtra("type");

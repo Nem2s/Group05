@@ -70,6 +70,7 @@ public class GroupActivity extends AestheticActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +116,9 @@ public class GroupActivity extends AestheticActivity {
         }
 
         try {
-            initializeUI();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                initializeUI();
+            }
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -133,9 +136,12 @@ public class GroupActivity extends AestheticActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 tv_members.setSelected(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                 switch (item.getItemId()) {
                     case R.id.navigation_expenses:
+
                         replaceWithExpenseFragment();
+
                         //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                         break;
                     case R.id.navigation_chat:
@@ -149,6 +155,7 @@ public class GroupActivity extends AestheticActivity {
                         //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                         break;
+                }
                 }
 
                 return true;
@@ -207,9 +214,11 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void initializeUI() throws ExecutionException, InterruptedException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onTransitionStart(Transition transition) {
                     transition.removeTarget(R.id.toolbar);
@@ -324,8 +333,11 @@ public class GroupActivity extends AestheticActivity {
                         tv_members.append(", " + u.getName());
 
                     tv_members.setSingleLine(true);
-                    tv_members.setMarqueeRepeatLimit(-1);
-                    tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BASE_1_1) {
+                        tv_members.setMarqueeRepeatLimit(-1);
+                        tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    }
+
                     tv_members.setSelected(true);
                     tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
                             Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
@@ -342,6 +354,7 @@ public class GroupActivity extends AestheticActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
@@ -351,8 +364,7 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
-
-
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithChatFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -360,6 +372,7 @@ public class GroupActivity extends AestheticActivity {
                 .commit();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithHistoryFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -367,6 +380,8 @@ public class GroupActivity extends AestheticActivity {
                 .commit();
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void animateAppAndStatusBar(final int fromColor, final int toColor, float cx, float cy) {
         // get the final radius for the clipping circle
         findViewById(R.id.reveal).setBackgroundColor(fromColor);
@@ -396,19 +411,24 @@ public class GroupActivity extends AestheticActivity {
                     (int) cx,
                     (int) cy, 0,
                     finalRadius);
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    mToolbar.setBackgroundColor(toColor);
-                }
-            });
-            animator.setStartDelay(0);
-            animator.setDuration(250);
-            animator.start();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        mToolbar.setBackgroundColor(toColor);
+                    }
+                });
+                animator.setStartDelay(0);
+                animator.setDuration(250);
+                animator.start();
+            }
+
         }
 
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void changeToolbarColor(int from, int to) {
         ArgbEvaluator evaluator = new ArgbEvaluator();
         ValueAnimator animator = new ValueAnimator();

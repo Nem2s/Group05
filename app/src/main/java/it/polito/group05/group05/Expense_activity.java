@@ -23,20 +23,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-//import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -54,6 +49,8 @@ import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
+
+//import com.rengwuxian.materialedittext.MaterialEditText;
 
 //import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -93,6 +90,7 @@ public class Expense_activity extends AestheticActivity {
     private CustomIncludedDialog cid;
     private boolean clickedDetails;
     private DatePickerDialog datePickerDialog;
+    private TextView nameDate;
 
     @Override
     protected void onStart() {
@@ -145,6 +143,7 @@ public class Expense_activity extends AestheticActivity {
                 .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
         tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
+
                 Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
                 Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
 
