@@ -89,7 +89,6 @@ public class GroupActivity extends AestheticActivity {
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
 
-
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             bottomView = (BottomNavigationView) findViewById(R.id.navigation);
             bottomView.setSelectedItemId(R.id.navigation_expenses);
@@ -104,15 +103,6 @@ public class GroupActivity extends AestheticActivity {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ExpenseFragment.newInstance());
             transaction.commit();
-
-
-        } else {
-            bottomView.setSelectedItemId(R.id.navigation_chat);
-            mFragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.add(R.id.fragment_container, ChatFragment.newInstance());
-            transaction.commit();
-
         }
 
         try {
@@ -169,11 +159,21 @@ public class GroupActivity extends AestheticActivity {
         String s = getIntent().getStringExtra("type");
         if (s != null) {
             if (s.equals("rememberPaymentToOne") || s.equals("rememberPayment")) {
+                getIntent().putExtra("type", "");
                 return;
             }
             if (s.equals("newGroup")) {
                 final Pair<View, String> p1 = new Pair<View, String>((View) tv_groupname, getResources().getString(R.string.transition_group_image));
                 AnimUtils.startActivityWithAnimation((Activity) this, new Intent(this, GroupDetailsActivity.class), p1);
+                getIntent().putExtra("type", "");
+
+
+            }
+            if (s.equals("newMessage")) {
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.fragment_container, ChatFragment.newInstance());
+                tx.commit();
+                getIntent().putExtra("type", "");
 
             }
             if (s.equals("paymentRequest")) {
@@ -199,9 +199,9 @@ public class GroupActivity extends AestheticActivity {
                             }
                         })
                         .show();
-
+                getIntent().putExtra("type", "");
             }
-            getIntent().putExtra("type", "");
+
         }
 
     }
@@ -283,9 +283,9 @@ public class GroupActivity extends AestheticActivity {
         }
         fillNameMembersList();
         tv_groupname.setText(currentGroup.getName());
-        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
-                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
-                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        //  tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+        //          Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+        //          Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

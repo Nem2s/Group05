@@ -13,8 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +27,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
@@ -257,23 +254,14 @@ public class MainActivity extends AestheticActivity
         };
 
         rv.setAdapter(mAdapter);
+        checkBundle();
 
     }
 
-    @Override
-    protected void onStop() {
-
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
+    private void checkBundle() {
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
-        setIntent(intent);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
 
@@ -293,6 +281,20 @@ public class MainActivity extends AestheticActivity
             });
 
         }
+    }
+
+    @Override
+    protected void onStop() {
+
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        checkBundle();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -340,14 +342,8 @@ public class MainActivity extends AestheticActivity
             item.setChecked(false);
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
         } else if (id == R.id.nav_manage) {
-            Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Ok", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                        }
-                    })
-                    .show();
+            Intent i = new Intent(this, SettingActivity.class);
+            startActivity(i);
             item.setChecked(false);
         } else if (id == R.id.nav_share) {
             Intent intent = new AppInviteInvitation.IntentBuilder("Share")

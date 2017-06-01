@@ -76,6 +76,7 @@
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorIcons</item>
     </style>
+
     <style name="RedButton" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@color/red_400</item>
