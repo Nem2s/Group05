@@ -22,7 +22,8 @@
             android:background="@drawable/edittext_design"
             android:elevation="5dp"
             android:padding="10dp"
-            android:layout_marginRight="8dp">
+            android:layout_marginRight="8dp"
+            >
 
             <TextView
                 android:id="@+id/name_text"
@@ -46,6 +47,7 @@
                 android:textSize="16sp"
                 android:textIsSelectable="true"
                 android:textStyle="normal"
+                android:maxWidth="150dp"
                 tools:text="Hey!" />
 
             <TextView

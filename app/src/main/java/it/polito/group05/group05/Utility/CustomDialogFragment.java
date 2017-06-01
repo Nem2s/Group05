@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -123,9 +125,9 @@ public class CustomDialogFragment extends DialogFragment {
                         expense.setId(fdb.getKey());
                         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
 
-                        if (expense.getFile() != null) {
-                            upLoadFile(uri);
-                        }
+                   //     if (expense.getFile() != null) {
+                     //       upLoadFile(uri);
+                       // }
                         double price;
                         double toSubtractOwner = 0.0;
                         for (int i = 0; i < partecipants.size(); i++) {
@@ -207,29 +209,4 @@ public class CustomDialogFragment extends DialogFragment {
         super.onResume();
     }
 
-    private void upLoadFile(Uri uri){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
-                .child("expenses")
-                .child(expense.getId())
-                .child(expense.getFile());
-        UploadTask uploadTask = storageRef.putFile(uri);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Activity activity = getActivity();
-                if(activity!=null){
-               //     eda.hideRelativeLayout();
-                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Activity activity = getActivity();
-                if(activity!=null)
-                    Toast.makeText(activity, "Upload Success", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 }

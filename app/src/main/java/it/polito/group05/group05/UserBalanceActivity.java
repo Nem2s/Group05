@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -146,7 +147,7 @@ public class UserBalanceActivity extends AestheticActivity {
         xaxis.setTextSize(10f);
         xaxis.setDrawAxisLine(false);
         xaxis.setDrawGridLines(true);
-        xaxis.setTextColor(getResources().getColor(R.color.colorAccent));
+        xaxis.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
         xaxis.setGranularity(1f); // one day
         xaxis.setValueFormatter(new IAxisValueFormatter() {
 
@@ -169,25 +170,25 @@ public class UserBalanceActivity extends AestheticActivity {
         leftAxis.setAxisMinimum(0f);
         leftAxis.setYOffset(-9f);
         leftAxis.setXOffset(8f);
-        leftAxis.setTextColor(getResources().getColor(R.color.colorAccent));
+        leftAxis.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
 
         YAxis rightAxis = lchart.getAxisRight();
         rightAxis.setEnabled(false);
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColors(getResources().getColor(R.color.colorPrimaryLight));
-        set.setValueTextColor(getResources().getColor(R.color.colorPrimaryLight));
+        set.setColors(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        set.setValueTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
         set.setLineWidth(1.5f);
         set.setValueTextSize(10f);
-        set.setCircleColor(getResources().getColor(R.color.colorAccent));
+        set.setCircleColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
         set.setDrawCircles(true);
         set.setCircleRadius(4f);
         set.setDrawValues(true);
         set.setFillAlpha(110);
-        set.setHighLightColor(getResources().getColor(R.color.colorAccent));
+        set.setHighLightColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
         set.setDrawCircleHole(false);
         set.setMode(LineDataSet.Mode.LINEAR);
-        set.setFillColor(R.color.colorPrimary);
+        set.setFillColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
 
         lchart.setDragEnabled(true);
         lchart.getLegend().setTextSize(11f);
@@ -208,6 +209,7 @@ public class UserBalanceActivity extends AestheticActivity {
             }
         });
         lchart.setData(new LineData(set));
+
         lchart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         lchart.invalidate();
     }
@@ -389,23 +391,28 @@ public class UserBalanceActivity extends AestheticActivity {
 
                 }
             });
+            animator.setStartDelay(200);
+            animator.setDuration(250);
+            animator.start();
         }
     }
 
 
     private void setupPieChart() {
-        pchart.setTransparentCircleColor(getResources().getColor(R.color.grey_300));
+        pchart.setTransparentCircleColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
         pchart.setTransparentCircleAlpha(110);
         pchart.setTransparentCircleRadius(55);
         pchart.setExtraOffsets(15, 0, 15, 5);
         pchart.setCenterTextSize(22f);
         pchart.setCenterTextTypeface(Typeface.DEFAULT_BOLD);
         pchart.setHoleRadius(50);
+        pchart.setHoleColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+
         pchart.setDrawSlicesUnderHole(false);
         pchart.setDrawCenterText(true);
         pchart.setRotationAngle(0);
         pchart.setDrawEntryLabels(false);
-        pchart.setEntryLabelColor(getResources().getColor(R.color.colorSecondaryText));
+        pchart.setEntryLabelColor(Aesthetic.get().textColorSecondary().take(1).blockingFirst());
         pchart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
 
     }

@@ -1,13 +1,34 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,20 +36,28 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.ExpenseDetailsActivity;
+import it.polito.group05.group05.ExpenseFragment;
+import it.polito.group05.group05.GroupActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 
@@ -63,7 +92,7 @@ public class ExpenseHolder extends GeneralHolder{
         this.timestamp = (TextView) itemView.findViewById(R.id.timestamp);
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
-        this.cv_owner = (CircleImageView) itemView.findViewById(R.id.cv_ownerimage);
+        this.cv_owner = (CircleImageView)itemView.findViewById(R.id.cv_ownerimage);
 
 
     }
@@ -108,6 +137,7 @@ public class ExpenseHolder extends GeneralHolder{
 
 
     }
+
 
 
     private void loadOwnerImage(String owner) {
@@ -156,12 +186,117 @@ public class ExpenseHolder extends GeneralHolder{
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
         rv.setVisibility(visibility);
 }*/
-    private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense) {
+    private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
 
+   /* int cnt=0;
+    try {
+        final PopupMenu popup = new PopupMenu(context, menu);
+    popup.inflate(R.menu.expense_card_menu);
+    //adding click listener
+    Menu popupMenu = popup.getMenu();
+    MenuItem pay= popupMenu.findItem(R.id.action_pay);
+    MenuItem subscribe= popupMenu.findItem(R.id.action_subscribe);
+    MenuItem delete= popupMenu.findItem(R.id.action_delete);
+        MenuItem download = popupMenu.findItem(R.id.file_download);
+        subscribe.setVisible(false);
+    if(expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId())!=0) {
+        delete.setVisible(false);
+    } else {
+        delete.setVisible(true);
+    }
+        if (expense.getOwner().compareTo(Singleton.getInstance().getCurrentUser().getId()) == 0) {
+        pay.setVisible(false);
+        } else {
+            pay.setVisible(true);
+        }
+        if (expense.getFile() == null) {
+        download.setVisible(false);
+        } else {
+            download.setVisible(true);
+    }
+    menu.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //creating a popup menu
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_delete:
+                            //handle menu1 click
+                                FirebaseDatabase.getInstance().getReference("expenses")
+                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                    .child(expense.getId()).removeValue();
+                                DB_Manager.getInstance().updateGroupFlow(new HashMap<String, Double>(expense.getMembers()));
+                                break;
+                            case R.id.action_pay:
+                            //handle menu2 click
+                                String s = Singleton.getInstance().getCurrentUser().getId();
+                            FirebaseDatabase.getInstance().getReference("expenses")
+                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                    .child(expense.getId())
+                                    .child("members")
+                                    .child(s).setValue(0.0);
+                                DB_Manager.getInstance().updateGroupFlow(s,expense.getMembers().get(s));
+                            FirebaseDatabase.getInstance().getReference("expenses")
+                                    .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                    .child(expense.getId())
+                                    .child("members")
+                                    .child(expense.getOwner())
+                                    .setValue(expense.getMembers().get(expense.getOwner()) + expense.getMembers().get(s));
+                                DB_Manager.getInstance().updateGroupFlow(expense.getOwner(),(-1.00)*expense.getMembers().get(s));
+                            break;
+                        case R.id.action_subscribe:
+                            final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                            View s1 = LayoutInflater.from(context).inflate(R.layout.layout, null, false);
+                            dialog.setView(s1);
+                            dialog.setTitle("Choose your amount");
+                            dialog.setCanceledOnTouchOutside(true);
+                            dialog.setButton(Dialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Double d = Double.valueOf(((EditText) dialog.findViewById(R.id.expense_amount_not_mandatory)).getText().toString());
+                                    if(d > expense.getPrice())
+                                        d=expense.getPrice();
+                                    d = d * (-1.00);
+                                    FirebaseDatabase.getInstance().getReference("expenses")
+                                            .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                            .child(expense.getId())
+                                            .child("members")
+                                            .child(Singleton.getInstance().getCurrentUser().getId()).setValue(d);
+                                }
+                            });
+                            dialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialog.cancel();
+                                }
+                            });
+                            dialog.show();
+                            //handle menu3 click
+                            break;
+                            case R.id.file_download:
+                                try {
+                                    DB_Manager.getInstance().setContext(context).fileDownload(expense.getId(), expense.getFile());
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                    }
+                    return false;
+                }
+            });
+            popup.show();
+        }
+    });
+    }
+    catch(Exception c ){
+       // Toast.makeText(context, "Error"+c.getMessage(), Toast.LENGTH_SHORT).show();
+    }*/
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent((Activity) context, ExpenseDetailsActivity.class);
+                Intent i = new Intent((Activity)context, ExpenseDetailsActivity.class);
                 Bundle extras = new Bundle();
                 extras.putSerializable("map", (Serializable) expense.getMembers());
                 extras.putString("title", expense.getName());
@@ -194,6 +329,22 @@ public class ExpenseHolder extends GeneralHolder{
             }
         });
 
+   /* rel.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                DB_Manager.getInstance().fileDownload(expense.getId(), expense.getFile());
+                File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ expense.getFile());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(f),"**///*");
+              /*  intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                context.startActivity(intent);
+            } catch (FileNotFoundException e) {
+                Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    });*/
 
     }
 

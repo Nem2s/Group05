@@ -1,9 +1,12 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +30,7 @@ public class ChatHolder extends GeneralHolder {
     private TextView userName;
     private TextView text;
     private TextView time;
+    private RelativeLayout rl;
     private CircleImageView imageView;
 
     public ChatHolder(View v) {
@@ -35,11 +39,14 @@ public class ChatHolder extends GeneralHolder {
         this.text = (TextView) v.findViewById(R.id.message_text);
         this.time = (TextView) v.findViewById(R.id.message_time);
         this.imageView = (CircleImageView) v.findViewById(R.id.image_person);
+        this.rl = (RelativeLayout)v.findViewById(R.id.message);
     }
 
     @Override
     public void setData(Object c, final Context context) {
         if (!(c instanceof ChatDatabase)) return;
+        GradientDrawable bgShape = (GradientDrawable) rl.getBackground();
+        bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
         ChatDatabase cdb = (ChatDatabase) c;
         userName.setText(cdb.getMessageUser());
         text.setText(cdb.getMessageText());

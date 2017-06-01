@@ -90,7 +90,7 @@ public class CustomIncludedDialog extends DialogFragment {
                 if(!newList.contains(e))
                 {
                     newList.add(e);
-            }}
+                }}
         }
     }
 

@@ -67,6 +67,8 @@ import com.mvc.imagepicker.ImagePicker;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -141,7 +143,7 @@ public class MainActivity extends AestheticActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -269,7 +271,7 @@ public class MainActivity extends AestheticActivity
     @Override
     protected void onStart() {
         super.onStart();
-
+        EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
 
@@ -402,6 +404,7 @@ public class MainActivity extends AestheticActivity
                             }
                         })
                         .show();
+
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
                     public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
@@ -501,11 +504,11 @@ public class MainActivity extends AestheticActivity
                     })
                     .show();
         } else {
-            initializeAesthetic(primary, accent, isdark[0]);
+            initializeAesthetic(primary, accent, false);
         }
     }
 
-    private void initializeAesthetic(int primary, int accent,boolean dark) {
+    private void initializeAesthetic(int primary, int accent ,boolean dark) {
         Singleton.getInstance().setColors(colors);
         if(dark) {
             Aesthetic.get()
@@ -551,11 +554,14 @@ public class MainActivity extends AestheticActivity
         PREDEFINED_THEME_OPTION = 0;
     }
 
-    private ColorItem[] generateThemes() {
-        ColorItem themes[] = new ColorItem[3];
-        themes[0] = new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme");
-        themes[1] = new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood");
-        themes[2] = new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece");
+    private List<ColorItem> generateThemes() {
+        List<ColorItem> themes = new ArrayList<>();
+        themes.add(new ColorItem(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent), "Blue Wolf (Default)"));
+        themes.add(new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme"));
+        themes.add(new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood"));
+        themes.add(new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece"));
+        themes.add(new ColorItem(Color.parseColor("#fafafa"), Color.parseColor("#64ffda"), "Alien"));
+        themes.add(new ColorItem(Color.parseColor("#37474f"), Color.parseColor("#64ffda"), "Black Alien"));
         return themes;
     }
 

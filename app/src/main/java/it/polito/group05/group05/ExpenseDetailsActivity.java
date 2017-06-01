@@ -27,6 +27,8 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.klinker.android.sliding.MultiShrinkScroller;
 import com.klinker.android.sliding.SlidingActivity;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,9 +60,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
-
-
-
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -92,6 +91,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         correct_download = b.getBoolean("correct_download");
 
         setContent(R.layout.activity_expense_details);
+
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
         WIDTH = b.getInt("width");
@@ -253,6 +253,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         }
 
         rv.setAdapter(adapter);
+
+
 
 
     }
