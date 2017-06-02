@@ -25,7 +25,9 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.MainActivity;
@@ -170,28 +172,49 @@ public class ImageUtils {
         return dp;
     }
 
-    public static void showTutorial(Activity activity, View... views) { /**Farlo con le Pair **/
-        for(View v : views)
+    public static void showTutorial(final Activity activity, Map<View, String[]> map) { /**Farlo con le Pair **/
+        final Iterator i = map.entrySet().iterator();
+        Map.Entry<View, String[] > e = (Map.Entry<View, String[]>) i.next();
         new MaterialTapTargetPrompt.Builder(activity)
-                .setTarget(views[0])
-                .setTarget(v)
+                .setTarget(e.getKey())
                 .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
                 .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
                 .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
-                .setPrimaryText("Send your first email")
-                .setSecondaryText("Tap the envelop to start composing your first email")
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener()
-                {
+                .setPrimaryText(e.getValue()[0])
+                .setSecondaryText(e.getValue()[1])
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                     @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget)
-                    {
-                        //Do something such as storing a value so that this prompt is never shown again
+                    public void onHidePrompt(MotionEvent motionEvent, boolean b) {
+
                     }
 
                     @Override
-                    public void onHidePromptComplete()
-                    {
+                    public void onHidePromptComplete() {
+                        if(i.hasNext())
+                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
+                    }
+                })
+                .show();
+    }
 
+    private static void goOn(final Activity activity, final Iterator i, Map.Entry<View, String[]> e) {
+        new MaterialTapTargetPrompt.Builder(activity)
+                .setTarget(e.getKey())
+                .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
+                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
+                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
+                .setPrimaryText(e.getValue()[0])
+                .setSecondaryText(e.getValue()[1])
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent motionEvent, boolean b) {
+
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+                        if(i.hasNext())
+                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
                     }
                 })
                 .show();

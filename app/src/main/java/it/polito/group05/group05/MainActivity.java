@@ -71,7 +71,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -91,7 +94,7 @@ import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 public class MainActivity extends AestheticActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    Map<View, String[]> map = new LinkedHashMap<View, String[]>();
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
     private static int CUSTOM_THEME_OPTION = 0;
     private static int PREDEFINED_THEME_OPTION = 0;
@@ -99,7 +102,7 @@ public class MainActivity extends AestheticActivity
     private static String THEME_HELPER = "Primary";
     private static final String PRIMARY = "Primary";
     private static final String ACCENT = "Accent";
-
+    ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
     NavigationView navigationView;
     CircleImageView cv_user_drawer;
@@ -158,7 +161,7 @@ public class MainActivity extends AestheticActivity
             return;
         }
 
-        String tkn = FirebaseInstanceId.getInstance().getToken();
+        final String tkn = FirebaseInstanceId.getInstance().getToken();
         FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(tkn);
 
 
@@ -189,7 +192,7 @@ public class MainActivity extends AestheticActivity
         });
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
 
@@ -214,7 +217,11 @@ public class MainActivity extends AestheticActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
+                if(!Singleton.getInstance().isFirstAcces()) {
+                    map.put(cv_user_drawer, new String[]{"Profile Image", "Clicking on it you'll be able to change your profile image"});
+                    ImageUtils.showTutorial(activity, map);
+                    map.clear();
+                }
             }
 
             @Override
@@ -229,7 +236,7 @@ public class MainActivity extends AestheticActivity
         });
 
         drawer.setDrawerListener(toggle);
-        toggle.syncState();
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -267,15 +274,11 @@ public class MainActivity extends AestheticActivity
         };
 */
         rv.setAdapter(mAdapter);
-        Handler h = new Handler(Looper.getMainLooper());
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
-                            ImageUtils.showTutorial(activity, fab);
-                        }
-                    }
-                }, 1000);
+        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
+            map.put(fab, new String[]{"Floating Action Button", "With this you can create a new group with yout friends!"});
+            ImageUtils.showTutorial(activity, map);
+            map.clear();
+        }
 
 
     }
@@ -290,6 +293,7 @@ public class MainActivity extends AestheticActivity
     @Override
     protected void onStart() {
         super.onStart();
+        toggle.syncState();
         EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
         if (groupId != null) {
@@ -346,12 +350,9 @@ public class MainActivity extends AestheticActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(final MenuItem item) {
         // Handle navigation view item clicks here.
-
         int id = item.getItemId();
         if (id == R.id.nav_balance) {
             Pair<View, String> p = new Pair<>((View) cv_user_drawer, getResources().getString(R.string.transition_group_image));

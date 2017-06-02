@@ -74,7 +74,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -86,6 +88,7 @@ import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.MemberContactItem;
 import it.polito.group05.group05.Utility.Holder.MemberInvitedItem;
 import it.polito.group05.group05.Utility.Interfaces.Namable;
@@ -305,6 +308,12 @@ public class NewGroupActivity extends AestheticActivity {
 
         fastInvitedAdapter.withSavedInstanceState(savedInstanceState);
         setupInvited();
+
+        if(!Singleton.getInstance().isFirstAcces()) {
+            Map<View, String[]> map = new LinkedHashMap<>();
+            map.put(fab,new String[]{"Share - ShareCash!", "Clicking on it you can share this Application with your contacts, try it!"});
+            ImageUtils.showTutorial(this, map);
+        }
     }
 
     private void setupInvited() {
