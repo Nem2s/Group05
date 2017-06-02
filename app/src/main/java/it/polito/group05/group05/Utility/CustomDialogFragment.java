@@ -74,12 +74,12 @@ public class CustomDialogFragment extends DialogFragment {
     Double totalPriceActual;
     CustomIncludedDialog c;
     FragmentManager fm;
-    Uri uri;
+    DatabaseReference uri;
 
-    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, Uri uri){
+    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, DatabaseReference fdb){
         this.listaCompleta= listOriginal;
         this.partecipants= list;
-        this.uri= uri;
+        this.fdb= fdb;
         expense= e;
         totalPriceActual = 0.0;
     }
@@ -121,7 +121,7 @@ public class CustomDialogFragment extends DialogFragment {
                 expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
 
                 if (expense.getFile() != null) {
-                    upLoadFile(uri);
+                    //upLoadFile(uri);
                 }
                 double price;
                 double toSubtractOwner = 0.0;

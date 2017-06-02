@@ -401,7 +401,7 @@ public class Expense_activity extends AestheticActivity {
                 cid.show(fm, "TV_tag");
             }
         });
-*/
+
         fastItemAdapter = new FastItemAdapter<IconItem>();
 
 
