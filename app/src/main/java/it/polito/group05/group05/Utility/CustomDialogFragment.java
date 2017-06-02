@@ -1,6 +1,7 @@
 package it.polito.group05.group05.Utility;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +51,7 @@ import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+import it.polito.group05.group05.ExpenseDetailsActivity;
 import it.polito.group05.group05.Expense_activity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
@@ -66,21 +70,24 @@ import static it.polito.group05.group05.R.layout.custom_prices;
 public class CustomDialogFragment extends DialogFragment {
 
     List<User_expense> partecipants, listaCompleta;
+    ExpenseDetailsActivity eda;
     ExpenseDatabase expense;
     RecyclerView recyclerView;
     FloatingActionButton back, confirm,reset;
     MemberExpandedAdapter memberAdapter;
-    private DatabaseReference fdb;
+
     Double totalPriceActual;
     CustomIncludedDialog c;
     FragmentManager fm;
-    Uri uri;
+    DatabaseReference fdb;
 
-    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, Uri uri){
+
+    public CustomDialogFragment(List<User_expense> listOriginal ,List<User_expense> list, ExpenseDatabase e, DatabaseReference fdb){
         this.listaCompleta= listOriginal;
         this.partecipants= list;
-        this.uri= uri;
+        this.fdb = fdb;
         expense= e;
+        eda = new ExpenseDetailsActivity();
         totalPriceActual = 0.0;
     }
 
@@ -111,54 +118,43 @@ public class CustomDialogFragment extends DialogFragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fdb = FirebaseDatabase.getInstance()
-                        .getReference("expenses")
-                        .child(Singleton.getInstance().getmCurrentGroup().getId())
-                        .push();
-                DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
-                        .child("lmTime");
-                expense.setId(fdb.getKey());
-                expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
 
-                if (expense.getFile() != null) {
-                    upLoadFile(uri);
-                }
-                double price;
-                double toSubtractOwner = 0.0;
-                for (int i = 0; i < partecipants.size(); i++) {
-                    if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
-                        toSubtractOwner += partecipants.get(i).getCustomValue();
-                    }
-                }
-                totalPriceActual = 0.0;
-                Map<String, Object> map_payed = new HashMap<>();
-                for (int i = 0; i < partecipants.size(); i++) {
-                    //    partecipants.get(i).setIncluded(false);
-                    price = partecipants.get(i).getCustomValue();
-                    totalPriceActual += partecipants.get(i).getCustomValue();
-                    String id = partecipants.get(i).getId();
+                        double price;
+                        double toSubtractOwner = 0.0;
+                        for (int i = 0; i < partecipants.size(); i++) {
+                            if (!(partecipants.get(i).getId().equals(expense.getOwner()))) {
+                                toSubtractOwner += partecipants.get(i).getCustomValue();
+                            }
+                        }
+                        totalPriceActual = 0.0;
+                        Map<String, Object> map_payed = new HashMap<>();
+                        for (int i = 0; i < partecipants.size(); i++) {
+                        //    partecipants.get(i).setIncluded(false);
+                            price = partecipants.get(i).getCustomValue();
+                            totalPriceActual += partecipants.get(i).getCustomValue();
+                            String id = partecipants.get(i).getId();
 
-                    if (partecipants.get(i).getId().equals(expense.getOwner())) {
-                        expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
-                        map_payed.put(id, true);
-                    } else {
-                        expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
-                        map_payed.put(id, false);
-                    }
-                    DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
+                            if (partecipants.get(i).getId().equals(expense.getOwner())) {
+                                expense.getMembers().put(partecipants.get(i).getId(), toSubtractOwner);
+                                map_payed.put(id, true);
+                            } else {
+                                expense.getMembers().put(partecipants.get(i).getId(), (-1.00) * price);
+                                map_payed.put(id, false);
+                            }
+                            DB_Manager.getInstance().updateGroupFlow(id, -1.00 * expense.getMembers().get(id));
 
-                }
+                        }
 
-                if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
-                    Snackbar.make(v, "Set prices again", Snackbar.LENGTH_SHORT).show();
-                    memberAdapter.changeTotal(expense.getPrice());
-                } else {
-                    expense.setPayed(map_payed);
-                    DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
-                    fdb.setValue(expense);
-                    getActivity().finish();
-                    dismiss();
-                }
+                        if ((totalPriceActual - expense.getPrice()) > 0.001 || (totalPriceActual - expense.getPrice()) < -0.001) {
+                            Snackbar.make(v, "Set prices again", Snackbar.LENGTH_SHORT).show();
+                            memberAdapter.changeTotal(expense.getPrice());
+                        } else {
+                            expense.setPayed(map_payed);
+                            DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
+                            fdb.setValue(expense);
+                            getActivity().finish();
+                            dismiss();
+                        }
 
             }
         });
@@ -175,13 +171,13 @@ public class CustomDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < partecipants.size(); i++) {
-                    partecipants.remove(i);
+                        partecipants.remove(i);
                 }
                 for(int j= 0; j< listaCompleta.size(); j++){
                     listaCompleta.get(j).setExcluded(false);
                 }
                 fm= getFragmentManager();
-                c = new CustomIncludedDialog(listaCompleta, expense, uri);
+                c = new CustomIncludedDialog(listaCompleta, expense, fdb);
                 c.show(fm, "TAG");
                 dismiss();
             }
@@ -204,34 +200,4 @@ public class CustomDialogFragment extends DialogFragment {
         super.onResume();
     }
 
-    private void upLoadFile(Uri uri){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
-                .child("expenses")
-                .child(expense.getId())
-                .child(expense.getFile());
-        UploadTask uploadTask = storageRef.putFile(uri);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Activity activity = getActivity();
-                if(activity!=null){
-                    expense.setFile("fail");
-                    Toast.makeText(activity, "Upload Failed", Toast.LENGTH_SHORT).show();}
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Activity activity = getActivity();
-                if(activity!=null)
-                    Toast.makeText(activity, "Upload Success", Toast.LENGTH_SHORT).show();
-
-                /*   NotificationCompat.Builder n = new NotificationCompat.Builder(getActivity());
-                n.setSmallIcon(R.id.logo).setContentTitle("Upload Success").setContentText("You have uploaded "+expense.getFile()).setAutoCancel(true);
-                NotificationManager nm = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                nm.notify(0,n.build());
-               // Snackbar.make(,"Uploading DONE", Snackbar.LENGTH_SHORT).show();
-            */}
-        });
-    }
 }

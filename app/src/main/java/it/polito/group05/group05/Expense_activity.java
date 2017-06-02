@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
@@ -20,13 +19,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -34,18 +31,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.aesthetic.Aesthetic;
-import com.afollestad.aesthetic.AestheticActivity;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -53,16 +43,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mikepenz.fastadapter.FastAdapter;
-import com.mikepenz.fastadapter.IAdapter;
-import com.mikepenz.fastadapter.IItem;
-import com.mikepenz.fastadapter.adapters.HeaderAdapter;
-import com.mikepenz.fastadapter.adapters.ItemAdapter;
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
-//import com.rengwuxian.materialedittext.MaterialEditText;
+import com.kyleduo.switchbutton.SwitchButton;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,15 +60,12 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.Utility.Adapter.MemberExpandedAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
-import it.polito.group05.group05.Utility.BaseClasses.IconItem;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 import it.polito.group05.group05.Utility.CustomDialogFragment;
 import it.polito.group05.group05.Utility.CustomIncludedDialog;
-import it.polito.group05.group05.Utility.HelperClasses.AssetUriLoader;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
-import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 
 public class Expense_activity extends AestheticActivity {
@@ -108,15 +89,16 @@ public class Expense_activity extends AestheticActivity {
     private String data = null;
     private String time = null;
     private String tmsp = null;
+    private MaterialDialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private boolean clicked_calendar = false;
+    private boolean upload = false;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
     private Double expense_price, totalPriceActual;
     private String expense_name;
     private long timestamp;
-    private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
     private Uri uri;
     private boolean newFile = false;
@@ -124,8 +106,10 @@ public class Expense_activity extends AestheticActivity {
     private File fileUploaded;
     private Context context;
     private CustomIncludedDialog cid;
-    private boolean clickedDetails;
+    private boolean success, fail;
     private DatePickerDialog datePickerDialog;
+    private DatabaseReference fdb;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onStart() {
@@ -146,7 +130,8 @@ public class Expense_activity extends AestheticActivity {
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         timestamp = 0;
-        clickedDetails = false;
+        success = false;
+        fail = false;
 
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
@@ -236,6 +221,15 @@ public class Expense_activity extends AestheticActivity {
                     if (expense.getPrice().toString().length() > 6)
                         Snackbar.make(v, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
                     else {
+                        fdb = FirebaseDatabase.getInstance()
+                                .getReference("expenses")
+                                .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .push();
+                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .child("lmTime");
+                        expense.setId(fdb.getKey());
+                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+
                         if (clicked_calendar) {
                             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                             Date date = null;
@@ -254,13 +248,27 @@ public class Expense_activity extends AestheticActivity {
                         for(User_expense e : partecipants){
                             e.setExcluded(false);
                         }
-                        final FragmentManager fm = getFragmentManager();
-                        cid = new CustomIncludedDialog(partecipants, expense, uri);
-                        cid.show(fm, "TV_tag");
-                    }
-                }
+                           if (expense.getFile() != null) {
+                               upload= true;
+                            upLoadFile(uri);
+                       }
 
-            }
+                        cid = new CustomIncludedDialog(partecipants, expense, fdb);
+                        if(upload){
+                            progressDialog = new ProgressDialog(context);
+                            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.show();
+                            upload= false;
+                        }
+                        else{
+                            final FragmentManager fm = getFragmentManager();
+                            cid.show(fm, "TV_tag");
+                        }
+                    }
+                    }
+
+                }
         });
 
         et_name.addTextChangedListener(new TextWatcher() {
@@ -290,6 +298,8 @@ public class Expense_activity extends AestheticActivity {
                 if (s.length() > 0) {
                     expense.setPrice(Double.parseDouble(s.toString().replace(',', '.')));
                     expense_price = Double.parseDouble(s.toString().replace(',', '.'));
+              //      memberAdapter.changeTotal(expense_price);
+              //      memberAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -312,17 +322,17 @@ public class Expense_activity extends AestheticActivity {
                                 if (dayOfMonth > mDay && month >= mMonth) {
                                     Toast.makeText(context, "Select a smaller date", Toast.LENGTH_SHORT).show();
                                 }
-                                else{
-                                    int month1 = month + 1;
-                                    if (month < 10) {
-                                        String mese = "0" + (month1);
-                                        data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
-                                        nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
-                                    } else {
-                                        data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
-                                        nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
-                                    }
+                            else{
+                                int month1 = month + 1;
+                                if (month < 10) {
+                                    String mese = "0" + (month1);
+                                    data = dayOfMonth + "/" + mese + "/" + year + " " + mHour + ":" + mMinute;
+                                    nameDate.setText(dayOfMonth + "/" + mese + "/" + year);
+                                } else {
+                                    data = dayOfMonth + "/" + month1 + "/" + year + " " + mHour + ":" + mMinute;
+                                    nameDate.setText(dayOfMonth + "/" + month1 + "/" + year);
                                 }
+                            }
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -335,27 +345,18 @@ public class Expense_activity extends AestheticActivity {
         {
             public void onClick(View v){
                 if (!newFile) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("*/*");
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
                     startActivityForResult(intent,0);
                 }else{
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
+                    expense.setFile(null);
                     newFile = false;
                 }
             }
         });
-
-   /*     moreLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickedDetails = true;
-                cdf.show(fm,"TV_tag");
-            }
-        });
-*/
-        fastItemAdapter = new FastItemAdapter<IconItem>();
 
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
@@ -366,6 +367,15 @@ public class Expense_activity extends AestheticActivity {
                 .adapter(fastItemAdapter,gridLayoutManager)
                 .build();
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener() {
+    }
+    private void upLoadFile(Uri uri){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                .child("expenses")
+                .child(expense.getId())
+                .child(expense.getFile());
+        UploadTask uploadTask = storageRef.putFile(uri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
                 Glide.with(context)
@@ -377,9 +387,21 @@ public class Expense_activity extends AestheticActivity {
             }
         });
         image_expense.setOnClickListener(new View.OnClickListener() {
+            public void onFailure(@NonNull Exception e) {
+                expense.setFile("Fail");
+                progressDialog.dismiss();
+                upload= false;
+                Toast.makeText(context,"Upload Failed: please upload a smaller file and delete it to continue",Toast.LENGTH_LONG).show();
+                }
+         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onClick(View view) {
                 dialog.show();
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                progressDialog.dismiss();
+                upload = false;
+                final FragmentManager fm = getFragmentManager();
+                cid.show(fm, "TV_tag");
             }
         });
     }
@@ -425,13 +447,11 @@ public class Expense_activity extends AestheticActivity {
                         if(nameFILE != null){
                             veroNF.setText(nameFILE);
                             buttonUPLOAD.setText("DELETE");
+                            //upload = false;
                             expense.setFile(nameFILE);
                         }
 
-                      /*  if (nameFILE != null) {
-                            expense.setFile(nameFILE);
-                            upLoadFile(uri);
-                       } */
+
                     }
                 } finally {
                     cursor.close();

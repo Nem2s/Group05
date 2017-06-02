@@ -37,7 +37,7 @@ public class PersonSelectedHolder extends GeneralHolder {
     }
 
     @Override
-    public void setData(Object c, final Context context) {
+    public void setData(Object c, Context context) {
         if (!(c instanceof User_expense)) return;
         final User_expense us = (User_expense) c;
         name.setText(us.getName());
@@ -49,18 +49,19 @@ public class PersonSelectedHolder extends GeneralHolder {
                 .asBitmap()
                 .placeholder(R.drawable.user_placeholder)
                 .into(img_profile);
+
         switchButton.setChecked(true);
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(buttonView.isChecked()) {
+                if(buttonView.isChecked()){
                     us.setExcluded(false);
-                } else {
+                }
+                else {
                     if (!(us.getId().equals(Singleton.getInstance().getCurrentUser().getId())))
                         us.setExcluded(true);
                     else {
-                        Toast.makeText(context, "You have already payed", Toast.LENGTH_SHORT).show();
-
+                        Snackbar.make(itemView,  "You have already payed", Toast.LENGTH_SHORT).show();
                         switchButton.setChecked(true);
                     }
                 }
