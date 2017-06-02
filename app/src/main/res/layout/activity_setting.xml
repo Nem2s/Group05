@@ -14,26 +14,46 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
-            android:layout_width="64dp"
+            android:layout_width="match_parent"
             android:layout_margin="10dp"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NAME:"
+            android:textStyle="bold"
+
+            android:id="@+id/tv_n" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NAME:"
+            android:textStyle="bold"
+            android:layout_below="@+id/name"
+            android:id="@+id/tv_tn"
+
+            />
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/name"
             android:layout_margin="10dp"
+            android:below="@+id/tv_n"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email Address"
+            android:hint="Name"
+            android:digits="0123456789"
+
+            android:id="@+id/name"
             android:layout_below="@+id/profile_image" />
         />
 
         <android.support.design.widget.TextInputEditText
-            android:layout_below="@+id/name"
+            android:layout_below="@+id/tv_tn"
             android:layout_width="match_parent"
             android:layout_margin="10dp"
             android:layout_height="wrap_content"
-            android:hint="Telephon Number"
+            android:hint="Tel Number"
             android:id="@+id/number" />
 
 
