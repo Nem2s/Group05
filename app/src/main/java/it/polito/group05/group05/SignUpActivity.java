@@ -319,6 +319,7 @@ public class SignUpActivity extends AppCompatActivity {
                         if(user_img != null && et_user_phone.getText().length() > 0) {
                             ud.setTelNumber(et_user_phone.getText().toString());
                             Singleton.getInstance().setCurrentUser(ud);
+                            Singleton.getInstance().setFirstAcces(true);
                             DB_Manager.getInstance().setContext(activity).pushNewUser(ud);
                             startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                             dialog.dismiss();

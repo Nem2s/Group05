@@ -2,6 +2,7 @@ package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -26,14 +27,14 @@ import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 public class PersonSelectedHolder extends GeneralHolder {
     CircleImageView img_profile;
     TextView name;
-    Switch switchButton;
+    SwitchCompat switchButton;
     Context context;
 
     public PersonSelectedHolder(View itemView) {
         super(itemView);
         this.img_profile = (CircleImageView) itemView.findViewById(R.id.iv_person_image);
         this.name = (TextView) itemView.findViewById(R.id.tv_name_member);
-        this.switchButton = (Switch) itemView.findViewById(R.id.switch_button);
+        this.switchButton = (SwitchCompat) itemView.findViewById(R.id.switch_button);
     }
 
     @Override

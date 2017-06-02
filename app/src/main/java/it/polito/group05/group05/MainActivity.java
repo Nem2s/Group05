@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -83,6 +86,7 @@ import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class MainActivity extends AestheticActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -95,6 +99,7 @@ public class MainActivity extends AestheticActivity
     private static String THEME_HELPER = "Primary";
     private static final String PRIMARY = "Primary";
     private static final String ACCENT = "Accent";
+
     DrawerLayout drawer;
     NavigationView navigationView;
     CircleImageView cv_user_drawer;
@@ -158,7 +163,8 @@ public class MainActivity extends AestheticActivity
 
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
@@ -173,7 +179,7 @@ public class MainActivity extends AestheticActivity
         /**DEBUGG**/
         Singleton.getInstance().setCurrContext(getApplicationContext());
         context = this;
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,6 +267,16 @@ public class MainActivity extends AestheticActivity
         };
 */
         rv.setAdapter(mAdapter);
+        Handler h = new Handler(Looper.getMainLooper());
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
+                            ImageUtils.showTutorial(activity, fab);
+                        }
+                    }
+                }, 1000);
+
 
     }
 

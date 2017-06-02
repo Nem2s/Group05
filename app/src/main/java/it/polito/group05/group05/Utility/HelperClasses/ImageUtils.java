@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,25 +12,32 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.IconItem;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
+import static android.R.attr.colorPrimary;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -161,4 +169,33 @@ public class ImageUtils {
         float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
+
+    public static void showTutorial(Activity activity, View... views) { /**Farlo con le Pair **/
+        for(View v : views)
+        new MaterialTapTargetPrompt.Builder(activity)
+                .setTarget(views[0])
+                .setTarget(v)
+                .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
+                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
+                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
+                .setPrimaryText("Send your first email")
+                .setSecondaryText("Tap the envelop to start composing your first email")
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener()
+                {
+                    @Override
+                    public void onHidePrompt(MotionEvent event, boolean tappedTarget)
+                    {
+                        //Do something such as storing a value so that this prompt is never shown again
+                    }
+
+                    @Override
+                    public void onHidePromptComplete()
+                    {
+
+                    }
+                })
+                .show();
+    }
+
+
 }

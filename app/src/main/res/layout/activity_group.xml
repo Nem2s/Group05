@@ -65,6 +65,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
                         android:focusableInTouchMode="true"
+                        android:src="@drawable/group_placeholder"
                         android:transitionName="@string/transition_group_image" />
 
                     <LinearLayout

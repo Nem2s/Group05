@@ -38,6 +38,11 @@ public class Singleton {
     private Map<String, Double> usersBalance;
     private int THRESHOLD = 25;
     private LinkedHashMap<String, UserContact> localContactsMap;
+    boolean firstAcces = false;
+
+    public boolean isFirstAcces() {
+        return firstAcces;
+    }
 
     private int[] colors;
 
@@ -154,6 +159,10 @@ public class Singleton {
 
     public int getThreshold() {
         return THRESHOLD;
+    }
+
+    public void setFirstAcces(boolean firstAcces) {
+        this.firstAcces = firstAcces;
     }
 
     class getRegContactsTask extends AsyncTask<Void, Void, Void> {

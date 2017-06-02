@@ -161,36 +161,7 @@ public class GroupActivity extends AestheticActivity {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
-                    transition.removeTarget(R.id.toolbar);
-                    transition.removeTarget(R.id.navigation);
                     ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
-                }
-
-                @Override
-                public void onTransitionEnd(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionCancel(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionPause(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionResume(Transition transition) {
-
-                }
-            });
-
-            getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
-                @Override
-                public void onTransitionStart(Transition transition) {
-
                 }
 
                 @Override
