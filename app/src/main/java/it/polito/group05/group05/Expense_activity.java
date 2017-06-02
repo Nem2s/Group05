@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -108,15 +109,16 @@ public class Expense_activity extends AestheticActivity {
     private String data = null;
     private String time = null;
     private String tmsp = null;
+    private MaterialDialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private boolean clicked_calendar = false;
+    private boolean upload = false;
 
     ////////////////////////////////////////
     private ExpenseDatabase expense;
     private Double expense_price, totalPriceActual;
     private String expense_name;
     private long timestamp;
-    private DatabaseReference fdb;
     private List<User_expense> partecipants = new ArrayList<>();
     private Uri uri;
     private boolean newFile = false;
@@ -124,8 +126,10 @@ public class Expense_activity extends AestheticActivity {
     private File fileUploaded;
     private Context context;
     private CustomIncludedDialog cid;
-    private boolean clickedDetails;
+    private boolean success, fail;
     private DatePickerDialog datePickerDialog;
+    private DatabaseReference fdb;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onStart() {
@@ -146,7 +150,8 @@ public class Expense_activity extends AestheticActivity {
         expense= new ExpenseDatabase();
         expense.setPrice(0.0);
         timestamp = 0;
-        clickedDetails = false;
+        success = false;
+        fail = false;
 
         expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
         parent = (CoordinatorLayout)findViewById(R.id.parent_layout);
@@ -236,6 +241,15 @@ public class Expense_activity extends AestheticActivity {
                     if (expense.getPrice().toString().length() > 6)
                         Snackbar.make(v, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
                     else {
+                        fdb = FirebaseDatabase.getInstance()
+                                .getReference("expenses")
+                                .child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .push();
+                        DatabaseReference fdbgroup = FirebaseDatabase.getInstance().getReference("groups").child(Singleton.getInstance().getmCurrentGroup().getId())
+                                .child("lmTime");
+                        expense.setId(fdb.getKey());
+                        expense.setOwner(Singleton.getInstance().getCurrentUser().getId());
+
                         if (clicked_calendar) {
                             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                             Date date = null;
@@ -254,9 +268,23 @@ public class Expense_activity extends AestheticActivity {
                         for(User_expense e : partecipants){
                             e.setExcluded(false);
                         }
-                        final FragmentManager fm = getFragmentManager();
-                        cid = new CustomIncludedDialog(partecipants, expense, uri);
-                        cid.show(fm, "TV_tag");
+                           if (expense.getFile() != null) {
+                               upload= true;
+                            upLoadFile(uri);
+                       }
+
+                        cid = new CustomIncludedDialog(partecipants, expense, fdb);
+                        if(upload){
+                            progressDialog = new ProgressDialog(context);
+                            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.show();
+                            upload= false;
+                        }
+                        else{
+                            final FragmentManager fm = getFragmentManager();
+                            cid.show(fm, "TV_tag");
+                        }
                     }
                 }
 
@@ -342,16 +370,35 @@ public class Expense_activity extends AestheticActivity {
                 }else{
                     veroNF.setText("FileName");
                     buttonUPLOAD.setText("UPLOAD");
+                    expense.setFile(null);
                     newFile = false;
                 }
             }
         });
 
-   /*     moreLayout.setOnClickListener(new View.OnClickListener() {
+    }
+    private void upLoadFile(Uri uri){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://group05-16e97.appspot.com")
+                .child("expenses")
+                .child(expense.getId())
+                .child(expense.getFile());
+        UploadTask uploadTask = storageRef.putFile(uri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onClick(View v) {
-                clickedDetails = true;
-                cdf.show(fm,"TV_tag");
+            public void onFailure(@NonNull Exception e) {
+                expense.setFile("Fail");
+                progressDialog.dismiss();
+                upload= false;
+                Toast.makeText(context,"Upload Failed: please upload a smaller file and delete it to continue",Toast.LENGTH_LONG).show();
+                }
+         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                progressDialog.dismiss();
+                upload = false;
+                final FragmentManager fm = getFragmentManager();
+                cid.show(fm, "TV_tag");
             }
         });
 */
@@ -425,13 +472,11 @@ public class Expense_activity extends AestheticActivity {
                         if(nameFILE != null){
                             veroNF.setText(nameFILE);
                             buttonUPLOAD.setText("DELETE");
+                            //upload = false;
                             expense.setFile(nameFILE);
                         }
 
-                      /*  if (nameFILE != null) {
-                            expense.setFile(nameFILE);
-                            upLoadFile(uri);
-                       } */
+
                     }
                 } finally {
                     cursor.close();

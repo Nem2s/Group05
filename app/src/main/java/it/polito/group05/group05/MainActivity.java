@@ -131,19 +131,16 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
         Bundle bundle = getIntent().getExtras();
-        Intent i2 = getIntent();
-        i2.setAction(null);
-        setIntent(i2);
-
+        if (bundle != null)
             i.putExtras(bundle);
         context.startActivity(i);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -279,6 +276,7 @@ public class MainActivity extends AestheticActivity
                     EventBus.getDefault().post(new ReadyEvent(g));
 
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -406,7 +404,6 @@ public class MainActivity extends AestheticActivity
                             }
                         })
                         .show();
-
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
                     public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {

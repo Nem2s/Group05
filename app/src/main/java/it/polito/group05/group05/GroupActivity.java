@@ -34,6 +34,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ExecutionException;
@@ -46,7 +48,11 @@ import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
+
+import static it.polito.group05.group05.R.id.view;
 
 public class GroupActivity extends AestheticActivity {
 
@@ -115,7 +121,14 @@ public class GroupActivity extends AestheticActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+/*else {
+            bottomView.setSelectedItemId(R.id.navigation_chat);
+            mFragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.fragment_container, ChatFragment.newInstance());
+            transaction.commit();
 
+        }*/
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -130,9 +143,7 @@ public class GroupActivity extends AestheticActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                 switch (item.getItemId()) {
                     case R.id.navigation_expenses:
-
                         replaceWithExpenseFragment();
-
                         //  animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
                         break;
                     case R.id.navigation_chat:
@@ -225,6 +236,8 @@ public class GroupActivity extends AestheticActivity {
                     transition.removeTarget(R.id.toolbar);
                     transition.removeTarget(R.id.navigation);
                     ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
+                    tv_groupname.setText(currentGroup.getName());
+                    fab.hide();
                 }
 
                 @Override
@@ -326,7 +339,6 @@ public class GroupActivity extends AestheticActivity {
     }
 
     private void fillNameMembersList() {
-
         tv_members.setText("");
         for(String s : currentGroup.getMembers().keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -357,7 +369,6 @@ public class GroupActivity extends AestheticActivity {
 
                 }
             });
-
         }
 
     }
@@ -368,7 +379,22 @@ public class GroupActivity extends AestheticActivity {
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
                 .commit();
         fab.show();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              /*  Pair<View, String> p1 = Pair.create((View)appBar, getString(R.string.transition_appbar));
+                Pair<View, String> p2 = Pair.create((View)toolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p3 = Pair.create((View)c, getString(R.string.transition_group_image));
+                Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
 
+                Intent i = new Intent(GroupActivity.this, Expense_activity.class);
+
+                startActivity(i);
+                //startActivity(i, options.toBundle());
+            }
+        });
     }
 
 

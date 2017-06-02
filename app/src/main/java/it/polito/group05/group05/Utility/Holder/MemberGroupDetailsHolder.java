@@ -21,6 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -64,6 +66,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
         tv_userName.setText(user.getName());
         tv_userBalance.setText("No debits/credits");
         button_pay.setVisibility(View.GONE);
+
+
         FirebaseDatabase.getInstance().getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
                 .addValueEventListener(new ValueEventListener() {
@@ -117,10 +121,9 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             @Override
             public void onClick(View v) {
                 try {
-
+                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
                     String myId = Singleton.getInstance().getCurrentUser().getId();
-                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), value);
-
+                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
                 } catch (Exception c) {
 
                 }
@@ -138,8 +141,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (button_notify.getVisibility() == View.VISIBLE)
-                            AnimUtils.enterRevealAnimation(button_notify);
+                        if(button_notify.getVisibility() == View.VISIBLE)
+                        AnimUtils.enterRevealAnimation(button_notify);
                     }
                 }, 30000);
             }

@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +42,13 @@ public class CustomIncludedDialog extends DialogFragment {
     FloatingActionButton next;
     FragmentManager fm;
     CustomDialogFragment cdf;
-    Uri uri;
+    DatabaseReference fdb;
 
 
-    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e, Uri uri) {
+    public CustomIncludedDialog(List<User_expense> list, ExpenseDatabase e, DatabaseReference fdb) {
         this.list = list;
         this.expense = e;
-        this.uri = uri;
+        this.fdb = fdb;
         newList = new ArrayList<>();
 
     }
@@ -73,7 +75,7 @@ public class CustomIncludedDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 searchSelection();
-                cdf = new CustomDialogFragment(list, newList, expense, uri);
+                cdf = new CustomDialogFragment(list, newList, expense, fdb);
                 cdf.show(fm, "Tv-TAG");
                 dismiss();
             }
@@ -90,7 +92,7 @@ public class CustomIncludedDialog extends DialogFragment {
                 if(!newList.contains(e))
                 {
                     newList.add(e);
-            }}
+                }}
         }
     }
 
