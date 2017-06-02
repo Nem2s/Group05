@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -55,12 +56,13 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     private int HEIGHT;
     private String dateFormat = "dd/MM";
     CircleImageView cv;
+    ImageView iv_expense;
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
 
-
-
+    ImageView iv_arrow;
+    TextView tv_members;
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -89,6 +91,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         b = getIntent().getExtras();
         nomeF = b.getString("file");
         idFile= b.getString("id");
+
         //correct_download = b.getBoolean("correct_download");
 
         setContent(R.layout.activity_expense_details);
@@ -105,7 +108,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_date = (TextView) findViewById(R.id.tv_day_month);
         tv_price = (TextView) findViewById(R.id.tv_price);
         tv_name = (TextView) findViewById(R.id.tv_owner_name);
+        iv_expense = (ImageView)findViewById(R.id.iv_expense_image);
         tv_expense = (TextView) findViewById(R.id.tv_expense_name);
+        tv_members = (TextView)findViewById(R.id.tv_static_members);
+        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);
@@ -113,7 +119,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rel_lay.setVisibility(View.GONE);
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
-
+        iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        ImageUtils.LoadExpenseImage(b.getString("img"), this, iv_expense);
         if(b.getString("file") != null){
             if (!(b.getString("file").equals("Fail")))
                 {
@@ -246,8 +254,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                         ImageUtils.LoadUserImageProfile(cv, getApplicationContext(), u);
                         tv_name.setText(u.getName());
                     } else {
-                        users.add(u);
-                        adapter.notifyItemChanged(users.size());
+                        if(!u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+                            users.add(u);
+                            adapter.notifyItemChanged(users.size());
+                        }
                     }
 
                 }

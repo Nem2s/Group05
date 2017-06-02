@@ -77,7 +77,6 @@ public class GroupActivity extends AestheticActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {

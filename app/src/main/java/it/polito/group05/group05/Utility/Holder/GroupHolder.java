@@ -97,7 +97,7 @@ public class GroupHolder extends GeneralHolder {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.exists()) return;
                             UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                            u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
+                           // u.setBalance(new Balance(Double.valueOf(g.getMembers().get(u.getId()).toString()),Double.valueOf(g.getMembers().get(u.getId()).toString())));
                             g.getMembers().put(u.getId(), u);
                         }
                         @Override

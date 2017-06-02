@@ -30,9 +30,9 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="VeryLongExpenseName"
-                android:textAlignment="center"
                 android:textSize="21sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textAlignment="center" />
 
             <LinearLayout
                 android:id="@+id/ll_1"
@@ -40,9 +40,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_expense_name"
                 android:layout_marginBottom="4dp"
-                android:layout_marginStart="8dp"
                 android:paddingEnd="16dp"
-                android:paddingStart="16dp">
+                android:paddingStart="16dp"
+                android:layout_marginStart="8dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cv_owner_image"
@@ -76,7 +76,7 @@
                             android:textStyle="italic|bold" />
 
                         <ImageView
-
+                            android:id="@+id/iv_arrow"
                             android:layout_width="12dp"
                             android:layout_height="12dp"
                             android:layout_gravity="center"
@@ -85,7 +85,7 @@
                             android:src="@drawable/arrow_right" />
 
                         <ImageView
-                            android:id="@+id/cv_expense_image"
+                            android:id="@+id/iv_expense_image"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_gravity="center"
@@ -101,7 +101,9 @@
                         android:drawableRight="@drawable/ic_action_calendar_month"
                         android:text="01/01"
                         android:textSize="11sp"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+
+                        />
 
                 </RelativeLayout>
 

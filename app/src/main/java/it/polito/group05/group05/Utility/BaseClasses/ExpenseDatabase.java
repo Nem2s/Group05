@@ -12,6 +12,7 @@ public class ExpenseDatabase implements Namable{
     private String name;
     private Double price;
     private String file;
+    private String expense_img;
     private long timestamp;
     private Map<String,Double> members;
     private Map<String,Object> payed;
@@ -34,9 +35,19 @@ public class ExpenseDatabase implements Namable{
         this.file=edb.file;
         this.price = edb.price;
         this.timestamp=edb.timestamp;
+        this.expense_img = edb.getExpense_img();
         if(edb.members== null) members = new HashMap<>();
         if(edb.payed== null) payed = new HashMap<>();
         else  members = edb.members;
+    }
+
+
+    public String getExpense_img() {
+        return expense_img;
+    }
+
+    public void setExpense_img(String expense_img) {
+        this.expense_img = expense_img;
     }
 
     //METHODS

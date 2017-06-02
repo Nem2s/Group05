@@ -322,6 +322,10 @@ public class DB_Manager {
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
+        String uuid = UUID.randomUUID().toString();
+        groupDatabase.setPictureUrl(uuid);
+        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
+        ref.setValue(groupDatabase);
         Map<String, Object> temp = new HashMap<String, Object>();
         temp.put(groupDatabase.getId(), true);
         for (String s : groupDatabase.getMembers().keySet()) {
@@ -329,11 +333,6 @@ public class DB_Manager {
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
 
-
-        String uuid = UUID.randomUUID().toString();
-        groupDatabase.setPictureUrl(uuid);
-        imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
-        ref.setValue(groupDatabase);
         newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
@@ -581,7 +580,7 @@ public class DB_Manager {
         userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
 
         if (currentUser.getImg_profile() == null)
-            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
+            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.user_placeholder));
 
         imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
         Singleton.getInstance().setCurrentUser(currentUser);

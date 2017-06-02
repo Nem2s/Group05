@@ -73,6 +73,7 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import it.polito.group05.group05.Utility.Adapter.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -101,7 +102,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    FirebaseIndexRecyclerAdapter mAdapter;
+    GroupAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -230,7 +231,9 @@ public class MainActivity extends AestheticActivity
 
         Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
-        mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
+
+        mAdapter = new GroupAdapter(this, tv_no_groups, iv_no_groups, pb);
+        /*mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
                                                             GroupHolder.class, groupRef, ref){
 
@@ -256,7 +259,7 @@ public class MainActivity extends AestheticActivity
                 iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
-
+*/
         rv.setAdapter(mAdapter);
 
     }
