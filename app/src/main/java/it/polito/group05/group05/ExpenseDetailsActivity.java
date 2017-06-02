@@ -1,14 +1,11 @@
 package it.polito.group05.group05;
 
-import android.content.Context;
-import android.os.Build;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
@@ -18,16 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,7 +28,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.klinker.android.sliding.MultiShrinkScroller;
 import com.klinker.android.sliding.SlidingActivity;
 
-import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -44,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -68,6 +58,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
+
+
+
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -94,11 +87,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
 
         b = getIntent().getExtras();
-
-
         nomeF = b.getString("file");
         idFile= b.getString("id");
-        correct_download = b.getBoolean("correct_download");
+        //correct_download = b.getBoolean("correct_download");
 
         setContent(R.layout.activity_expense_details);
         LEFT_OFFSET = b.getInt("left_offset");
@@ -122,22 +113,48 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
 
-        if(nomeF != null && correct_download){
+        if(b.getString("file") != null){
+            if (!(b.getString("file").equals("Fail")))
+                {
+                    if (rel_lay.getVisibility() == View.GONE) {
+                        rel_lay.setVisibility(View.VISIBLE);
+                        nameFile.setText(b.getString("file"));
+                    }
+                }
+                else {
+                rel_lay.setVisibility(View.GONE);
+            }
+        }else {
+            rel_lay.setVisibility(View.GONE);
+        }
+
+        /*
+
+        if(nomeF.equals("Fail") || nomeF.equals(null)){
+            rel_lay.setVisibility(View.GONE);
+        }else {
+            if (rel_lay.getVisibility() == View.GONE) {
+                rel_lay.setVisibility(View.VISIBLE);
+                nameFile.setText(b.getString("file"));
+            }
+        }
+*/
+     /*   if(nomeF ){
             if (rel_lay.getVisibility() == View.GONE){
                 rel_lay.setVisibility(View.VISIBLE);
                 nameFile.setText(b.getString("file"));
             }
         }else{
             rel_lay.setVisibility(View.GONE);}
-
+*/
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try{
-                DB_Manager.getInstance().fileDownload(idFile,nomeF);
+                    DB_Manager.getInstance().fileDownload(idFile,nomeF);
                 }
                 catch (FileNotFoundException fnfe){
-                  //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
+                    //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -170,7 +187,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_date.setText(format.format(calendar.getTime()));
         retriveUsersExpense((HashMap<String, Double>) b.getSerializable("map"), (HashMap<String, Object>) b.getSerializable("payed"));
         sv.fullScroll(ScrollView.FOCUS_DOWN);
-
     }
 
     @Override
@@ -178,6 +194,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         super.onBackPressed();
         supportFinishAfterTransition();
     }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {

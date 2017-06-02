@@ -322,20 +322,17 @@ public class DB_Manager {
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());
-        Map<String, Object> temp = new HashMap<String, Object>();
-        temp.put(groupDatabase.getId(), true);
         String uuid = UUID.randomUUID().toString();
         groupDatabase.setPictureUrl(uuid);
         imageProfileUpload(2, groupDatabase.getId(), uuid, bitmap);
         ref.setValue(groupDatabase);
-        newhistory(groupDatabase.getId(), groupDatabase);
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupDatabase.getId(), true);
         for (String s : groupDatabase.getMembers().keySet()) {
             if (s == null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
-
-
-
+        newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
 
@@ -483,7 +480,6 @@ public class DB_Manager {
     }
 
 
-
     public boolean checkUserDebtRemoving() {
         DatabaseReference dbref = groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("members").child(Singleton.getInstance().getCurrentUser().getId());
         dbref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -545,7 +541,6 @@ public class DB_Manager {
                         Singleton.getInstance().setCurrentUser(currentUser);
                         EventBus.getDefault().post(new CurrentUserReadyEvent());
                         userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
-                        /*DOWNLOAD DELL'IMMAGINE????*/
                     }
 
                     @Override

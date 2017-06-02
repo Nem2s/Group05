@@ -1,4 +1,4 @@
-package it.polito.group05.group05;
+/*package it.polito.group05.group05;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -57,7 +57,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 /**
  * Created by Marco on 05/05/2017.
  */
-
+/*
 public class NewMemberActivity extends AestheticActivity {
     private static DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups");
 
@@ -149,7 +149,7 @@ public class NewMemberActivity extends AestheticActivity {
 
         });
         */
-        invitedAdapter = new MemberInvitedAdapter(contacts, context);
+ /*       invitedAdapter = new MemberInvitedAdapter(contacts, context);
         if(invitedAdapter.getItemCount() == 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.parent_layout), "No contacts stored in your phone, Start invite your friends!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("ok", new View.OnClickListener() {
@@ -206,7 +206,7 @@ public class NewMemberActivity extends AestheticActivity {
         /**TROVARE METODO ALTERNATIVO **/
         //checkSelected();
 
-        et_group_name.addTextChangedListener(new TextWatcher() {
+   /*     et_group_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -223,7 +223,7 @@ public class NewMemberActivity extends AestheticActivity {
             }
         });
 
-    }
+    }*/
 
     /*
         @Subscribe
@@ -257,7 +257,7 @@ public class NewMemberActivity extends AestheticActivity {
                 EventBus.getDefault().register(this);
         }
     */
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
@@ -424,3 +424,4 @@ public class NewMemberActivity extends AestheticActivity {
 
 
 }
+*/

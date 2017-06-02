@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,10 +16,13 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -27,8 +32,10 @@ import android.widget.ProgressBar;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.NavigationViewMode;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.firebase.ui.auth.ui.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,15 +43,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 import it.polito.group05.group05.Utility.Adapter.GroupDetailsAdapter;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
+import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.AppBarStateChangeListener;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupDetailsActivity extends AestheticActivity {
@@ -129,8 +144,8 @@ public class GroupDetailsActivity extends AestheticActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(GroupDetailsActivity.this, NewMemberActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(GroupDetailsActivity.this, NewMemberActivity.class);
+                //startActivity(i);
             }
         });
 
@@ -394,11 +409,9 @@ public class GroupDetailsActivity extends AestheticActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AnimUtils.exitRevealAndFinish(fab, this);
-        } else {/*
+        } else {
             AnimUtils.toggleOffView(fab, getApplicationContext());
             supportFinishAfterTransition();
-            */
-            finish();
         }
 
     }
@@ -463,14 +476,13 @@ public class GroupDetailsActivity extends AestheticActivity {
                     }
                 });
 
-            scheduleStartPostponedTransition(cv_back);
+                scheduleStartPostponedTransition(cv_back);
             } else {
                 fab.show();
                 AnimUtils.enterRevealAnimation(iv_header);
                 cv_back.setVisibility(View.INVISIBLE);
                 retriveUsers();
-
-        }
+            }
         }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {

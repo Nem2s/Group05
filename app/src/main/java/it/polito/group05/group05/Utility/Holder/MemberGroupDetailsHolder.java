@@ -1,6 +1,8 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
@@ -70,7 +75,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
                         tv_userBalance.setText("Already Payed!");
-                        tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
@@ -103,7 +107,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 
                             } else {
                                 tv_userBalance.setText("Already Payed!");
-                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
                             }
@@ -118,10 +121,9 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             @Override
             public void onClick(View v) {
                 try {
-
+                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
                     String myId = Singleton.getInstance().getCurrentUser().getId();
-                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), value);
-
+                    DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
                 } catch (Exception c) {
 
                 }
@@ -139,8 +141,8 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (button_notify.getVisibility() == View.VISIBLE)
-                            AnimUtils.enterRevealAnimation(button_notify);
+                        if(button_notify.getVisibility() == View.VISIBLE)
+                        AnimUtils.enterRevealAnimation(button_notify);
                     }
                 }, 30000);
             }

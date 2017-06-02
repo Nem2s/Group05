@@ -62,9 +62,13 @@ import com.mvc.imagepicker.ImagePicker;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import it.polito.group05.group05.Utility.Adapter.GroupAdapter;
 import it.polito.group05.group05.Utility.BaseClasses.ColorItem;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
@@ -73,6 +77,7 @@ import it.polito.group05.group05.Utility.Event.ReadyEvent;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
+import it.polito.group05.group05.Utility.Holder.GeneralHolder;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
@@ -93,7 +98,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    FirebaseIndexRecyclerAdapter mAdapter;
+    GroupAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -126,13 +131,9 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
         Bundle bundle = getIntent().getExtras();
-        Intent i2 = getIntent();
-        i2.setAction(null);
-        setIntent(i2);
-
+        if (bundle != null)
             i.putExtras(bundle);
         context.startActivity(i);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -157,7 +158,7 @@ public class MainActivity extends AestheticActivity
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
-        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+        ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
         if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
             if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
                 pb.setVisibility(View.GONE);
@@ -226,7 +227,9 @@ public class MainActivity extends AestheticActivity
 
         Query ref = FirebaseDatabase.getInstance().getReference("groups").orderByChild("lmTime");
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups");
-        mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
+
+        mAdapter = new GroupAdapter(this, tv_no_groups, iv_no_groups, pb);
+        /*mAdapter = new FirebaseIndexRecyclerAdapter( GroupDatabase.class,
                                                             R.layout.group_item_sample,
                                                             GroupHolder.class, groupRef, ref){
 
@@ -251,8 +254,7 @@ public class MainActivity extends AestheticActivity
                 tv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
                 iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
-        };
-
+        };*/
         rv.setAdapter(mAdapter);
         checkBundle();
 
@@ -274,6 +276,7 @@ public class MainActivity extends AestheticActivity
                     EventBus.getDefault().post(new ReadyEvent(g));
 
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -550,11 +553,14 @@ public class MainActivity extends AestheticActivity
         PREDEFINED_THEME_OPTION = 0;
     }
 
-    private ColorItem[] generateThemes() {
-        ColorItem themes[] = new ColorItem[3];
-        themes[0] = new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme");
-        themes[1] = new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood");
-        themes[2] = new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece");
+    private List<ColorItem> generateThemes() {
+        List<ColorItem> themes = new ArrayList<>();
+        themes.add(new ColorItem(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent), "Blue Wolf (Default)"));
+        themes.add(new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme"));
+        themes.add(new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood"));
+        themes.add(new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece"));
+        themes.add(new ColorItem(Color.parseColor("#fafafa"), Color.parseColor("#64ffda"), "Alien"));
+        themes.add(new ColorItem(Color.parseColor("#37474f"), Color.parseColor("#64ffda"), "Black Alien"));
         return themes;
     }
 

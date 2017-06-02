@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.afollestad.aesthetic.AestheticActivity;
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
@@ -149,6 +151,8 @@ public class SignUpActivity extends AestheticActivity {
             if(user_img != null && bitmap != null) {
                 user_img.setImageBitmap(bitmap);
                 ud.setImg_profile(bitmap);
+            } else {
+                user_img.setImageDrawable(getResources().getDrawable(R.drawable.user_placeholder));
             }
 
 

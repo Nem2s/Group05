@@ -1,3 +1,4 @@
+/*
 package it.polito.group05.group05.Utility.Adapter;
 
 import android.app.ProgressDialog;
@@ -15,12 +16,14 @@ import java.util.List;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
-import it.polito.group05.group05.Utility.Holder.MemberContactsHolder;
+
 import it.polito.group05.group05.Utility.Interfaces.Namable;
 
+*/
 /**
  * Created by Marco on 25/05/2017.
- */
+ *//*
+
 
 public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHolder> implements Filterable {
 
@@ -173,3 +176,4 @@ public class MemberContactsAdapter extends RecyclerView.Adapter<MemberContactsHo
         return res;
     }
 }
+*/

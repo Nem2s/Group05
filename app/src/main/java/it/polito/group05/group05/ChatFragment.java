@@ -1,6 +1,7 @@
 package it.polito.group05.group05;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -70,6 +71,9 @@ public class ChatFragment extends Fragment {
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rec.setLayoutManager(ll);
         ll.setStackFromEnd(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fab.setTransitionName("fab_transition");
+        }
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chats")
                 .child(Singleton.getInstance().getIdCurrentGroup());
         adapter = new FirebaseRecyclerAdapter<ChatDatabase, ChatHolder>(ChatDatabase.class, R.layout.message,

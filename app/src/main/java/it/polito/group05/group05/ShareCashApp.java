@@ -1,5 +1,6 @@
 package it.polito.group05.group05;
 
+import android.app.Application;
 import android.support.multidex.MultiDexApplication;
 
 /**
