@@ -45,6 +45,7 @@ import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
 public class GroupActivity extends AestheticActivity {
