@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -55,12 +56,13 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     private int HEIGHT;
     private String dateFormat = "dd/MM";
     CircleImageView cv;
+    ImageView iv_expense;
     TextView tv_price;
     TextView tv_date;
     TextView tv_name;
 
-
-
+    ImageView iv_arrow;
+    TextView tv_members;
     TextView tv_expense;
     Button button_pay;
     Button download;
@@ -89,9 +91,11 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         b = getIntent().getExtras();
         nomeF = b.getString("file");
         idFile= b.getString("id");
+
         //correct_download = b.getBoolean("correct_download");
 
         setContent(R.layout.activity_expense_details);
+
         LEFT_OFFSET = b.getInt("left_offset");
         TOP_OFFSET = b.getInt("top_offset");
         WIDTH = b.getInt("width");
@@ -104,7 +108,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         tv_date = (TextView) findViewById(R.id.tv_day_month);
         tv_price = (TextView) findViewById(R.id.tv_price);
         tv_name = (TextView) findViewById(R.id.tv_owner_name);
+        iv_expense = (ImageView)findViewById(R.id.iv_expense_image);
         tv_expense = (TextView) findViewById(R.id.tv_expense_name);
+        tv_members = (TextView)findViewById(R.id.tv_static_members);
+        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
         rv = (RecyclerView) findViewById(R.id.rv_expense_members);
         button_notify = (Button) findViewById(R.id.button_notify);
         button_pay = (Button) findViewById(R.id.button_pay);
@@ -112,7 +119,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rel_lay.setVisibility(View.GONE);
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
-
+        iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        ImageUtils.LoadExpenseImage(b.getString("img"), this, iv_expense);
         if(b.getString("file") != null){
             if (!(b.getString("file").equals("Fail")))
                 {
@@ -151,10 +160,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             @Override
             public void onClick(View v) {
                 try{
-                    DB_Manager.getInstance().fileDownload(idFile,nomeF);
+                DB_Manager.getInstance().fileDownload(idFile,nomeF);
                 }
                 catch (FileNotFoundException fnfe){
-                    //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
+                  //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -179,14 +188,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
-        double d = Double.parseDouble(b.getString("price"));
-        tv_price.setText(String.format("%.2f", d) + " €");
+        tv_price.setText( b.getString("price") + " €");
         tv_expense.setText(b.getString("title"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(b.getLong("timestamp"));
-        tv_date.setText(format.format(calendar.getTime()));
-        retriveUsersExpense((HashMap<String, Double>) b.getSerializable("map"), (HashMap<String, Object>) b.getSerializable("payed"));
-        sv.fullScroll(ScrollView.FOCUS_DOWN);
+        retriveUsersExpense((HashMap<String, Double>)b.getSerializable("map"));
     }
 
     @Override
@@ -195,10 +199,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         supportFinishAfterTransition();
     }
 
-
-
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
-    private void retriveUsersExpense(final Map<String, Double> map, final Map<String, Object> payed) {
+    private void retriveUsersExpense(final HashMap<String, Double> map) {
         final List<UserDatabase> users = new ArrayList<>();
         final Context context = this;
 
@@ -252,16 +253,12 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     if (u.getId().equals(b.getString("owner"))) {
                         ImageUtils.LoadUserImageProfile(cv, getApplicationContext(), u);
                         tv_name.setText(u.getName());
-
                     } else {
-                        if (u.getId().equals(Singleton.getInstance().getCurrentUser().getId()))
-                            return;
-                        users.add(u);
-                        adapter.notifyItemChanged(users.size());
-
-
+                        if(!u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+                            users.add(u);
+                            adapter.notifyItemChanged(users.size());
+                        }
                     }
-
 
                 }
 
@@ -271,8 +268,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                 }
             });
         }
-
         rv.setAdapter(adapter);
+
+
 
 
     }

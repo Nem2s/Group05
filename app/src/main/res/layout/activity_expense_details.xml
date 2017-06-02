@@ -12,203 +12,205 @@
         android:layout_height="wrap_content"
         android:id="@+id/scroll_view_to">
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:layout_height="180dp"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="0dp">
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/tv_expense_name"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="0dp">
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="VeryLongExpenseName"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                android:textAlignment="center" />
 
-                <TextView
-                    android:id="@+id/tv_expense_name"
+            <LinearLayout
+                android:id="@+id/ll_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_expense_name"
+                android:layout_marginBottom="4dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:layout_marginStart="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cv_owner_image"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/default_avatar"
+
+                    />
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="VeryLongExpenseName"
-                    android:textAlignment="center"
-                    android:textSize="21sp"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
 
-                <LinearLayout
-                    android:id="@+id/ll_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_expense_name"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginStart="8dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp">
+                    >
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/cv_owner_image"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/default_avatar"
-
-                        />
-
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
 
                         >
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-
-                            >
-
-                            <TextView
-                                android:id="@+id/tv_price"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginStart="16dp"
-                                android:text="20,000,000€"
-                                android:textSize="21sp"
-                                android:textStyle="italic|bold" />
-
-                            <ImageView
-
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:layout_gravity="center"
-                                android:layout_marginStart="4dp"
-                                android:alpha="0.8"
-                                android:src="@drawable/arrow_right" />
-
-                            <ImageView
-                                android:id="@+id/cv_expense_image"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/shopping_cart" />
-                        </LinearLayout>
-
                         <TextView
-                            android:id="@+id/tv_day_month"
+                            android:id="@+id/tv_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginTop="8dp"
-                            android:drawableRight="@drawable/ic_action_calendar_month"
-                            android:text="01/01"
-                            android:textSize="11sp"
-                            android:textStyle="italic" />
+                            android:layout_gravity="center"
+                            android:layout_marginStart="16dp"
+                            android:text="20,000,000€"
+                            android:textSize="21sp"
+                            android:textStyle="italic|bold" />
 
-                    </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/iv_arrow"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="4dp"
+                            android:alpha="0.8"
+                            android:src="@drawable/arrow_right" />
 
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_owner_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@id/ll_1"
-                    android:layout_marginStart="8dp"
-                    android:alpha="0.6"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="VeryLongOwnerName"
-                    android:textSize="11sp" />
-
-
-                <RelativeLayout
-                    android:id="@+id/relative_file"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_owner_name"
-                    android:visibility="visible">
+                        <ImageView
+                            android:id="@+id/iv_expense_image"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/shopping_cart" />
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/nome_file"
+                        android:id="@+id/tv_day_month"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="28dp"
-                        android:layout_marginTop="8dp"
-                        android:alpha="0.8"
-                        android:text="Nomefile"
-                        android:textSize="12sp"
-                        android:textStyle="italic" />
-
-                    <Button
-                        android:id="@+id/download"
-                        android:layout_width="wrap_content"
-                        android:layout_height="180dp"
-                        android:theme="@style/BlueButton"
                         android:layout_alignParentEnd="true"
-                        android:text="Download"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="28dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:drawableRight="@drawable/ic_action_calendar_month"
+                        android:text="01/01"
+                        android:textSize="11sp"
+                        android:textStyle="italic"
 
+                        />
 
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
-                    android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
-                    android:alpha="0.4"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_owner_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/ll_1"
+                android:layout_marginStart="8dp"
+                android:alpha="0.6"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="VeryLongOwnerName"
+                android:textSize="11sp" />
+
 
             <RelativeLayout
+                android:id="@+id/relative_file"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_owner_name"
+                android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/tv_static_members"
+                    android:id="@+id/nome_file"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Members:"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_expense_members"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_static_members"
-                    android:layout_marginTop="4dp">
-
-                </android.support.v7.widget.RecyclerView>
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginTop="8dp"
+                    android:alpha="0.8"
+                    android:text="Nomefile"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
 
                 <Button
-                    android:id="@+id/button_pay"
+                    android:id="@+id/download"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/rv_expense_members"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="16dp"
-                    android:text="Pay"
-                    android:theme="@style/GreenButton" />
+                    android:theme="@style/GreenButton"
+                    android:layout_alignParentEnd="true"
+                    android:text="DOWNLOAD"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="28dp"
+                    android:layout_marginBottom="8dp"/>
 
-                <Button
-                    android:id="@+id/button_notify"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/rv_expense_members"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="16dp"
-                    android:text="Notify"
-                    android:theme="@style/BlueButton"
-                    android:visibility="gone" />
+
             </RelativeLayout>
-        </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+                android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
+                android:alpha="0.4"
+                android:background="@android:color/darker_gray" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_static_members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Members:"
+                android:textColor="@color/colorAccent"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_expense_members"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_static_members"
+                android:layout_marginTop="4dp">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <Button
+                android:id="@+id/button_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rv_expense_members"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="Pay"
+                android:theme="@style/GreenButton" />
+
+            <Button
+                android:id="@+id/button_notify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rv_expense_members"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="Notify"
+                android:theme="@style/BlueButton"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

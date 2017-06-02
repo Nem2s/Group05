@@ -332,6 +332,7 @@ public class DB_Manager {
             if (s == null) continue;
             userRef.child(s).child(userGroups).updateChildren(temp);
         }
+
         newhistory(groupDatabase.getId(), groupDatabase);
         return groupDatabase.getId();
     }
@@ -578,7 +579,7 @@ public class DB_Manager {
         userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
 
         if (currentUser.getImg_profile() == null)
-            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.man_1));
+            currentUser.setImg_profile(BitmapFactory.decodeResource(context.getResources(), R.drawable.user_placeholder));
 
         imageProfileUpload(1, userDatabase.getId(), uuid, currentUser.getImg_profile());
         Singleton.getInstance().setCurrentUser(currentUser);

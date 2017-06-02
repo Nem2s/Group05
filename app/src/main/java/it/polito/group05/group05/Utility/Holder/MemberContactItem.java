@@ -86,7 +86,7 @@ public class MemberContactItem extends AbstractItem<MemberContactItem, MemberCon
 
     @Override
     public int getType() {
-        return 0;
+        return R.id.contact_parent;
     }
 
     @Override
@@ -107,23 +107,7 @@ public class MemberContactItem extends AbstractItem<MemberContactItem, MemberCon
             holder.img_profile.setImageURI(Uri.parse(imgUri));
         else
             holder.img_profile.setImageDrawable(context.getResources().getDrawable(R.drawable.user_placeholder));
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Intent sendIntent = new Intent("android.intent.action.MAIN");
-
-                sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.Conversation"));
-                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("+39" + number + "@s.whatsapp.net"));//phone number without "+" prefix
-                try {
-                    context.startActivity(sendIntent);
-                } catch (Exception e) {
-                    Toast.makeText(context, "WhatsApp not Installed", Toast.LENGTH_SHORT)
-                            .show();
-                }
-
-            }
-        });
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {

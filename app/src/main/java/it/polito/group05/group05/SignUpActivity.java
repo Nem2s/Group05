@@ -51,7 +51,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 
 import static com.facebook.FacebookSdk.getApplicationSignature;
 
-public class SignUpActivity extends AestheticActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     // [START declare_auth]
     private FirebaseAuth mAuth;

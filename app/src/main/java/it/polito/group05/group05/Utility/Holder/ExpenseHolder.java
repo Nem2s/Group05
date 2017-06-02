@@ -81,7 +81,7 @@ public class ExpenseHolder extends GeneralHolder{
         Date date = new Date(expenseDatabase.getTimestamp());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         this.timestamp.setText(sdf.format(date));
-
+        ImageUtils.LoadExpenseImage(expenseDatabase, context, expense_image);
         String id = Singleton.getInstance().getCurrentUser().getId();
         for (String i : expenseDatabase.getMembers().keySet()){
             /**Aggiunto da andrea**/
@@ -161,7 +161,8 @@ public class ExpenseHolder extends GeneralHolder{
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent((Activity) context, ExpenseDetailsActivity.class);
+                Intent i = new Intent(context, ExpenseDetailsActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Bundle extras = new Bundle();
                 extras.putSerializable("map", (Serializable) expense.getMembers());
                 extras.putString("title", expense.getName());
@@ -170,6 +171,7 @@ public class ExpenseHolder extends GeneralHolder{
                 extras.putString("price", expense.getPrice().toString());
                 extras.putLong("timestamp", expense.getTimestamp());
                 extras.putString("file", expense.getFile());
+                extras.putString("img", expense.getExpense_img());
          /*       if(expense.getFile()!= null){
                     extras.putString("file", expense.getFile());
                     if(expense.getFile().equals("fail")){

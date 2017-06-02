@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_layout"
+    tools:context="it.polito.group05.group05.SettingActivity">
 
 
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -20,35 +24,45 @@
             android:layout_height="wrap_content"
             android:text="NAME:"
             android:textStyle="bold"
-
             android:id="@+id/tv_n" />
 
-        <TextView
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/ti_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TEL NUMBER:"
-            android:textStyle="bold"
-
-            android:id="@+id/tv_tn"
-
-            />
+            android:layout_height="wrap_content">
         <android.support.design.widget.TextInputEditText
             android:layout_margin="10dp"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
             android:digits="0123456789"
-            android:id="@+id/name" />
+            android:id="@+id/name"
+            android:layout_below="@+id/profile_image" />
         />
-
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <android.support.design.widget.TextInputEditText
-
+            android:layout_below="@+id/tv_tn"
             android:layout_width="match_parent"
             android:layout_margin="10dp"
             android:layout_height="wrap_content"
             android:hint="Tel Number"
             android:id="@+id/number" />
 
+    </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NAME:"
+            android:textStyle="bold"
+            android:layout_below="@+id/ti_name"
+            android:id="@+id/tv_tn"
 
+            />
     </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

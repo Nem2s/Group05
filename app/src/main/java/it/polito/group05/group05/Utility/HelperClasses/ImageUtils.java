@@ -1,9 +1,16 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
@@ -17,7 +24,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
+import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.IconItem;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 
@@ -30,7 +39,6 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class ImageUtils {
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
-        if (user != null)
         Glide.with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
@@ -51,6 +59,26 @@ public class ImageUtils {
                 .asBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(cv);
+    }
+
+    public static void LoadExpenseImage(Expense expense, Context context, ImageView iv) {
+        if(expense.getExpense_img() == null) {
+            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.shopping_cart));
+        } else
+            Glide.with(context)
+                    .using(new AssetUriLoader(context))
+                    .load(Uri.parse(expense.getExpense_img()))
+                    .into(iv);
+    }
+
+    public static void LoadExpenseImage(String s, Context context, ImageView iv) {
+        if(s == null) {
+            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.shopping_cart));
+        } else
+            Glide.with(context)
+                    .using(new AssetUriLoader(context))
+                    .load(Uri.parse(s))
+                    .into(iv);
     }
 
     public static void LoadMyImageProfile(ImageView iv, Context context) {
@@ -107,11 +135,11 @@ public class ImageUtils {
         return px;
     }
 
-    public static boolean isColorDark(int color) {
-        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        if (darkness < 0.5) {
+    public static boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.5){
             return false; // It's a light color
-        } else {
+        }else{
             return true; // It's a dark color
         }
     }

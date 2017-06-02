@@ -144,8 +144,8 @@ public class GroupDetailsActivity extends AestheticActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent i = new Intent(GroupDetailsActivity.this, NewMemberActivity.class);
-                //startActivity(i);
+                Intent i = new Intent(GroupDetailsActivity.this, NewMemberActivity.class);
+                startActivity(i);
             }
         });
 

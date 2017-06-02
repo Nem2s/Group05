@@ -40,7 +40,7 @@ public class ContactItem extends AbstractItem<ContactItem, ContactItem.ContactHo
 
     @Override
     public int getType() {
-        return R.id.userdforfastadapter;
+        return R.id.contact_parent;
     }
 
     @Override
