@@ -8,35 +8,62 @@
     android:orientation="vertical"
     tools:context="it.polito.group05.group05.GroupActivity">
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize"></FrameLayout>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_gravity="bottom"
+        ></android.support.design.widget.BottomNavigationView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="72dp"
+        app:layout_anchorGravity="bottom"
+        android:layout_alignParentEnd="true"
+        android:transitionName="@string/transition_fab"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:layout_behavior="it.polito.group05.group05.Utility.HelperClasses.FabBehavior" />
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <io.codetail.widget.RevealFrameLayout
             android:id="@+id/reveal"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="4dp">
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                >
 
                 <LinearLayout
                     android:id="@+id/cv_header_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/cv_groupImage"
-                        android:layout_height="40dp"
                         android:layout_width="40dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="40dp"
                         android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
                         android:focusableInTouchMode="true"
                         android:transitionName="@string/transition_group_image"
                         />
@@ -47,34 +74,29 @@
                         android:orientation="vertical"
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
-                        >
-                    <TextView
-                        android:id="@+id/tv_group_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VeryLongGroupName"
-                        android:ellipsize="end"
-                        android:layout_marginEnd="60dp"
-                        android:lines="1"
-                        android:textStyle="bold"
-                        android:tag=":aesthetic_ignore"
-                        android:transitionName="@string/transition_text"
-                        android:textSize="20sp" />
+                        android:orientation="vertical">
+
                         <TextView
-                            
+                            android:id="@+id/tv_group_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="60dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="VeryLongGroupName"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:tag=":aesthetic_ignore"
+                            android:transitionName="@string/transition_text"
+              />
+
+                        <TextView
+                            android:tag=":aesthetic_ignore"
                             android:id="@+id/tv_members"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Member1, Member2, Member3, Member 4, Member 5"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit ="marquee_forever"
-                            android:singleLine="true"
-                            android:focusable="true"
-                            android:textColor="?android:textColorSecondary"
-                            android:focusableInTouchMode="true"
-                            android:scrollHorizontally="true"
-                            android:textSize="11sp"
-                            />
+                            android:textSize="11sp" />
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>

@@ -1,6 +1,8 @@
 package it.polito.group05.group05.Utility.Holder;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.DataSnapshot;
@@ -61,8 +64,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
         tv_userName.setText(user.getName());
         tv_userBalance.setText("No debits/credits");
         button_pay.setVisibility(View.GONE);
-
-
         FirebaseDatabase.getInstance().getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
                 .addValueEventListener(new ValueEventListener() {
@@ -70,7 +71,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         value = 0;
                         tv_userBalance.setText("Already Payed!");
-                        tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         button_pay.setVisibility(View.GONE);
                         button_notify.setVisibility(View.GONE);
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
@@ -103,7 +103,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
 
                             } else {
                                 tv_userBalance.setText("Already Payed!");
-                                tv_userBalance.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
                             }

@@ -295,10 +295,17 @@ public class GroupActivity extends AestheticActivity {
                 Pair<View, String> p4 = Pair.create((View)tv, getString(R.string.transition_text));
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)context, p1, p2, p3, p4);*/
-
+                Pair<View, String> p1 =new Pair<View, String>(cv_group, getString(R.string.transition_group_image));
+                Pair<View, String> p2 = new Pair<View, String>(tv_groupname, getString(R.string.transition_text));
+                Pair<View, String> p3 = new Pair<View, String>(mToolbar, getString(R.string.transition_toolbar));
+                Pair<View, String> p4 = new Pair<View, String>(fab, getString(R.string.transition_fab));
                 Intent i = new Intent(GroupActivity.this, Expense_activity.class);
 
-                startActivity(i);
+                AnimUtils.startActivityWithAnimation(GroupActivity.this, i, p1,p2, p3, p4);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().setExitTransition(null);
+                }
                 //startActivity(i, options.toBundle());
             }
         });
@@ -366,9 +373,14 @@ public class GroupActivity extends AestheticActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithChatFragment() {
-        fab.hide();
+        ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, ChatFragment.newInstance())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            chat.setSharedElementEnterTransition(new DetailsTransition());
+            chat.setSharedElementReturnTransition(new DetailsTransition());
+        }
+        transaction.replace(R.id.fragment_container, chat)
+                .addSharedElement(fab, "fab_transition")
                 .commit();
     }
 

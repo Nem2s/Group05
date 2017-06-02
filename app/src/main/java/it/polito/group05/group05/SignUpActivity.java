@@ -149,6 +149,8 @@ public class SignUpActivity extends AestheticActivity {
             if(user_img != null && bitmap != null) {
                 user_img.setImageBitmap(bitmap);
                 ud.setImg_profile(bitmap);
+            } else {
+                user_img.setImageDrawable(getResources().getDrawable(R.drawable.user_placeholder));
             }
 
 

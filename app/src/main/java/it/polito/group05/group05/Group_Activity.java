@@ -201,8 +201,8 @@ public class Group_Activity extends AestheticActivity implements  ChatFragment.O
         switch(item.getItemId()){
 
             case R.id.add_member:
-                Intent i = new Intent(this,NewMemberActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(this,NewMemberActivity.class);
+                //startActivity(i);
                 break;
             case R.id.leave_group:
                 DB_Manager.getInstance().checkUserDebtRemoving();
