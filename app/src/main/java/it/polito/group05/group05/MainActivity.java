@@ -368,31 +368,6 @@ public class MainActivity extends AestheticActivity
 
             item.setChecked(false);
         } else if (id == R.id.nav_themes) {
-
-            if(CUSTOM_THEME_OPTION == 0 && PREDEFINED_THEME_OPTION == 0) {
-                MaterialDialog dialog = new MaterialDialog.Builder(context)
-                        .title("Theming Options")
-                        .positiveText("Predefined Themes")
-                        .negativeText("Custom Themes")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                PREDEFINED_THEME_OPTION = 1;
-                                CUSTOM_THEME_OPTION = 0;
-                                onNavigationItemSelected(item);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                CUSTOM_THEME_OPTION = 1;
-                                PREDEFINED_THEME_OPTION = 0;
-                                onNavigationItemSelected(item);
-                            }
-                        })
-                        .show();
-            }
-            if(PREDEFINED_THEME_OPTION == 1) {
                 FastItemAdapter adapter = new FastItemAdapter<ColorItem>();
                 adapter.withSelectable(true);
                 adapter.add(generateThemes());
@@ -400,10 +375,13 @@ public class MainActivity extends AestheticActivity
                         .title("Select one Theme")
                         .titleColor(getResources().getColor(R.color.colorAccent))
                         .adapter(adapter, new LinearLayoutManager(context))
-                        .dismissListener(new DialogInterface.OnDismissListener() {
+                        .positiveText("Custom Themes")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                PREDEFINED_THEME_OPTION = 0;
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull final DialogAction which) {
+                                THEME_HELPER = "Primary";
+                                customThemeMethod();
+                                dialog.dismiss();
                             }
                         })
                         .show();
@@ -418,44 +396,6 @@ public class MainActivity extends AestheticActivity
                         return true;
                     }
                 });
-            } else if(CUSTOM_THEME_OPTION == 1)
-            ColorPickerDialogBuilder
-                    .with(context)
-                    .setTitle("Choose " + THEME_HELPER + " color")
-                    .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.colorPrimary) :
-                                                                getResources().getColor(R.color.colorAccent))
-                    .showColorPreview(true)
-                    .lightnessSliderOnly()
-                    .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                    .density(12)
-
-                    .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                            if(THEME_HELPER.equals(PRIMARY)) {
-                                THEME_HELPER = ACCENT;
-                                colors[1] = selectedColor;
-                                CUSTOM_THEME_OPTION = 1;
-                                onNavigationItemSelected(item);
-                            } else {
-                                colors[0] = selectedColor;
-                                THEME_HELPER = PRIMARY;
-                                setupTheme(colors);
-                            }
-
-                        }
-                    })
-                    .setNegativeButton("Restore Default", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            colors[1] = getResources().getColor(R.color.colorPrimary);
-                            colors[0] = getResources().getColor(R.color.colorAccent);
-                            setupTheme(colors);
-                        }
-                    })
-                    .build()
-                    .show();
-                    CUSTOM_THEME_OPTION = 0;
             item.setChecked(false);
         } else if (id == R.id.nav_contacts) {
             Intent i = new Intent();
@@ -472,6 +412,37 @@ public class MainActivity extends AestheticActivity
 
         return true;
 
+    }
+
+    private void customThemeMethod() {
+        ColorPickerDialogBuilder
+                .with(context)
+                .setTitle("Choose " + THEME_HELPER + " color")
+                .initialColor(THEME_HELPER.equals(PRIMARY) ? getResources().getColor(R.color.blue_400) :
+                        getResources().getColor(R.color.colorAccent))
+                .showColorPreview(true)
+                .lightnessSliderOnly()
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+
+                .setPositiveButton(THEME_HELPER.equals(PRIMARY) ? "Select Accent" : "Let's Theme it!", new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                        if(THEME_HELPER.equals(PRIMARY)) {
+                            THEME_HELPER = ACCENT;
+                            colors[1] = selectedColor;
+                            customThemeMethod();
+                        } else {
+                            colors[0] = selectedColor;
+                            THEME_HELPER = PRIMARY;
+                            CUSTOM_THEME_OPTION = 0;
+                            setupTheme(colors);
+                        }
+
+                    }
+                })
+                .build()
+                .show();
     }
 
     @Override
