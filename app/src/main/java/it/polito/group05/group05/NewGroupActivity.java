@@ -222,7 +222,7 @@ public class NewGroupActivity extends AestheticActivity {
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-        
+
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
