@@ -13,10 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +30,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
@@ -39,6 +43,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -77,7 +82,6 @@ import it.polito.group05.group05.Utility.Event.ReadyEvent;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
-import it.polito.group05.group05.Utility.Holder.GeneralHolder;
 import it.polito.group05.group05.Utility.Holder.GroupHolder;
 
 public class MainActivity extends AestheticActivity
@@ -131,8 +135,10 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null)
+        if (bundle != null) {
             i.putExtras(bundle);
+            getIntent().putExtra("groupId","");
+        }
         context.startActivity(i);
     }
 
@@ -158,7 +164,7 @@ public class MainActivity extends AestheticActivity
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
-        ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
         if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
             if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
                 pb.setVisibility(View.GONE);
@@ -261,44 +267,11 @@ public class MainActivity extends AestheticActivity
 
     }
 
-    private void checkBundle() {
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
-        String groupId = getIntent().getStringExtra("groupId");
-        if (groupId != null) {
-
-            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.exists()) return;
-                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
-                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
-                    EventBus.getDefault().post(new ReadyEvent(g));
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-    }
-
     @Override
     protected void onStop() {
-
+        super.onStop();
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        checkBundle();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -315,7 +288,7 @@ public class MainActivity extends AestheticActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -383,6 +356,7 @@ public class MainActivity extends AestheticActivity
                             }
                         })
                         .show();
+
                 adapter.withOnClickListener(new FastAdapter.OnClickListener() {
                     @Override
                     public boolean onClick(View view, IAdapter iAdapter, IItem item, int i) {
@@ -479,7 +453,7 @@ public class MainActivity extends AestheticActivity
         }
     }
 
-    private void initializeAesthetic(int primary, int accent, boolean dark) {
+    private void initializeAesthetic(int primary, int accent ,boolean dark) {
         Singleton.getInstance().setColors(colors);
         if(dark) {
             Aesthetic.get()
@@ -525,6 +499,32 @@ public class MainActivity extends AestheticActivity
         PREDEFINED_THEME_OPTION = 0;
     }
 
+    private void checkBundle() {
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+        String groupId = getIntent().getStringExtra("groupId");
+        getIntent().putExtra("groupId","");
+        if (groupId != null) {
+            if(groupId.equals("")) return;
+            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) return;
+                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
+                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
+                    EventBus.getDefault().post(new ReadyEvent(g));
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+    }
     private List<ColorItem> generateThemes() {
         List<ColorItem> themes = new ArrayList<>();
         themes.add(new ColorItem(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent), "Blue Wolf (Default)"));

@@ -542,6 +542,7 @@ public class DB_Manager {
                         Singleton.getInstance().setCurrentUser(currentUser);
                         EventBus.getDefault().post(new CurrentUserReadyEvent());
                         userRef.child(Singleton.getInstance().getCurrentUser().getId()).child("fcmToken").setValue(refreshedToken);
+                        /*DOWNLOAD DELL'IMMAGINE????*/
                     }
 
                     @Override

@@ -123,13 +123,7 @@ public class SettingActivity extends SlidingActivity {
                 });
                 phone.setEnabled(true);
                 name.setEnabled(true);
-                cv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ImagePicker.pickImage(c, "Select Image:");
-                        REQUEST_FROM_NEW_USER = ImagePicker.PICK_IMAGE_REQUEST_CODE;
-                    }
-                });
+
 
 
             }

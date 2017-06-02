@@ -11,13 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
 import com.afollestad.materialdialogs.DialogAction;
@@ -70,15 +70,6 @@ public class SignUpActivity extends AppCompatActivity {
     private CurrentUser ud;//= new CurrentUser();
 
     private EditText et_user_phone;
-
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-        EventBus.getDefault().post(new CurrentUserReadyEvent());
-    }
 
     @Subscribe
     public void currentUserReady(CurrentUserReadyEvent event) {

@@ -26,10 +26,6 @@ public class SelectionChangedEvent {
             textIsValid = false;
         return new SelectionChangedEvent();
     }
-
-    public static boolean isValidAddMemeber() {
-        return selectionIsValid > 0;
-    }
     public static boolean isValid() {
         return selectionIsValid > 0 && textIsValid;
     }

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -210,8 +211,10 @@ public class Group_Activity extends AestheticActivity implements  ChatFragment.O
                 break;
             case R.id.action_settings:
                 break;
+            case R.id.changeBackground:
+                //(findViewById(R.id.activity_main)).setBackground(R.drawable.haring1);
 
-
+                break;
         }
 
 

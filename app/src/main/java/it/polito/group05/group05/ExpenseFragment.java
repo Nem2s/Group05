@@ -63,6 +63,7 @@ public class ExpenseFragment extends Fragment {
         inflater.inflate(R.menu.sort_menu, subMenu.getSubMenu());
         super.onCreateOptionsMenu(menu, inflater);
 
+
     }
 
     @Override
@@ -175,6 +176,15 @@ public class ExpenseFragment extends Fragment {
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if(model==null) return;
                 viewHolder.setData(model,getActivity().getApplicationContext());
+                String s = getActivity().getIntent().getStringExtra("type");
+                if(s!=null){
+                    if(s.equals("newExpense"))
+                        viewHolder.showExpense(new Expense(model));
+
+
+
+
+                }
 
             }
 

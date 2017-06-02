@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.materialdialogs.DialogAction;
@@ -66,8 +67,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
         tv_userName.setText(user.getName());
         tv_userBalance.setText("No debits/credits");
         button_pay.setVisibility(View.GONE);
-
-
         FirebaseDatabase.getInstance().getReference("expenses/" + Singleton.getInstance().getmCurrentGroup().getId())
                 .orderByKey()
                 .addValueEventListener(new ValueEventListener() {
@@ -104,7 +103,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 button_pay.setVisibility(View.VISIBLE);
                                 button_notify.setVisibility(View.GONE);
 
-
                             } else {
                                 tv_userBalance.setText("Already Payed!");
                                 button_pay.setVisibility(View.GONE);
@@ -125,7 +123,6 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                     String myId = Singleton.getInstance().getCurrentUser().getId();
                     DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
                 } catch (Exception c) {
-
                 }
                 Snackbar.make(itemView, "Reminder sent to " + user.getName(), Snackbar.LENGTH_INDEFINITE)
                         .setAction("Ok", new View.OnClickListener() {
