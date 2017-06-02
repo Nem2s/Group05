@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -34,8 +33,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ExecutionException;
@@ -48,11 +45,7 @@ import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
-import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
-import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
-
-import static it.polito.group05.group05.R.id.view;
 
 public class GroupActivity extends AestheticActivity {
 
@@ -77,7 +70,7 @@ public class GroupActivity extends AestheticActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,9 +106,9 @@ public class GroupActivity extends AestheticActivity {
         }
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                initializeUI();
-            }
+
+            initializeUI();
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -140,7 +133,7 @@ public class GroupActivity extends AestheticActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 tv_members.setSelected(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+
                 switch (item.getItemId()) {
                     case R.id.navigation_expenses:
                         replaceWithExpenseFragment();
@@ -157,7 +150,7 @@ public class GroupActivity extends AestheticActivity {
                         //   animateAppAndStatusBar(getBackgroundColor(mToolbar), getResources().getColor(R.color.expenseTabColor), mToolbar.getX(), mToolbar.getHeight());
 
                         break;
-                }
+
                 }
 
                 return true;
@@ -226,11 +219,10 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void initializeUI() throws ExecutionException, InterruptedException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
                 @Override
                 public void onTransitionStart(Transition transition) {
                     transition.removeTarget(R.id.toolbar);
@@ -328,11 +320,12 @@ public class GroupActivity extends AestheticActivity {
     private void scheduleStartPostponedTransition(final View sharedElement) {
         sharedElement.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public boolean onPreDraw() {
                         sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
-                        startPostponedEnterTransition();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            startPostponedEnterTransition();
+                        }
                         return true;
                     }
                 });
@@ -351,13 +344,9 @@ public class GroupActivity extends AestheticActivity {
 
                     else
                         tv_members.append(", " + u.getName());
-
                     tv_members.setSingleLine(true);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BASE_1_1) {
                         tv_members.setMarqueeRepeatLimit(-1);
                         tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                    }
-
                     tv_members.setSelected(true);
                     tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
                             Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
@@ -373,7 +362,7 @@ public class GroupActivity extends AestheticActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+
     private void replaceWithExpenseFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, ExpenseFragment.newInstance())
@@ -398,7 +387,6 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void replaceWithChatFragment() {
         ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -411,7 +399,7 @@ public class GroupActivity extends AestheticActivity {
                 .commit();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+
     private void replaceWithHistoryFragment() {
         fab.hide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -420,7 +408,6 @@ public class GroupActivity extends AestheticActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     private void animateAppAndStatusBar(final int fromColor, final int toColor, float cx, float cy) {
         // get the final radius for the clipping circle
         findViewById(R.id.reveal).setBackgroundColor(fromColor);
@@ -450,8 +437,8 @@ public class GroupActivity extends AestheticActivity {
                     (int) cx,
                     (int) cy, 0,
                     finalRadius);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                animator.addListener(new AnimatorListenerAdapter() {
+
+            animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         mToolbar.setBackgroundColor(toColor);
@@ -460,14 +447,14 @@ public class GroupActivity extends AestheticActivity {
                 animator.setStartDelay(0);
                 animator.setDuration(250);
                 animator.start();
-            }
+
 
         }
 
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+
     private void changeToolbarColor(int from, int to) {
         ArgbEvaluator evaluator = new ArgbEvaluator();
         ValueAnimator animator = new ValueAnimator();
