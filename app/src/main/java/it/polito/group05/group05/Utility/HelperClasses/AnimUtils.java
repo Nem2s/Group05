@@ -68,6 +68,27 @@ public class AnimUtils {
         anim.start();
     }
 
+    public static void toggleOn(final View view, Context context) {
+        Animation anim = AnimationUtils.loadAnimation(context, R.anim.fab_open);
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        anim.start();
+    }
+
     public static void enterRevealAnimation(View view) {
         // previously invisible view
         final View myView = view;

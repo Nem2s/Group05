@@ -86,7 +86,7 @@ public class ExpenseFragment extends Fragment {
                     super.onOptionsItemSelected(item);
         }
         if (id == R.id.add_member){
-            //startActivity( new Intent(getContext(), NewMemberActivity.class));
+            startActivity( new Intent(getContext(), NewMemberActivity.class));
         }
         if (id == R.id.leave_group){
             DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(),getContext());

@@ -23,6 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 
 /**
  * Created by Marco on 05/05/2017.
@@ -30,24 +31,32 @@ import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 
 public class MemberInvitedItem extends AbstractItem<MemberInvitedItem, MemberInvitedItem.ViewHolder> {
 
-    String name;
+    public String name;
     String id;
     String number;
     String email;
     String imgUri;
     UserContact user;
-    boolean selected = false;
+
 
     public static MemberInvitedItem fromUserContact(UserContact u) {
         MemberInvitedItem item = new MemberInvitedItem();
         item.name = u.getName();
         item.number = u.getTelNumber();
         item.imgUri = u.getiProfile();
-        item.selected = u.isSelected();
         item.email = u.getEmail();
         item.id = u.getId();
+        u.setSelected(false);
         item.user = u;
         return item;
+    }
+
+    public void setSelected(boolean b) {
+        user.setSelected(b);
+    }
+
+    public boolean isSelected() {
+        return user.isSelected();
     }
 
     public static List<MemberInvitedItem> fromUserContactList(List<UserContact> list) {
@@ -57,6 +66,8 @@ public class MemberInvitedItem extends AbstractItem<MemberInvitedItem, MemberInv
         }
         return res;
     }
+
+
 
     @Override
     public void bindView(ViewHolder holder, List<Object> payloads) {
@@ -75,20 +86,12 @@ public class MemberInvitedItem extends AbstractItem<MemberInvitedItem, MemberInv
                 .asBitmap()
                 .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .into(holder.img_profile);
-        if(user.isSelected())
-            holder.button.setVisibility(View.VISIBLE);
-        else
-            holder.button.setVisibility(View.GONE);
+        holder.button.setVisibility(View.INVISIBLE);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(SelectionChangedEvent.onSelectionChangedEvent(user.isSelected()));
-
-            }
-        });
 
     }
+
+
 
     @Override
     public MemberInvitedItem.ViewHolder getViewHolder(View view) {
@@ -97,14 +100,14 @@ public class MemberInvitedItem extends AbstractItem<MemberInvitedItem, MemberInv
 
     @Override
     public int getType() {
-        return 0;
+        return R.id.invited_parent;
     }
 
     @Override
     public int getLayoutRes() {
         return R.layout.invited_item_sample;
     }
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView img_profile;
         TextView name;
         TextView number;
@@ -118,6 +121,11 @@ public class MemberInvitedItem extends AbstractItem<MemberInvitedItem, MemberInv
             this.number = (TextView)itemView.findViewById(R.id.tv_invited_pnumber);
             this.email = (TextView)itemView.findViewById(R.id.tv_invited_email);
             this.button = (FloatingActionButton) itemView.findViewById(R.id.add_to_group_button);
+        }
+
+        public void handleButton(boolean selected, Context context) {
+            if(selected) button.hide();
+            else button.show();
         }
     }
 

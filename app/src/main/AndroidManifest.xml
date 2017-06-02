@@ -48,7 +48,7 @@
             android:label="New Group Activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
+             />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"

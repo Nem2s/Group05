@@ -22,8 +22,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +36,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -49,12 +52,17 @@ import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter_extensions.ActionModeHelper;
+import com.mikepenz.fastadapter_extensions.UndoHelper;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener;
+import com.mikepenz.materialize.util.UIUtils;
 import com.mvc.imagepicker.ImagePicker;
 
 import org.greenrobot.eventbus.EventBus;
@@ -113,7 +121,7 @@ public class NewGroupActivity extends AestheticActivity {
     List<UserContact> contacts;
     List<UserContact> local_contacts = new ArrayList<>(Singleton.getInstance().getLocalContactsList(0));
     SwipeRefreshLayout mSwipeLayout;
-
+    NestedScrollView nsv;
     private MenuItem mSearchItem;
 
     public static MenuItem mConfirmItem;
@@ -202,30 +210,19 @@ public class NewGroupActivity extends AestheticActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_new_group);
-
         activity = this;
-        isNameEmpty = true;
-
-
         et_group_name = (EditText) findViewById(R.id.group_name_add);
-
         iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
-
         no_people = (TextView)findViewById(R.id.no_people);
-
         context = this;
         tv_contacts = (TextView)findViewById(R.id.tv_contacts);
         //mSwipeLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_layout);
         rv_contacts = (RecyclerView)findViewById(R.id.contacts_people_list);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
-
         setSupportActionBar(mToolbar);
-
         fab = (FloatingActionButton)findViewById(R.id.fab_invite);
-
-
+        
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -247,8 +244,6 @@ public class NewGroupActivity extends AestheticActivity {
             }
 
         });
-
-
         iv_new_group.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -269,34 +264,6 @@ public class NewGroupActivity extends AestheticActivity {
         //checkSelected();
 
 
-        et_group_name.addTextChangedListener(new TextWatcher() {
-
-            @Override
-
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-            }
-
-
-            @Override
-
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                EventBus.getDefault().post(SelectionChangedEvent.onTextChangedEvent(charSequence.length() > 0));
-
-            }
-
-
-            @Override
-
-            public void afterTextChanged(Editable editable){
-
-
-            }
-
-        });
-
 
 
 
@@ -304,12 +271,14 @@ public class NewGroupActivity extends AestheticActivity {
         //create our FastAdapter which will manage everything
         fastContactAdapter = new FastItemAdapter<>();
         fastInvitedAdapter = new FastItemAdapter<>();
+
         LinearLayoutManager contactsManager = new LinearLayoutManager(getApplicationContext());
+        contactsManager.setAutoMeasureEnabled(true);
         LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
         //create our FooterAdapter which will manage the progress items
-        setupInvited();
         footerAdapter = new FooterAdapter<>();
         rv_contacts.setLayoutManager(contactsManager);
+        rv_contacts.setHasFixedSize(false);
         //rv_contacts.setNestedScrollingEnabled(false);
         //configure the itemAdapter
         fastContactAdapter.withFilterPredicate(new IItemAdapter.Predicate<MemberContactItem>() {
@@ -322,7 +291,6 @@ public class NewGroupActivity extends AestheticActivity {
         });
         fastContactAdapter.add(MemberContactItem.fromUserContactList(local_contacts));
         rv_contacts.setAdapter(footerAdapter.wrap(fastContactAdapter));
-
         rv_contacts.addOnScrollListener(new EndlessRecyclerOnScrollListener(footerAdapter) {
             @Override
             public void onLoadMore(final int currentPage) {
@@ -335,7 +303,8 @@ public class NewGroupActivity extends AestheticActivity {
                     }
                 });
 
-
+        fastInvitedAdapter.withSavedInstanceState(savedInstanceState);
+        setupInvited();
     }
 
     private void setupInvited() {
@@ -343,7 +312,14 @@ public class NewGroupActivity extends AestheticActivity {
 
         //dialog = ProgressDialog.show(activity, "Loading", "Loading contacts...", true, false);
 
-
+        fastInvitedAdapter.withFilterPredicate(new IItemAdapter.Predicate<MemberInvitedItem>() {
+            @Override
+            public boolean filter(MemberInvitedItem item, CharSequence constraint) {
+                //return true if we should filter it out
+                //return false to keep it
+                return !item.name.toLowerCase().startsWith(constraint.toString().toLowerCase());
+            }
+        });
         LinearLayoutManager invitedManager = new LinearLayoutManager(getApplicationContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_invited.getContext(),
 
@@ -361,8 +337,22 @@ public class NewGroupActivity extends AestheticActivity {
             }
         });
         fastInvitedAdapter.add(MemberInvitedItem.fromUserContactList(contacts));
+        fastInvitedAdapter.setHasStableIds(true);
         fastInvitedAdapter.withSelectable(true);
+        fastInvitedAdapter.withMultiSelect(true);
+
         rv_invited.setAdapter(fastInvitedAdapter);
+
+        fastInvitedAdapter.withOnClickListener(new FastAdapter.OnClickListener<MemberInvitedItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<MemberInvitedItem> iAdapter, MemberInvitedItem item, int i) {
+                item.setSelected(!item.isSelected());
+                ((MemberInvitedItem.ViewHolder)item.getViewHolder(view)).handleButton(!item.isSelected(), context);
+
+                return true;
+            }
+        });
+
 
         if(fastInvitedAdapter.getAdapterItemCount() == 0) {
 
@@ -408,103 +398,116 @@ public class NewGroupActivity extends AestheticActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //add the values which need to be saved from the adapter to the bundel
+        outState = fastInvitedAdapter.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
 
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.new_group_menu, menu);
 
-
-
         mSearchItem = menu.findItem(R.id.m_search);
 
         mConfirmItem = menu.findItem(R.id.m_confirm);
 
-        mConfirmItem.setVisible(false);
-
         searchView = (SearchView)mSearchItem.getActionView();
-
-
-        if(!et_group_name.isEnabled())
-
-            mSearchItem.setEnabled(false);
-
-        else
-
-            mSearchItem.setEnabled(true);
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
+        mConfirmItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                DatabaseReference ref = groupRef.push();
 
-            public boolean onQueryTextSubmit(String query) {
-                getWindow().setSoftInputMode(
-                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-                );
-                return false;
+                GroupDatabase group = new GroupDatabase();
 
-            }
+                group.setMembers(new HashMap<String,Object>());
 
-            @Override
+                group.setId(ref.getKey());
 
-            public boolean onQueryTextChange(String newText) {
+                group.setName(et_group_name.getText().toString());
+
+                group.setCreator(Singleton.getInstance().getCurrentUser().getId());
+
+                for (UserContact u : contacts) {
+
+                    if(u.isSelected()) {
+
+                        group.getMembers().put(u.getId(), 0.0);
+
+                        u.setSelected(false);
+
+                    }
 
 
+                }
 
-                if ( TextUtils.isEmpty ( newText ) ) {
+                if(!group.getMembers().isEmpty() && et_group_name.getText().length() > 0) {
 
-                    fastInvitedAdapter.filter("");
-                    fastContactAdapter.filter("");
-                    tv_partecipants.setVisibility(View.VISIBLE);
-                    tv_contacts.setVisibility(View.VISIBLE);
-                    no_people.setVisibility(View.GONE);
+                    group.getMembers().put(currentUser.getId(), 0.0);
+                    DB_Manager.getInstance().setContext(context).pushNewGroup(group, ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap());
+
+                    finish();
 
                 } else {
 
-                    fastInvitedAdapter.filter(newText);
-                    fastContactAdapter.filter(newText);
-                    if(fastInvitedAdapter.getAdapterItemCount() == 0 &&
-                            fastContactAdapter.getAdapterItemCount() == 0) {
-                        no_people.setVisibility(View.VISIBLE);
-                        tv_partecipants.setVisibility(View.GONE);
-                        tv_contacts.setVisibility(View.GONE);
-                    } else {
-                        tv_partecipants.setVisibility(View.VISIBLE);
-                        tv_contacts.setVisibility(View.VISIBLE);
-                    }
+                    Snackbar.make(findViewById(R.id.parent_layout), "Missing some Informations!", Snackbar.LENGTH_LONG).show();
 
-                    return true;
-                }
-
-                rv_contacts.smoothScrollToPosition(0);
-                rv_invited.smoothScrollToPosition(0);
-
-                return false;
-            }
-
-            private List<UserContact> filterLocal(String s) {
-                List<UserContact> res = new ArrayList<>();
-
-                for(UserContact u : local_contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
-                        res.add(u);
 
                 }
 
-                return res;
+                return true;
             }
-            private List<UserContact> filterRegistered(String s) {
-                List<UserContact> res = new ArrayList<>();
-
-                for(UserContact u : contacts) {
-                    if (((Namable)u).getName().toLowerCase().startsWith(s.toString().toLowerCase()))
-                        res.add(u);
-
-                }
-                return res;
-            }
-
         });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                                              @Override
+
+                                              public boolean onQueryTextSubmit(String query) {
+                                                  getWindow().setSoftInputMode(
+                                                          WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+                                                  );
+                                                  return false;
+
+                                              }
+
+                                              @Override
+
+                                              public boolean onQueryTextChange(String newText) {
+
+
+                                                  if (TextUtils.isEmpty(newText)) {
+
+                                                      fastInvitedAdapter.filter("");
+                                                      fastContactAdapter.filter("");
+                                                      tv_partecipants.setVisibility(View.VISIBLE);
+                                                      tv_contacts.setVisibility(View.VISIBLE);
+                                                      no_people.setVisibility(View.GONE);
+
+                                                  } else {
+
+                                                      fastInvitedAdapter.filter(newText);
+                                                      fastContactAdapter.filter(newText);
+                                                      if (fastInvitedAdapter.getAdapterItemCount() == 0 &&
+                                                              fastContactAdapter.getAdapterItemCount() == 0) {
+                                                          no_people.setVisibility(View.VISIBLE);
+                                                          tv_partecipants.setVisibility(View.GONE);
+                                                          tv_contacts.setVisibility(View.GONE);
+                                                      } else {
+                                                          tv_partecipants.setVisibility(View.VISIBLE);
+                                                          tv_contacts.setVisibility(View.VISIBLE);
+                                                      }
+
+                                                      return true;
+                                                  }
+
+                                                  rv_contacts.smoothScrollToPosition(0);
+                                                  rv_invited.smoothScrollToPosition(0);
+
+                                                  return false;
+                                              }
+                                          });
 
         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
 
@@ -543,116 +546,8 @@ public class NewGroupActivity extends AestheticActivity {
 
         });
 
-
+        mToolbar.setTitle("Let's create a new Group!");
         return true;
-
-    }
-
-
-    @Subscribe public void onSelectionChangedEvent(SelectionChangedEvent event) {
-
-        SelectionChangedEvent.getValues(this);
-
-        this.formIsValid = event.isValid();
-
-        if(formIsValid) {
-
-            mConfirmItem.setVisible(true);
-
-        } else
-
-            mConfirmItem.setVisible(false);
-
-    }
-
-
-    @Override
-
-    protected void onStop() {
-
-        EventBus.getDefault().unregister(this);
-
-        SelectionChangedEvent.resetValues();
-
-        super.onStop();
-
-    }
-
-
-    @Override
-
-    protected void onStart() {
-
-        super.onStart();
-
-        if(!EventBus.getDefault().isRegistered(this))
-
-            EventBus.getDefault().register(this);
-
-    }
-
-
-    @Override
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if(id == R.id.m_confirm) {
-
-            DatabaseReference ref = groupRef.push();
-
-            GroupDatabase group = new GroupDatabase();
-
-            group.setMembers(new HashMap<String,Object>());
-
-            group.setId(ref.getKey());
-
-            group.setName(et_group_name.getText().toString());
-
-            group.setCreator(Singleton.getInstance().getCurrentUser().getId());
-
-            for (UserContact u : contacts) {
-
-                if(u.isSelected()) {
-
-                    group.getMembers().put(u.getId(), 0.0);
-
-                    u.setSelected(false);
-
-                }
-
-
-            }
-
-
-            group.getMembers().put(currentUser.getId(), 0.0);
-
-
-            if(!group.getMembers().isEmpty() && !et_group_name.getText().toString().equals("")) {
-
-
-                DB_Manager.getInstance().setContext(this).pushNewGroup(group, ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap());
-
-                finish();
-
-            } else {
-
-                Snackbar.make(findViewById(R.id.parent_layout), "Missing some Informations!", Snackbar.LENGTH_LONG).show();
-                return false;
-
-
-            }
-
-        }
-
-
-        //DB_Manager.getInstance().PushGroupToDB(newgroup);
-
-        //DB_Manager.getInstance().MonitorOnGroup(newgroup);
-
-
-        return super.onOptionsItemSelected(item);
 
     }
 
@@ -773,4 +668,5 @@ public class NewGroupActivity extends AestheticActivity {
 
 
 
-}
+    }
+
