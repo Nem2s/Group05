@@ -19,6 +19,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.name.name.permission.C2D_MESSAGE"
+        android:protectionLevel="normal" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -36,6 +38,7 @@
             android:name=".Group_Activity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Expense_activity"
@@ -90,6 +93,7 @@
             android:label="@string/title_activity_group_details"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

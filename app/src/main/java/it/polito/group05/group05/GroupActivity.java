@@ -214,9 +214,6 @@ public class GroupActivity extends AestheticActivity {
 
                 AnimUtils.startActivityWithAnimation(GroupActivity.this, i, p1,p2, p3, p4);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getWindow().setExitTransition(null);
-                }
                 //startActivity(i, options.toBundle());
             }
         });
@@ -282,12 +279,8 @@ public class GroupActivity extends AestheticActivity {
     private void replaceWithChatFragment() {
         ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            chat.setSharedElementEnterTransition(new DetailsTransition());
-            chat.setSharedElementReturnTransition(new DetailsTransition());
-        }
+        fab.hide();
         transaction.replace(R.id.fragment_container, chat)
-                .addSharedElement(fab, "fab_transition")
                 .commit();
     }
 

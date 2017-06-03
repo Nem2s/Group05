@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -108,6 +109,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+                .diskCacheStrategy( DiskCacheStrategy.SOURCE )
                 .centerCrop()
                 .into(cv);
     }
@@ -178,8 +180,8 @@ public class ImageUtils {
         new MaterialTapTargetPrompt.Builder(activity)
                 .setTarget(e.getKey())
                 .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
-                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
-                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
+                .setPrimaryTextColour(Aesthetic.get().colorCardViewBackground().take(1).blockingFirst())
+                .setSecondaryTextColour(Aesthetic.get().colorCardViewBackground().take(1).blockingFirst())
                 .setPrimaryText(e.getValue()[0])
                 .setSecondaryText(e.getValue()[1])
                 .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {

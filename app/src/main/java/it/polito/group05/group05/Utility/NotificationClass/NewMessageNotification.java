@@ -143,12 +143,8 @@ public class NewMessageNotification {
     private static void notify(final Context context, final Notification notification) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.notify(NOTIFICATION_TAG, 0, notification);
-        } else {
-            nm.notify(NOTIFICATION_TAG.hashCode(), notification);
+                nm.notify(NOTIFICATION_TAG, 0, notification);
         }
-    }
 
     /**
      * Cancels any notifications of this type previously shown using

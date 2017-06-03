@@ -143,12 +143,14 @@ public class MainActivity extends AestheticActivity
         Singleton.getInstance().setIdCurrentGroup(cu.getGroupDatabase().getId());
         Intent i = new Intent(context, GroupActivity.class);
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null)
+        if (bundle != null) {
             i.putExtras(bundle);
+            getIntent().putExtra("groupId","");
+        }
         context.startActivity(i);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -217,16 +219,12 @@ public class MainActivity extends AestheticActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                if(!Singleton.getInstance().isFirstAcces()) {
-                    map.put(cv_user_drawer, new String[]{"Profile Image", "Clicking on it you'll be able to change your profile image"});
-                    ImageUtils.showTutorial(activity, map);
-                    map.clear();
-                }
+
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-
+                toggle.syncState();
             }
 
             @Override
@@ -236,7 +234,7 @@ public class MainActivity extends AestheticActivity
         });
 
         drawer.setDrawerListener(toggle);
-
+        toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -272,13 +270,9 @@ public class MainActivity extends AestheticActivity
                 iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
-*/
+*/        checkBundle();
         rv.setAdapter(mAdapter);
-        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
-            map.put(fab, new String[]{"Floating Action Button", "With this you can create a new group with yout friends!"});
-            ImageUtils.showTutorial(activity, map);
-            map.clear();
-        }
+
 
 
     }
@@ -290,34 +284,7 @@ public class MainActivity extends AestheticActivity
             EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        toggle.syncState();
-        EventBus.getDefault().register(this);
-        String groupId = getIntent().getStringExtra("groupId");
-        if (groupId != null) {
 
-            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.exists()) return;
-                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
-                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
-                    EventBus.getDefault().post(new ReadyEvent(g));
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -558,10 +525,37 @@ public class MainActivity extends AestheticActivity
 
     public boolean isColorDark(int color){
         double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
-        if(darkness<0.5){
+        if(darkness<0.7){
             return false; // It's a light color
         }else{
             return true; // It's a dark color
+        }
+    }
+
+    private void checkBundle() {
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+        EventBus.getDefault().register(this);
+        String groupId = getIntent().getStringExtra("groupId");
+        getIntent().putExtra("groupId","");
+        if (groupId != null) {
+            if(groupId.equals("")) return;
+            FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) return;
+                    //    if(!(dataSnapshot.getValue() instanceof GroupDatabase)) return ;
+                    GroupDatabase g = dataSnapshot.getValue(GroupDatabase.class);
+                    EventBus.getDefault().post(new ReadyEvent(g));
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
 }

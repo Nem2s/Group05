@@ -1,8 +1,11 @@
 package it.polito.group05.group05;
 
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.ChatHolder;
 
 
@@ -39,10 +46,12 @@ public class ChatFragment extends Fragment {
     private RecyclerView rec;
     private EditText input;
     private String textInput;
+    private RelativeLayout et_shape;
     private FloatingActionButton fab;
     private DatabaseReference fdb;
     private FirebaseRecyclerAdapter adapter;
     private LinearLayoutManager ll;
+    private LinearLayout overlay;
 
 
     public ChatFragment() {
@@ -67,13 +76,15 @@ public class ChatFragment extends Fragment {
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         input = (EditText) rootView.findViewById(R.id.input);
         rec = (RecyclerView) rootView.findViewById(R.id.rec);
+        overlay = (LinearLayout)rootView.findViewById(R.id.overlay_chat);
+        overlay.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
         rec.setHasFixedSize(false);
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rec.setLayoutManager(ll);
+        /*et_shape = (RelativeLayout)rootView.findViewById(R.id.et_shape);
+        GradientDrawable bgShape = (GradientDrawable)et_shape.getBackground();
+        bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());*/
         ll.setStackFromEnd(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.setTransitionName("fab_transition");
-        }
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chats")
                 .child(Singleton.getInstance().getIdCurrentGroup());
         adapter = new FirebaseRecyclerAdapter<ChatDatabase, ChatHolder>(ChatDatabase.class, R.layout.message,
@@ -90,6 +101,7 @@ public class ChatFragment extends Fragment {
             protected void populateViewHolder(ChatHolder viewHolder, ChatDatabase model, int position) {
                 if (model == null) return;
                 viewHolder.setData(model, getContext());
+
             }
 
             @Override
@@ -120,7 +132,12 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                fab.show();
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
