@@ -83,6 +83,7 @@ public class CustomIncludedDialog extends DialogFragment {
         this.getDialog().setTitle("Choose Friends");
         return rootView;
 
+
     }
 
     private void searchSelection() {

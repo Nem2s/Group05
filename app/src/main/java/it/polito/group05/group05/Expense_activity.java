@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +91,7 @@ public class Expense_activity extends AestheticActivity {
 
     private static final String[] headers = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
+    Map<View,String[]> map_tuto = new LinkedHashMap<>();
     private CoordinatorLayout parent;
     private RecyclerView rv_icons;
     private FastItemAdapter fastItemAdapter;
@@ -136,6 +138,7 @@ public class Expense_activity extends AestheticActivity {
 
     @Override
     protected void onStop() {
+        map_tuto.clear();
         super.onStop();
     }
 
@@ -169,6 +172,7 @@ public class Expense_activity extends AestheticActivity {
         nomeFile = (TextView) findViewById(R.id.tv_name_fil);
         nameDate = (TextView) findViewById(R.id.name_date);
         buttonUPLOAD = (Button) findViewById(R.id.button_upload);
+
         calendar1 = (ImageView) findViewById(R.id.calendar);
         fab = (FloatingActionButton) findViewById(R.id.fab_id);
         setSupportActionBar(toolbar);
@@ -371,6 +375,11 @@ public class Expense_activity extends AestheticActivity {
                 dialog.show();
             }
         });
+        map_tuto.put(image_expense,new String[]{"Categories","Choose among different categories"});
+        map_tuto.put(calendar1,new String[]{"When","Set when the expens was made"});
+        map_tuto.put(buttonUPLOAD,new String[]{"You can add your receipt","Try it"});
+        map_tuto.put(fab,new String[]{"Next","Add your expense"});
+        ImageUtils.showTutorial(this,map_tuto);
     }
     private void upLoadFile(Uri uri){
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -396,6 +405,10 @@ public class Expense_activity extends AestheticActivity {
                 cid.show(fm, "TV_tag");
             }
         });
+
+
+
+
     }
 
     private List retriveIcons() {

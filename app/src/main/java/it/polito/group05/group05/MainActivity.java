@@ -170,6 +170,8 @@ public class MainActivity extends AestheticActivity
         setContentView(R.layout.activity_main);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
@@ -228,6 +230,7 @@ public class MainActivity extends AestheticActivity
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                toggle.syncState();
 
             }
 
@@ -238,7 +241,7 @@ public class MainActivity extends AestheticActivity
         });
 
         drawer.setDrawerListener(toggle);
-
+        toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -306,8 +309,8 @@ public class MainActivity extends AestheticActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        // Inflate the menu; this adds items to the action bar if it is present
+       // getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

@@ -27,12 +27,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
 import static it.polito.group05.group05.Group_Activity.toolbar;
@@ -180,9 +183,7 @@ public class ExpenseFragment extends Fragment {
                 if(s!=null){
                     if(s.equals("newExpense"))
                         viewHolder.showExpense(new Expense(model));
-
-
-
+                    if(position!=0) return;
 
                 }
 

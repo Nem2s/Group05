@@ -3,6 +3,7 @@ package it.polito.group05.group05.Utility.HelperClasses;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -25,7 +26,9 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +50,8 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class ImageUtils {
+    Activity activity;
+    List<Map.Entry<View,String[]>> mapTutorial =new ArrayList<>();
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
         Glide.with(getApplicationContext())
@@ -172,9 +177,37 @@ public class ImageUtils {
         return dp;
     }
 
-    public static void showTutorial(final Activity activity, Map<View, String[]> map) { /**Farlo con le Pair **/
-        final Iterator i = map.entrySet().iterator();
-        Map.Entry<View, String[] > e = (Map.Entry<View, String[]>) i.next();
+    public static void showTutorial(final Activity activity, final Map<View, String[]> map) { /**Farlo con le Pair **/
+        final Map<View, String[]> map_tmp = checkMap(activity ,map);
+        final Iterator i = map_tmp.entrySet().iterator();
+        if(i.hasNext())
+        goOn(activity,i);
+    }
+
+    private  static Map<View, String[]> checkMap(Activity a,Map<View, String[]> map) {
+
+
+        Map<View, String[]> map_tmp = new LinkedHashMap<>();
+         Map.Entry<View, String[]> e;
+        SharedPreferences sharedPref = a.getSharedPreferences(a.getString(R.string.tutorial),Context.MODE_PRIVATE);
+        Iterator i = map.entrySet().iterator();
+        while (i.hasNext())
+        {
+           e  =(Map.Entry<View, String[]>) i.next();
+            if(sharedPref.getBoolean(e.getValue()[0], false)) continue;
+            map_tmp.put(e.getKey(),e.getValue());
+        }
+
+        return map_tmp;
+
+    }
+
+    private static void goOn(final Activity activity, final Iterator i) {
+
+        if(!i.hasNext()) return;
+        SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.tutorial),Context.MODE_PRIVATE);
+       final Map.Entry<View, String[]> e=(Map.Entry<View, String[]>) i.next();
+        if(e==null) return;
         new MaterialTapTargetPrompt.Builder(activity)
                 .setTarget(e.getKey())
                 .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
@@ -185,40 +218,23 @@ public class ImageUtils {
                 .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                     @Override
                     public void onHidePrompt(MotionEvent motionEvent, boolean b) {
-
+                        SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.tutorial),Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean(e.getValue()[0], true);
+                        editor.commit();
                     }
 
                     @Override
                     public void onHidePromptComplete() {
-                        if(i.hasNext())
-                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
+
+                            goOn(activity, i);
                     }
                 })
                 .show();
+
+
     }
 
-    private static void goOn(final Activity activity, final Iterator i, Map.Entry<View, String[]> e) {
-        new MaterialTapTargetPrompt.Builder(activity)
-                .setTarget(e.getKey())
-                .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
-                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
-                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
-                .setPrimaryText(e.getValue()[0])
-                .setSecondaryText(e.getValue()[1])
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
-                    @Override
-                    public void onHidePrompt(MotionEvent motionEvent, boolean b) {
-
-                    }
-
-                    @Override
-                    public void onHidePromptComplete() {
-                        if(i.hasNext())
-                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
-                    }
-                })
-                .show();
-    }
 
 
 }

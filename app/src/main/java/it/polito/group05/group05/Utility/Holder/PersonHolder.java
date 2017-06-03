@@ -55,7 +55,7 @@ public class PersonHolder extends GeneralHolder {
         user_name.setText(u.getName());
         if(Singleton.getInstance().getUsersBalance().containsKey(u.getId()))
         {
-            if (u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) user_name.setText("Tu");
+            if (u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) user_name.setText("You");
                 balance.setText(String.format("%.2f €",Math.abs(Singleton.getInstance().getUsersBalance().get(u.getId()))));
             if(Singleton.getInstance().getUsersBalance().get(u.getId()) > 0){
                 balance.setTextColor(context.getResources().getColor(R.color.debit_red));

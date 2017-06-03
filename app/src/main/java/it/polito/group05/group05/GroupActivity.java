@@ -40,6 +40,8 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
@@ -57,6 +59,7 @@ public class GroupActivity extends AestheticActivity {
 
 
     FragmentManager mFragmentManager;
+    Map<View, String[]> map = new LinkedHashMap<View, String[]>();
     BottomNavigationView bottomView;
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
@@ -96,6 +99,7 @@ public class GroupActivity extends AestheticActivity {
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             bottomView = (BottomNavigationView) findViewById(R.id.navigation);
+
             bottomView.setSelectedItemId(R.id.navigation_expenses);
             fab = (FloatingActionButton) findViewById(R.id.fab);
             cv_group = (CircleImageView) findViewById(R.id.cv_groupImage);
@@ -124,6 +128,17 @@ public class GroupActivity extends AestheticActivity {
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(mToolbar);
+
+
+        map.put(fab,new String[]{"Create an expense","Tapping the button you can start to create the expense"});
+
+
+map.put(findViewById(R.id.navigation_expenses),new String[]{"Expense", "Here you can find all expenses made by you or your friend"});
+
+map.put(findViewById(R.id.navigation_chat),new String[]{"Chat","Talk with your friends"});
+
+map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple section dedicated that summarize the history of the group"});
+        ImageUtils.showTutorial(this,map);
 
 
         bottomView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -158,6 +173,12 @@ public class GroupActivity extends AestheticActivity {
     public void onBackPressed() {
         super.onBackPressed();
         supportFinishAfterTransition();
+    }
+
+    @Override
+    protected void onStop() {
+        map.clear();
+        super.onStop();
     }
 
     private void initializeUI() {

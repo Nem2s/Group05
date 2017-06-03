@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
@@ -38,6 +40,9 @@ public class MemberIncludedAdapter extends RecyclerView.Adapter<PersonSelectedHo
     @Override
     public void onBindViewHolder(PersonSelectedHolder holder, int position) {
         holder.setData(users.get(position), context);
+        if(position!=0) return;
+       final Map<View,String[]> map = new HashMap<>();
+        map.put(holder.switchButton,new String[]{"Partecipants","You can choose who you want to share the expense "});
     }
 
     @Override

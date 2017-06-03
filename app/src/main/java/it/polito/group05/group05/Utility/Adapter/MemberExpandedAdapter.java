@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -15,9 +16,13 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.User_expense;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.MemberIncludedHolder;
 
 /**
@@ -137,6 +142,8 @@ public class MemberExpandedAdapter extends RecyclerView.Adapter<MemberIncludedHo
         holder.costo_person.setText(String.format("%.2f", ue.getCustomValue()));
 
         holder.costo_person.setOnTouchListener(touchListener);
+        if(position!=0) return;
+
 
     }
 
