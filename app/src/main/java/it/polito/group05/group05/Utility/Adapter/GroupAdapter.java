@@ -49,6 +49,7 @@ public class GroupAdapter extends RecyclerView.Adapter {
         this.pb = pb;
         tv_no_groups.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
         iv_no_groups.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+
         retriveGroups();
     }
 

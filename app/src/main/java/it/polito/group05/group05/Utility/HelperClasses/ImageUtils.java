@@ -1,5 +1,6 @@
 package it.polito.group05.group05.Utility.HelperClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,25 +12,34 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.IconItem;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
+import static android.R.attr.colorPrimary;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -161,4 +171,54 @@ public class ImageUtils {
         float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
+
+    public static void showTutorial(final Activity activity, Map<View, String[]> map) { /**Farlo con le Pair **/
+        final Iterator i = map.entrySet().iterator();
+        Map.Entry<View, String[] > e = (Map.Entry<View, String[]>) i.next();
+        new MaterialTapTargetPrompt.Builder(activity)
+                .setTarget(e.getKey())
+                .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
+                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
+                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
+                .setPrimaryText(e.getValue()[0])
+                .setSecondaryText(e.getValue()[1])
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent motionEvent, boolean b) {
+
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+                        if(i.hasNext())
+                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
+                    }
+                })
+                .show();
+    }
+
+    private static void goOn(final Activity activity, final Iterator i, Map.Entry<View, String[]> e) {
+        new MaterialTapTargetPrompt.Builder(activity)
+                .setTarget(e.getKey())
+                .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
+                .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
+                .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
+                .setPrimaryText(e.getValue()[0])
+                .setSecondaryText(e.getValue()[1])
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent motionEvent, boolean b) {
+
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+                        if(i.hasNext())
+                            goOn(activity, i, (Map.Entry<View, String[]>) i.next());
+                    }
+                })
+                .show();
+    }
+
+
 }

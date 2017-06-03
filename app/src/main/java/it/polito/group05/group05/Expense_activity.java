@@ -192,36 +192,6 @@ public class Expense_activity extends AestheticActivity {
             User_expense ue = new User_expense((UserDatabase) Singleton.getInstance().getmCurrentGroup().getMembers().get(s));
             ue.setExpense(expense);
             partecipants.add(ue);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-                        transition.removeTarget(android.R.id.statusBarBackground);
-
-                    }
-
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionPause(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-
-                    }
-                });
-            }
         }
 
 

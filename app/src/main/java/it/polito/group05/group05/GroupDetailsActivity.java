@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -20,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.util.Log;
@@ -69,6 +71,7 @@ public class GroupDetailsActivity extends AestheticActivity {
     private final int COME_FROM_ADD_MEMBER_ACTIVITY = 123;
     private final GroupDatabase currGroup = Singleton.getInstance().getmCurrentGroup();
     ImageView iv_header;
+    SwitchCompat notSwitch;
     CircleImageView cv_back;
     FloatingActionButton fab;
     RecyclerView rv_members;
@@ -91,7 +94,7 @@ public class GroupDetailsActivity extends AestheticActivity {
         setContentView(R.layout.activity_group_details);
 
 
-
+        final Activity activity = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
@@ -129,7 +132,7 @@ public class GroupDetailsActivity extends AestheticActivity {
         iv_header = (ImageView) findViewById(R.id.iv_header_group_image);
         iv_header.setVisibility(View.INVISIBLE);
         cv_back = (CircleImageView) findViewById(R.id.cv_backimage);
-
+        notSwitch = (SwitchCompat)findViewById(R.id.switch_notifications);
         rv_members = (RecyclerView) findViewById(R.id.rv_group_members);
         pb = (ProgressBar) findViewById(R.id.pb_loading_members);
         pb.setVisibility(View.INVISIBLE);
@@ -156,7 +159,19 @@ public class GroupDetailsActivity extends AestheticActivity {
         rv_members.setAdapter(mAdapter);
 
 
+        if(!Singleton.getInstance().isFirstAcces()) {
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Map<View, String[]> map = new LinkedHashMap<>();
+                    map.put(fab, new String[] {"Add Member", "Add your friends to this group simply by clicking on this!"});
+                    map.put(notSwitch, new String[] {"Enable/Disable", "...Notifications! Simply, isn't it?"});
+                    ImageUtils.showTutorial(activity, map);
+                }
+            }, 1500);
 
+        }
     }
 
     private void onStartView(Bundle savedInstanceState) {
