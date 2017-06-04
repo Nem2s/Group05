@@ -302,7 +302,6 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple s
 
 
     private void replaceWithChatFragment() {
-        fab.hide();
         ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         fab.hide();
