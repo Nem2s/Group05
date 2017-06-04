@@ -152,8 +152,9 @@ public class CustomDialogFragment extends DialogFragment {
                             expense.setPayed(map_payed);
                             DB_Manager.getInstance().newhistory(Singleton.getInstance().getmCurrentGroup().getId(), expense);
                             fdb.setValue(expense);
-                            getActivity().finish();
                             dismiss();
+                            getActivity().onBackPressed();
+
                         }
 
             }

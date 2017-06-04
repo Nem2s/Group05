@@ -435,6 +435,12 @@ public class Expense_activity extends AestheticActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        supportFinishAfterTransition();
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
