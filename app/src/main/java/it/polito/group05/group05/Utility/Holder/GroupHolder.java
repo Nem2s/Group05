@@ -123,7 +123,6 @@ public class GroupHolder extends GeneralHolder {
             public void onClick(View view) {
                 Singleton.getInstance().setmCurrentGroup(g);
                 Singleton.getInstance().setIdCurrentGroup(g.getId());
-
                 AnimUtils.startActivityWithAnimation((Activity) context, new Intent(context, GroupDetailsActivity.class), p1);
             }
         });

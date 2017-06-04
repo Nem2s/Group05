@@ -130,7 +130,6 @@ public class GroupAdapter extends RecyclerView.Adapter {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                     }
 
                     @Override
