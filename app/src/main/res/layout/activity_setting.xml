@@ -10,55 +10,38 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="32dp"
+        >
 
-        <TextView
-            android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="NAME:"
-            android:textStyle="bold"
-            android:id="@+id/tv_n"
-            android:layout_margin="10sp"/>
+            android:id="@+id/tl_number"
+            >
+            <android.support.design.widget.TextInputEditText
 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:hint="Tel Number"
+                android:id="@+id/number" />
 
+        </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:id="@+id/ti_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_n">
-        <android.support.design.widget.TextInputEditText
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Name"
-            android:digits="0123456789"
-            android:id="@+id/name"
-            android:layout_below="@+id/profile_image" />
-        />
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_tn">
-        <android.support.design.widget.TextInputEditText
-
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content"
-            android:hint="Tel Number"
-            android:id="@+id/number" />
-
-    </android.support.design.widget.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TEL NUMBER:"
-            android:textStyle="bold"
-            android:layout_below="@+id/ti_name"
-            android:id="@+id/tv_tn"
-            android:layout_margin="10sp"
-
+            android:layout_below="@+id/tl_number">
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:id="@+id/name"
+                android:layout_below="@+id/profile_image" />
             />
+        </android.support.design.widget.TextInputLayout>
+
     </RelativeLayout>
 
 

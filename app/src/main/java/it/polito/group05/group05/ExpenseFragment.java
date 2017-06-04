@@ -1,5 +1,6 @@
 package it.polito.group05.group05;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -100,7 +101,7 @@ public class ExpenseFragment extends Fragment {
         if (id == R.id.group_detail){
             // final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
             startActivity( new Intent(getContext(), GroupDetailsActivity.class));
-            // AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
+             AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), null);
 
         }
         return super.onOptionsItemSelected(item);

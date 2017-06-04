@@ -22,7 +22,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 public class ExpenseCardHolder extends GeneralHolder {
 
     CircleImageView civ;
-    TextView tv,tv_debt;
+    TextView tv,tv_debt,tv_payed;
 
 
     public ExpenseCardHolder(View itemView) {
@@ -30,6 +30,7 @@ public class ExpenseCardHolder extends GeneralHolder {
         civ = (CircleImageView) itemView.findViewById(R.id.expense_member_image);
         tv = (TextView) itemView.findViewById(R.id.expense_member_name);
         tv_debt = (TextView) itemView.findViewById(R.id.expense_member_debt);
+        tv_payed = (TextView) itemView.findViewById(R.id.tv_detail_payed);
 
     }
     public void setData(Object u1,Context c){
@@ -47,6 +48,7 @@ public class ExpenseCardHolder extends GeneralHolder {
                 .into(civ);
         tv.setText(s);
         tv_debt.setText(String.format("%.2f", u.getCustomValue()));
+        tv_payed.setText("payed");
         if (u.getCustomValue() < 0.01) {
             tv_debt.setTextColor(Color.RED);
         } else {

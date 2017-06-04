@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -28,6 +33,8 @@ public class SettingActivity extends SlidingActivity {
     CircleImageView cv;
     TextInputEditText phone;
     TextInputEditText name;
+    Activity activity;
+    Snackbar snack;
 
     private static final int COMING_FROM_BALANCE_ACTIVITY = 123;
     private static int CUSTOM_THEME_OPTION = 0;
@@ -40,7 +47,7 @@ public class SettingActivity extends SlidingActivity {
         Intent intent = ImagePicker.getPickImageIntent(this, "Select Image:");
 
         if (bitmap != null && REQUEST_FROM_NEW_USER == requestCode) {
-            cv.setImageBitmap(bitmap);
+            ((SlidingActivity)activity).setImage(bitmap);
             //currentUser.setProfile_image(bitmap);
             //DB_Manager.getInstance().photoMemoryUpload(1, currentUser.getId(), bitmap);
             String uuid = UUID.randomUUID().toString();
@@ -56,40 +63,33 @@ public class SettingActivity extends SlidingActivity {
     public void init(Bundle bundle) {
 
         this.enableFullscreen();
+        setPrimaryColors(Aesthetic.get().colorPrimary().take(1).blockingFirst(),
+                Aesthetic.get().colorPrimaryDark().take(1).blockingFirst());
         setContent(R.layout.activity_setting);
         cv = (CircleImageView) findViewById(R.id.profile_image);
-        phone = (TextInputEditText) findViewById(R.id.name);
-        name = (TextInputEditText) findViewById(R.id.number);
+        phone = (TextInputEditText) findViewById(R.id.number);
+        name = (TextInputEditText) findViewById(R.id.name);
         phone.setText(Singleton.getInstance().getCurrentUser().getTelNumber());
+       // switchCompat = (SwitchCompat)findViewById(R.id.switch_notifications);
         phone.setEnabled(false);
         name.setEnabled(false);
-        final SlidingActivity o = this;
-        try {
-            Glide.with(this)
-                    .using(new FirebaseImageLoader())
-                    .load(FirebaseStorage.getInstance().getReference("users")
-                            .child(Singleton.getInstance().getCurrentUser().getId())
-                            .child(Singleton.getInstance().getCurrentUser().getiProfile()))
-                    .asBitmap()
-                    .centerCrop()
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            o.setImage(resource);
-                        }
-                    })
-
-            ;
-        } catch (Exception e) {
-
-
-        }
+        activity = this;
+        snack = Snackbar.make(findViewById(R.id.root_layout), "To modify your profile image select Modify!", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Modify", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ImagePicker.pickImage(activity, "Select Image:");
+                        REQUEST_FROM_NEW_USER = ImagePicker.PICK_IMAGE_REQUEST_CODE;
+                        snack.dismiss();
+                    }
+                });
         name.setText(Singleton.getInstance().getCurrentUser().getName());
         final Activity c = this;
-        setFab(R.color.accent, R.drawable.ic_mode_edit, new View.OnClickListener() {
+        setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_mode_edit, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFab(R.color.colorAccent, R.drawable.ic_action_tick_white, new View.OnClickListener() {
+                snack.show();
+                setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_action_tick_white, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (phone.getText().length() == 0 || name.getText().length() == 0) {
@@ -129,6 +129,25 @@ public class SettingActivity extends SlidingActivity {
             }
         });
 
-
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(getApplicationContext())
+                        .using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("users")
+                                .child(Singleton.getInstance().getCurrentUser().getId())
+                                .child(Singleton.getInstance().getCurrentUser().getiProfile()))
+                        .asBitmap()
+                        .fitCenter()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                ((SlidingActivity)activity).setImage(resource);
+                            }
+                        });
+            }
+        });
     }
+
+
 }

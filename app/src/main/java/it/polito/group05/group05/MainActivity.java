@@ -175,7 +175,8 @@ public class MainActivity extends AestheticActivity
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
-        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+         ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -306,7 +307,7 @@ public class MainActivity extends AestheticActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+      //  getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

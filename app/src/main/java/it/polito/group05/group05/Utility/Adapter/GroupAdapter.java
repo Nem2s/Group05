@@ -47,8 +47,11 @@ public class GroupAdapter extends RecyclerView.Adapter {
         this.tv_no_groups = tv_no_groups;
         this.iv_no_groups = iv_no_groups;
         this.pb = pb;
-        tv_no_groups.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+         tv_no_groups.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+         //tv_no_groups.setVisibility(View.VISIBLE );
         iv_no_groups.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+//        iv_no_groups.setVisibility(View.VISIBLE );
+        pb.setVisibility(View.GONE);
 
         retriveGroups();
     }
@@ -66,6 +69,8 @@ public class GroupAdapter extends RecyclerView.Adapter {
         groupList.get(position).getMembers().clear();
         groupList.get(position).setMembers(new HashMap<>(groupMap.get(id).getMembers()));
         ((GroupHolder)holder).setData(groupList.get(position),context);
+        if(position==getItemCount())
+            pb.setVisibility(View.GONE);
     }
 
     @Override
@@ -76,12 +81,12 @@ public class GroupAdapter extends RecyclerView.Adapter {
     public void retriveGroups() {
         FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups")
                 .addChildEventListener(new ChildEventListener() {
-
-
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(!dataSnapshot.exists()) return;
                         final String groupID = dataSnapshot.getKey();
                         if (!groupID.equals("00")) {
+                            pb.setVisibility(View.VISIBLE);
                             if (!((CurrentUser) Singleton.getInstance().getCurrentUser()).getGroups().contains(groupID))
                                 ((CurrentUser) Singleton.getInstance().getCurrentUser()).getGroups().add(groupID);
                             FirebaseDatabase.getInstance().getReference("groups/" + groupID)
