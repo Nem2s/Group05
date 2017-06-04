@@ -110,7 +110,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    GroupAdapter mAdapter;
+    static GroupAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -150,7 +150,11 @@ public class MainActivity extends AestheticActivity
         context.startActivity(i);
     }
 
+    public static void refresh(){
 
+        mAdapter.notifyDataSetChanged();
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +179,8 @@ public class MainActivity extends AestheticActivity
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
-        final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+         ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
+
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -187,8 +192,8 @@ public class MainActivity extends AestheticActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                    startActivity(new Intent(MainActivity.this, NewGroupActivity.class));
+        Intent i =  new Intent(MainActivity.this, NewGroupActivity.class);
+                    startActivity(i);
             }
         });
 
@@ -224,6 +229,7 @@ public class MainActivity extends AestheticActivity
                     map.clear();
                 }
             }
+
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -306,7 +312,7 @@ public class MainActivity extends AestheticActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+      //  getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

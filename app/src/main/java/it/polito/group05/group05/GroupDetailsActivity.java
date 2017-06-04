@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -157,6 +158,16 @@ public class GroupDetailsActivity extends AestheticActivity {
         //users.addAll((Singleton.getInstance().getmCurrentGroup().getMembers().values()));
         mAdapter = new GroupDetailsAdapter(this, users);
         rv_members.setAdapter(mAdapter);
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Map<View, String[]> map = new LinkedHashMap<>();
+                map.put(fab, new String[] {"Add Member", "Add your friends to this group simply by clicking on this!"});
+                map.put(notSwitch, new String[] {"Enable/Disable", "...Notifications! Simply, isn't it?"});
+                ImageUtils.showTutorial(activity, map);
+            }
+        }, 1500);
 
     }
 
@@ -433,7 +444,7 @@ public class GroupDetailsActivity extends AestheticActivity {
 
     private void initializeUI() {
 
-
+        final Context context = this;
         ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .title("Group Informations")
@@ -449,7 +460,7 @@ public class GroupDetailsActivity extends AestheticActivity {
                 getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                     @Override
                     public void onTransitionStart(Transition transition) {
-
+                        ImageUtils.LoadImageGroup(cv_back,context,currGroup);
                     }
 
                     @Override

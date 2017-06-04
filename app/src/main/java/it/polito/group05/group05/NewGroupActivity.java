@@ -309,6 +309,11 @@ public class NewGroupActivity extends AestheticActivity {
         fastInvitedAdapter.withSavedInstanceState(savedInstanceState);
         setupInvited();
 
+            Map<View, String[]> map = new LinkedHashMap<>();
+            map.put(fab,new String[]{"Share - ShareCash!", "Clicking on it you can share this Application with your contacts, try it!"});
+            ImageUtils.showTutorial(this, map);
+
+
 
     }
 

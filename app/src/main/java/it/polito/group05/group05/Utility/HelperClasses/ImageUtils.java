@@ -110,7 +110,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
-                .centerCrop()
+                .fitCenter()
                 .into(cv);
     }
 
@@ -118,6 +118,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+
                 .centerCrop()
                 .into(cv);
     }

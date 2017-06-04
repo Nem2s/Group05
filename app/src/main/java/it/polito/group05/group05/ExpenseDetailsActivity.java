@@ -3,6 +3,7 @@ package it.polito.group05.group05;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -75,8 +76,11 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     ScrollView sv;
     String nomeF, idFile;
     Boolean correct_download;
+     HashMap<String, Double> map;
 
     private long fileSize = 0;
+    private HashMap<String, Object> payed;
+
     @Override
     protected void configureScroller(MultiShrinkScroller scroller) {
         super.configureScroller(scroller);
@@ -89,6 +93,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
 
         b = getIntent().getExtras();
+         map = (HashMap<String, Double>)b.getSerializable("map");
+       payed= (HashMap<String, Object>)b.getSerializable("payed");
         nomeF = b.getString("file");
         idFile= b.getString("id");
 
@@ -190,7 +196,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rv.setItemAnimator(new DefaultItemAnimator());
         tv_price.setText( b.getString("price") + " €");
         tv_expense.setText(b.getString("title"));
-        retriveUsersExpense((HashMap<String, Double>)b.getSerializable("map"));
+        retriveUsersExpense(map,payed);
+       // retriveUsersExpense((HashMap<String, Object>)b.getSerializable("payed"));
     }
 
     @Override
@@ -199,7 +206,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         supportFinishAfterTransition();
     }
 
-    private void retriveUsersExpense(final HashMap<String, Double> map) {
+    private void retriveUsersExpense(final HashMap<String, Double> map,final HashMap<String,Object> payed ) {
         final List<UserDatabase> users = new ArrayList<>();
         final Context context = this;
         final Map<View,String[]> map_tuto = new HashMap<>();
@@ -209,7 +216,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             button_pay.setVisibility(View.VISIBLE);
 
             button_notify.setVisibility(View.GONE);
-            map_tuto.put(button_pay,new String[]{"Pay","Pay your debit and wait for owner conrfimation"});
+            map_tuto.put(button_pay,new String[]{"Pay","Pay your debit and wait for owner confirmation"});
             ImageUtils.showTutorial(this,map_tuto);
             //Boolean b =(Boolean) payed.get(Singleton.getInstance().getCurrentUser().getId());
             //if(!b){
@@ -225,6 +232,22 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             });
 
         } else {
+Boolean b = false;
+            for(String c : payed.keySet()){
+                if(!(payed.get(c) instanceof Boolean)) continue;
+                if(c.equals(Singleton.getInstance().getCurrentUser().getId())) continue;
+                if((Boolean)payed.get(c))
+                    b = true;
+
+            }
+            if(!b) {
+                setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_delete, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DB_Manager.getInstance().updateGroupFlow(map);
+                    }
+                });
+            }
             button_pay.setVisibility(View.GONE);
             button_notify.setVisibility(View.VISIBLE);
             button_notify.setText("Remind to others");
@@ -245,7 +268,7 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                 }
             });
         }
-        final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map);
+        final MemberExpenseAdapter adapter = new MemberExpenseAdapter(users, getApplicationContext(), map,payed);
 
         for (final String s : map.keySet()) {
             FirebaseDatabase.getInstance().getReference("users").child(s).child("userInfo").addListenerForSingleValueEvent(new ValueEventListener() {

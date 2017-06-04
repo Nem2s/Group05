@@ -33,7 +33,6 @@ public class SettingActivity extends SlidingActivity {
     CircleImageView cv;
     TextInputEditText phone;
     TextInputEditText name;
-    SwitchCompat switchCompat;
     Activity activity;
     Snackbar snack;
 
@@ -71,7 +70,7 @@ public class SettingActivity extends SlidingActivity {
         phone = (TextInputEditText) findViewById(R.id.number);
         name = (TextInputEditText) findViewById(R.id.name);
         phone.setText(Singleton.getInstance().getCurrentUser().getTelNumber());
-        switchCompat = (SwitchCompat)findViewById(R.id.switch_notifications);
+       // switchCompat = (SwitchCompat)findViewById(R.id.switch_notifications);
         phone.setEnabled(false);
         name.setEnabled(false);
         activity = this;

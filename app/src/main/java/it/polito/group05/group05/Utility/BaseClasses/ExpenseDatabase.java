@@ -37,8 +37,9 @@ public class ExpenseDatabase implements Namable{
         this.timestamp=edb.timestamp;
         this.expense_img = edb.getExpense_img();
         if(edb.members== null) members = new HashMap<>();
-        if(edb.payed== null) payed = new HashMap<>();
         else  members = edb.members;
+        if(edb.payed== null) payed = new HashMap<>();
+        else payed=edb.payed;
     }
 
 
