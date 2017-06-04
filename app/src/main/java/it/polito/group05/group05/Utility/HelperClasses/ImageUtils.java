@@ -129,6 +129,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+
                 .centerCrop()
                 .placeholder(R.drawable.grey_placeholder)
                 .into(cv);
