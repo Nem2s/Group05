@@ -117,7 +117,13 @@ public class ImageUtils {
                 .into(cv);
     }
 
-    
+    public static void LoadImageGroup(ImageView cv, Context context, GroupDatabase currGroup) {
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+                .centerCrop()
+                .into(cv);
+    }
 
 
     public static List<Integer> getMatColor(String typeColor, Context context, int n) {

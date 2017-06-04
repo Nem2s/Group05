@@ -42,6 +42,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:maxLines="1"
+            android:textStyle="italic"
+            android:alpha="0.6"
             android:text="Debit/credit   ___$"
             android:textSize="16sp" />
     </LinearLayout>

@@ -77,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
         // String eid = (String) getIntent().getStringExtra("expenseId");
         // String message = (String) getIntent().getStringExtra("message");
         Intent i = new Intent(this, MainActivity.class);
+         
         Bundle bundle = getIntent().getExtras();
         if (bundle != null)
             i.putExtras(bundle);
