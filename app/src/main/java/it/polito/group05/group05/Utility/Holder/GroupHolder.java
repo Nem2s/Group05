@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -45,17 +46,16 @@ public class GroupHolder extends GeneralHolder {
     CircleImageView groupProfile;
     TextView name;
     TextView balance;
-    TextView badge;
+
     TextView time;
-    LinearLayout ll;
+    RelativeLayout ll;
 
     public  GroupHolder(View itemView) {
         super(itemView);
-        ll = (LinearLayout)itemView.findViewById(R.id.group_item_sample_ll);
+        ll = (RelativeLayout)itemView.findViewById(R.id.group_item_sample_ll);
         this.groupProfile=(CircleImageView)itemView.findViewById(R.id.iv_group_image);
         this.balance=(TextView)itemView.findViewById(R.id.tv_group_balance);
         this.name=(TextView)itemView.findViewById(R.id.tv_group_name);
-        this.badge=(TextView)itemView.findViewById(R.id.tv_badge_counter);
         this.time=(TextView)itemView.findViewById(R.id.tc_last_message);
 
     }

@@ -398,7 +398,7 @@ public class DB_Manager {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                MainActivity.refresh();
+               // MainActivity.refresh();
 
             }
         });
