@@ -140,6 +140,7 @@
                     android:layout_marginTop="8dp"
                     android:alpha="0.8"
                     android:text="Nomefile"
+                    android:fitsSystemWindows="true"
                     android:textSize="12sp"
                     android:textStyle="italic" />
 

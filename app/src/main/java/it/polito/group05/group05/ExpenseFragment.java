@@ -185,8 +185,8 @@ public class ExpenseFragment extends Fragment {
             }
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
-                if(model==null) return;
-                viewHolder.setData(model,getContext());
+                if(model==null || getActivity()==null ) return;
+                viewHolder.setData(model,getActivity());
                 String s = getActivity().getIntent().getStringExtra("type");
                 if(s!=null){
                     if(s.equals("newExpense")) {
@@ -253,8 +253,8 @@ public class ExpenseFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
-                if (model == null) return;
-                viewHolder.setData(model, getContext());
+                if (model == null || getActivity()==null) return;
+                viewHolder.setData(model, getActivity());
 
             }
         };
