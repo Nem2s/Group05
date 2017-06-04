@@ -150,6 +150,7 @@ public class MainActivity extends AestheticActivity
         context.startActivity(i);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,9 +176,6 @@ public class MainActivity extends AestheticActivity
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
         final ProgressBar pb = (ProgressBar)findViewById(R.id.pb_loading_groups);
-        if(((CurrentUser)Singleton.getInstance().getCurrentUser())!=null)
-            if(((CurrentUser)Singleton.getInstance().getCurrentUser()).getGroups().size()==0)
-                pb.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
         activity = this;
@@ -230,7 +228,6 @@ public class MainActivity extends AestheticActivity
             @Override
             public void onDrawerClosed(View drawerView) {
                 toggle.syncState();
-
             }
 
             @Override
@@ -295,7 +292,7 @@ public class MainActivity extends AestheticActivity
             EventBus.getDefault().unregister(this);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -308,8 +305,8 @@ public class MainActivity extends AestheticActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present
-       // getMenuInflater().inflate(R.menu.main, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -555,7 +552,7 @@ public class MainActivity extends AestheticActivity
 
     public boolean isColorDark(int color){
         double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
-        if(darkness<0.5){
+        if(darkness<0.7){
             return false; // It's a light color
         }else{
             return true; // It's a dark color

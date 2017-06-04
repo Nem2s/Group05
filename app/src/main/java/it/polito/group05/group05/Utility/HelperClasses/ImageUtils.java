@@ -26,7 +26,6 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,8 +49,6 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class ImageUtils {
-    Activity activity;
-    List<Map.Entry<View,String[]>> mapTutorial =new ArrayList<>();
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
         Glide.with(getApplicationContext())

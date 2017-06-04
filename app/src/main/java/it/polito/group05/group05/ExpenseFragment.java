@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,7 @@ import java.util.Map;
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
+import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
@@ -155,7 +157,12 @@ public class ExpenseFragment extends Fragment {
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         rv.setLayoutManager(ll);
         ll.setStackFromEnd(true);
-
+        iv_noexpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().findViewById(R.id.fab).callOnClick();
+            }
+        });
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getIdCurrentGroup());

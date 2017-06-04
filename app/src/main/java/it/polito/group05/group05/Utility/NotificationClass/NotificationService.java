@@ -35,7 +35,6 @@ public class NotificationService extends FirebaseMessagingService {
     int counter = 0;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @Override
 
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -43,11 +42,13 @@ public class NotificationService extends FirebaseMessagingService {
         Map<String, String> map = remoteMessage.getData();
 
         // buildNotification();
-        buildNotification(map);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            buildNotification(map);
+        }
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+
     private void buildNotification(Map<String, String> map) {
         String type = map.get("type");
         int notificationId;

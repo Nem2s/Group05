@@ -3,6 +3,7 @@ package it.polito.group05.group05.Utility.Holder;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.ChatDatabase;
+import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 
 /**
@@ -30,7 +32,8 @@ public class ChatHolder extends GeneralHolder {
     private TextView userName;
     private TextView text;
     private TextView time;
-    private RelativeLayout rl;
+    private LinearLayout ll;
+    private RelativeLayout overlay;
     private CircleImageView imageView;
 
     public ChatHolder(View v) {
@@ -39,42 +42,74 @@ public class ChatHolder extends GeneralHolder {
         this.text = (TextView) v.findViewById(R.id.message_text);
         this.time = (TextView) v.findViewById(R.id.message_time);
         this.imageView = (CircleImageView) v.findViewById(R.id.image_person);
-        this.rl = (RelativeLayout)v.findViewById(R.id.message);
+        this.ll = (LinearLayout)v.findViewById(R.id.message);
+        this.overlay = (RelativeLayout)v.findViewById(R.id.overlay_chat_message);
     }
 
     @Override
     public void setData(Object c, final Context context) {
         if (!(c instanceof ChatDatabase)) return;
-        GradientDrawable bgShape = (GradientDrawable) rl.getBackground();
-        bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
         ChatDatabase cdb = (ChatDatabase) c;
-        userName.setText(cdb.getMessageUser());
-        text.setText(cdb.getMessageText());
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("HH:mm");
-        time.setText(sdf.format(cdb.getMessageTime()));
+        if(cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
+            GradientDrawable bgShape = (GradientDrawable) ll.getBackground();
+            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            GradientDrawable bgoverlay = (GradientDrawable) overlay.getBackground();
+            bgoverlay.setColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+            overlay.setAlpha(0.4f);
+            text.setText(cdb.getMessageText());
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("HH:mm");
+            time.setText(sdf.format(cdb.getMessageTime()));
 
-        FirebaseDatabase.getInstance().getReference("users").child(cdb.getMessageUserId())
-                .child("userInfo")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) return;
-                        UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
-                        Glide.with(context)
-                                .using(new FirebaseImageLoader())
-                                .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
-                                .centerCrop()
-                                .into(imageView);
-                    }
+            FirebaseDatabase.getInstance().getReference("users").child(cdb.getMessageUserId())
+                    .child("userInfo")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) return;
+                            UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                            Glide.with(context)
+                                    .using(new FirebaseImageLoader())
+                                    .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
+                                    .centerCrop()
+                                    .into(imageView);
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
 
+        } else {
+            GradientDrawable bgShape = (GradientDrawable) ll.getBackground();
+            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            text.setText(cdb.getMessageText());
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("HH:mm");
+            time.setText(sdf.format(cdb.getMessageTime()));
+            userName.setText(cdb.getMessageUser());
+            FirebaseDatabase.getInstance().getReference("users").child(cdb.getMessageUserId())
+                    .child("userInfo")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) return;
+                            UserDatabase u = dataSnapshot.getValue(UserDatabase.class);
+                            Glide.with(context)
+                                    .using(new FirebaseImageLoader())
+                                    .load(FirebaseStorage.getInstance().getReference("users").child(u.getId()).child(u.getiProfile()))
+                                    .centerCrop()
+                                    .into(imageView);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+        }
     }
-
-
 }
+
