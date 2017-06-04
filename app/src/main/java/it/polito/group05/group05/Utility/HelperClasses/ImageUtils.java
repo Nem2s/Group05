@@ -21,6 +21,9 @@ import android.widget.ImageView;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -106,12 +109,18 @@ public class ImageUtils {
                 .into(iv);
     }
 
-    public static void LoadImageGroup(CircleImageView cv, Context context, GroupDatabase currGroup) {
+    public static void LoadImageGroup(final CircleImageView cv, Context context, GroupDatabase currGroup) {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
                 .fitCenter()
-                .into(cv);
+                .into(new SimpleTarget<GlideDrawable>() {
+                          @Override
+                          public void onResourceReady(GlideDrawable glideDrawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                              cv.setImageDrawable(glideDrawable);
+                          }
+                      }
+                );
     }
 
     public static void LoadImageGroup(ImageView cv, Context context, GroupDatabase currGroup) {
