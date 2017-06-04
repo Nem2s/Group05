@@ -28,13 +28,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.group05.group05.Utility.BaseClasses.Expense;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.ExpenseHolder;
 
 import static it.polito.group05.group05.Group_Activity.toolbar;
@@ -64,6 +67,7 @@ public class ExpenseFragment extends Fragment {
         MenuItem subMenu = menu.findItem(R.id.sort_action);
         inflater.inflate(R.menu.sort_menu, subMenu.getSubMenu());
         super.onCreateOptionsMenu(menu, inflater);
+
 
     }
 
@@ -181,7 +185,15 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if(model==null) return;
-                viewHolder.setData(model,getActivity().getApplicationContext());
+                viewHolder.setData(model,getContext());
+                String s = getActivity().getIntent().getStringExtra("type");
+                if(s!=null){
+                    if(s.equals("newExpense")) {
+                        if (model.getId().equals(getActivity().getIntent().getStringExtra("expenseId"))){
+                            viewHolder.showExpense(new Expense(model));
+                        getActivity().getIntent().putExtra("type", "");}
+                    }
+                }
 
             }
 

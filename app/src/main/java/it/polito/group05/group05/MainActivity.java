@@ -170,6 +170,8 @@ public class MainActivity extends AestheticActivity
         setContentView(R.layout.activity_main);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
         iv_no_groups = (ImageView)findViewById(R.id.iv_no_groups);
         tv_no_groups = (TextView)findViewById(R.id.tv_no_groups);
         rv = (RecyclerView) findViewById(R.id.groups_rv);
@@ -219,7 +221,11 @@ public class MainActivity extends AestheticActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
+                if(!Singleton.getInstance().isFirstAcces()) {
+                    map.put(cv_user_drawer, new String[]{"Profile Image", "Clicking on it you'll be able to change your profile image"});
+                    ImageUtils.showTutorial(activity, map);
+                    map.clear();
+                }
             }
 
             @Override
@@ -270,9 +276,14 @@ public class MainActivity extends AestheticActivity
                 iv_no_groups.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
-*/        checkBundle();
+*/
         rv.setAdapter(mAdapter);
-
+        checkBundle();
+        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
+            map.put(fab, new String[]{"Floating Action Button", "With this you can create a new group with yout friends!"});
+            ImageUtils.showTutorial(activity, map);
+            map.clear();
+        }
 
 
     }
@@ -326,14 +337,8 @@ public class MainActivity extends AestheticActivity
             item.setChecked(false);
             AnimUtils.startActivityForResultWithAnimation(this, new Intent(this, UserBalanceActivity.class), COMING_FROM_BALANCE_ACTIVITY, p);
         } else if (id == R.id.nav_manage) {
-            Snackbar.make(findViewById(R.id.parent_layout), "To be implemented...", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Ok", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                        }
-                    })
-                    .show();
+            Intent i = new Intent(this, SettingActivity.class);
+            startActivity(i);
             item.setChecked(false);
         } else if (id == R.id.nav_share) {
             Intent intent = new AppInviteInvitation.IntentBuilder("Share")
@@ -512,32 +517,11 @@ public class MainActivity extends AestheticActivity
         PREDEFINED_THEME_OPTION = 0;
     }
 
-    private List<ColorItem> generateThemes() {
-        List<ColorItem> themes = new ArrayList<>();
-        themes.add(new ColorItem(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent), "Blue Wolf (Default)"));
-        themes.add(new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme"));
-        themes.add(new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood"));
-        themes.add(new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece"));
-        themes.add(new ColorItem(Color.parseColor("#fafafa"), Color.parseColor("#64ffda"), "Alien"));
-        themes.add(new ColorItem(Color.parseColor("#37474f"), Color.parseColor("#64ffda"), "Black Alien"));
-        return themes;
-    }
-
-    public boolean isColorDark(int color){
-        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
-        if(darkness<0.7){
-            return false; // It's a light color
-        }else{
-            return true; // It's a dark color
-        }
-    }
-
     private void checkBundle() {
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
-        getIntent().putExtra("groupId","");
         if (groupId != null) {
             if(groupId.equals("")) return;
             FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -556,6 +540,25 @@ public class MainActivity extends AestheticActivity
                 }
             });
 
+        }
+    }
+    private List<ColorItem> generateThemes() {
+        List<ColorItem> themes = new ArrayList<>();
+        themes.add(new ColorItem(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent), "Blue Wolf (Default)"));
+        themes.add(new ColorItem(Color.parseColor("#ffd740"), Color.parseColor("#4a148c"), "Lakers Theme"));
+        themes.add(new ColorItem(Color.parseColor("#607d8b"), Color.parseColor("#ff8f00"), "Robin Hood"));
+        themes.add(new ColorItem(Color.parseColor("#e91e63"), Color.parseColor("#ffd740"), "Cake Piece"));
+        themes.add(new ColorItem(Color.parseColor("#fafafa"), Color.parseColor("#64ffda"), "Alien"));
+        themes.add(new ColorItem(Color.parseColor("#37474f"), Color.parseColor("#64ffda"), "Black Alien"));
+        return themes;
+    }
+
+    public boolean isColorDark(int color){
+        double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
+        if(darkness<0.7){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
         }
     }
 }

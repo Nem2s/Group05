@@ -202,13 +202,15 @@ public class ExpenseDetailsActivity extends SlidingActivity {
     private void retriveUsersExpense(final HashMap<String, Double> map) {
         final List<UserDatabase> users = new ArrayList<>();
         final Context context = this;
+        final Map<View,String[]> map_tuto = new HashMap<>();
 
         if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
             users.add(Singleton.getInstance().getCurrentUser());
             button_pay.setVisibility(View.VISIBLE);
 
             button_notify.setVisibility(View.GONE);
-
+            map_tuto.put(button_pay,new String[]{"Pay","Pay your debit and wait for owner conrfimation"});
+            ImageUtils.showTutorial(this,map_tuto);
             //Boolean b =(Boolean) payed.get(Singleton.getInstance().getCurrentUser().getId());
             //if(!b){
             button_pay.setOnClickListener(new View.OnClickListener() {
@@ -221,16 +223,16 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                     finish();
                 }
             });
-            //}
-            //  else {
-            //    button_pay.setBackgroundColor(getResources().getColor(R.color.grey_600));
-            //  button_pay.setText("Payed");
 
-            //}
         } else {
             button_pay.setVisibility(View.GONE);
             button_notify.setVisibility(View.VISIBLE);
             button_notify.setText("Remind to others");
+
+
+            map_tuto.put(button_notify,new String[]{"Reminder","Send a reminder to those who did not pay you"});
+            ImageUtils.showTutorial(this,map_tuto);
+
             button_notify.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

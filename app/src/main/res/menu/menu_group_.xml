@@ -22,6 +22,7 @@
         android:orderInCategory="100"
         android:title="Leave the group"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/changeBackground"
         android:orderInCategory="100"

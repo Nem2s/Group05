@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -38,6 +40,8 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
@@ -45,6 +49,7 @@ import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.HelperClasses.AnimUtils;
+import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
@@ -54,6 +59,7 @@ public class GroupActivity extends AestheticActivity {
 
 
     FragmentManager mFragmentManager;
+    Map<View, String[]> map = new LinkedHashMap<View, String[]>();
     BottomNavigationView bottomView;
     FloatingActionButton fab;
     NestedScrollView mNestedScrollView;
@@ -93,6 +99,7 @@ public class GroupActivity extends AestheticActivity {
 
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             bottomView = (BottomNavigationView) findViewById(R.id.navigation);
+
             bottomView.setSelectedItemId(R.id.navigation_expenses);
             fab = (FloatingActionButton) findViewById(R.id.fab);
             cv_group = (CircleImageView) findViewById(R.id.cv_groupImage);
@@ -123,6 +130,17 @@ public class GroupActivity extends AestheticActivity {
         setSupportActionBar(mToolbar);
 
 
+        map.put(fab,new String[]{"Create an expense","Tapping the button you can start to create the expense"});
+
+
+map.put(findViewById(R.id.navigation_expenses),new String[]{"Expense", "Here you can find all expenses made by you or your friend"});
+
+map.put(findViewById(R.id.navigation_chat),new String[]{"Chat","Talk with your friends"});
+
+map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple section dedicated that summarize the history of the group"});
+        ImageUtils.showTutorial(this,map);
+
+
         bottomView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -148,12 +166,19 @@ public class GroupActivity extends AestheticActivity {
                 return true;
             }
         });
+        checkBundle();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         supportFinishAfterTransition();
+    }
+
+    @Override
+    protected void onStop() {
+        map.clear();
+        super.onStop();
     }
 
     private void initializeUI() {
@@ -277,6 +302,7 @@ public class GroupActivity extends AestheticActivity {
 
 
     private void replaceWithChatFragment() {
+        fab.hide();
         ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         fab.hide();
@@ -378,8 +404,60 @@ public class GroupActivity extends AestheticActivity {
         return 0;
     }
 
-    private void replaceWithDetailsFragment() {
 
+
+    private void checkBundle() {
+
+        String s = getIntent().getStringExtra("type");
+        if (s != null) {
+            if (s.equals("rememberPaymentToOne") || s.equals("rememberPayment")) {
+                getIntent().putExtra("type", "");
+                return;
+            }
+
+            if (s.equals("newGroup")) {
+                final Pair<View, String> p1 = new Pair<View, String>((View) tv_groupname, getResources().getString(R.string.transition_group_image));
+                AnimUtils.startActivityWithAnimation((Activity) this, new Intent(this, GroupDetailsActivity.class), p1);
+                getIntent().putExtra("type", "");
+
+
+            }
+            if (s.equals("newMessage")) {
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.fragment_container, ChatFragment.newInstance());
+                tx.commit();
+                getIntent().putExtra("type", "");
+
+            }
+            if (s.equals("paymentRequest")) {
+                final String eid = getIntent().getStringExtra("expenseId");
+                final String uid = getIntent().getStringExtra("requestFromId");
+                final String gid = getIntent().getStringExtra("groupId");
+                final String debit = getIntent().getStringExtra("expenseDebit");
+                final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
+                AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
+                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payDone(gid, eid, uid, (-1.00) * dd, Singleton.getInstance().getCurrentUser().getId());
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DB_Manager.getInstance().payUnDone(gid, eid, uid);
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                getIntent().putExtra("type", "");
+            }
+
+        }
 
     }
+
+
 }

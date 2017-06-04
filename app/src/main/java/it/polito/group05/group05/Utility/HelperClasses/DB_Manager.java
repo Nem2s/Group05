@@ -636,10 +636,10 @@ public class DB_Manager {
     }
 
 
-    public void payDone(String gid, String eid, String id, double debit) {
+    public void payDone(String gid, String eid, String id, double debit, String myId) {
         payDone(gid, eid, id);
         updateGroupFlow(gid, id, debit);
-        updateGroupFlow(gid, Singleton.getInstance().getCurrentUser().getId(), (-1.00) * debit);
+        updateGroupFlow(gid, myId, (-1.00) * debit);
 
 
     }

@@ -32,33 +32,39 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_main"
+
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Expense_activity"
             android:label="@string/title_activity_main"
+
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".NewGroupActivity"
             android:label="New Group Activity"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
              />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".SignUpActivity"
             android:label="@string/app_name"
+
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -70,6 +76,7 @@
         <activity
             android:name=".UserBalanceActivity"
             android:label="UserBalanceActivity"
+
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -79,8 +86,8 @@
         <activity
             android:name=".ExpenseDetailsActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light"></activity>
+
+            android:theme="@style/Theme.Sliding.Light" />
 
         <service android:name=".Utility.NotificationClass.NotificationService">
             <intent-filter>
@@ -91,6 +98,7 @@
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
+
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
@@ -102,6 +110,7 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
+
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -110,9 +119,9 @@
         </activity>
 
         <meta-data xmlns:tools="http://schemas.android.com/tools"
-            tools:replace="android:value"
             android:name="io.fabric.ApiKey"
-            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161" />
+            android:value="5381bde621a76dca9bd52f6b6ee9db1dae4c0161"
+            tools:replace="android:value" />
 
         <receiver
             android:name=".Utility.NotificationClass.MyReceiver"
@@ -129,6 +138,11 @@
             android:exported="true" />
 
 
+        <activity
+            android:name=".SettingActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light" />
     </application>
 
 </manifest>

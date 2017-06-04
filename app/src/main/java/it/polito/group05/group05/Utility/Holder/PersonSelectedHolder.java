@@ -27,7 +27,7 @@ import it.polito.group05.group05.Utility.BaseClasses.User_expense;
 public class PersonSelectedHolder extends GeneralHolder {
     CircleImageView img_profile;
     TextView name;
-    SwitchCompat switchButton;
+    public SwitchCompat switchButton;
     Context context;
 
     public PersonSelectedHolder(View itemView) {

@@ -156,22 +156,19 @@ public class ExpenseHolder extends GeneralHolder{
     rv.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
         rv.setVisibility(visibility);
 }*/
-    private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
 
-        cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(context, ExpenseDetailsActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Bundle extras = new Bundle();
-                extras.putSerializable("map", (Serializable) expense.getMembers());
-                extras.putString("title", expense.getName());
-                extras.putString("id", expense.getId());
-                extras.putString("owner", expense.getOwner());
-                extras.putString("price", expense.getPrice().toString());
-                extras.putLong("timestamp", expense.getTimestamp());
-                extras.putString("file", expense.getFile());
-                extras.putString("img", expense.getExpense_img());
+    public void showExpense(Expense expense){
+        Intent i = new Intent(context, ExpenseDetailsActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle extras = new Bundle();
+        extras.putSerializable("map", (Serializable) expense.getMembers());
+        extras.putString("title", expense.getName());
+        extras.putString("id", expense.getId());
+        extras.putString("owner", expense.getOwner());
+        extras.putString("price", expense.getPrice().toString());
+        extras.putLong("timestamp", expense.getTimestamp());
+        extras.putString("file", expense.getFile());
+        extras.putString("img", expense.getExpense_img());
          /*       if(expense.getFile()!= null){
                     extras.putString("file", expense.getFile());
                     if(expense.getFile().equals("fail")){
@@ -180,20 +177,34 @@ public class ExpenseHolder extends GeneralHolder{
                     else extras.putBoolean("correct_download", true);
                 }
            */
-                int location[] = new int[2];
-                cv.getLocationInWindow(location);
-                LEFT_OFFSET = location[0];
-                TOP_OFFSET = location[1];
-                WIDTH = cv.getWidth();
-                HEIGHT = cv.getHeight();
-                extras.putInt("left_offset", LEFT_OFFSET);
-                extras.putString("expenseId", expense.getId());
-                extras.putInt("top_offset", TOP_OFFSET);
-                extras.putInt("width", WIDTH);
-                extras.putInt("height", HEIGHT);
-                extras.putSerializable("payed", (Serializable) expense.getPayed());
-                i.putExtras(extras);
-                context.startActivity(i);
+        int location[] = new int[2];
+        cv.getLocationInWindow(location);
+        LEFT_OFFSET = location[0];
+        TOP_OFFSET = location[1];
+        WIDTH = cv.getWidth();
+        HEIGHT = cv.getHeight();
+        extras.putInt("left_offset", LEFT_OFFSET);
+        extras.putString("expenseId", expense.getId());
+        extras.putInt("top_offset", TOP_OFFSET);
+        extras.putInt("width", WIDTH);
+        extras.putInt("height", HEIGHT);
+        extras.putSerializable("payed", (Serializable) expense.getPayed());
+        i.putExtras(extras);
+        context.startActivity(i);
+
+
+
+    }
+    private Expense creatExpense(ExpenseDatabase ed){
+
+      return null;
+    }
+    private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
+
+        cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               showExpense(expense);
 
             }
         });
