@@ -344,11 +344,24 @@ public class MainActivity extends AestheticActivity
             startActivity(i);
             item.setChecked(false);
         } else if (id == R.id.nav_share) {
-            Intent intent = new AppInviteInvitation.IntentBuilder("Share")
+
+            try {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                String sAux = "\nLet's try out Share Cash! It's awesome!\n\n";
+                sAux = sAux + "https://h5uqp.app.goo.gl/ZjWo \n\n";
+                i.putExtra(Intent.EXTRA_TEXT, sAux);
+                startActivity(Intent.createChooser(i, "choose one"));
+                item.setChecked(false);
+            } catch(Exception e) {
+                //e.toString();
+            }
+           /* Intent intent = new AppInviteInvitation.IntentBuilder("Share")
                     .setMessage("Let's try out Share Cash! It's awesome!")
                     .build();
-            startActivityForResult(intent, 1);
-            item.setChecked(false);
+            startActivityForResult(intent, 1);*/
+
         } else if (id == R.id.nav_logout) {
             AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

@@ -98,7 +98,7 @@ public class MemberContactItem extends AbstractItem<MemberContactItem, MemberCon
 
 
     @Override
-    public void bindView(ViewHolder holder, List<Object> payloads) {
+    public void bindView(final ViewHolder holder, List<Object> payloads) {
         super.bindView(holder, payloads);
         final Context context = holder.itemView.getContext();
         holder.name.setText(name);
@@ -107,6 +107,17 @@ public class MemberContactItem extends AbstractItem<MemberContactItem, MemberCon
             holder.img_profile.setImageURI(Uri.parse(imgUri));
         else
             holder.img_profile.setImageDrawable(context.getResources().getDrawable(R.drawable.user_placeholder));
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String phoneNumber = holder.number.getText().toString();
+                String smsBody =  "Let's try out Share Cash! It's awesome!\n\nhttps://h5uqp.app.goo.gl/ZjWo";
+                Uri uri = Uri.parse("smsto:" + phoneNumber);
+                Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
+                smsIntent.putExtra("sms_body", smsBody);
+                context.startActivity(smsIntent);
+            }
+        });
 
     }
 

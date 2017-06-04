@@ -218,6 +218,7 @@ public class ImageUtils {
         new MaterialTapTargetPrompt.Builder(activity)
                 .setTarget(e.getKey())
                 .setBackgroundColour(Aesthetic.get().colorAccent().take(1).blockingFirst())
+                .setFocalColour(Aesthetic.get().colorWindowBackground().take(1).blockingFirst())
                 .setPrimaryTextColour(Aesthetic.get().textColorPrimary().take(1).blockingFirst())
                 .setSecondaryTextColour(Aesthetic.get().textColorSecondary().take(1).blockingFirst())
                 .setPrimaryText(e.getValue()[0])
