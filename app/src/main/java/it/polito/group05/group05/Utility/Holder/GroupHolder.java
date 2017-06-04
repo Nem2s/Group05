@@ -77,20 +77,23 @@ public class GroupHolder extends GeneralHolder {
     String s = String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString()));
 
         Double x = Double.valueOf(s.replace(",", "."));
+        String s1 = "Break even";
         if(x >0.001) {
             balance.setTextColor(Color.GREEN);
             x=Math.abs(x);
-            balance.setText("You have to receive € " + x);
+            s1=String.format("%.2f",x);
+            balance.setText("You have to receive € " + s);
 
         }
         else if(x <-0.001){
             x=Math.abs(x);
-            balance.setText("You have to pay € " + x);
+            s1 = String.format("%.2f",x);
+            balance.setText("You have to pay € " + s);
             balance.setTextColor(Color.RED);
         }
         else{
             balance.setTextColor(context.getResources().getColor(R.color.colorTextPrimary));
-            balance.setText("Break even");
+            balance.setText("Debits free");
 
         }
 

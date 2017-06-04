@@ -75,7 +75,7 @@ public class ImageUtils {
 
     public static void LoadExpenseImage(Expense expense, Context context, ImageView iv) {
         if(expense.getExpense_img() == null) {
-            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.shopping_cart));
+            iv.setImageResource(R.drawable.shopping_cart);
         } else
             Glide.with(context)
                     .using(new AssetUriLoader(context))
@@ -178,8 +178,16 @@ public class ImageUtils {
     public static void showTutorial(final Activity activity, final Map<View, String[]> map) { /**Farlo con le Pair **/
         final Map<View, String[]> map_tmp = checkMap(activity ,map);
         final Iterator i = map_tmp.entrySet().iterator();
-        if(i.hasNext())
-        goOn(activity,i);
+        if(i.hasNext()) {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            goOn(activity, i);
+        }
+
+
     }
 
     private  static Map<View, String[]> checkMap(Activity a,Map<View, String[]> map) {
@@ -201,6 +209,7 @@ public class ImageUtils {
     }
 
     private static void goOn(final Activity activity, final Iterator i) {
+
 
         if(!i.hasNext()) return;
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.tutorial),Context.MODE_PRIVATE);

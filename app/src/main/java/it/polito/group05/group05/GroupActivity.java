@@ -147,7 +147,7 @@ map.put(findViewById(R.id.navigation_expenses),new String[]{"Expense", "Here you
 
 map.put(findViewById(R.id.navigation_chat),new String[]{"Chat","Talk with your friends"});
 
-map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple section dedicated that summarize the history of the group"});
+map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple dedicated section that summarize the history of the group"});
         ImageUtils.showTutorial(this,map);
 
 
@@ -445,7 +445,7 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple s
                 final String debit = getIntent().getStringExtra("expenseDebit");
                 final Double dd = Double.parseDouble(getIntent().getStringExtra("expenseDebit").substring(1));
                 AlertDialog d = new AlertDialog.Builder(this).setTitle("Confirm the Payment")
-                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + "by " + getIntent().getStringExtra("requestFrom") + " ?")
+                        .setMessage("Have you received € " + String.format("%.2f", dd) + " for " + getIntent().getStringExtra("expenseName") + " by " + getIntent().getStringExtra("requestFrom") + " ?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

@@ -311,6 +311,7 @@ public class NewGroupActivity extends AestheticActivity {
 
             Map<View, String[]> map = new LinkedHashMap<>();
             map.put(fab,new String[]{"Share - ShareCash!", "Clicking on it you can share this Application with your contacts, try it!"});
+            map.put(iv_new_group,new String[]{"Change group image", "Clicking on it you can choose a group profile image!"});
             ImageUtils.showTutorial(this, map);
 
 

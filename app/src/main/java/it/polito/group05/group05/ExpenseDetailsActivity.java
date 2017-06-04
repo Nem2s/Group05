@@ -194,7 +194,8 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         LinearLayoutManager ll = new LinearLayoutManager(this);
         rv.setLayoutManager(ll);
         rv.setItemAnimator(new DefaultItemAnimator());
-        tv_price.setText( b.getString("price") + " €");
+        Double d =  Double.parseDouble(b.getString("price"));
+        tv_price.setText(String.format("%.2f €", d));
         tv_expense.setText(b.getString("title"));
         retriveUsersExpense(map,payed);
        // retriveUsersExpense((HashMap<String, Object>)b.getSerializable("payed"));
@@ -244,7 +245,10 @@ Boolean b = false;
                 setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_delete, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                       FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getmCurrentGroup().getId()).child(getIntent().getStringExtra("id")).removeValue();
+                       FirebaseDatabase.getInstance().getReference("history").child(Singleton.getInstance().getmCurrentGroup().getId()).child(getIntent().getStringExtra("id")).removeValue();
                         DB_Manager.getInstance().updateGroupFlow(map);
+                        finish();
                     }
                 });
             }

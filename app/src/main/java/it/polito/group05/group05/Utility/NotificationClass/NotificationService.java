@@ -41,10 +41,8 @@ public class NotificationService extends FirebaseMessagingService {
 
         Map<String, String> map = remoteMessage.getData();
 
-        // buildNotification();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+
             buildNotification(map);
-        }
 
     }
 
