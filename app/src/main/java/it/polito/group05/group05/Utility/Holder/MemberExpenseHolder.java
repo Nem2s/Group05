@@ -19,7 +19,7 @@ import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 public class MemberExpenseHolder extends GeneralHolder {
 
     CircleImageView cv;
-    TextView name;
+    TextView name,payed;
     TextView price;
     UserDatabase user;
     Context context;
@@ -29,6 +29,7 @@ public class MemberExpenseHolder extends GeneralHolder {
         this.cv = (CircleImageView) itemView.findViewById(R.id.cv_image);
         this.name = (TextView) itemView.findViewById(R.id.tv_name);
         this.price = (TextView) itemView.findViewById(R.id.tv_price);
+        this.payed = (TextView) itemView.findViewById(R.id.tv_detail_payed);
 
     }
 
@@ -38,16 +39,21 @@ public class MemberExpenseHolder extends GeneralHolder {
     }
 
 
-    public void setData(Object c, Context context, Map<String, Double> e) {
+    public void setData(Object c, Context context, Map<String, Double> e,Map<String,Object> payed) {
         user = (UserDatabase) c;
         this.context = context;
         ImageUtils.LoadUserImageProfile(cv, context, user);
+
         if (user.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
             name.setText("You");
         } else
             name.setText(user.getName());
         double d = Math.abs(e.get(user.getId()));
         this.price.setText(String.format("%.2f", d) + " €");
+        if(payed.get(user.getId()) instanceof Boolean) {
+            Boolean b =(Boolean) payed.get(user.getId());
+            this.payed.setText((b)?"(PAYED)":"(TO PAY)");
+        }
 
     }
 }

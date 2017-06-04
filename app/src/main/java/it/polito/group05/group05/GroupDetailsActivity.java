@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -443,7 +444,7 @@ public class GroupDetailsActivity extends AestheticActivity {
 
     private void initializeUI() {
 
-
+        final Context context = this;
         ImageUtils.LoadImageGroup(iv_header, getApplicationContext(), currGroup);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                 .title("Group Informations")
@@ -459,7 +460,7 @@ public class GroupDetailsActivity extends AestheticActivity {
                 getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
                     @Override
                     public void onTransitionStart(Transition transition) {
-
+                        ImageUtils.LoadImageGroup(cv_back,context,currGroup);
                     }
 
                     @Override

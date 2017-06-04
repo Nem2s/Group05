@@ -65,7 +65,7 @@ public class GroupActivity extends AestheticActivity {
     NestedScrollView mNestedScrollView;
     Toolbar mToolbar;
     GroupDatabase currentGroup = Singleton.getInstance().getmCurrentGroup();
-    CircleImageView cv_group;
+    static CircleImageView cv_group;
     TextView tv_groupname;
     TextView tv_members;
 
@@ -128,6 +128,16 @@ public class GroupActivity extends AestheticActivity {
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         setSupportActionBar(mToolbar);
+       final Activity a = this;
+        mToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Pair<View, String> p1 = new Pair<View, String>((View) GroupActivity.cv_group, a.getResources().getString(R.string.transition_group_image));
+
+                AnimUtils.startActivityWithAnimation((Activity) a, new Intent(a, GroupDetailsActivity.class), p1);
+
+            }
+        });
 
 
         map.put(fab,new String[]{"Create an expense","Tapping the button you can start to create the expense"});

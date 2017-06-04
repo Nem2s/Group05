@@ -99,9 +99,9 @@ public class ExpenseFragment extends Fragment {
             DB_Manager.getInstance().leaveGroup(Singleton.getInstance().getCurrentUser(),getContext());
         }
         if (id == R.id.group_detail){
-            // final Pair<View, String> p1 = new Pair<View, String>((View) groupProfile, context.getResources().getString(R.string.transition_group_image));
-            startActivity( new Intent(getContext(), GroupDetailsActivity.class));
-             AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), null);
+             final Pair<View, String> p1 = new Pair<View, String>((View) GroupActivity.cv_group, getActivity().getResources().getString(R.string.transition_group_image));
+            //startActivity( new Intent(getContext(), GroupDetailsActivity.class));
+             AnimUtils.startActivityWithAnimation((Activity) getActivity(), new Intent(getContext(), GroupDetailsActivity.class), p1);
 
         }
         return super.onOptionsItemSelected(item);

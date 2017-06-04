@@ -110,7 +110,7 @@ public class MainActivity extends AestheticActivity
     Context context;
     ImageView iv_no_groups;
     TextView tv_no_groups;
-    GroupAdapter mAdapter;
+    static GroupAdapter mAdapter;
     RecyclerView rv;
     ImageView iv_nav_header;
     int colors[] = new int[2];
@@ -150,7 +150,11 @@ public class MainActivity extends AestheticActivity
         context.startActivity(i);
     }
 
+    public static void refresh(){
 
+        mAdapter.notifyDataSetChanged();
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,8 +192,8 @@ public class MainActivity extends AestheticActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                    startActivity(new Intent(MainActivity.this, NewGroupActivity.class));
+        Intent i =  new Intent(MainActivity.this, NewGroupActivity.class);
+                    startActivity(i);
             }
         });
 
@@ -225,6 +229,7 @@ public class MainActivity extends AestheticActivity
                     map.clear();
                 }
             }
+
 
             @Override
             public void onDrawerClosed(View drawerView) {

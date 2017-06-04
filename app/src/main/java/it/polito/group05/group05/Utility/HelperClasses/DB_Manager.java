@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import it.polito.group05.group05.MainActivity;
 import it.polito.group05.group05.R;
 import it.polito.group05.group05.Utility.BaseClasses.CurrentUser;
 import it.polito.group05.group05.Utility.BaseClasses.ExpenseDatabase;
@@ -396,8 +398,8 @@ public class DB_Manager {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                MainActivity.refresh();
+
             }
         });
 
@@ -657,6 +659,7 @@ public class DB_Manager {
 
     public void reminderToAll(String gid, String expenseId, String s) {
         FirebaseDatabase.getInstance().getReference("history").child(gid).child(expenseId).child("notifyToAll").child(s).setValue(true);
+
     }
 
     public void reminderTo(String gid, String s, String uid, Double d) {
@@ -679,13 +682,15 @@ public class DB_Manager {
                                 value += e.getMembers().get(user.getId());
                             }
                         }
+                        String h = String.format("%.2f",value);
                         if (n > 0 && value != 0) {
+
                             builder =
                                     new MaterialDialog.Builder(context)
                                             .title("Error")
                                             .content("You cannot leave the group.\n" +
                                                     "You have " + n + " pending " + (n > 1 ? "Expenses " : "Expense ") +
-                                                    "for a total of " + (value < 0 ? -value + " €'s debit" : value + " €'s credit"))
+                                                    "for a total of " + (value < 0 ? h.substring(1) + " €'s debit" : h + " €'s credit"))
                                             .negativeText("Cancel")
                                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                                 @Override

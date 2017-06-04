@@ -85,8 +85,10 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 continue;
                             if (expense.getMembers().containsKey(Singleton.getInstance().getCurrentUser().getId())) {
                                 if (expense.getOwner().equals(Singleton.getInstance().getCurrentUser().getId()) &&
-                                        expense.getMembers().containsKey(user.getId()))
-                                    value -= expense.getMembers().get(user.getId());
+                                        expense.getMembers().containsKey(user.getId())) {
+                                    if(!(boolean) expense.getPayed().get(user.getId()))
+                                        value -= expense.getMembers().get(user.getId());
+                                }
                                 else if (user.getId().equals(expense.getOwner()) &&
                                         !(boolean)expense.getPayed().get(Singleton.getInstance().getCurrentUser().getId()))
                                     value += expense.getMembers().get(Singleton.getInstance().getCurrentUser().getId());
@@ -104,7 +106,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
                                 button_notify.setVisibility(View.GONE);
 
                             } else {
-                                tv_userBalance.setText("Already Payed!");
+                                tv_userBalance.setText("Break even!");
                                 button_pay.setVisibility(View.GONE);
                                 button_notify.setVisibility(View.GONE);
                             }
@@ -119,7 +121,7 @@ public class MemberGroupDetailsHolder extends GeneralHolder {
             @Override
             public void onClick(View v) {
                 try {
-                    Double d = Double.parseDouble(tv_userBalance.getText().toString());
+                    Double d = Math.abs(value);
                     String myId = Singleton.getInstance().getCurrentUser().getId();
                     DB_Manager.getInstance().reminderTo(Singleton.getInstance().getmCurrentGroup().getId(), myId, user.getId(), d);
                 } catch (Exception c) {

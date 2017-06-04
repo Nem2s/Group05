@@ -162,6 +162,7 @@ public class ExpenseHolder extends GeneralHolder{
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle extras = new Bundle();
         extras.putSerializable("map", (Serializable) expense.getMembers());
+        extras.putSerializable("payed", (Serializable) expense.getPayed());
         extras.putString("title", expense.getName());
         extras.putString("id", expense.getId());
         extras.putString("owner", expense.getOwner());
