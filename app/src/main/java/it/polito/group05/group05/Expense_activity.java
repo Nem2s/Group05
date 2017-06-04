@@ -350,7 +350,7 @@ public class Expense_activity extends AestheticActivity {
         });
 
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         fastItemAdapter.add(retriveIcons());
         fastItemAdapter.setHasStableIds(true);
         final MaterialDialog dialog = new MaterialDialog.Builder(context)

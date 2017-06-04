@@ -87,7 +87,6 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         // scroller.setScroll(MultiShrinkScroller.FOCUS_DOWN);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void init(Bundle bundle) {
 
