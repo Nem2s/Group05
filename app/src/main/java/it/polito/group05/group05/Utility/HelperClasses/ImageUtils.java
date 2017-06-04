@@ -9,6 +9,8 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -28,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import com.google.firebase.storage.FirebaseStorage;
+import com.klinker.android.sliding.SlidingActivity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -110,19 +113,26 @@ public class ImageUtils {
                 .into(iv);
     }
 
-    public static void LoadImageGroup(final CircleImageView cv, Context context, GroupDatabase currGroup) {
-        Glide.with(context)
-                .using(new FirebaseImageLoader())
-                .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
-                .placeholder(R.drawable.grey_placeholder)
-                .fitCenter()
-                .into(new SimpleTarget<GlideDrawable>() {
-                          @Override
-                          public void onResourceReady(GlideDrawable glideDrawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                              cv.setImageDrawable(glideDrawable);
-                          }
-                      }
-                );
+    public static void LoadImageGroup(final CircleImageView cv, final Context context, final GroupDatabase currGroup) {
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(getApplicationContext())
+                        .using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+
+                        .asBitmap()
+                        .fitCenter()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                                cv.setImageBitmap(resource);
+                            }
+                        });
+            }
+        });
     }
 
     public static void LoadImageGroup(ImageView cv, Context context, GroupDatabase currGroup) {
