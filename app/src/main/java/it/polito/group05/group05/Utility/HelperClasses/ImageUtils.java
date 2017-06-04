@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -23,12 +24,13 @@ import android.widget.ImageView;
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.klinker.android.sliding.SlidingActivity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -56,7 +58,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class ImageUtils {
 
     public static void LoadUserImageProfile(CircleImageView cv, Context context, UserDatabase user) {
-        Glide.with(context.getApplicationContext())
+        Glide.with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
                         .child(user.getId())
@@ -68,7 +70,7 @@ public class ImageUtils {
 
     public static void LoadMyImageProfile(CircleImageView cv, Context context) {
         UserDatabase user = Singleton.getInstance().getCurrentUser();
-        Glide.with(context.getApplicationContext())
+        Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
                         .child(user.getId())
@@ -82,7 +84,7 @@ public class ImageUtils {
         if(expense.getExpense_img() == null) {
             iv.setImageResource(R.drawable.shopping_cart);
         } else
-            Glide.with(context.getApplicationContext())
+            Glide.with(context)
                     .using(new AssetUriLoader(context))
                     .load(Uri.parse(expense.getExpense_img()))
                     .into(iv);
@@ -92,7 +94,7 @@ public class ImageUtils {
         if(s == null) {
             iv.setImageDrawable(context.getResources().getDrawable(R.drawable.shopping_cart));
         } else
-            Glide.with(context.getApplicationContext())
+            Glide.with(context)
                     .using(new AssetUriLoader(context))
                     .load(Uri.parse(s))
                     .into(iv);
@@ -100,7 +102,7 @@ public class ImageUtils {
 
     public static void LoadMyImageProfile(ImageView iv, Context context) {
         UserDatabase user = Singleton.getInstance().getCurrentUser();
-        Glide.with(context.getApplicationContext())
+        Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("users")
                         .child(user.getId())
@@ -111,21 +113,33 @@ public class ImageUtils {
                 .into(iv);
     }
 
-    public static void LoadImageGroup(CircleImageView cv, Context context, GroupDatabase currGroup) {
-        Glide.with(context.getApplicationContext())
-                .using(new FirebaseImageLoader())
-                .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
-                .asBitmap()
-                .placeholder(R.drawable.grey_placeholder)
-                .fitCenter()
-                .into(cv);
+    public static void LoadImageGroup(final CircleImageView cv, final Context context, final GroupDatabase currGroup) {
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(getApplicationContext())
+                        .using(new FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+
+                        .asBitmap()
+                        .fitCenter()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                                cv.setImageBitmap(resource);
+                            }
+                        });
+            }
+        });
     }
 
     public static void LoadImageGroup(ImageView cv, Context context, GroupDatabase currGroup) {
-        Glide.with(context.getApplicationContext())
+        Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
-                .asBitmap()
+
                 .centerCrop()
                 .placeholder(R.drawable.grey_placeholder)
                 .into(cv);
