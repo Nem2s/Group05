@@ -30,38 +30,38 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group_Activity"
             android:label="@string/title_activity_main"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Expense_activity"
             android:label="@string/title_activity_main"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".NewGroupActivity"
             android:label="New Group Activity"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
              />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".SignUpActivity"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -73,7 +73,7 @@
         <activity
             android:name=".UserBalanceActivity"
             android:label="UserBalanceActivity"
-            android:launchMode="singleInstance"
+
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -83,8 +83,7 @@
         <activity
             android:name=".ExpenseDetailsActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            android:taskAffinity=""
+
             android:theme="@style/Theme.Sliding.Light" />
 
         <service android:name=".Utility.NotificationClass.NotificationService">
@@ -96,7 +95,7 @@
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
-            android:launchMode="singleInstance"
+
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -107,7 +106,7 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
-            android:launchMode="singleInstance"
+
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

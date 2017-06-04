@@ -150,7 +150,6 @@ public class MainActivity extends AestheticActivity
         context.startActivity(i);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -523,7 +522,6 @@ public class MainActivity extends AestheticActivity
             EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         String groupId = getIntent().getStringExtra("groupId");
-        getIntent().putExtra("groupId","");
         if (groupId != null) {
             if(groupId.equals("")) return;
             FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {

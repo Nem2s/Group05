@@ -178,13 +178,14 @@ public class ExpenseFragment extends Fragment {
             @Override
             protected void populateViewHolder(ExpenseHolder viewHolder, ExpenseDatabase model, int position) {
                 if(model==null) return;
-                viewHolder.setData(model,getActivity().getApplicationContext());
+                viewHolder.setData(model,getContext());
                 String s = getActivity().getIntent().getStringExtra("type");
                 if(s!=null){
-                    if(s.equals("newExpense"))
-                        viewHolder.showExpense(new Expense(model));
-                    if(position!=0) return;
-
+                    if(s.equals("newExpense")) {
+                        if (model.getId().equals(getActivity().getIntent().getStringExtra("expenseId"))){
+                            viewHolder.showExpense(new Expense(model));
+                        getActivity().getIntent().putExtra("type", "");}
+                    }
                 }
 
             }

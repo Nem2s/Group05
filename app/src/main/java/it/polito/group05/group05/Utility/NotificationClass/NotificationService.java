@@ -129,7 +129,7 @@ public class NotificationService extends FirebaseMessagingService {
 
                 break;
             case "rememberPaymentToOne":
-                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("debit"))) + " for to be balanced";
+                body = "reminds you to pay € " + String.format("%.2f", Double.parseDouble(map.get("debit"))) + " to be balanced";
                 title = map.get("requestFrom") + "@" + map.get("groupName");
                 ticker = title + '\n' + body;
                 break;
