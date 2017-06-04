@@ -76,6 +76,8 @@ public class GroupAdapter extends RecyclerView.Adapter {
     public void retriveGroups() {
         FirebaseDatabase.getInstance().getReference("users").child(Singleton.getInstance().getCurrentUser().getId()).child("userGroups")
                 .addChildEventListener(new ChildEventListener() {
+
+
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         final String groupID = dataSnapshot.getKey();
