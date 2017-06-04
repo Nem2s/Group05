@@ -112,7 +112,7 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 crashlytics {
-    enableNdk false
+    enableNdk true
     androidNdkOut 'src/main/obj'
     androidNdkLibsOut 'src/main/libs'
 }

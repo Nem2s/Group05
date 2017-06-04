@@ -350,7 +350,7 @@ public class Expense_activity extends AestheticActivity {
         });
 
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         fastItemAdapter.add(retriveIcons());
         fastItemAdapter.setHasStableIds(true);
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
@@ -433,6 +433,12 @@ public class Expense_activity extends AestheticActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        supportFinishAfterTransition();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
