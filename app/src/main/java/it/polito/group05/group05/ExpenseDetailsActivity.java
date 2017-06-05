@@ -220,6 +220,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             ImageUtils.showTutorial(this,map_tuto);
             //Boolean b =(Boolean) payed.get(Singleton.getInstance().getCurrentUser().getId());
             //if(!b){
+            if((Boolean)payed.get(Singleton.getInstance().getCurrentUser().getId())) {
+                button_pay.setVisibility(View.GONE);
+            }
             button_pay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -232,9 +235,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             });
 
         } else {
-Boolean b = false;
+            Boolean b = false;
+            button_notify.setVisibility(View.GONE);
             for(String c : payed.keySet()){
-                if(!(payed.get(c) instanceof Boolean)) continue;
+                if(!(boolean)(payed.get(c))) button_notify.setVisibility(View.VISIBLE); /**DA AGGIUSTARE QUI **/
                 if(c.equals(Singleton.getInstance().getCurrentUser().getId())) continue;
                 if((Boolean)payed.get(c))
                     b = true;
@@ -251,8 +255,8 @@ Boolean b = false;
                     }
                 });
             }
+
             button_pay.setVisibility(View.GONE);
-            button_notify.setVisibility(View.VISIBLE);
             button_notify.setText("Remind to others");
 
 
@@ -286,6 +290,7 @@ Boolean b = false;
                             users.add(u);
                             adapter.notifyItemChanged(users.size());
                         }
+
                     }
 
                 }

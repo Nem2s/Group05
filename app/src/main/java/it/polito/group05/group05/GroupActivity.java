@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -68,6 +69,7 @@ public class GroupActivity extends AestheticActivity {
     static CircleImageView cv_group;
     TextView tv_groupname;
     TextView tv_members;
+    Activity activity;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -123,7 +125,7 @@ public class GroupActivity extends AestheticActivity {
 
         }
 
-
+        activity = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -426,10 +428,8 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
 
             if (s.equals("newGroup")) {
                 final Pair<View, String> p1 = new Pair<View, String>((View) cv_group, getResources().getString(R.string.transition_group_image));
-                AnimUtils.startActivityWithAnimation((Activity) this, new Intent(this, GroupDetailsActivity.class), p1);
+                AnimUtils.startActivityWithAnimation(activity, new Intent(this, GroupDetailsActivity.class), p1);
                 getIntent().putExtra("type", "");
-
-
             }
             if (s.equals("newMessage")) {
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
@@ -463,7 +463,6 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
                         .show();
                 getIntent().putExtra("type", "");
             }
-
         }
 
     }

@@ -137,7 +137,7 @@ public class NotificationService extends FirebaseMessagingService {
         for (String s : map.keySet()) {
             i.putExtra(s, map.get(s));
         }
-
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         nb.setContentIntent(PendingIntent.getActivity(getApplicationContext(), NotificationId.getID(), i, FLAG_ONE_SHOT));
         nb.setContentText(body).setContentTitle(title).setTicker(ticker).setAutoCancel(true);
         NotificationManager nm = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));

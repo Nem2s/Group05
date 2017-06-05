@@ -46,6 +46,7 @@ public class ExpenseHolder extends GeneralHolder{
     CardView cv;
     Query ref;
     ImageView calendar;
+    ImageView expense_done;
     Context context;
     List<UserDatabase> members = new ArrayList<>();
 
@@ -64,6 +65,7 @@ public class ExpenseHolder extends GeneralHolder{
         this.cv = (CardView) itemView.findViewById(R.id.card_expense);
         this.calendar = (ImageView) itemView.findViewById(R.id.calendar);
         this.cv_owner = (CircleImageView) itemView.findViewById(R.id.cv_ownerimage);
+        this.expense_done = (ImageView)itemView.findViewById(R.id.expense_done);
 
 
     }
@@ -75,6 +77,16 @@ public class ExpenseHolder extends GeneralHolder{
         if(!(c instanceof ExpenseDatabase)) return;
         this.context = context;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
+        Boolean value = true;
+        for(Object b : expenseDatabase.getPayed().values()) {
+            value = (Boolean)b;
+            if(!value) break;
+        }
+        if(value) {
+            expense_done.setVisibility(View.VISIBLE);
+        } else {
+            expense_done.setVisibility(View.INVISIBLE);
+        }
         loadOwnerImage(expenseDatabase.getOwner());
         name.setText(expenseDatabase.getName());
         price.setText(String.format("%.2f €",expenseDatabase.getPrice()));
