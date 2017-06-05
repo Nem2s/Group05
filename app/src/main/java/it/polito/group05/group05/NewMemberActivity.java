@@ -59,12 +59,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.codetail.animation.ViewAnimationUtils;
 
+import io.reactivex.Single;
 import it.polito.group05.group05.Utility.BaseClasses.GroupDatabase;
 import it.polito.group05.group05.Utility.BaseClasses.Singleton;
 import it.polito.group05.group05.Utility.BaseClasses.UserContact;
 import it.polito.group05.group05.Utility.BaseClasses.UserDatabase;
 import it.polito.group05.group05.Utility.Event.SelectionChangedEvent;
 import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
+import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 import it.polito.group05.group05.Utility.Holder.MemberInvitedItem;
 
 /**
@@ -92,13 +94,15 @@ public class NewMemberActivity extends AestheticActivity {
     private final UserDatabase currentUser = Singleton.getInstance().getCurrentUser();
     private Context context;
     FastItemAdapter<MemberInvitedItem> fastInvitedAdapter;
+    private HashMap<String, Boolean> maptmp=new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_member);
-        et_group_name = (EditText) findViewById(R.id.group_name_add);
-        iv_new_group = (CircleImageView) findViewById(R.id.iv_new_group);
+
+
+
         no_people = (TextView)findViewById(R.id.no_people);
         context = this;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -154,7 +158,15 @@ public class NewMemberActivity extends AestheticActivity {
         rv_invited.setLayoutManager(invitedManager);
         rv_invited.addItemDecoration(dividerItemDecoration);
 
-        contacts = new ArrayList<>(Singleton.getInstance().getRegContactsList().values());
+        contacts = new ArrayList<>();
+
+        for(String s : Singleton.getInstance().getRegContactsList().keySet()){
+            if(Singleton.getInstance().getmCurrentGroup().getMembers().get(s)==null){
+
+                contacts.add(Singleton.getInstance().getRegContactsList().get(s));
+            }
+
+        }
 
         Collections.sort(contacts, new Comparator<UserContact>() {
             @Override
@@ -215,9 +227,6 @@ public class NewMemberActivity extends AestheticActivity {
             });
 
 
-            et_group_name.setEnabled(false);
-
-            iv_new_group.setEnabled(false);
 
 
         }
@@ -239,22 +248,14 @@ public class NewMemberActivity extends AestheticActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 DatabaseReference ref = groupRef.push();
 
-                GroupDatabase group = new GroupDatabase();
+                GroupDatabase group = Singleton.getInstance().getmCurrentGroup();
 
-                group.setMembers(new HashMap<String,Object>());
-
-                group.setId(ref.getKey());
-
-                group.setName(et_group_name.getText().toString());
-
-                group.setCreator(Singleton.getInstance().getCurrentUser().getId());
 
                 for (UserContact u : contacts) {
-
+                    if(group.getMembers().get(u.getId())!=null) continue;
                     if(u.isSelected()) {
 
-                        group.getMembers().put(u.getId(), 0.0);
-
+                        maptmp.put(u.getId(), true);
                         u.setSelected(false);
 
                     }
@@ -262,11 +263,8 @@ public class NewMemberActivity extends AestheticActivity {
 
                 }
 
-                if(!group.getMembers().isEmpty() && et_group_name.getText().length() > 0) {
-
-                    group.getMembers().put(currentUser.getId(), 0.0);
-                    DB_Manager.getInstance().setContext(context).pushNewGroup(group, ((BitmapDrawable)iv_new_group.getDrawable()).getBitmap());
-
+                if(!group.getMembers().isEmpty()) {
+                    DB_Manager.getInstance().setContext(context).pushNewGroup(maptmp,group.getId());
                     finish();
 
                 } else {

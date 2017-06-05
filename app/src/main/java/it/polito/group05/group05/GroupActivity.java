@@ -353,7 +353,7 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
             animator.start();
         } else {
             Animator animator = ViewAnimationUtils.createCircularReveal(
-                    
+
                     mToolbar,
                     (int) cx,
                     (int) cy, 0,

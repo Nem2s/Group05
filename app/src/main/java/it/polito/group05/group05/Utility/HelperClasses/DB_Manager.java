@@ -320,7 +320,17 @@ public class DB_Manager {
         });
 
     }
-
+    public String pushNewGroup(Map<String ,Boolean> tmp_map,String groupId) {
+        String uuid = UUID.randomUUID().toString();
+        Map<String, Object> temp = new HashMap<String, Object>();
+        temp.put(groupId, true);
+        for (String s : tmp_map.keySet()) {
+            if (s == null) continue;
+            userRef.child(s).child(userGroups).updateChildren(temp);
+            groupRef.child(groupId).child("members").child(s).setValue(0.0);
+        }
+        return groupId;
+    }
     public String pushNewGroup(GroupDatabase groupDatabase, Bitmap bitmap) {
         DatabaseReference ref = groupRef.push();
         groupDatabase.setId(ref.getKey());

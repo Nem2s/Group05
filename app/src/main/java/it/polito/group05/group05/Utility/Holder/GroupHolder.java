@@ -77,7 +77,7 @@ public class GroupHolder extends GeneralHolder {
     String s = String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString()));
 
         Double x = Double.valueOf(s.replace(",", "."));
-        String s1 = "Break even";
+        String s1;
         if(x >0.001) {
             balance.setTextColor(Color.GREEN);
             x=Math.abs(x);
