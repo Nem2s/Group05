@@ -428,8 +428,12 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
             }
 
             if (s.equals("newGroup")) {
-                final Pair<View, String> p1 = new Pair<View, String>((View) cv_group, getResources().getString(R.string.transition_group_image));
-                AnimUtils.startActivityWithAnimation(activity, new Intent(this, GroupDetailsActivity.class), p1);
+                mToolbar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToolbar.callOnClick();
+                    }
+                });
                 getIntent().putExtra("type", "");
             }
             if (s.equals("newMessage")) {

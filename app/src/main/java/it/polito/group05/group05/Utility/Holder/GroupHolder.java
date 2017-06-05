@@ -82,13 +82,13 @@ public class GroupHolder extends GeneralHolder {
             balance.setTextColor(Color.GREEN);
             x=Math.abs(x);
             s1=String.format("%.2f",x);
-            balance.setText("You have to receive € " + s);
+            balance.setText("You have to receive € " + s1);
 
         }
         else if(x <-0.001){
             x=Math.abs(x);
             s1 = String.format("%.2f",x);
-            balance.setText("You have to pay € " + s);
+            balance.setText("You have to pay € " + s1);
             balance.setTextColor(Color.RED);
         }
         else{
