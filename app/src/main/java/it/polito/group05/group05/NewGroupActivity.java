@@ -113,7 +113,7 @@ public class NewGroupActivity extends AestheticActivity {
 
     public  static int REQUEST_FROM_NEW_GROUP, INVITE;
 
-    FloatingActionButton fab;
+   // FloatingActionButton fab;
 
     CircleImageView iv_new_group;
 
@@ -224,29 +224,7 @@ public class NewGroupActivity extends AestheticActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         tv_partecipants = (TextView)findViewById(R.id.tv_partecipants);
         setSupportActionBar(mToolbar);
-        fab = (FloatingActionButton)findViewById(R.id.fab_invite);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-
-            public void onClick(View v) {
-
-
-                Intent intent = new AppInviteInvitation.IntentBuilder("")
-
-                        .setMessage("")
-
-                        .setDeepLink(Uri.parse("https://h5uqp.app.goo.gl/"))
-
-                        .build();
-
-                startActivityForResult(intent, INVITE);
-
-
-            }
-
-        });
         iv_new_group.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -310,7 +288,7 @@ public class NewGroupActivity extends AestheticActivity {
         setupInvited();
 
             Map<View, String[]> map = new LinkedHashMap<>();
-            map.put(fab,new String[]{"Share - ShareCash!", "Clicking on it you can share this Application with your contacts, try it!"});
+            //map.put(fab,new String[]{"Share - ShareCash!", "Clicking on it you can share this Application with your contacts, try it!"});
             map.put(iv_new_group,new String[]{"Change group image", "Clicking on it you can choose a group profile image!"});
             ImageUtils.showTutorial(this, map);
 
