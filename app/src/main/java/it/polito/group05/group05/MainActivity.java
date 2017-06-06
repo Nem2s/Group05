@@ -227,7 +227,7 @@ public class MainActivity extends AestheticActivity
                     map.put(cv_user_drawer, new String[]{"Profile Image", "Clicking on it you'll be able to change your profile image"});
                     ImageUtils.showTutorial(activity, map);
 
-                
+
             }
 
 
@@ -361,14 +361,14 @@ public class MainActivity extends AestheticActivity
             startActivityForResult(intent, 1);*/
 
         } else if (id == R.id.nav_logout) {
-          AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+       /*   AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     startActivity(new Intent(MainActivity.this, SignUpActivity.class));
                     finish();
                 }
             });
-
+*/
             item.setChecked(false);
         } else if (id == R.id.nav_themes) {
                 FastItemAdapter adapter = new FastItemAdapter<ColorItem>();

@@ -124,8 +124,20 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         rel_lay.setVisibility(View.GONE);
         nameFile = (TextView) findViewById(R.id.nome_file);
         download = (Button) findViewById(R.id.download);
-        iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
-        tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+            iv_arrow.post(new Runnable() {
+                @Override
+                public void run() {
+                    iv_arrow.setColorFilter(Aesthetic.get().colorAccent().take(1).blockingFirst());
+
+                }
+            });
+        tv_members.post(new Runnable() {
+            @Override
+            public void run() {
+                tv_members.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+
+            }
+        });
         ImageUtils.LoadExpenseImage(b.getString("img"), this, iv_expense);
         if(b.getString("file") != null){
             if (!(b.getString("file").equals("Fail")))
@@ -212,17 +224,24 @@ public class ExpenseDetailsActivity extends SlidingActivity {
         final Map<View,String[]> map_tuto = new HashMap<>();
 
         if (!b.getString("owner").equals(Singleton.getInstance().getCurrentUser().getId())) {
-            users.add(Singleton.getInstance().getCurrentUser());
-            button_pay.setVisibility(View.VISIBLE);
+          //  users.add(Singleton.getInstance().getCurrentUser());
 
-            button_notify.setVisibility(View.GONE);
-            map_tuto.put(button_pay,new String[]{"Pay","Pay your debit and wait for owner confirmation"});
-            ImageUtils.showTutorial(this,map_tuto);
-            //Boolean b =(Boolean) payed.get(Singleton.getInstance().getCurrentUser().getId());
-            //if(!b){
-            if((Boolean)payed.get(Singleton.getInstance().getCurrentUser().getId())) {
+            if(map.get(Singleton.getInstance().getCurrentUser().getId())==null)
+                button_pay.setVisibility(View.GONE);
+            else if((Boolean)payed.get(Singleton.getInstance().getCurrentUser().getId())) {
                 button_pay.setVisibility(View.GONE);
             }
+            else{
+                button_pay.setVisibility(View.VISIBLE);
+                map_tuto.put(button_pay,new String[]{"Pay","Pay your debit and wait for owner confirmation"});
+                ImageUtils.showTutorial(this,map_tuto);
+            }
+            button_notify.setVisibility(View.GONE);
+
+            //Boolean b =(Boolean) payed.get(Singleton.getInstance().getCurrentUser().getId());
+            //if(!b){
+
+
             button_pay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -286,10 +305,9 @@ public class ExpenseDetailsActivity extends SlidingActivity {
                         ImageUtils.LoadUserImageProfile(cv, getApplicationContext(), u);
                         tv_name.setText(u.getName());
                     } else {
-                        if(!u.getId().equals(Singleton.getInstance().getCurrentUser().getId())) {
                             users.add(u);
                             adapter.notifyItemChanged(users.size());
-                        }
+
 
                     }
 

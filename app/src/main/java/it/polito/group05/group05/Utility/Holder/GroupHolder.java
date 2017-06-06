@@ -79,7 +79,7 @@ public class GroupHolder extends GeneralHolder {
         Double x = Double.valueOf(s.replace(",", "."));
         String s1;
         if(x >0.001) {
-            balance.setTextColor(Color.GREEN);
+
             x=Math.abs(x);
             s1=String.format("%.2f",x);
             balance.setText("You have to receive € " + s1);
@@ -89,7 +89,7 @@ public class GroupHolder extends GeneralHolder {
             x=Math.abs(x);
             s1 = String.format("%.2f",x);
             balance.setText("You have to pay € " + s1);
-            balance.setTextColor(Color.RED);
+
         }
         else{
             balance.setTextColor(context.getResources().getColor(R.color.colorTextPrimary));

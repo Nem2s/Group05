@@ -321,7 +321,7 @@ public class UserBalanceActivity extends AestheticActivity {
                 int cx = (int)itemSelected.getX();
                 int cy = (int)itemSelected.getY();
                 animateAndLaunchActivity(cx, cy, set.getColor(set.getEntryIndex(e)));*/
-
+                    if(set.getEntryIndex(e)<=0) return;
                         animateAndLaunchActivity(cx, cy, set.getColor(set.getEntryIndex(e)));
 
                     }

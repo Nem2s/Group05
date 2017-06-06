@@ -295,6 +295,13 @@ public class Expense_activity extends AestheticActivity {
                     //      memberAdapter.changeTotal(expense_price);
                     //      memberAdapter.notifyDataSetChanged();
                 }
+                else {
+                    expense.setPrice(0.0);
+                    expense_price = 0.0;
+
+
+
+                }
             }
         });
 

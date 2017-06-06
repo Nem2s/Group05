@@ -180,7 +180,13 @@ public class ImageUtils {
     }
 
     public static boolean isLightDarkActionBar() {
-        return Aesthetic.get().isDark().take(1).blockingFirst() == isColorDark(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+        try {
+            return Aesthetic.get().isDark().take(1).blockingFirst() == isColorDark(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+        }
+        catch (Exception e){
+            return true;
+
+        }
     }
 
     /**
@@ -201,12 +207,13 @@ public class ImageUtils {
         final Map<View, String[]> map_tmp = checkMap(activity ,map);
         final Iterator i = map_tmp.entrySet().iterator();
         if(i.hasNext()) {
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            goOn(activity, i);
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    goOn(activity, i);
+                }
+            },1500);
+
         }
 
 

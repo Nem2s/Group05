@@ -40,6 +40,7 @@ public class MemberExpenseAdapter extends RecyclerView.Adapter<MemberExpenseHold
 
     @Override
     public void onBindViewHolder(MemberExpenseHolder holder, int position) {
+
         holder.setData(users.get(position), context, expenseDatabase,payed);
 
 

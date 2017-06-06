@@ -286,9 +286,12 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
                     tv_members.setMarqueeRepeatLimit(-1);
                     tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                     tv_members.setSelected(true);
-                    tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
-                            Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
-                            Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
+                    try {
+                        tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                                Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                                Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
+                    }
+                    catch (Exception e ){}
                 }
 
                 @Override
