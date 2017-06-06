@@ -80,7 +80,7 @@ public class CustomIncludedDialog extends DialogFragment {
                 dismiss();
             }
         });
-        this.getDialog().setTitle("Choose Friends");
+
         return rootView;
 
 

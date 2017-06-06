@@ -76,7 +76,7 @@ public class NotificationService extends FirebaseMessagingService {
         String title = "default";
         String ticker = "default";
         notificationId = 0;
-        Random m = new Random(10000);
+
         switch (type) {
             case "newGroup":
                 body = "You have been added to " + map.get("groupName");

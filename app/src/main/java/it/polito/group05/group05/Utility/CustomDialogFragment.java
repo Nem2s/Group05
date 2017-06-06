@@ -188,7 +188,7 @@ public class CustomDialogFragment extends DialogFragment {
         params.width = RecyclerView.LayoutParams.MATCH_PARENT;
         params.height = RecyclerView.LayoutParams.MATCH_PARENT;
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-        this.getDialog().setTitle("Set Custom Prices");
+
         return rootView;
     }
 

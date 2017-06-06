@@ -9,13 +9,32 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="Set Custom Prices"
+                android:layout_marginLeft="25sp"
+                android:id="@+id/title"/>
+            <View
+                android:id="@+id/view"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/title"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="@dimen/material_layout_keylines_screen_edge_margin"
+                android:layout_marginStart="@dimen/material_layout_keylines_screen_edge_margin"
+                android:layout_marginTop="8dp"
+                android:alpha="0.6"
+                android:background="@android:color/darker_gray" />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_members"
                 android:layout_width="match_parent"
                 android:visibility="visible"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
+                android:layout_below="@+id/view"
                 android:scrollbars="vertical"
                 android:layout_height="wrap_content">
 
