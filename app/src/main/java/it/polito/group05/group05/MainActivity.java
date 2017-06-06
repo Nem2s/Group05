@@ -223,11 +223,11 @@ public class MainActivity extends AestheticActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                if(!Singleton.getInstance().isFirstAcces()) {
+                map.clear();
                     map.put(cv_user_drawer, new String[]{"Profile Image", "Clicking on it you'll be able to change your profile image"});
                     ImageUtils.showTutorial(activity, map);
-                    map.clear();
-                }
+
+                
             }
 
 
@@ -282,11 +282,9 @@ public class MainActivity extends AestheticActivity
 */
         rv.setAdapter(mAdapter);
         checkBundle();
-        if(!Singleton.getInstance().isFirstAcces()) { /**FOR DEBUG **/
             map.put(fab, new String[]{"Floating Action Button", "With this you can create a new group with yout friends!"});
             ImageUtils.showTutorial(activity, map);
-            map.clear();
-        }
+
 
 
     }
@@ -363,7 +361,7 @@ public class MainActivity extends AestheticActivity
             startActivityForResult(intent, 1);*/
 
         } else if (id == R.id.nav_logout) {
-            AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+          AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     startActivity(new Intent(MainActivity.this, SignUpActivity.class));
