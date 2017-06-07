@@ -364,12 +364,20 @@ public class NewMemberActivity extends AestheticActivity {
 
     public void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
 
-
+mToolbar.post(new Runnable() {
+    @Override
+    public void run() {
         mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+    }
+});
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
+            Integer x =null;
+            while(x==null)
+                try{x=Aesthetic.get().colorStatusBar().take(1).blockingFirst();}catch(NullPointerException e ){x=null;}
+            getWindow().setStatusBarColor(x);
 
         }
 
@@ -414,11 +422,18 @@ public class NewMemberActivity extends AestheticActivity {
 
                     super.onAnimationEnd(animation);
 
-                    mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
+                    mToolbar.post(new Runnable() {
+                        @Override
+                        public void run() {
+                       mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
 
+                        }
+                    });
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                        getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
+                    Integer x=null;
+                        while(x==null)
+                            try{x=Aesthetic.get().colorStatusBar().take(1).blockingFirst();}catch (NullPointerException e ){x=null;}
+                        getWindow().setStatusBarColor(x);
 
                     }
 
@@ -430,8 +445,10 @@ public class NewMemberActivity extends AestheticActivity {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                getWindow().setStatusBarColor(Aesthetic.get().colorStatusBar().take(1).blockingFirst());
-
+                Integer x=null;
+                while(x==null)
+                    try{x=Aesthetic.get().colorStatusBar().take(1).blockingFirst();}catch (NullPointerException e ){x=null;}
+                getWindow().setStatusBarColor(x);
             }
 
         }

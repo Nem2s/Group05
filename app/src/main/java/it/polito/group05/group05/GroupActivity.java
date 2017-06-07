@@ -235,9 +235,15 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
         }
         fillNameMembersList();
         tv_groupname.setText(currentGroup.getName());
-        tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
-                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
-                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        tv_groupname.post(new Runnable() {
+            @Override
+            public void run() {
+                tv_groupname.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                        Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                        Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -290,12 +296,17 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
                     tv_members.setMarqueeRepeatLimit(-1);
                     tv_members.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                     tv_members.setSelected(true);
-                    try {
-                        tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
-                                Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
-                                Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
-                    }
-                    catch (Exception e ){}
+                    Integer x=null;
+              while(x==null) {
+                  try {
+                      tv_members.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                              Aesthetic.get().textColorSecondary().take(1).blockingFirst() :
+                              Aesthetic.get().textColorSecondaryInverse().take(1).blockingFirst());
+                      x=1;
+                  }catch (NullPointerException e ){x=null;}
+              }
+
+
                 }
 
                 @Override

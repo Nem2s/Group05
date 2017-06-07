@@ -100,7 +100,9 @@ public class GroupDetailsActivity extends AestheticActivity {
         final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+toolbar.post(new Runnable() {
+    @Override
+    public void run() {
         toolbarLayout.setTitle(Singleton.getInstance().getmCurrentGroup().getName());
         toolbarLayout.setExpandedTitleColor(ImageUtils.isLightDarkActionBar() ?
                 Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
@@ -115,6 +117,9 @@ public class GroupDetailsActivity extends AestheticActivity {
                 return false;
             }
         });
+    }
+});
+
 
         /*if (Aesthetic.isFirstTime()) {
             int[] colors = Singleton.getInstance().getColors();

@@ -272,7 +272,13 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             if(!b) {
                 Integer x = null;
                 while(x==null)
-                x=Aesthetic.get().colorAccent().take(1).blockingFirst();
+                    try {
+                        x = Aesthetic.get().colorAccent().take(1).blockingFirst();
+                    }
+                    catch(NullPointerException n ){
+                        x=null;
+
+                    }
                 setFab(x, R.drawable.ic_delete, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -81,9 +81,15 @@ public class InternalHistoryHolder extends GeneralHolder {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String time = sdf.format(date);
         history_time.setText(time);
-        history_image. setColorFilter(
-                Aesthetic.get().textColorSecondary().take(1).blockingFirst()
-        );
+        history_image.post(new Runnable() {
+            @Override
+            public void run() {
+                history_image. setColorFilter(
+                        Aesthetic.get().textColorSecondary().take(1).blockingFirst()
+                );
+            }
+        });
+
         if (last) divider_history.setVisibility(View.GONE);
     }
 }

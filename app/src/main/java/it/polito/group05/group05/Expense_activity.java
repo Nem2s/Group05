@@ -185,9 +185,15 @@ public class Expense_activity extends AestheticActivity {
                 .crossFade()
                 .into(iv_group_image);
         tv_group_name.setText(Singleton.getInstance().getmCurrentGroup().getName());
-        tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
-                Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
-                Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+        tv_group_name.post(new Runnable() {
+            @Override
+            public void run() {
+                tv_group_name.setTextColor(ImageUtils.isLightDarkActionBar() ?
+                        Aesthetic.get().textColorPrimary().take(1).blockingFirst() :
+                        Aesthetic.get().textColorPrimaryInverse().take(1).blockingFirst());
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         for (String s : Singleton.getInstance().getmCurrentGroup().getMembers().keySet()) {

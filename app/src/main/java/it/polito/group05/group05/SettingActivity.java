@@ -85,7 +85,16 @@ public class SettingActivity extends SlidingActivity {
                 });
         name.setText(Singleton.getInstance().getCurrentUser().getName());
         final Activity c = this;
-        setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_mode_edit, new View.OnClickListener() {
+        Integer x =null;
+        while(x==null)
+            try {
+                x = Aesthetic.get().colorAccent().take(1).blockingFirst();
+            }
+            catch(NullPointerException n ){
+                x=null;
+
+            }
+        setFab(x, R.drawable.ic_mode_edit, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 snack.show();

@@ -147,7 +147,11 @@ public class UserBalanceActivity extends AestheticActivity {
         xaxis.setTextSize(10f);
         xaxis.setDrawAxisLine(false);
         xaxis.setDrawGridLines(true);
-        xaxis.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        Integer x = null;
+        while(x==null){
+            try{x=Aesthetic.get().colorAccent().take(1).blockingFirst();}catch (NullPointerException e){x=null;}
+        }
+        xaxis.setTextColor(x);
         xaxis.setGranularity(1f); // one day
         xaxis.setValueFormatter(new IAxisValueFormatter() {
 
@@ -170,25 +174,29 @@ public class UserBalanceActivity extends AestheticActivity {
         leftAxis.setAxisMinimum(0f);
         leftAxis.setYOffset(-9f);
         leftAxis.setXOffset(8f);
-        leftAxis.setTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+       x = null;
+        while(x==null){
+            try{x=Aesthetic.get().colorAccent().take(1).blockingFirst();}catch (NullPointerException e){x=null;}
+        }
+        leftAxis.setTextColor(x);
 
         YAxis rightAxis = lchart.getAxisRight();
         rightAxis.setEnabled(false);
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColors(Aesthetic.get().colorAccent().take(1).blockingFirst());
-        set.setValueTextColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        set.setColors(x);
+        set.setValueTextColor(x);
         set.setLineWidth(1.5f);
         set.setValueTextSize(10f);
-        set.setCircleColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        set.setCircleColor(x);
         set.setDrawCircles(true);
         set.setCircleRadius(4f);
         set.setDrawValues(true);
         set.setFillAlpha(110);
-        set.setHighLightColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        set.setHighLightColor(x);
         set.setDrawCircleHole(false);
         set.setMode(LineDataSet.Mode.LINEAR);
-        set.setFillColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+        set.setFillColor(x);
 
         lchart.setDragEnabled(true);
         lchart.getLegend().setTextSize(11f);
@@ -406,13 +414,17 @@ public class UserBalanceActivity extends AestheticActivity {
         pchart.setCenterTextSize(22f);
         pchart.setCenterTextTypeface(Typeface.DEFAULT_BOLD);
         pchart.setHoleRadius(50);
-        pchart.setHoleColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+        Integer x =null;
+        while(x==null){try{x=Aesthetic.get().colorWindowBackground().take(1).blockingFirst();}catch (NullPointerException e){x=null;}}
+        pchart.setHoleColor(x);
 
         pchart.setDrawSlicesUnderHole(false);
         pchart.setDrawCenterText(true);
         pchart.setRotationAngle(0);
         pchart.setDrawEntryLabels(false);
-        pchart.setEntryLabelColor(Aesthetic.get().textColorSecondary().take(1).blockingFirst());
+        while(x==null){try{x=Aesthetic.get().textColorSecondary().take(1).blockingFirst();}catch (NullPointerException e){x=null;}}
+
+        pchart.setEntryLabelColor(x);
         pchart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
 
     }

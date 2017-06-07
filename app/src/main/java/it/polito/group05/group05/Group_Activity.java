@@ -72,15 +72,24 @@ public class Group_Activity extends AestheticActivity implements  ChatFragment.O
         setContentView(R.layout.activity_group_);
         if (Aesthetic.isFirstTime()) {
             int[] colors = Singleton.getInstance().getColors();
-            Aesthetic.get()
-                    .colorPrimary(colors[1])
-                    .colorStatusBarAuto()
-                    .colorNavigationBarAuto()
-                    .colorAccent(colors[0])
-                    .navigationViewMode(
-                            NavigationViewMode.SELECTED_ACCENT
-                    )
-                    .apply();
+            Integer x = null;
+            while (x == null) {
+                try{
+                Aesthetic.get()
+                        .colorPrimary(colors[1])
+                        .colorStatusBarAuto()
+                        .colorNavigationBarAuto()
+                        .colorAccent(colors[0])
+                        .navigationViewMode(
+                                NavigationViewMode.SELECTED_ACCENT
+                        )
+                        .apply();
+                x=1;}
+                catch (NullPointerException e ){
+
+                    x=null;
+                }
+            }
         }
         context = this;
         final CircleImageView c = (CircleImageView)findViewById(R.id.iv_group_image);

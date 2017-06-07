@@ -52,9 +52,16 @@ public class ChatHolder extends GeneralHolder {
         ChatDatabase cdb = (ChatDatabase) c;
         if(cdb.getMessageUserId().equals(Singleton.getInstance().getCurrentUser().getId())) {
             GradientDrawable bgShape = (GradientDrawable) ll.getBackground();
-            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
             GradientDrawable bgoverlay = (GradientDrawable) overlay.getBackground();
-            bgoverlay.setColor(Aesthetic.get().colorAccent().take(1).blockingFirst());
+            Integer x =null;
+            while (x==null) {
+                try{
+                    x=Aesthetic.get().colorWindowBackground().take(1).blockingFirst();
+                bgShape.setColor(x);
+                x=Aesthetic.get().colorAccent().take(1).blockingFirst();
+                bgoverlay.setColor(x);}
+                catch (NullPointerException e ){x=null;}
+            }
             overlay.setAlpha(0.4f);
             text.setText(cdb.getMessageText());
             SimpleDateFormat sdf = new SimpleDateFormat();
@@ -83,7 +90,14 @@ public class ChatHolder extends GeneralHolder {
 
         } else {
             GradientDrawable bgShape = (GradientDrawable) ll.getBackground();
-            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            Integer x =null;
+            while (x==null) {
+                try {
+                    x=Aesthetic.get().colorWindowBackground().take(1).blockingFirst();
+                    bgShape.setColor(x);
+                }
+                catch (NullPointerException e ){x=null;}
+            }
             text.setText(cdb.getMessageText());
             SimpleDateFormat sdf = new SimpleDateFormat();
             sdf.applyPattern("HH:mm");
