@@ -57,7 +57,7 @@
                     android:textSize="13sp"
                     android:visibility="visible"
                     android:imeOptions="actionDone"
-                    android:maxLength="5"
+                    android:maxLength="9"
                     android:textColor="@color/colorSecondaryText"
                     android:layout_toLeftOf="@+id/euro_member"
                     />

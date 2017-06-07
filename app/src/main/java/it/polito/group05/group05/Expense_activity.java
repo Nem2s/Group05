@@ -210,8 +210,8 @@ public class Expense_activity extends AestheticActivity {
                 if (expense.getName().toString().length() == 0 || expense.getPrice() == 0.0) {
                     Snackbar.make(v, "Set a valid Description", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    if (expense.getPrice().toString().length() > 6)
-                        Snackbar.make(v, "Price on max 6 characters", Snackbar.LENGTH_SHORT).show();
+                    if (expense.getPrice().toString().length() > 8)
+                        Snackbar.make(v, "Price on max 8 digits", Snackbar.LENGTH_SHORT).show();
                     else {
                          fdb = FirebaseDatabase.getInstance()
                                 .getReference("expenses")

@@ -610,7 +610,7 @@ public class DB_Manager {
             ref = FirebaseDatabase.getInstance().getReference("history/" + GroupID).child(e.getId());
             h = new HistoryClass(
                     Singleton.getInstance().getCurrentUser().getName(),
-                    "added " + e.getName() + " of " + e.getPrice().toString() + "€",
+                    "added " + e.getName() + " of " + String.format("%.2f ",e.getPrice()) + "€",
                     e.getTimestamp(),
                     0);
             groupRef.child(Singleton.getInstance().getmCurrentGroup().getId()).child("lmTime").setValue(date.getTime());
