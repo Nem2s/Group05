@@ -79,7 +79,7 @@
         <activity
             android:name=".UserBalanceActivity"
             android:label="UserBalanceActivity"
-
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -89,7 +89,7 @@
         <activity
             android:name=".ExpenseDetailsActivity"
             android:excludeFromRecents="true"
-
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Sliding.Light" />
 
         <service android:name=".Utility.NotificationClass.NotificationService">
@@ -113,7 +113,7 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
-
+android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -145,6 +145,7 @@
             android:name=".SettingActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Sliding.Light" />
     </application>
 

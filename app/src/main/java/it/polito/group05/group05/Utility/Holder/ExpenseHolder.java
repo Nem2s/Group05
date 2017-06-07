@@ -74,6 +74,7 @@ public class ExpenseHolder extends GeneralHolder{
     }
 
     public void setData(Object c, final Context context, int type) {
+        if(context==null) return;
         if(!(c instanceof ExpenseDatabase)) return;
         this.context = context;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
@@ -137,6 +138,7 @@ public class ExpenseHolder extends GeneralHolder{
     }
 
     public void setData(Object c, final Context context, String eid) {
+        if(context==null) return;
         if (!(c instanceof ExpenseDatabase)) return;
         final Expense expenseDatabase = new Expense((ExpenseDatabase) c);
         //

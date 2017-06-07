@@ -130,8 +130,5 @@ public class GroupDatabase implements Namable {
         return memb;
     }
 
-    public float getTotal() {
-        return (float) (this.balance.getCredit() - this.balance.getDebit());
-    }
 
 }

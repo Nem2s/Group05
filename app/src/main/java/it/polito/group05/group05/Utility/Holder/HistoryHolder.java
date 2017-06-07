@@ -84,15 +84,28 @@ public class HistoryHolder extends GeneralHolder {
         String today_s = sdf.format(today);
         if (time.equals(today_s)) {
             when_text_view.setText("Today");
-            GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
-            bgShape.setColor(Aesthetic.get().isDark().take(1).blockingFirst() ? Aesthetic.get().colorPrimary().take(1).blockingFirst()
-                                                                                    : Aesthetic.get().colorAccent().take(1).blockingFirst());
+            internal_rv.post(new Runnable() {
+                @Override
+                public void run() {
+                    GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
+                    bgShape.setColor(Aesthetic.get().isDark().take(1).blockingFirst() ? Aesthetic.get().colorPrimary().take(1).blockingFirst()
+                            : Aesthetic.get().colorAccent().take(1).blockingFirst());
 
-            bgShape.setAlpha(64);
+                    bgShape.setAlpha(64);
+                }
+            });
+
         } else {
+
             when_text_view.setText(time);
-            GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
-            bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            internal_rv.post(new Runnable() {
+                @Override
+                public void run() {
+                    GradientDrawable bgShape = (GradientDrawable) internal_rv.getBackground();
+                    bgShape.setColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+                }
+            });
+
         }
     }
 }
