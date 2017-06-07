@@ -77,7 +77,12 @@ public class ChatFragment extends Fragment {
         input = (EditText) rootView.findViewById(R.id.input);
         rec = (RecyclerView) rootView.findViewById(R.id.rec);
         overlay = (LinearLayout)rootView.findViewById(R.id.overlay_chat);
-        overlay.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+        overlay.post(new Runnable() {
+            @Override
+            public void run() {
+          overlay.setBackgroundColor(Aesthetic.get().colorWindowBackground().take(1).blockingFirst());
+            }
+        });
         rec.setHasFixedSize(false);
         ll = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rec.setLayoutManager(ll);

@@ -270,7 +270,10 @@ public class ExpenseDetailsActivity extends SlidingActivity {
 
             }
             if(!b) {
-                setFab(Aesthetic.get().colorAccent().take(1).blockingFirst(), R.drawable.ic_delete, new View.OnClickListener() {
+                Integer x = null;
+                while(x==null)
+                x=Aesthetic.get().colorAccent().take(1).blockingFirst();
+                setFab(x, R.drawable.ic_delete, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                        FirebaseDatabase.getInstance().getReference("expenses").child(Singleton.getInstance().getmCurrentGroup().getId()).child(getIntent().getStringExtra("id")).removeValue();

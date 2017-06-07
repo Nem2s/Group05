@@ -224,7 +224,11 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
             scheduleStartPostponedTransition(cv_group);
 
         } else {
-            fab.show();
+            if(getIntent().getStringExtra("type")==null)
+                fab.show();
+            else
+                if(!getIntent().getStringExtra("type").equals("newMessage"))
+                    fab.show();
             ImageUtils.LoadImageGroup(cv_group, getApplicationContext(), currentGroup);
 
 
@@ -319,9 +323,10 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
     private void replaceWithChatFragment() {
         ChatFragment chat = ChatFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        fab.hide();
+
         transaction.replace(R.id.fragment_container, chat)
                 .commit();
+        fab.hide();
     }
 
     private void replaceWithHistoryFragment() {
