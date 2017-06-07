@@ -70,6 +70,8 @@ public class ExpenseHolder extends GeneralHolder{
 
     }
     public void setData(Object c, final Context context){
+
+        if(context==null) return;
         setData(c, context, View.GONE);
     }
 
@@ -124,6 +126,7 @@ public class ExpenseHolder extends GeneralHolder{
 
 
     private void loadOwnerImage(String owner) {
+        if(context==null) return;
         FirebaseDatabase.getInstance().getReference("users").child(owner).child("userInfo").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -172,6 +175,7 @@ public class ExpenseHolder extends GeneralHolder{
 }*/
 
     public void showExpense(Expense expense){
+        if(context==null) return;
         Intent i = new Intent(context, ExpenseDetailsActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle extras = new Bundle();
@@ -215,7 +219,7 @@ public class ExpenseHolder extends GeneralHolder{
       return null;
     }
     private void setupListener(final CardView cv, final TextView price, final Context context, final Expense expense){
-
+        if(context==null) return;
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -178,8 +178,14 @@ public class ExpenseDetailsActivity extends SlidingActivity {
             public void onClick(View v) {
                 try{
                 DB_Manager.getInstance().fileDownload(idFile,nomeF);
+                    File f = new File(Environment.getExternalStorageDirectory().getPath() + "/FileAppPoli/"+ nomeF);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(f),"*/*");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(intent);
                 }
                 catch (FileNotFoundException fnfe){
+                    Snackbar.make(v, "File not found", Snackbar.LENGTH_SHORT).show();
                   //  Snackbar.make( ExpenseDetailsActivity.this, "File not found", Snackbar.LENGTH_SHORT).show();
                 }
             }

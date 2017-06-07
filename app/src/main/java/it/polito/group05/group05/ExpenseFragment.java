@@ -177,7 +177,8 @@ public class ExpenseFragment extends Fragment {
                 tv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
                 iv_noexpense.setVisibility(ea.getItemCount() == 0 ? View.VISIBLE : View.GONE);
                 if(type== ChangeEventListener.EventType.ADDED) {
-                    ll.smoothScrollToPosition(rv,null,this.getItemCount());
+                            rv.getLayoutManager().scrollToPosition(getItemCount()-1);
+
                 }
 
                 //aggiungere animazioni strane
