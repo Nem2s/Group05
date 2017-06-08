@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ATLASS.iml" filepath="$PROJECT_DIR$/ATLASS.iml" />
       <module fileurl="file://$PROJECT_DIR$/Group05.iml" filepath="$PROJECT_DIR$/Group05.iml" />
       <module fileurl="file://$PROJECT_DIR$/Group05-anna.iml" filepath="$PROJECT_DIR$/Group05-anna.iml" />
       <module fileurl="file://$PROJECT_DIR$/Malnati_app.iml" filepath="$PROJECT_DIR$/Malnati_app.iml" />
