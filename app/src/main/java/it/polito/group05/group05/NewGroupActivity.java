@@ -598,16 +598,16 @@ mToolbar.post(new Runnable() {
                 public void onAnimationEnd(Animator animation) {
 
                     super.onAnimationEnd(animation);
-                mToolbar.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());
-                    }
-                });
+       Integer x = null;
+          while (x==null) {
+              try{
+              mToolbar.setBackgroundColor(Aesthetic.get().colorPrimary().take(1).blockingFirst());x=1;} catch (NullPointerException e ){x=null;}
+          }
+
 
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Integer  x = null;
+                         x = null;
                         while(x==null){try{x=Aesthetic.get().colorStatusBar().take(1).blockingFirst();}catch (NullPointerException e) {x=null;}}
 
                         getWindow().setStatusBarColor(x);

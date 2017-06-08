@@ -54,6 +54,7 @@ import it.polito.group05.group05.Utility.HelperClasses.DB_Manager;
 import it.polito.group05.group05.Utility.HelperClasses.DetailsTransition;
 import it.polito.group05.group05.Utility.HelperClasses.ImageUtils;
 
+import static it.polito.group05.group05.R.id.toolbar;
 import static it.polito.group05.group05.R.id.view;
 
 public class GroupActivity extends AestheticActivity {
@@ -121,6 +122,7 @@ public class GroupActivity extends AestheticActivity {
             mFragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, ChatFragment.newInstance());
+
             transaction.commit();
 
         }
@@ -347,46 +349,53 @@ map.put(findViewById(R.id.navigation_history),new String[]{"History","A simple d
                 .commit();
     }
 
-    private void animateAppAndStatusBar(final int fromColor, final int toColor, float cx, float cy) {
+    private void animateAppAndStatusBar(final int fromColor, final int toColor, final float cx, final float cy) {
         // get the final radius for the clipping circle
         findViewById(R.id.reveal).setBackgroundColor(fromColor);
-        int dx = (int) Math.max(cx, mToolbar.getWidth() - cx);
-        int dy = (int) Math.max(cy, mToolbar.getHeight() - cy);
-        float finalRadius = (float) Math.hypot(dx, dy);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
+        final int dx = (int) Math.max(cx, mToolbar.getWidth() - cx);
+        final int dy = (int) Math.max(cy, mToolbar.getHeight() - cy);
+       final  float finalRadius = (float) Math.hypot(dx, dy);
 
-                    mToolbar,
-                    (int) cx,
-                    (int) cy, 0,
-                    finalRadius
-            );
-            animator.addListener(new AnimatorListenerAdapter() {
+            mToolbar.post(new Runnable() {
                 @Override
-                public void onAnimationStart(Animator animation) {
-                    mToolbar.setBackgroundColor(toColor);
-                }
-            });
-            animator.setStartDelay(200);
-            animator.setDuration(250);
-            animator.start();
-        } else {
-            Animator animator = ViewAnimationUtils.createCircularReveal(
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Animator animator = android.view.ViewAnimationUtils.createCircularReveal(
 
-                    mToolbar,
-                    (int) cx,
-                    (int) cy, 0,
-                    finalRadius);
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    mToolbar.setBackgroundColor(toColor);
+                            mToolbar,
+                            (int) cx,
+                            (int) cy, 0,
+                            finalRadius
+                    );
+                    animator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            mToolbar.setBackgroundColor(toColor);
+                        }
+                    });
+                    animator.setStartDelay(200);
+                    animator.setDuration(250);
+                    animator.start();
+                } else {
+                    Animator animator = ViewAnimationUtils.createCircularReveal(
+
+                            mToolbar,
+                            (int) cx,
+                            (int) cy, 0,
+                            finalRadius);
+                    animator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            mToolbar.setBackgroundColor(toColor);
+                        }
+                    });
+                    animator.setStartDelay(0);
+                    animator.setDuration(250);
+                    animator.start();
                 }
+
+            }
             });
-            animator.setStartDelay(0);
-            animator.setDuration(250);
-            animator.start();
-        }
 
 
     }

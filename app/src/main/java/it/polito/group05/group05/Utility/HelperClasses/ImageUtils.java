@@ -212,7 +212,7 @@ public class ImageUtils {
                 public void run() {
                     goOn(activity, i);
                 }
-            },1500);
+            },800);
 
         }
 
