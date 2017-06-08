@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -113,6 +114,7 @@ public class ImageUtils {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(FirebaseStorage.getInstance().getReference("groups").child(currGroup.getId()).child(currGroup.getPictureUrl()))
+                .diskCacheStrategy( DiskCacheStrategy.SOURCE )
                 .centerCrop()
                 .into(cv);
     }
@@ -181,19 +183,19 @@ public class ImageUtils {
         final Map<View, String[]> map_tmp = checkMap(activity ,map);
         final Iterator i = map_tmp.entrySet().iterator();
         if(i.hasNext())
-        goOn(activity,i);
+            goOn(activity,i);
     }
 
     private  static Map<View, String[]> checkMap(Activity a,Map<View, String[]> map) {
 
 
         Map<View, String[]> map_tmp = new LinkedHashMap<>();
-         Map.Entry<View, String[]> e;
+        Map.Entry<View, String[]> e;
         SharedPreferences sharedPref = a.getSharedPreferences(a.getString(R.string.tutorial),Context.MODE_PRIVATE);
         Iterator i = map.entrySet().iterator();
         while (i.hasNext())
         {
-           e  =(Map.Entry<View, String[]>) i.next();
+            e  =(Map.Entry<View, String[]>) i.next();
             if(sharedPref.getBoolean(e.getValue()[0], false)) continue;
             map_tmp.put(e.getKey(),e.getValue());
         }
@@ -206,7 +208,7 @@ public class ImageUtils {
 
         if(!i.hasNext()) return;
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.tutorial),Context.MODE_PRIVATE);
-       final Map.Entry<View, String[]> e=(Map.Entry<View, String[]>) i.next();
+        final Map.Entry<View, String[]> e=(Map.Entry<View, String[]>) i.next();
         if(e==null) return;
         new MaterialTapTargetPrompt.Builder(activity)
                 .setTarget(e.getKey())
@@ -227,7 +229,7 @@ public class ImageUtils {
                     @Override
                     public void onHidePromptComplete() {
 
-                            goOn(activity, i);
+                        goOn(activity, i);
                     }
                 })
                 .show();

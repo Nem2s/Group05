@@ -73,15 +73,15 @@ public class GroupHolder extends GeneralHolder {
         if(daysdf.format(date).equals(daysdf.format(today))) time_s = sdf.format(date);
         else time_s = daysdf.format(date);
         time.setText(time_s);
-        this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())));
+        this.balance.setText(String.format("%.2f", Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString())) + "€");
 
-        Double x = Double.valueOf(balance.getText().toString().replace(",", "."));
+        Double x = Double.parseDouble(g.getMembers().get(Singleton.getInstance().getCurrentUser().getId()).toString().replace(",", "."));
         if(x >0.001)
         balance.setTextColor(Color.GREEN);
         else if(x <-0.001)
             balance.setTextColor(Color.RED);
         else{
-            balance.setText("Saldato");
+            balance.setText("Debts-Free");
 
         }
 

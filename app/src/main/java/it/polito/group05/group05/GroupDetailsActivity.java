@@ -158,20 +158,6 @@ public class GroupDetailsActivity extends AestheticActivity {
         mAdapter = new GroupDetailsAdapter(this, users);
         rv_members.setAdapter(mAdapter);
 
-
-        if(!Singleton.getInstance().isFirstAcces()) {
-            Handler h = new Handler();
-            h.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Map<View, String[]> map = new LinkedHashMap<>();
-                    map.put(fab, new String[] {"Add Member", "Add your friends to this group simply by clicking on this!"});
-                    map.put(notSwitch, new String[] {"Enable/Disable", "...Notifications! Simply, isn't it?"});
-                    ImageUtils.showTutorial(activity, map);
-                }
-            }, 1500);
-
-        }
     }
 
     private void onStartView(Bundle savedInstanceState) {

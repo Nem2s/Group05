@@ -4,51 +4,54 @@
     android:id="@+id/message_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="right"
     android:layout_margin="4dp">
-
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_person"
+        android:layout_width="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_height="32dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/girl" />
     <LinearLayout
-        android:id="@+id/first_linear"
+        android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:gravity="end"
+        android:minWidth="80dp"
+        android:background="@drawable/edittext_design"
+        android:layoutDirection="rtl"
+
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
-
-        <RelativeLayout
-            android:id="@+id/message"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_design"
-            android:elevation="5dp"
-            android:padding="10dp"
-            android:layout_marginRight="8dp"
-            >
-
-            <TextView
-                android:id="@+id/name_text"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:textStyle="bold"
-                android:textSize="11sp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:layout_alignParentEnd="true"
-                tools:text="Some User" />
-
+        android:layout_toStartOf="@+id/image_person"
+        android:layout_marginEnd="7dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/overlay_chat_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/edittext_design"
+                ></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                >
             <TextView
                 android:id="@+id/message_text"
-                android:layout_below="@id/name_text"
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textIsSelectable="true"
+                android:textDirection="ltr"
+                android:maxWidth="180dp"
                 android:textStyle="normal"
-                android:maxWidth="150dp"
-                tools:text="Hey!" />
+                android:text="weqqweqweqeqeqeeqeqeqqweqwewe" />
 
             <TextView
                 android:id="@+id/message_time"
@@ -57,19 +60,13 @@
                 android:layout_marginLeft="8dp"
                 android:text="hh:mm"
                 android:textSize="9sp"
+                android:gravity="right"
+                android:textDirection="rtl"
                 android:layout_marginBottom="2dp"
                 android:layout_below="@id/message_text"
-                android:layout_alignParentEnd="true" />
-
-        </RelativeLayout>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_person"
-
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="4dp"
-            android:src="@drawable/girl" />
+                 />
+            </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 
 </RelativeLayout>
